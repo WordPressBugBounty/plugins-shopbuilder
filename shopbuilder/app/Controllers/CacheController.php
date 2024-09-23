@@ -1,0 +1,132 @@
+<?php
+/**
+ * Shortcodes Class.
+ *
+ * This class contains all the Shortcodes.
+ *
+ * @package RadiusTheme\SB
+ */
+
+namespace RadiusTheme\SB\Controllers;
+
+use RadiusTheme\SB\Helpers\Cache;
+use RadiusTheme\SB\Traits\SingletonTrait;
+
+// Do not allow directly accessing this file.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit( 'This script cannot be accessed directly.' );
+}
+
+/**
+ * CacheController Class.
+ */
+class CacheController {
+	/**
+	 * Singleton Trait
+	 */
+	use SingletonTrait;
+
+	/**
+	 * Class Constructor
+	 */
+	public function __construct() {
+		// Hook to add custom item to admin bar.
+		add_action( 'admin_bar_menu', [ $this, 'admin_bar_menu' ], 9999 );
+		add_action( 'init', [ $this, 'admin_bar_menu_action' ] );
+		add_action( 'admin_notices', [ $this, 'cache_notice' ] );
+	}
+
+	/**
+	 * @param object $wp_admin_bar hello.
+	 * @return void
+	 */
+	public function admin_bar_menu( $wp_admin_bar ) {
+		// Only add for administrators.
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+		// Add a top-level item.
+		$wp_admin_bar->add_node(
+			[
+				'id'    => 'shop_builder',
+				'title' => 'ShopBuilder',
+			]
+		);
+		// Add submenu items.
+		$wp_admin_bar->add_node(
+			[
+				'id'     => 'clear_all_cache',
+				'parent' => 'shop_builder', // Set the parent to the top-level item ID.
+				'title'  => 'Clear All Cache',
+				'href'   => wp_nonce_url( add_query_arg( 'rtsb_clear_cache', 'all', add_query_arg( null, null ) ), rtsb()->nonceText ),
+			]
+		);
+		$wp_admin_bar->add_node(
+			[
+				'id'     => 'clear_object_cache',
+				'parent' => 'shop_builder', // Set the parent to the top-level item ID.
+				'title'  => 'Clear Object Cache',
+				'href'   => wp_nonce_url( add_query_arg( 'rtsb_clear_cache', 'data', add_query_arg( null, null ) ), rtsb()->nonceText ),
+			]
+		);
+		$wp_admin_bar->add_node(
+			[
+				'id'     => 'clear_template_cache',
+				'parent' => 'shop_builder', // Set the parent to the top-level item ID.
+				'title'  => 'Clear Template Cache',
+				'href'   => wp_nonce_url( add_query_arg( 'rtsb_clear_cache', 'template', add_query_arg( null, null ) ), rtsb()->nonceText ),
+			]
+		);
+	}
+
+	/***
+	 *
+	 * @return mixed
+	 */
+	public function admin_bar_menu_action() {
+		if ( ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ?? '' ) ), rtsb()->nonceText ) ) {
+			return;
+		}
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+		$clear_cache = sanitize_text_field( wp_unslash( $_GET['rtsb_clear_cache'] ?? '' ) );
+		if ( empty( $clear_cache ) ) {
+			return;
+		}
+		switch ( $clear_cache ) {
+			case 'all':
+				Cache::clear_all_cache();
+				break;
+			case 'data':
+				Cache::clear_data_cache();
+				break;
+			case 'template':
+				Cache::clear_template_cache();
+				break;
+		}
+		// Set the notice flag.
+		set_transient( 'rtsb_cache_cleared_notice', true, 30 );
+
+		$ref_pram = wp_parse_url( wp_get_referer() );
+		$path     = $ref_pram['path'] ?? '/';
+		parse_str( ( $ref_pram['query'] ?? '' ), $query_array );
+		$the_query_arg = add_query_arg( $query_array, home_url( $path ) );
+		$params[]      = '_wpnonce';
+		$redirect_url  = urldecode( remove_query_arg( $params, $the_query_arg ) );
+		wp_safe_redirect( $redirect_url );
+		exit;
+	}
+
+	/**
+	 * @return void
+	 */
+	public function cache_notice() {
+		if ( get_transient( 'rtsb_cache_cleared_notice' ) ) {
+			echo '<div class="notice notice-success is-dismissible">';
+			echo '<p>' . esc_html__( 'Shopbuilder cache has been successfully cleared.', 'shopbuilder' ) . '</p>';
+			echo '</div>';
+			delete_transient( 'rtsb_cache_cleared_notice' );
+		}
+	}
+}
