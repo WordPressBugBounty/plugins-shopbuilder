@@ -3,7 +3,7 @@
         'name' => 'radiustheme/shopbuilder',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => 'ff3f5dfa9f909c9fa0e8ad02e57925b0e474e874',
+        'reference' => 'a87ff330736b5f936eed296030f1c2626b4bf544',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -13,7 +13,7 @@
         'radiustheme/shopbuilder' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => 'ff3f5dfa9f909c9fa0e8ad02e57925b0e474e874',
+            'reference' => 'a87ff330736b5f936eed296030f1c2626b4bf544',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

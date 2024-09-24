@@ -381,13 +381,16 @@ class BuilderController {
 		$source_name    = 'post_type';
 		$paged          = absint( $_POST['page'] ?? 1 );
 		if ( ! empty( $_POST['post_type'] ) ) {
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 			$post_type = sanitize_text_field( $_POST['post_type'] );
 		}
 
 		if ( ! empty( $_POST['source_name'] ) ) {
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 			$source_name = sanitize_text_field( $_POST['source_name'] );
 		}
 
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 		$search  = ! empty( $_POST['search'] ) ? sanitize_text_field( $_POST['search'] ) : '';
 		$results = $post_list = [];
 		switch ( $source_name ) {
@@ -457,11 +460,12 @@ class BuilderController {
 			wp_send_json_error( [] );
 		}
 
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		if ( empty( array_filter( $_POST['id'] ) ) ) {
 			wp_send_json_error( [] );
 		}
 		$ids         = array_map( 'intval', $_POST['id'] );
-		$source_name = ! empty( $_POST['source_name'] ) ? sanitize_text_field( $_POST['source_name'] ) : '';
+		$source_name = ! empty( $_POST['source_name'] ) ? sanitize_text_field( $_POST['source_name'] ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 
 		switch ( $source_name ) {
 			case 'taxonomy':
@@ -472,7 +476,9 @@ class BuilderController {
 					'include'    => implode( ',', $ids ),
 				];
 
+				// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated
 				if ( $_POST['post_type'] !== 'all' ) {
+                    // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 					$args['taxonomy'] = sanitize_text_field( $_POST['post_type'] );
 				}
 
@@ -492,7 +498,7 @@ class BuilderController {
 			default:
 				$post_info = get_posts(
 					[
-						'post_type' => sanitize_text_field( $_POST['post_type'] ),
+						'post_type' => sanitize_text_field( $_POST['post_type'] ), // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotValidated
 						'include'   => implode( ',', $ids ),
 					]
 				);

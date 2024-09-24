@@ -31,15 +31,15 @@ final class Wishlist {
 
 	private function __construct() {
 
-		if( ! ExtraSettings::instance()->get_option( $this->wishlist_db_key, get_option( $this->wishlist_db_key, false ) ) ){
+		if ( ! ExtraSettings::instance()->get_option( $this->wishlist_db_key, get_option( $this->wishlist_db_key, false ) ) ) {
 			add_action( 'wp_loaded', [ $this, 'activate' ] );
 			ExtraSettings::instance()->set_option( $this->wishlist_db_key, $this->wishlist_db_version );
 		}
 
-		//if ( ! get_option( $this->wishlist_db_key, '' ) ) {
-		//	add_action( 'wp_loaded', [ $this, 'activate' ] );
-		//	update_option( $this->wishlist_db_key, $this->wishlist_db_version );
-		//}
+		// if ( ! get_option( $this->wishlist_db_key, '' ) ) {
+		// add_action( 'wp_loaded', [ $this, 'activate' ] );
+		// update_option( $this->wishlist_db_key, $this->wishlist_db_version );
+		// }
 
 		new WishlistRouteV1();
 
@@ -47,6 +47,8 @@ final class Wishlist {
 
 		if ( is_user_logged_in() ) {
 			$cookie_name = WishlistFns::instance()->get_cookie_name();
+
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 			if ( isset( $_COOKIE[ $cookie_name ] ) && is_array( json_decode( wp_unslash( $_COOKIE[ $cookie_name ] ), true ) ) ) {
 				$ids         = WishlistFns::instance()->get_wishlist_ids();
 				$product_ids = [];
@@ -57,7 +59,6 @@ final class Wishlist {
 				setcookie( self::KEY, '', time() - 3600, '/' );
 			}
 		}
-
 
 		if ( is_admin() ) {
 			WishlistAdmin::instance();
@@ -74,6 +75,4 @@ final class Wishlist {
 	public function activate() {
 		( new WishlistInstaller() )->run();
 	}
-
-
 }

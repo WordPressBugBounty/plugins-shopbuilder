@@ -31,9 +31,8 @@ $class       = rtsb()->has_pro() && $ajax_filter ? ' has-ajax-filter' : ' no-aja
 	);
 
 	$default_orderby = apply_filters( 'woocommerce_default_catalog_orderby', get_option( 'woocommerce_default_catalog_orderby', '' ) );
-	// phpcs:disable WordPress.Security.NonceVerification.Recommended
+	// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 	$orderby = isset( $_GET['orderby'] ) ? wc_clean( wp_unslash( $_GET['orderby'] ) ) : $default_orderby;
-	// phpcs:enable WordPress.Security.NonceVerification.Recommended
 
 	if ( ! $show_default_orderby ) {
 		unset( $catalog_orderby_options['menu_order'] );

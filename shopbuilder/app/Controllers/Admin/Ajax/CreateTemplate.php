@@ -75,7 +75,7 @@ class CreateTemplate extends Source_Base {
 		$hasPro           = isset( $_POST['hasPro'] ) ? sanitize_text_field( wp_unslash( $_POST['hasPro'] ) ) : null;
 		$edit_with        = isset( $_POST['template_edit_with'] ) ? sanitize_text_field( wp_unslash( $_POST['template_edit_with'] ) ) : null;
 		$default_template = isset( $_POST['default_template'] ) ? sanitize_text_field( wp_unslash( $_POST['default_template'] ) ) : null;
-		$import_layout    = isset( $_POST['import_default_layout'] ) ? sanitize_text_field( $_POST['import_default_layout'] ) : null;
+		$import_layout    = isset( $_POST['import_default_layout'] ) ? sanitize_text_field( $_POST['import_default_layout'] ) : null; //phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 		$product_id       = isset( $_POST['preview_product_id'] ) ? absint( $_POST['preview_product_id'] ) : null;
 
 		$url = '#';
@@ -155,7 +155,7 @@ class CreateTemplate extends Source_Base {
 		if ( $page_id ) {
 			$edit_by           = Fns::page_edit_with( $page_id );
 			$template_for      = sanitize_text_field( wp_unslash( $_POST['product_page_for'] ?? '' ) );
-			$selected_category = array_unique( isset( $_POST['selected_category'] ) && is_array( $_POST['selected_category'] ) ? array_map( 'sanitize_text_field', $_POST['selected_category'] ) : [] );
+			$selected_category = array_unique( isset( $_POST['selected_category'] ) && is_array( $_POST['selected_category'] ) ? array_map( 'sanitize_text_field', $_POST['selected_category'] ) : [] ); //phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 			if ( 'product' == $page_type ) {
 				update_post_meta( $page_id, BuilderFns::$product_template_meta, $product_id );
 				update_post_meta( $page_id, '_is_product_page_template_for', $template_for );

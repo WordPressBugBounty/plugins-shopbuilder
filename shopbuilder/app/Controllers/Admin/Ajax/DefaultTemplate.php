@@ -42,8 +42,8 @@ class DefaultTemplate {
 			wp_send_json_error();
 		}
 		$page_type       = isset( $_POST['template_type'] ) ? sanitize_text_field( wp_unslash( $_POST['template_type'] ) ) : null; // phpcs:ignore WordPress.Security.NonceVerification.Missing
-		$default_page_id = isset( $_POST['set_default_page_id'] ) && 'publish' === get_post_status( $_POST['set_default_page_id'] ) ? absint( wp_unslash( $_POST['set_default_page_id'] ) ) : null; // phpcs:ignore WordPress.Security.NonceVerification.Missing
-		$page_id         = isset( $_POST['page_id'] ) && 'publish' === get_post_status( $_POST['page_id'] ) ? absint( wp_unslash( $_POST['page_id'] ) ) : null; // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$default_page_id = isset( $_POST['set_default_page_id'] ) && 'publish' === get_post_status( $_POST['set_default_page_id'] ) ? absint( wp_unslash( $_POST['set_default_page_id'] ) ) : null; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		$page_id         = isset( $_POST['page_id'] ) && 'publish' === get_post_status( $_POST['page_id'] ) ? absint( wp_unslash( $_POST['page_id'] ) ) : null; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		Cache::clear_transient_cache();
 		$the_cat_option   = BuilderFns::archive_option_name_by_template_id( $page_id );
 		$the_cats         = TemplateSettings::instance()->get_option( $the_cat_option );

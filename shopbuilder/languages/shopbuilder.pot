@@ -6,7 +6,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-08-21 06:46+0000\n"
+"POT-Creation-Date: 2024-09-24 09:04+0000\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-KeywordsList: __;_e;_ex:1,2c;_n:1,2;_n_noop:1,2;_nx:1,2,4c;_nx_noop:1,2,3c;_x:1,2c;esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c\n"
 "X-Poedit-SearchPath-0: .\n"
@@ -74,11 +74,11 @@ msgstr ""
 msgid "ShopBuilder Icons"
 msgstr ""
 
-#: ../app/Controllers/BuilderController.php:589, ../app/Controllers/BuilderController.php:590, ../app/Models/ElementList.php:921
+#: ../app/Controllers/BuilderController.php:595, ../app/Controllers/BuilderController.php:596, ../app/Models/ElementList.php:921
 msgid "Ajax Product Filters"
 msgstr ""
 
-#: ../app/Controllers/CacheController.php:127
+#: ../app/Controllers/CacheController.php:132
 msgid "Shopbuilder cache has been successfully cleared."
 msgstr ""
 
@@ -106,7 +106,7 @@ msgstr ""
 msgid "Activate WooCommerce"
 msgstr ""
 
-#: ../app/Controllers/Dependencies.php:104, ../app/Controllers/Dependencies.php:90, ../app/Controllers/Admin/Ajax/ModalTemplate.php:330
+#: ../app/Controllers/Dependencies.php:104, ../app/Controllers/Dependencies.php:90, ../app/Controllers/Admin/Ajax/ModalTemplate.php:349
 msgid "Elementor"
 msgstr ""
 
@@ -164,170 +164,170 @@ msgstr ""
 msgid "%s does not exist."
 msgstr ""
 
-#: ../app/Helpers/Fns.php:1057
+#: ../app/Helpers/Fns.php:1070
 msgid "Full size"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:1058
+#: ../app/Helpers/Fns.php:1071
 msgid "Custom image size"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:1070, ../app/Elementor/Helper/ControlHelper.php:99
+#: ../app/Helpers/Fns.php:1083, ../app/Elementor/Helper/ControlHelper.php:99
 msgid "Grid Layout 1"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:1071, ../app/Elementor/Helper/ControlHelper.php:104
+#: ../app/Helpers/Fns.php:1084, ../app/Elementor/Helper/ControlHelper.php:104
 msgid "Grid Layout 2"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:1072, ../app/Elementor/Helper/ControlHelper.php:295
+#: ../app/Helpers/Fns.php:1085, ../app/Elementor/Helper/ControlHelper.php:295
 msgid "List Layout 1"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:1073, ../app/Elementor/Helper/ControlHelper.php:299
+#: ../app/Helpers/Fns.php:1086, ../app/Elementor/Helper/ControlHelper.php:299
 msgid "List Layout 2"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:1074, ../app/Elementor/Helper/ControlHelper.php:234
+#: ../app/Helpers/Fns.php:1087, ../app/Elementor/Helper/ControlHelper.php:234
 msgid "Slider Layout 1"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:1075, ../app/Elementor/Helper/ControlHelper.php:239
+#: ../app/Helpers/Fns.php:1088, ../app/Elementor/Helper/ControlHelper.php:239
 msgid "Slider Layout 2"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:1076
+#: ../app/Helpers/Fns.php:1089
 msgid "Category Single Layout 1"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:1077, ../app/Elementor/Helper/ControlHelper.php:343
+#: ../app/Helpers/Fns.php:1090, ../app/Elementor/Helper/ControlHelper.php:343
 msgid "Category Layout 1"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:1078, ../app/Elementor/Helper/ControlHelper.php:348
+#: ../app/Helpers/Fns.php:1091, ../app/Elementor/Helper/ControlHelper.php:348
 msgid "Category Layout 2"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:1113, ../app/Controllers/Admin/Ajax/ModalTemplate.php:176
+#: ../app/Helpers/Fns.php:1126, ../app/Controllers/Admin/Ajax/ModalTemplate.php:178
 msgid "All Products"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:1203
+#: ../app/Helpers/Fns.php:1216
 msgid "Product Category"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:1215
+#: ../app/Helpers/Fns.php:1228
 msgid "All Categories"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:1216
+#: ../app/Helpers/Fns.php:1229
 msgid "Sub-Categories by Parent"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:1217
+#: ../app/Helpers/Fns.php:1230
 msgid "Select by ID"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:1218
+#: ../app/Helpers/Fns.php:1231
 msgid "Manual Selection"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:1251
+#: ../app/Helpers/Fns.php:1264
 msgid "Nothing found"
 msgstr ""
 
 #. translators: %s is the number of reviews
-#: ../app/Helpers/Fns.php:1310
+#: ../app/Helpers/Fns.php:1323
 msgid "%s Review"
 msgid_plural "%s Reviews"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../app/Helpers/Fns.php:1556
+#: ../app/Helpers/Fns.php:1569
 msgid "Default Image"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:2031
+#: ../app/Helpers/Fns.php:2044
 msgid "Facebook"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:2035
+#: ../app/Helpers/Fns.php:2048
 msgid "Twitter"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:2039
+#: ../app/Helpers/Fns.php:2052
 msgid "Linkedin"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:2043
+#: ../app/Helpers/Fns.php:2056
 msgid "Pinterest"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:2047
+#: ../app/Helpers/Fns.php:2060
 msgid "Skype"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:2051
+#: ../app/Helpers/Fns.php:2064
 msgid "Whatsapp"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:2055
+#: ../app/Helpers/Fns.php:2068
 msgid "Reddit"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:2059
+#: ../app/Helpers/Fns.php:2072
 msgid "Telegram"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:2113
+#: ../app/Helpers/Fns.php:2126
 msgid "Share on Facebook"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:2120
+#: ../app/Helpers/Fns.php:2133
 msgid "Share on Twitter"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:2127
+#: ../app/Helpers/Fns.php:2140
 msgid "Share on Pinterest"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:2134
+#: ../app/Helpers/Fns.php:2147
 msgid "Share on LinkedIn"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:2141
+#: ../app/Helpers/Fns.php:2154
 msgid "Share on Skype"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:2148
+#: ../app/Helpers/Fns.php:2161
 msgid "Share on Whatsapp"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:2155
+#: ../app/Helpers/Fns.php:2168
 msgid "Share on Reddit"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:2162
+#: ../app/Helpers/Fns.php:2175
 msgid "Share on Telegram"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:2272, ../app/Controllers/Admin/Ajax/AdminSettings.php:146
+#: ../app/Helpers/Fns.php:2285, ../app/Controllers/Admin/Ajax/AdminSettings.php:146
 msgid "Section , block or options may be empty"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:2279
+#: ../app/Helpers/Fns.php:2292
 msgid "No section or block found with given data"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:2356
+#: ../app/Helpers/Fns.php:2378
 msgid "No changes found for update"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:2364, ../app/Controllers/Admin/Ajax/AdminSettings.php:179
+#: ../app/Helpers/Fns.php:2386, ../app/Controllers/Admin/Ajax/AdminSettings.php:179
 msgid "Successfully Saved"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:2625, ../app/Helpers/Fns.php:2619
+#: ../app/Helpers/Fns.php:2649, ../app/Helpers/Fns.php:2642
 msgid "404 Error"
 msgstr ""
 
@@ -387,7 +387,7 @@ msgstr ""
 msgid "Single Category"
 msgstr ""
 
-#: ../app/Models/ElementList.php:159, ../app/Models/ElementList.php:340, ../app/Models/ElementList.php:715, ../app/Controllers/Admin/Ajax/ModalTemplate.php:177, ../app/Elementor/Widgets/Controls/StyleFields.php:820, ../app/Elementor/Widgets/General/ProductCategories.php:38, ../app/Elementor/Widgets/Single/ProductCats.php:30
+#: ../app/Models/ElementList.php:159, ../app/Models/ElementList.php:340, ../app/Models/ElementList.php:715, ../app/Controllers/Admin/Ajax/ModalTemplate.php:179, ../app/Elementor/Widgets/Controls/StyleFields.php:820, ../app/Elementor/Widgets/General/ProductCategories.php:38, ../app/Elementor/Widgets/Single/ProductCats.php:30
 msgid "Product Categories"
 msgstr ""
 
@@ -447,7 +447,7 @@ msgstr ""
 msgid "Product Rating"
 msgstr ""
 
-#: ../app/Models/ElementList.php:364, ../app/Models/ElementList.php:741, ../app/Controllers/Admin/Ajax/ModalTemplate.php:178, ../app/Elementor/Widgets/Single/ProductTags.php:30
+#: ../app/Models/ElementList.php:364, ../app/Models/ElementList.php:741, ../app/Controllers/Admin/Ajax/ModalTemplate.php:180, ../app/Elementor/Widgets/Single/ProductTags.php:30
 msgid "Product Tags"
 msgstr ""
 
@@ -479,7 +479,7 @@ msgstr ""
 msgid "Product Stock Count"
 msgstr ""
 
-#: ../app/Models/ElementList.php:458, ../app/Models/ModuleList.php:1052
+#: ../app/Models/ElementList.php:458, ../app/Models/ModuleList.php:1066
 msgid "Flash Sale Countdown"
 msgstr ""
 
@@ -487,7 +487,7 @@ msgstr ""
 msgid "Size Chart"
 msgstr ""
 
-#: ../app/Models/ElementList.php:480, ../app/Models/ElementList.php:831, ../app/Models/ModuleList.php:1066
+#: ../app/Models/ElementList.php:480, ../app/Models/ElementList.php:831, ../app/Models/ModuleList.php:1080
 msgid "Quick Checkout"
 msgstr ""
 
@@ -1416,55 +1416,67 @@ msgstr ""
 msgid "Switch on to enable currency switcher module."
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1038
+#: ../app/Models/ModuleList.php:1036
+msgid "Product Add-Ons"
+msgstr ""
+
+#: ../app/Models/ModuleList.php:1039
+msgid "Enable Product Add-Ons?"
+msgstr ""
+
+#: ../app/Models/ModuleList.php:1040
+msgid "Switch on to enable product add-ons module."
+msgstr ""
+
+#: ../app/Models/ModuleList.php:1052
 msgid "Sales Notification"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1041
+#: ../app/Models/ModuleList.php:1055
 msgid "Enable Sales Notification?"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1042
+#: ../app/Models/ModuleList.php:1056
 msgid "Switch on to enable Sales Notification module."
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1055
+#: ../app/Models/ModuleList.php:1069
 msgid "Enable Flash Sale Countdown?"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1056
+#: ../app/Models/ModuleList.php:1070
 msgid "Switch on to enable Flash Sale Countdown module."
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1069
+#: ../app/Models/ModuleList.php:1083
 msgid "Enable Quick Checkout?"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1070
+#: ../app/Models/ModuleList.php:1084
 msgid "Switch on to enable quick checkout module. Note: Currently, this is not suitable for variable products."
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1080
+#: ../app/Models/ModuleList.php:1094
 msgid "Multi-Step Checkout"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1083
+#: ../app/Models/ModuleList.php:1097
 msgid "Enable Multi-Step Checkout?"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1084
+#: ../app/Models/ModuleList.php:1098
 msgid "Switch on to enable Multi-step Checkout module."
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1094
+#: ../app/Models/ModuleList.php:1108
 msgid "Back-Order"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1097
+#: ../app/Models/ModuleList.php:1111
 msgid "Enable Back-Order?"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1098
+#: ../app/Models/ModuleList.php:1112
 msgid "Switch on to enable back-order module."
 msgstr ""
 
@@ -1634,7 +1646,7 @@ msgstr ""
 msgid "View"
 msgstr ""
 
-#: ../app/Controllers/Builder/BuilderCpt.php:387, ../app/Controllers/Admin/Ajax/ModalTemplate.php:514
+#: ../app/Controllers/Builder/BuilderCpt.php:387, ../app/Controllers/Admin/Ajax/ModalTemplate.php:533
 msgid "Preview"
 msgstr ""
 
@@ -2099,7 +2111,7 @@ msgstr ""
 msgid "Dimensions"
 msgstr ""
 
-#: ../app/Modules/Compare/CompareFns.php:296, ../app/Modules/WishList/WishlistFns.php:384
+#: ../app/Modules/Compare/CompareFns.php:296, ../app/Modules/WishList/WishlistFns.php:387
 msgid "In stock"
 msgstr ""
 
@@ -2230,7 +2242,7 @@ msgid "No section found with given data"
 msgstr ""
 
 #. translators: %s: Edit
-#: ../app/Controllers/Admin/Ajax/CreateTemplate.php:212, ../app/Controllers/Admin/Ajax/ModalTemplate.php:426
+#: ../app/Controllers/Admin/Ajax/CreateTemplate.php:212, ../app/Controllers/Admin/Ajax/ModalTemplate.php:445
 msgid "Edit with %s"
 msgstr ""
 
@@ -2238,11 +2250,11 @@ msgstr ""
 msgid "Template Settings"
 msgstr ""
 
-#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:47, ../app/Controllers/Admin/Ajax/ModalTemplate.php:575, ../app/Controllers/Admin/Ajax/ModalTemplate.php:634
+#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:47, ../app/Controllers/Admin/Ajax/ModalTemplate.php:594, ../app/Controllers/Admin/Ajax/ModalTemplate.php:653
 msgid "Session Expired..."
 msgstr ""
 
-#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:56, ../app/Controllers/Admin/Ajax/ModalTemplate.php:582, ../app/Controllers/Admin/Ajax/ModalTemplate.php:642
+#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:56, ../app/Controllers/Admin/Ajax/ModalTemplate.php:601, ../app/Controllers/Admin/Ajax/ModalTemplate.php:661
 msgid "Permission Denied..."
 msgstr ""
 
@@ -2250,107 +2262,107 @@ msgstr ""
 msgid "You don't have permission to perform this action"
 msgstr ""
 
-#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:74
+#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:75
 msgid "You don't have proper authorization to perform this action"
 msgstr ""
 
-#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:136
+#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:138
 msgid "Template Name"
 msgstr ""
 
-#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:143
+#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:145
 msgid "Enter Template Name"
 msgstr ""
 
-#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:147
+#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:149
 msgid "This field is required"
 msgstr ""
 
-#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:150
+#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:152
 msgid "Select Template Type"
 msgstr ""
 
-#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:163
+#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:165
 msgid "Product Template For"
 msgstr ""
 
-#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:179
+#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:181
 msgid "Selected Products"
 msgstr ""
 
-#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:207
+#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:216
 msgid "Select Product Categories"
 msgstr ""
 
-#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:249
+#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:265
 msgid "Select Product Tags"
 msgstr ""
 
-#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:287
+#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:303
 msgid "Select Products "
 msgstr ""
 
-#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:318
+#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:337
 msgid "Select Preview Product"
 msgstr ""
 
-#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:327
+#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:346
 msgid "Select Editor Type"
 msgstr ""
 
-#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:332
+#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:351
 msgid "Gutenberg (Coming Soon)"
 msgstr ""
 
-#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:336
+#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:355
 msgid "Set as Active Template"
 msgstr ""
 
-#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:366
+#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:385
 msgid "Switch on to set as active template"
 msgstr ""
 
-#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:385
+#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:404
 msgid "Pre-built Templates "
 msgstr ""
 
-#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:394
+#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:413
 msgid "Blank Template"
 msgstr ""
 
-#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:418
+#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:437
 msgid "Save"
 msgstr ""
 
-#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:468
+#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:487
 msgid "Live Preview"
 msgstr ""
 
-#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:550
+#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:569
 msgid "Creating Template..."
 msgstr ""
 
-#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:550
+#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:569
 msgid "Create Blank Template"
 msgstr ""
 
-#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:543
+#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:562
 msgid "Upgrade"
 msgstr ""
 
-#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:537
+#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:556
 msgid "Importing..."
 msgstr ""
 
-#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:537
+#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:556
 msgid "Import"
 msgstr ""
 
-#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:591
+#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:610
 msgid "Empty string Not allowed..."
 msgstr ""
 
-#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:652
+#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:671
 msgid "Invalid taxonomy"
 msgstr ""
 
@@ -6100,7 +6112,7 @@ msgstr ""
 msgid "Lost your password?"
 msgstr ""
 
-#: ../templates/elementor/checkout/order-review.php:20
+#: ../templates/elementor/checkout/order-review.php:22
 msgid "Your order"
 msgstr ""
 

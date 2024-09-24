@@ -79,7 +79,8 @@ class CacheController {
 		);
 	}
 
-	/***
+
+	/**
 	 *
 	 * @return mixed
 	 */
@@ -90,10 +91,12 @@ class CacheController {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return;
 		}
+
 		$clear_cache = sanitize_text_field( wp_unslash( $_GET['rtsb_clear_cache'] ?? '' ) );
 		if ( empty( $clear_cache ) ) {
 			return;
 		}
+
 		switch ( $clear_cache ) {
 			case 'all':
 				Cache::clear_all_cache();
@@ -107,14 +110,16 @@ class CacheController {
 		}
 		// Set the notice flag.
 		set_transient( 'rtsb_cache_cleared_notice', true, 30 );
-
-		$ref_pram = wp_parse_url( wp_get_referer() );
-		$path     = $ref_pram['path'] ?? '/';
-		parse_str( ( $ref_pram['query'] ?? '' ), $query_array );
-		$the_query_arg = add_query_arg( $query_array, home_url( $path ) );
-		$params[]      = '_wpnonce';
-		$redirect_url  = urldecode( remove_query_arg( $params, $the_query_arg ) );
-		wp_safe_redirect( $redirect_url );
+		$referrer = wp_get_referer();  // Get the referrer URL.
+		if ( $referrer ) {
+			// Rebuild the URL with the original path and query string.
+			$redirect_url = $referrer;
+			// Redirect to the referrer URL with its query string intact.
+			wp_safe_redirect( $redirect_url );
+			exit;
+		}
+		// Fallback: if referrer is not available, redirect to home_url().
+		wp_safe_redirect( home_url() );
 		exit;
 	}
 

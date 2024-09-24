@@ -4,7 +4,7 @@ Donate link:
 Tags: Elementor, Woocommerce Builder, Elementor Woocommerce Builder, Woocommerce, Woocommerce Product
 Requires at least: 5.5
 Tested up to: 6.6
-Stable tag: 2.2.1
+Stable tag: 2.2.2
 Requires PHP: 7.4
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -327,9 +327,20 @@ If you like the ShopBuilder Plugin, then consider checking out our other WordPre
 
 * Yes, you can use the module without Elementor.
 
+= How can I report security bugs? =
+
+* You can report security bugs through the Patchstack Vulnerability Disclosure Program. The Patchstack team help validate, triage and handle any security vulnerabilities. [Report a security vulnerability.](https://patchstack.com/database/vdp/shopbuilder)
+
 == Screenshots ==
 
 == Changelog ==
+= 2.2.2 ( September 24, 2024 ) =
+* Add: Enhanced compatibility with new modules and features.
+* Fix: Resolved an issue where the "Clear Cache" button resulted in unintended page redirection.
+* Fix: Addressed an error which occurred when the preview product was unavailable on the Preview page.
+* Fix: Corrected a style issue affecting the display of tooltips.
+* Fix: Rectified a JS issue preventing proper add-to-cart functionality for variable products.
+* Update: Updated dependency libraries for enhanced stability and security.
 
 = 2.2.1 ( August 21, 2024 ) =
 * Fix: Resolved an issue where the color picker in the admin settings was non-responsive.

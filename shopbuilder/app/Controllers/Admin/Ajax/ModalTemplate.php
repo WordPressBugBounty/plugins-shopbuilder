@@ -70,6 +70,7 @@ class ModalTemplate {
 		}
 
 		// Check if the user is not logged in and the provided 'user_id' in the request does not match the currently logged-in user's ID.
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 		if ( ! is_user_logged_in() && $user->ID !== sanitize_text_field( $_REQUEST['user_id'] ) ) {
 			wp_die( esc_html__( 'You don\'t have proper authorization to perform this action', 'shopbuilder' ) );
 		}
@@ -116,6 +117,7 @@ class ModalTemplate {
 			$_rtsb_import_id = get_post_meta( $post_id, '_rtsb_import_id', true );
 		}
 
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 		$status            = $_REQUEST['status'] ?? '';
 		$post_args         = [ 'timeout' => 120 ];
 		$post_args['body'] = [
@@ -185,6 +187,13 @@ class ModalTemplate {
 					</select>
 				</div>
 
+				<?php if ( ! rtsb()->has_pro() ) { ?>
+					<div class="rtsb-product-page-for rtsb-tb-field-wraper" style="display:none;" >
+						<label for="product_page_for">  </label>
+						<span class="elementor-pro-notice"><a target="_blank" href="<?php echo esc_url( rtsb()->pro_version_link() ); ?>">Upgrade to PRO</a> to unlock Product Categories, Product Tags, Selected Products</span>
+					</div>
+				<?php } ?>
+
 				<!-- Product Page For Categories -->
 				<div class="rtsb-categories-page-field rtsb-product-page-for-the-categories rtsb-tb-field-wraper <?php echo esc_attr( ! rtsb()->has_pro() ? 'pro-disable' : '' ); ?>" style="display:none;">
 					<?php
@@ -226,6 +235,13 @@ class ModalTemplate {
 						?>
 					</p>
 				</div>
+
+				<?php if ( ! rtsb()->has_pro() ) { ?>
+					<div class="rtsb-categories-page-field rtsb-product-page-for-the-categories rtsb-tb-field-wraper" style="display:none;">
+						<label for="product_page_for">  </label>
+						<span class="elementor-pro-notice"><a target="_blank" href="<?php echo esc_url( rtsb()->pro_version_link() ); ?>">Upgrade to PRO</a> to unlock Categories Base Prodcut Page.</span>
+					</div>
+				<?php } ?>
 
 				<!-- Product Page for Selected Product Tags-->
 				<div class="rtsb-product-tags-page-field rtsb-product-page-for-the-tags rtsb-tb-field-wraper <?php echo esc_attr( ! rtsb()->has_pro() ? 'pro-disable' : '' ); ?>" style="display:none;">
@@ -311,8 +327,11 @@ class ModalTemplate {
 					<?php
 					$default_items = '';
 					$product_id    = get_post_meta( $post_id, BuilderFns::$product_template_meta, true );
-					if ( $product_id ) {
+					if ( $product_id && get_post_status( $product_id ) ) {
 						$default_items = '<option selected="selected" value="' . $product_id . '">' . get_the_title( $product_id ) . ' - ( ID ' . $product_id . ' )</option>';
+					}
+					if ( $product_id && ! get_post_status( $product_id ) ) {
+						delete_post_meta( $post_id, BuilderFns::$product_template_meta );
 					}
 					?>
 					<label for="rtsb_product_page_preview"><?php esc_html_e( 'Select Preview Product', 'shopbuilder' ); ?></label>

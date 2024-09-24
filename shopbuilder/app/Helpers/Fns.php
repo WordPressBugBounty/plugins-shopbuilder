@@ -46,7 +46,7 @@ class Fns {
 	}
 
 	public static function get_nonce() {
-        // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		return isset( $_REQUEST[ rtsb()->nonceId ] ) ? sanitize_text_field( $_REQUEST[ rtsb()->nonceId ] ) : null;
 	}
 
@@ -76,7 +76,7 @@ class Fns {
 		if ( ! headers_sent() && session_status() == PHP_SESSION_NONE ) {
 			session_start();
 		}
-		return $_SESSION[ $name ] ?? null;
+		return $_SESSION[ $name ] ?? null; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 	}
 	/**
 	 * Remove Session Variable
@@ -378,7 +378,7 @@ class Fns {
 
 		if ( get_post_type( get_the_ID() ) == BuilderFns::$post_type_tb ) {
 			$product_id = get_post_meta( get_the_ID(), BuilderFns::$product_template_meta, true );
-			if ( $product_id ) {
+			if ( $product_id && get_post_status( $product_id ) ) {
 				return $product_id;
 			}
 		}
@@ -969,11 +969,13 @@ class Fns {
 	}
 
 	/**
-	 * Safe print a validated HTML tag.
+	 * Safe get a validated HTML tag.
 	 *
-	 * @param string $tag
+	 * @param string $tag HTML tag.
+	 *
+	 * @return string
 	 */
-	public static function print_validated_html_tag( $tag ) {
+	public static function get_validated_html_tag( $tag ) {
 		$allowed_html_wrapper_tags = [
 			'a',
 			'article',
@@ -995,7 +997,18 @@ class Fns {
 			'span',
 		];
 
-		self::print_html( in_array( strtolower( $tag ), $allowed_html_wrapper_tags, true ) ? $tag : 'div' );
+		return in_array( strtolower( $tag ), $allowed_html_wrapper_tags, true ) ? $tag : 'div';
+	}
+
+	/**
+	 * Safe print a validated HTML tag.
+	 *
+	 * @param string $tag HTML tag.
+	 *
+	 * @return void
+	 */
+	public static function print_validated_html_tag( $tag ) {
+		self::print_html( self::get_validated_html_tag( $tag ) );
 	}
 
 	/**
@@ -2320,6 +2333,15 @@ class Fns {
 								$the_value = $raw_value;
 							}
 							$value = wp_json_encode( $the_value );
+						} elseif ( 'product_addons_special_settings' === $field['type'] ) {
+							$paddons_value = [];
+							// error_log(print_r( $raw_value , true) . "\n\n", 3, __DIR__ . '/log.txt');
+							if ( is_array( $raw_value ) ) {
+								foreach ( $raw_value as $key => $value ) {
+									$paddons_value[] = json_decode( stripslashes( $value ), true );
+								}
+							}
+							$value = wp_json_encode( $paddons_value );
 						} else {
 							if ( ! empty( $field['multiple'] ) || in_array( $field['type'], [ 'checkbox', 'search_and_multi_select' ] ) ) {
 								if ( isset( $raw_value ) && is_array( $raw_value ) ) {
@@ -2612,6 +2634,7 @@ class Fns {
 					'label' => $post->post_title . ' ( ID ' . $post->ID . ')',
 				];
 			}
+
 			if ( $search_query ) {
 				if ( strpos( '-error 404', $search_query ) ) {
 					$posts[] = [
@@ -2620,10 +2643,12 @@ class Fns {
 					];
 				}
 			} else {
-				$posts[] = [
-					'value' => 'error',
-					'label' => __( '404 Error', 'shopbuilder' ),
-				];
+				if ( 'page' === $args['post_type'] ) {
+					$posts[] = [
+						'value' => 'error',
+						'label' => __( '404 Error', 'shopbuilder' ),
+					];
+				}
 			}
 		} else {
 			$posts = self::get_registered_post_types( $search_query );

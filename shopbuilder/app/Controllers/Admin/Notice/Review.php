@@ -67,6 +67,7 @@ class Review {
 	 * @return void
 	 */
 	public function notice_actions() {
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 		if ( ! isset( $_REQUEST['_wpnonce'] ) || ! wp_verify_nonce( $_REQUEST['_wpnonce'], 'rtsb_notice_nonce' ) ) {
 			return;
 		}

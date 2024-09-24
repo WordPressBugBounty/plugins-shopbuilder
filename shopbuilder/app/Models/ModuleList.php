@@ -1028,7 +1028,21 @@ class ModuleList extends ListModel {
 					'fields'       => [],
 				]
 			),
-			// Product Addons.
+			'product_add_ons'      => apply_filters(
+				'rtsb/module/product_add_ons/options',
+				[
+					'id'           => 'product_add_ons',
+					'active'       => '',
+					'title'        => esc_html__( 'Product Add-Ons', 'shopbuilder' ),
+					'package'      => $this->pro_package(),
+					'active_field' => [
+						'label' => esc_html__( 'Enable Product Add-Ons?', 'shopbuilder' ),
+						'help'  => esc_html__( 'Switch on to enable product add-ons module.', 'shopbuilder' ),
+					],
+					'is_active'    => true,
+					'fields'       => [],
+				]
+			),
 			// Checkout Fields Manager.
 			'sales_notification'   => apply_filters(
 				'rtsb/module/sales_notification/options',

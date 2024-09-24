@@ -7,6 +7,8 @@
  */
 
 // Do not allow directly accessing this file.
+use RadiusTheme\SB\Helpers\Fns;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit( 'This script cannot be accessed directly.' );
 }
@@ -22,9 +24,11 @@ $wrapper_classes = ! empty( $controllers['table_horizontal_scroll_on_mobile'] ) 
 	}
 	?>
 
-	<?php // do_action( 'woocommerce_checkout_before_order_review' ); ?>
+	<?php
+	$addons = 'on' === ( Fns::get_options( 'modules', 'product_add_ons' )['active'] ?? '' );
+	?>
 
-	<div id="order_review" class="woocommerce-checkout-review-order">
+	<div id="order_review" class="woocommerce-checkout-review-order<?php echo esc_attr( $addons ? ' has-product-addons' : '' ); ?>">
 		<?php woocommerce_order_review(); ?>
 	</div>
 

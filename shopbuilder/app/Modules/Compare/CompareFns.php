@@ -392,7 +392,10 @@ class CompareFns {
 	public function get_compared_product_ids() {
 		$cookie_name = $this->get_cookie_name();
 		$ids         = [];
+
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		if ( isset( $_COOKIE[ $cookie_name ] ) && is_array( json_decode( wp_unslash( $_COOKIE[ $cookie_name ] ), true ) ) ) {
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 			$ids = array_map( 'absint', json_decode( wp_unslash( $_COOKIE[ $cookie_name ] ), true ) );
 		}
 
