@@ -4,6 +4,7 @@ namespace RadiusTheme\SB\Modules;
 
 defined( 'ABSPATH' ) || exit();
 
+use RadiusTheme\SB\Helpers\Fns;
 use RadiusTheme\SB\Models\ModuleList;
 
 use RadiusTheme\SB\Traits\SingletonTrait;

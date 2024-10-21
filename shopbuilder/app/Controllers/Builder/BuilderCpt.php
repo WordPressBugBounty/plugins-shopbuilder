@@ -132,7 +132,7 @@ class BuilderCpt {
 			],
 			'query_var'          => true,
 			'publicly_queryable' => true,
-			'capability_type'    => 'product',
+			// 'capability_type'    => 'product', Will Remove this line in the future.
 			'show_in_rest'       => true,
 			'rest_base'          => BuilderFns::$post_type_tb,
 		];

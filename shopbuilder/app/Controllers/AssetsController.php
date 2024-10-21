@@ -397,6 +397,17 @@ class AssetsController {
 
 		global $pagenow;
 
+		$whitelisted_pages = [ 'rtsb-settings', 'rtsb-get-help', 'rtsb-themes' ];
+		$current_page      = ! empty( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+
+		if ( 'admin.php' === $pagenow && ! empty( $_GET['page'] ) && in_array( $current_page, $whitelisted_pages, true ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			/**
+			 * Styles.
+			 */
+			wp_enqueue_style( 'rtsb-admin-app' );
+			wp_enqueue_style( 'rtsb-fonts' );
+		}
+
 		if ( 'admin.php' === $pagenow && ! empty( $_GET['page'] ) && 'rtsb-settings' === $_GET['page'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			// Elementor Console Error Fixed For "rtsb-settings" Page.
 			wp_dequeue_script( 'elementor-admin-top-bar' );
@@ -414,12 +425,6 @@ class AssetsController {
 			wp_dequeue_style( 'elementor-common' );
 
 			/**
-			 * Styles.
-			 */
-			wp_enqueue_style( 'rtsb-admin-app' );
-			wp_enqueue_style( 'rtsb-fonts' );
-
-			/**
 			 * Scripts.
 			 */
 			wp_enqueue_script( 'updates' );
@@ -434,10 +439,11 @@ class AssetsController {
 					'restApiUrl'  => esc_url_raw( rest_url() ),
 					'rest_nonce'  => wp_create_nonce( 'wp_rest' ),
 					'nonce'       => wp_create_nonce( rtsb()->nonceText ),
-					'sections'    => Settings::instance()->get_sections(),
 					'pages'       => Fns::get_pages(),
 					'hasPro'      => rtsb()->has_pro() ? 'yes' : 'no',
 					'updateRates' => esc_html__( 'Update All Rates', 'shopbuilder' ),
+					'sections'    => Settings::instance()->get_sections(),
+					'userRoles'   => Fns::get_all_user_roles(),
 				]
 			);
 		} else {

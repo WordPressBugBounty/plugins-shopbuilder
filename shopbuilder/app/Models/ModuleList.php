@@ -9,6 +9,8 @@ namespace RadiusTheme\SB\Models;
 
 use RadiusTheme\SB\Helpers\Fns;
 use RadiusTheme\SB\Models\Base\ListModel;
+use RadiusTheme\SB\Modules\CheckoutEditor\CheckoutEditorInit;
+use RadiusTheme\SB\Modules\CheckoutEditor\CheckoutFns;
 use RadiusTheme\SB\Traits\SingletonTrait;
 use RadiusTheme\SB\Modules\Compare\Compare;
 use RadiusTheme\SB\Modules\WishList\Wishlist;
@@ -48,7 +50,7 @@ class ModuleList extends ListModel {
 	 */
 	protected function raw_list() {
 		$list = [
-			'quick_view'           => apply_filters(
+			'quick_view'             => apply_filters(
 				'rtsb/module/quick_view/options',
 				[
 					'id'           => 'quick_view',
@@ -212,7 +214,7 @@ class ModuleList extends ListModel {
 					),
 				]
 			),
-			'wishlist'             => apply_filters(
+			'wishlist'               => apply_filters(
 				'rtsb/module/wishlist/options',
 				[
 					'id'           => 'wishlist',
@@ -566,7 +568,7 @@ class ModuleList extends ListModel {
 					],
 				]
 			),
-			'compare'              => apply_filters(
+			'compare'                => apply_filters(
 				'rtsb/module/compare/options',
 				[
 					'id'           => 'compare',
@@ -890,7 +892,7 @@ class ModuleList extends ListModel {
 					],
 				]
 			),
-			'variation_swatches'   => apply_filters(
+			'variation_swatches'     => apply_filters(
 				'rtsb/module/variation_swatches/options',
 				[
 					'id'                => 'variation_swatches',
@@ -916,7 +918,7 @@ class ModuleList extends ListModel {
 					'fields'            => [],
 				]
 			),
-			'variation_gallery'    => apply_filters(
+			'variation_gallery'      => apply_filters(
 				'rtsb/module/variation_gallery/options',
 				[
 					'id'                => 'variation_gallery',
@@ -942,7 +944,7 @@ class ModuleList extends ListModel {
 					'fields'            => [],
 				]
 			),
-			'mini_cart'            => apply_filters(
+			'mini_cart'              => apply_filters(
 				'rtsb/module/mini_cart/options',
 				[
 					'id'           => 'mini_cart',
@@ -957,7 +959,7 @@ class ModuleList extends ListModel {
 					'fields'       => [],
 				]
 			),
-			'product_size_chart'   => apply_filters(
+			'product_size_chart'     => apply_filters(
 				'rtsb/module/product_size_chart/options',
 				[
 					'id'           => 'product_size_chart',
@@ -971,7 +973,7 @@ class ModuleList extends ListModel {
 					'fields'       => [],
 				]
 			),
-			'product_badges'       => apply_filters(
+			'product_badges'         => apply_filters(
 				'rtsb/module/product_badges/options',
 				[
 					'id'           => 'product_badges',
@@ -985,7 +987,7 @@ class ModuleList extends ListModel {
 					'fields'       => [],
 				]
 			),
-			'customize_my_account' => apply_filters(
+			'customize_my_account'   => apply_filters(
 				'rtsb/module/customize_my_account/options',
 				[
 					'id'           => 'customize_my_account',
@@ -999,7 +1001,7 @@ class ModuleList extends ListModel {
 					'fields'       => [],
 				]
 			),
-			'pre_order'            => apply_filters(
+			'pre_order'              => apply_filters(
 				'rtsb/module/pre_order/options',
 				[
 					'id'           => 'pre_order',
@@ -1013,7 +1015,7 @@ class ModuleList extends ListModel {
 					'fields'       => [],
 				]
 			),
-			'currency_switcher'    => apply_filters(
+			'currency_switcher'      => apply_filters(
 				'rtsb/module/currency_switcher/options',
 				[
 					'id'           => 'currency_switcher',
@@ -1028,7 +1030,7 @@ class ModuleList extends ListModel {
 					'fields'       => [],
 				]
 			),
-			'product_add_ons'      => apply_filters(
+			'product_add_ons'        => apply_filters(
 				'rtsb/module/product_add_ons/options',
 				[
 					'id'           => 'product_add_ons',
@@ -1044,7 +1046,166 @@ class ModuleList extends ListModel {
 				]
 			),
 			// Checkout Fields Manager.
-			'sales_notification'   => apply_filters(
+			'checkout_fields_editor' => apply_filters(
+				'rtsb/module/checkout_fields_editor/options',
+				[
+					'id'           => 'checkout_fields_editor',
+					'active'       => '',
+					'title'        => esc_html__( 'Checkout Fields Editor', 'shopbuilder' ),
+					'base_class'   => CheckoutEditorInit::class,
+					'active_field' => [
+						'label' => esc_html__( 'Enable Checkout Fields Editor?', 'shopbuilder' ),
+						'help'  => esc_html__( 'Switch on to enable Checkout Fields Editor module.', 'shopbuilder' ),
+					],
+					'fields'       => [
+						'checkout_billing_intro'          => [
+							'id'   => 'checkout_billing_intro',
+							'type' => 'description',
+							'text' => esc_html__( 'Billing Fields Editor allows you to customize the default billing fields on your checkout page.', 'shopbuilder' ),
+							'tab'  => 'billing_fields',
+						],
+						'modify_billing_form'             => [
+							'id'    => 'modify_billing_form',
+							'type'  => 'switch',
+							'label' => esc_html__( 'Customize Billing Form?', 'shopbuilder' ),
+							'help'  => esc_html__( 'Enable this option to edit billing Form.', 'shopbuilder' ),
+							'tab'   => 'billing_fields',
+						],
+
+						'checkout_billing_fields_info'    => [
+							'id'         => 'checkout_billing_fields_info',
+							'type'       => 'title',
+							'label'      => esc_html__( 'Billing Fields', 'shopbuilder' ),
+							'tab'        => 'billing_fields',
+							'dependency' => [
+								'rules' => [
+									[
+										'item'     => 'modules.checkout_fields_editor.modify_billing_form',
+										'value'    => 'on',
+										'operator' => '==',
+									],
+								],
+							],
+						],
+						'checkout_billing_fields'         => [
+							'id'         => 'checkout_billing_fields',
+							'type'       => 'checkout_fields',
+							'tab'        => 'billing_fields',
+							'value'      => wp_json_encode( CheckoutFns::default_billing_fields() ),
+							'dependency' => [
+								'rules' => [
+									[
+										'item'     => 'modules.checkout_fields_editor.modify_billing_form',
+										'value'    => 'on',
+										'operator' => '==',
+									],
+								],
+							],
+						],
+						'checkout_shipping_intro'         => [
+							'id'   => 'checkout_shipping_intro',
+							'type' => 'description',
+							'text' => esc_html__( 'Shipping Fields Editor allows you to customize the default shipping fields on your checkout page.', 'shopbuilder' ),
+							'tab'  => 'shipping_fields',
+						],
+						'modify_shipping_form'            => [
+							'id'    => 'modify_billing_form',
+							'type'  => 'switch',
+							'label' => esc_html__( 'Modify Shipping Form?', 'shopbuilder' ),
+							'help'  => esc_html__( 'Enable this option to edit shipping Form.', 'shopbuilder' ),
+							'tab'   => 'shipping_fields',
+						],
+						'checkout_shipping_fields_info'   => [
+							'id'         => 'checkout_shipping_fields_info',
+							'type'       => 'title',
+							'label'      => esc_html__( 'Shipping Fields', 'shopbuilder' ),
+							'tab'        => 'shipping_fields',
+							'dependency' => [
+								'rules' => [
+									[
+										'item'     => 'modules.checkout_fields_editor.modify_shipping_form',
+										'value'    => 'on',
+										'operator' => '==',
+									],
+								],
+							],
+						],
+						'checkout_shipping_fields'        => [
+							'id'         => 'checkout_shipping_fields',
+							'type'       => 'checkout_fields',
+							'tab'        => 'shipping_fields',
+							'value'      => wp_json_encode( CheckoutFns::default_shipping_fields() ),
+							'dependency' => [
+								'rules' => [
+									[
+										'item'     => 'modules.checkout_fields_editor.modify_shipping_form',
+										'value'    => 'on',
+										'operator' => '==',
+									],
+								],
+							],
+						],
+						'checkout_additional_intro'       => [
+							'id'   => 'checkout_additional_intro',
+							'type' => 'description',
+							'text' => esc_html__( 'Additional Fields Editor allows you to customize the extra fields on your checkout page.', 'shopbuilder' ),
+							'tab'  => 'additional_fields',
+						],
+						'modify_additional_form'          => [
+							'id'    => 'modify_additional_form',
+							'type'  => 'switch',
+							'label' => esc_html__( 'Modify Additional Form Field?', 'shopbuilder' ),
+							'help'  => esc_html__( 'Enable this option to edit Additional Form.', 'shopbuilder' ),
+							'tab'   => 'additional_fields',
+						],
+						'checkout_additional_fields_info' => [
+							'id'         => 'checkout_additional_fields_info',
+							'type'       => 'title',
+							'label'      => esc_html__( 'Additional Fields', 'shopbuilder' ),
+							'tab'        => 'additional_fields',
+							'dependency' => [
+								'rules' => [
+									[
+										'item'     => 'modules.checkout_fields_editor.modify_additional_form',
+										'value'    => 'on',
+										'operator' => '==',
+									],
+								],
+							],
+						],
+						'checkout_additional_fields'      => [
+							'id'         => 'checkout_additional_fields',
+							'type'       => 'checkout_fields',
+							'tab'        => 'additional_fields',
+							'value'      => wp_json_encode( CheckoutFns::checkout_additional_fields() ),
+							'dependency' => [
+								'rules' => [
+									[
+										'item'     => 'modules.checkout_fields_editor.modify_additional_form',
+										'value'    => 'on',
+										'operator' => '==',
+									],
+								],
+							],
+						],
+					],
+					'tabs'         => [
+						'general'           => [
+							'title' => esc_html__( 'General', 'shopbuilder' ),
+						],
+						'billing_fields'    => [
+							'title' => esc_html__( 'Billing Fields', 'shopbuilder' ),
+						],
+						'shipping_fields'   => [
+							'title' => esc_html__( 'Shipping Fields', 'shopbuilder' ),
+						],
+						'additional_fields' => [
+							'title' => esc_html__( 'Additional Fields', 'shopbuilder' ),
+						],
+					],
+				]
+			),
+			'sales_notification'     => apply_filters(
 				'rtsb/module/sales_notification/options',
 				[
 					'id'           => 'sales_notification',
@@ -1058,7 +1219,7 @@ class ModuleList extends ListModel {
 					'fields'       => [],
 				]
 			),
-			'flash_sale_countdown' => apply_filters(
+			'flash_sale_countdown'   => apply_filters(
 				'rtsb/module/flash_sale_countdown/options',
 				[
 					'id'           => 'flash_sale_countdown',
@@ -1072,7 +1233,7 @@ class ModuleList extends ListModel {
 					'fields'       => [],
 				]
 			),
-			'quick_checkout'       => apply_filters(
+			'quick_checkout'         => apply_filters(
 				'rtsb/module/quick_checkout/options',
 				[
 					'id'           => 'quick_checkout',
@@ -1086,7 +1247,7 @@ class ModuleList extends ListModel {
 					'fields'       => [],
 				]
 			),
-			'multi_step_checkout'  => apply_filters(
+			'multi_step_checkout'    => apply_filters(
 				'rtsb/module/multi_step_checkout/options',
 				[
 					'id'           => 'multi_step_checkout',
@@ -1100,7 +1261,7 @@ class ModuleList extends ListModel {
 					'fields'       => [],
 				]
 			),
-			'back_order'           => apply_filters(
+			'back_order'             => apply_filters(
 				'rtsb/module/back_order/options',
 				[
 					'id'           => 'back_order',
@@ -1110,6 +1271,20 @@ class ModuleList extends ListModel {
 					'active_field' => [
 						'label' => esc_html__( 'Enable Back-Order?', 'shopbuilder' ),
 						'help'  => esc_html__( 'Switch on to enable back-order module.', 'shopbuilder' ),
+					],
+					'fields'       => [],
+				]
+			),
+			'sticky_add_to_cart'     => apply_filters(
+				'rtsb/module/sticky_add_to_cart/options',
+				[
+					'id'           => 'sticky_add_to_cart',
+					'active'       => '',
+					'title'        => esc_html__( 'Sticky Add-To-Cart', 'shopbuilder' ),
+					'package'      => $this->pro_package(),
+					'active_field' => [
+						'label' => esc_html__( 'Enable Sticky Add-To-Cart?', 'shopbuilder' ),
+						'help'  => esc_html__( 'Switch on to enable sticky add-to-cart module.', 'shopbuilder' ),
 					],
 					'fields'       => [],
 				]

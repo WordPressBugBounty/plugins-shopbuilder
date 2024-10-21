@@ -4,7 +4,7 @@ Donate link:
 Tags: Elementor, Woocommerce Builder, Elementor Woocommerce Builder, Woocommerce, Woocommerce Product
 Requires at least: 5.5
 Tested up to: 6.6
-Stable tag: 2.2.2
+Stable tag: 2.3.0
 Requires PHP: 7.4
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -334,6 +334,16 @@ If you like the ShopBuilder Plugin, then consider checking out our other WordPre
 == Screenshots ==
 
 == Changelog ==
+
+= 2.3.0 ( October 21, 2024 ) =
+* Feature: Introducing the 'Checkout Fields Editor' module for editing checkout fields.
+* Add: Support for variation product image sizes on the archive page.
+* Add: Admin 'Themes' page.
+* Fix: Resolved discrepancies with Elementor CSS class selectors.
+* Fix: Addressed the save issue with the activate-button in the template builder.
+* Fix: Corrected a styling issue in the checkout order review widget.
+* Update: Improved UI for the admin 'Get Help' page.
+
 = 2.2.2 ( September 24, 2024 ) =
 * Add: Enhanced compatibility with new modules and features.
 * Fix: Resolved an issue where the "Clear Cache" button resulted in unintended page redirection.

@@ -27,7 +27,7 @@ class AdminInit {
 	 */
 	static $parent_menu_hook = '';
 
-	//private $menu_link_part;
+	// private $menu_link_part;
 
 	use SingletonTrait;
 
@@ -94,9 +94,15 @@ class AdminInit {
 			'rtsb-get-help',
 			[ $this, 'get_help_page' ],
 		);
-        do_action( 'rtsb/add/more/submenu', self::MENU_PAGE_SLUG, self::MENU_CAPABILITY );
-
-
+		add_submenu_page(
+			self::MENU_PAGE_SLUG,
+			esc_html__( 'Themes', 'shopbuilder' ),
+			esc_html__( 'Themes', 'shopbuilder' ),
+			self::MENU_CAPABILITY,
+			'rtsb-themes',
+			[ $this, 'get_themes_page' ],
+		);
+		do_action( 'rtsb/add/more/submenu', self::MENU_PAGE_SLUG, self::MENU_CAPABILITY );
 
 		// Remove Parent Submenu
 		remove_submenu_page( self::MENU_PAGE_SLUG, self::MENU_PAGE_SLUG );
@@ -109,14 +115,18 @@ class AdminInit {
 
 	public function settings_page() {
 		?>
-        <div class="wrap rtsb-admin-wrap">
-            <div id="rtsb-admin-app"></div>
-        </div>
+		<div class="wrap rtsb-admin-wrap">
+			<div id="rtsb-admin-app"></div>
+		</div>
 		<?php
 	}
 
 	public function get_help_page() {
 		Fns::renderView( 'help' );
+	}
+
+	public function get_themes_page() {
+		Fns::renderView( 'themes' );
 	}
 
 	/**
@@ -127,7 +137,12 @@ class AdminInit {
 			'in_admin_header',
 			function () {
 				$screen = get_current_screen();
-				if ( in_array( $screen->base, [ 'shopbuilder_page_rtsb-settings', 'shopbuilder_page_rtsb-license' ])  ) {
+
+				if ( in_array(
+					$screen->base,
+					[ 'shopbuilder_page_rtsb-settings', 'shopbuilder_page_rtsb-license', 'shopbuilder_page_rtsb-themes' ],
+					true
+				) ) {
 					remove_all_actions( 'admin_notices' );
 					remove_all_actions( 'all_admin_notices' );
 				}
@@ -135,5 +150,4 @@ class AdminInit {
 			1000
 		);
 	}
-
 }

@@ -180,7 +180,7 @@ class ReSizer {
 
 			return $image;
 		} catch ( Exception $ex ) {
-			error_log( 'ReSizer.process() error: ' . $ex->getMessage() );
+			//error_log( 'ReSizer.process() error: ' . $ex->getMessage() );
 
 			if ( $this->throwOnError ) {
 				// Bubble up exception.

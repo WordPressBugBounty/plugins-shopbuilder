@@ -117,6 +117,35 @@ class Fns {
 	}
 
 	/**
+	 * Get all user roles.
+	 *
+	 * @return array|false|mixed
+	 */
+	public static function get_all_user_roles() {
+		$cache_key = 'rtsb_get_user_roles';
+		$roles     = wp_cache_get( $cache_key, 'shopbuilder' );
+
+		if ( empty( $roles ) ) {
+			if ( ! function_exists( 'get_editable_roles' ) ) {
+				require_once ABSPATH . 'wp-admin/includes/user.php';
+			}
+
+			$user_roles = \get_editable_roles();
+			$roles      = [];
+
+			foreach ( $user_roles as $key => $role ) {
+				if ( empty( $role['capabilities'] ) ) {
+					continue;
+				}
+				$roles[ $key ] = $role['name'];
+			}
+		}
+		wp_cache_set( $cache_key, $roles, 'shopbuilder' );
+		Cache::set_data_cache_key( $cache_key );
+		return $roles;
+	}
+
+	/**
 	 * @param $data
 	 *
 	 * @return mixed|string
@@ -430,6 +459,7 @@ class Fns {
 	 * @return void
 	 */
 	public static function doing_it_wrong( $function, $message, $version ) {
+		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_wp_debug_backtrace_summary
 		$message .= ' Backtrace: ' . wp_debug_backtrace_summary();
 		_doing_it_wrong( esc_html( $function ), wp_kses_post( $message ), esc_html( $version ) );
 	}
@@ -2333,15 +2363,16 @@ class Fns {
 								$the_value = $raw_value;
 							}
 							$value = wp_json_encode( $the_value );
-						} elseif ( 'product_addons_special_settings' === $field['type'] ) {
-							$paddons_value = [];
-							// error_log(print_r( $raw_value , true) . "\n\n", 3, __DIR__ . '/log.txt');
+						} elseif ( in_array( $field['type'], [ 'product_addons_special_settings', 'checkout_fields' ] ) ) {
+							$manual_field_value = [];
 							if ( is_array( $raw_value ) ) {
 								foreach ( $raw_value as $key => $value ) {
-									$paddons_value[] = json_decode( stripslashes( $value ), true );
+									$manual_field_value[] = json_decode( stripslashes( $value ), true );
 								}
+								$value = wp_json_encode( $manual_field_value );
+							} elseif ( is_string( $raw_value ) ) {
+								$value = $raw_value;
 							}
-							$value = wp_json_encode( $paddons_value );
 						} else {
 							if ( ! empty( $field['multiple'] ) || in_array( $field['type'], [ 'checkbox', 'search_and_multi_select' ] ) ) {
 								if ( isset( $raw_value ) && is_array( $raw_value ) ) {
@@ -2986,5 +3017,61 @@ class Fns {
 			}
 		);
 		return $ids;
+	}
+
+	/**
+	 * Generate and cache dynamic CSS styles.
+	 *
+	 * @param array  $options      CSS options to apply (e.g. padding, margin).
+	 * @param string $cache_key    Cache key for the CSS.
+	 * @param array  $css_properties An array of CSS properties with selectors and properties.
+	 * @param string $style_handle  The handle for the inline styles.
+	 *
+	 * @return void
+	 */
+	public static function dynamic_styles( $options, $cache_key, $css_properties, $style_handle = 'rtsb-frontend' ) {
+		$cached_css = wp_cache_get( $cache_key, 'shopbuilder' );
+
+		if ( false !== $cached_css ) {
+			wp_add_inline_style( $style_handle, $cached_css );
+			return;
+		}
+
+		$css_rules         = [];
+		$grouped_css_rules = [];
+
+		foreach ( $css_properties as $option => $details ) {
+			if ( ! empty( $options[ $option ] ) ) {
+				$selector = $details['selector'] ?? '';
+				$property = $details['property'] ?? '';
+				$unit     = $details['unit'] ?? '';
+				$value    = $options[ $option ];
+
+				if ( empty( $grouped_css_rules[ $selector ] ) ) {
+					$grouped_css_rules[ $selector ] = [];
+				}
+
+				if ( is_array( $property ) ) {
+					foreach ( $property as $prop ) {
+						$grouped_css_rules[ $selector ][] = $prop . ': ' . $value . $unit . ' !important';
+					}
+				} else {
+					$grouped_css_rules[ $selector ][] = $property . ': ' . $value . $unit . ' !important';
+				}
+			}
+		}
+
+		foreach ( $grouped_css_rules as $selector => $properties ) {
+			$css_rules[] = $selector . ' {' . implode( '; ', $properties ) . '}';
+		}
+
+		$dynamic_css = implode( ' ', $css_rules );
+
+		wp_cache_set( $cache_key, $dynamic_css, 'shopbuilder', 12 * HOUR_IN_SECONDS );
+		Cache::set_data_cache_key( $cache_key );
+
+		if ( ! empty( $dynamic_css ) ) {
+			wp_add_inline_style( $style_handle, $dynamic_css );
+		}
 	}
 }

@@ -1,0 +1,418 @@
+Array
+(
+    [image] => Array
+        (
+            [type] => select2
+            [label] => Select Image Size
+            [description] => Please select the image size.
+            [options] => Array
+                (
+                    [thumbnail] => Thumbnail (150*150)
+                    [medium] => Medium (300*300)
+                    [large] => Large (1024*1024)
+                    [1536x1536] => 1536x1536 (1536*1536)
+                    [2048x2048] => 2048x2048 (2048*2048)
+                    [woocommerce_thumbnail] => Woocommerce_thumbnail (300*300)
+                    [woocommerce_single] => Woocommerce_single (600*0)
+                    [woocommerce_gallery_thumbnail] => Woocommerce_gallery_thumbnail (100*100)
+                    [full] => Full size
+                    [rtsb_custom] => Custom image size
+                )
+
+            [default] => woocommerce_thumbnail
+            [label_block] => 1
+            [content_classes] => elementor-descriptor
+            [conditions] => Array
+                (
+                    [relation] => and
+                    [terms] => Array
+                        (
+                            [0] => Array
+                                (
+                                    [relation] => or
+                                    [terms] => Array
+                                        (
+                                            [0] => Array
+                                                (
+                                                    [name] => show_featured_image
+                                                    [operator] => ==
+                                                    [value] => yes
+                                                )
+
+                                        )
+
+                                )
+
+                        )
+
+                )
+
+        )
+
+    [image_custom_dimension] => Array
+        (
+            [type] => image-dimensions
+            [label] => Enter Custom Image Size
+            [label_block] => 1
+            [show_label] => 1
+            [default] => Array
+                (
+                    [width] => 400
+                    [height] => 400
+                )
+
+            [conditions] => Array
+                (
+                    [relation] => and
+                    [terms] => Array
+                        (
+                            [0] => Array
+                                (
+                                    [relation] => or
+                                    [terms] => Array
+                                        (
+                                            [0] => Array
+                                                (
+                                                    [name] => show_featured_image
+                                                    [operator] => ==
+                                                    [value] => yes
+                                                )
+
+                                        )
+
+                                )
+
+                            [1] => Array
+                                (
+                                    [relation] => or
+                                    [terms] => Array
+                                        (
+                                            [0] => Array
+                                                (
+                                                    [name] => image
+                                                    [operator] => ==
+                                                    [value] => rtsb_custom
+                                                )
+
+                                        )
+
+                                )
+
+                        )
+
+                )
+
+        )
+
+    [image_crop] => Array
+        (
+            [type] => select2
+            [label] => Image Crop
+            [description] => Please click on &quot;Apply&quot; to update the image.
+            [options] => Array
+                (
+                    [soft] => Soft Crop
+                    [hard] => Hard Crop
+                )
+
+            [default] => hard
+            [conditions] => Array
+                (
+                    [relation] => and
+                    [terms] => Array
+                        (
+                            [0] => Array
+                                (
+                                    [relation] => or
+                                    [terms] => Array
+                                        (
+                                            [0] => Array
+                                                (
+                                                    [name] => show_featured_image
+                                                    [operator] => ==
+                                                    [value] => yes
+                                                )
+
+                                        )
+
+                                )
+
+                            [1] => Array
+                                (
+                                    [relation] => or
+                                    [terms] => Array
+                                        (
+                                            [0] => Array
+                                                (
+                                                    [name] => image
+                                                    [operator] => ==
+                                                    [value] => rtsb_custom
+                                                )
+
+                                        )
+
+                                )
+
+                        )
+
+                )
+
+        )
+
+    [image_custom_dimension_note] => Array
+        (
+            [type] => html
+            [raw] => <span style="display: block; background: #fffbf1; padding: 10px; font-weight: 500; line-height: 1.4; color: #bd3a3a;border: 1px solid #bd3a3a;">Please note that, if you enter image size larger than the actual image itself, the image sizes will fallback to the full image dimension.</span>
+            [conditions] => Array
+                (
+                    [relation] => and
+                    [terms] => Array
+                        (
+                            [0] => Array
+                                (
+                                    [relation] => or
+                                    [terms] => Array
+                                        (
+                                            [0] => Array
+                                                (
+                                                    [name] => show_featured_image
+                                                    [operator] => ==
+                                                    [value] => yes
+                                                )
+
+                                        )
+
+                                )
+
+                            [1] => Array
+                                (
+                                    [relation] => or
+                                    [terms] => Array
+                                        (
+                                            [0] => Array
+                                                (
+                                                    [name] => image
+                                                    [operator] => ==
+                                                    [value] => rtsb_custom
+                                                )
+
+                                        )
+
+                                )
+
+                        )
+
+                )
+
+        )
+
+)
+Array
+(
+    [image] => Array
+        (
+            [type] => select2
+            [label] => Select Image Size
+            [description] => Please select the image size.
+            [options] => Array
+                (
+                    [thumbnail] => Thumbnail (150*150)
+                    [medium] => Medium (300*300)
+                    [large] => Large (1024*1024)
+                    [1536x1536] => 1536x1536 (1536*1536)
+                    [2048x2048] => 2048x2048 (2048*2048)
+                    [woocommerce_thumbnail] => Woocommerce_thumbnail (300*300)
+                    [woocommerce_single] => Woocommerce_single (600*0)
+                    [woocommerce_gallery_thumbnail] => Woocommerce_gallery_thumbnail (100*100)
+                    [full] => Full size
+                    [rtsb_custom] => Custom image size
+                )
+
+            [default] => woocommerce_thumbnail
+            [label_block] => 1
+            [content_classes] => elementor-descriptor
+            [conditions] => Array
+                (
+                    [relation] => and
+                    [terms] => Array
+                        (
+                            [0] => Array
+                                (
+                                    [relation] => or
+                                    [terms] => Array
+                                        (
+                                            [0] => Array
+                                                (
+                                                    [name] => show_featured_image
+                                                    [operator] => ==
+                                                    [value] => yes
+                                                )
+
+                                        )
+
+                                )
+
+                        )
+
+                )
+
+        )
+
+    [image_custom_dimension] => Array
+        (
+            [type] => image-dimensions
+            [label] => Enter Custom Image Size
+            [label_block] => 1
+            [show_label] => 1
+            [default] => Array
+                (
+                    [width] => 400
+                    [height] => 400
+                )
+
+            [conditions] => Array
+                (
+                    [relation] => and
+                    [terms] => Array
+                        (
+                            [0] => Array
+                                (
+                                    [relation] => or
+                                    [terms] => Array
+                                        (
+                                            [0] => Array
+                                                (
+                                                    [name] => show_featured_image
+                                                    [operator] => ==
+                                                    [value] => yes
+                                                )
+
+                                        )
+
+                                )
+
+                            [1] => Array
+                                (
+                                    [relation] => or
+                                    [terms] => Array
+                                        (
+                                            [0] => Array
+                                                (
+                                                    [name] => image
+                                                    [operator] => ==
+                                                    [value] => rtsb_custom
+                                                )
+
+                                        )
+
+                                )
+
+                        )
+
+                )
+
+        )
+
+    [image_crop] => Array
+        (
+            [type] => select2
+            [label] => Image Crop
+            [description] => Please click on &quot;Apply&quot; to update the image.
+            [options] => Array
+                (
+                    [soft] => Soft Crop
+                    [hard] => Hard Crop
+                )
+
+            [default] => hard
+            [conditions] => Array
+                (
+                    [relation] => and
+                    [terms] => Array
+                        (
+                            [0] => Array
+                                (
+                                    [relation] => or
+                                    [terms] => Array
+                                        (
+                                            [0] => Array
+                                                (
+                                                    [name] => show_featured_image
+                                                    [operator] => ==
+                                                    [value] => yes
+                                                )
+
+                                        )
+
+                                )
+
+                            [1] => Array
+                                (
+                                    [relation] => or
+                                    [terms] => Array
+                                        (
+                                            [0] => Array
+                                                (
+                                                    [name] => image
+                                                    [operator] => ==
+                                                    [value] => rtsb_custom
+                                                )
+
+                                        )
+
+                                )
+
+                        )
+
+                )
+
+        )
+
+    [image_custom_dimension_note] => Array
+        (
+            [type] => html
+            [raw] => <span style="display: block; background: #fffbf1; padding: 10px; font-weight: 500; line-height: 1.4; color: #bd3a3a;border: 1px solid #bd3a3a;">Please note that, if you enter image size larger than the actual image itself, the image sizes will fallback to the full image dimension.</span>
+            [conditions] => Array
+                (
+                    [relation] => and
+                    [terms] => Array
+                        (
+                            [0] => Array
+                                (
+                                    [relation] => or
+                                    [terms] => Array
+                                        (
+                                            [0] => Array
+                                                (
+                                                    [name] => show_featured_image
+                                                    [operator] => ==
+                                                    [value] => yes
+                                                )
+
+                                        )
+
+                                )
+
+                            [1] => Array
+                                (
+                                    [relation] => or
+                                    [terms] => Array
+                                        (
+                                            [0] => Array
+                                                (
+                                                    [name] => image
+                                                    [operator] => ==
+                                                    [value] => rtsb_custom
+                                                )
+
+                                        )
+
+                                )
+
+                        )
+
+                )
+
+        )
+
+)

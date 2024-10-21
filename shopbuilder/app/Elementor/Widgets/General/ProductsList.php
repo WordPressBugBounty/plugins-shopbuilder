@@ -161,7 +161,40 @@ class ProductsList extends ElementorWidgetBase {
 
 		return $this->control_fields;
 	}
-
+	/**
+	 * Widget Field
+	 *
+	 * @return array
+	 */
+	public function thumbnail_size( $thumbnail_size ) {
+		$settings = $this->get_settings_for_display();
+		if ( 'rtsb_custom' === $settings['image'] ) {
+			// Custom image size is not supported. It may be implemented later.
+			// $thumbnail_size   = [];
+			// $thumbnail_size[] = $settings['image_custom_dimension']['width'] ?? 0;
+			// $thumbnail_size[] = $settings['image_custom_dimension']['height'] ?? 0;.
+			return $thumbnail_size;
+		}
+		return $settings['image'] ?? $thumbnail_size;
+	}
+	/**
+	 * Init render hooks & functions.
+	 *
+	 * @return void
+	 */
+	protected function render_start() {
+		parent::render_start();
+		add_filter( 'woocommerce_thumbnail_size', [ $this, 'thumbnail_size' ], 15 );
+	}
+	/**
+	 * Init render hooks & functions.
+	 *
+	 * @return void
+	 */
+	protected function render_end() {
+		parent::render_end();
+		remove_filter( 'woocommerce_thumbnail_size', [ $this, 'thumbnail_size' ], 15 );
+	}
 	/**
 	 * Render Function
 	 *

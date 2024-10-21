@@ -77,7 +77,6 @@ class CreateTemplate extends Source_Base {
 		$default_template = isset( $_POST['default_template'] ) ? sanitize_text_field( wp_unslash( $_POST['default_template'] ) ) : null;
 		$import_layout    = isset( $_POST['import_default_layout'] ) ? sanitize_text_field( $_POST['import_default_layout'] ) : null; //phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 		$product_id       = isset( $_POST['preview_product_id'] ) ? absint( $_POST['preview_product_id'] ) : null;
-
 		$url = '#';
 
 		if ( ! wp_verify_nonce( Fns::get_nonce(), rtsb()->nonceText ) || ! $page_type ) {
@@ -170,9 +169,9 @@ class CreateTemplate extends Source_Base {
 				if ( 'default_template' === $default_template ) {
 					TemplateSettings::instance()->set_option( $option_name, $page_id );
 				} else {
-					if ( ! $has_default ) {
+					//if ( ! $has_default ) {
 						TemplateSettings::instance()->set_option( $option_name, '' );
-					}
+					// }
 				}
 			}
 

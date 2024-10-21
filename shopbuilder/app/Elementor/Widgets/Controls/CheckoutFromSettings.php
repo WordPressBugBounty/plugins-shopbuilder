@@ -113,6 +113,31 @@ class CheckoutFromSettings {
 				'tab'   => 'style',
 				'label' => esc_html__( 'Form Fields', 'shopbuilder' ),
 			],
+			'primary_color'               => [
+				'type'            => 'html',
+				'raw'             => sprintf(
+					'<h3 class="rtsb-elementor-group-heading">%s</h3>',
+					esc_html__( 'Primary Settings', 'shopbuilder' )
+				),
+				'content_classes' => 'elementor-panel-heading-title',
+			],
+			'fields_primary_color'        => [
+				'label'     => esc_html__( 'Fields Primary Color', 'shopbuilder' ),
+				'type'      => 'color',
+				'selectors' => [
+					'{{WRAPPER}} .rtsb-input-field, {{WRAPPER}} #ship-to-different-address' => '--rtsb-fields-primary-color: {{VALUE}}',
+				],
+			],
+
+			'from_fields_settings'        => [
+				'type'            => 'html',
+				'raw'             => sprintf(
+					'<h3 class="rtsb-elementor-group-heading">%s</h3>',
+					esc_html__( 'From Fields Settings', 'shopbuilder' )
+				),
+				'content_classes' => 'elementor-panel-heading-title',
+			],
+
 			'fields_height'               => [
 				'label'     => esc_html__( 'Fields Height', 'shopbuilder' ),
 				'type'      => 'slider',
@@ -127,7 +152,20 @@ class CheckoutFromSettings {
 					self::$selectors['fields_height'] => 'height: {{SIZE}}{{UNIT}};',
 				],
 			],
-
+			'textarea_fields_height'      => [
+				'label'     => esc_html__( 'Textarea Fields Height', 'shopbuilder' ),
+				'type'      => 'slider',
+				'separator' => 'default',
+				'range'     => [
+					'px' => [
+						'min' => 10,
+						'max' => 200,
+					],
+				],
+				'selectors' => [
+					self::$selectors['textarea_fields_height'] => 'height: {{SIZE}}{{UNIT}};',
+				],
+			],
 			'fields_width_100'            => [
 				'label'       => esc_html__( 'Full Width Fields?', 'shopbuilder' ),
 				'type'        => 'switch',

@@ -25,9 +25,11 @@ class FilterHooks {
 	 */
 	public static function init_hooks() {
 		add_filter( 'wp_kses_allowed_html', [ __CLASS__, 'custom_wpkses_post_tags' ], 10, 2 );
+
 		add_filter( 'woocommerce_get_country_locale', [ __CLASS__, 'change_country_locale' ] );
 		add_filter( 'woocommerce_checkout_fields', [ __CLASS__, 'woocommerce_checkout_fields' ], 50 );
 		add_filter( 'woocommerce_default_address_fields', [ __CLASS__, 'default_address_fields' ] );
+
 		add_filter( 'woocommerce_add_to_cart_form_action', [ __CLASS__, 'preview_page_product_permalink' ] );
 		add_filter( 'woocommerce_add_to_cart_redirect', [ __CLASS__, 'preview_page_product_add_to_cart_redirect' ], 10 );
 		add_filter( 'woocommerce_product_get_rating_html', [ __CLASS__, 'get_star_rating_html' ], 11, 3 );
@@ -110,7 +112,9 @@ class FilterHooks {
 	 * @return array
 	 */
 	public static function change_country_locale( $locale ) {
-
+		if ( Fns::is_module_active( 'checkout_fields_editor' ) ) {
+			return $locale;
+		}
 		$elementor_list = GeneralList::instance()->get_data();
 
 		if ( ! array_key_exists( 'billing_form', $elementor_list ) ) {
@@ -227,10 +231,9 @@ class FilterHooks {
 	 */
 	public static function woocommerce_checkout_fields( $fields ) {
 		// Only on checkout page.
-		if ( ! BuilderFns::is_checkout() ) {
-			// return $fields;
+		if ( Fns::is_module_active( 'checkout_fields_editor' ) ) {
+			return $fields;
 		}
-
 		$elementor_list = GeneralList::instance()->get_data();
 		$fields_key     = [];
 
@@ -274,10 +277,9 @@ class FilterHooks {
 	 */
 	public static function default_address_fields( $fields ) {
 		// Only on checkout page.
-		if ( ! BuilderFns::is_checkout() ) {
-			// return $fields;
+		if ( Fns::is_module_active( 'checkout_fields_editor' ) ) {
+			return $fields;
 		}
-
 		$elementor_list = GeneralList::instance()->get_data();
 
 		if ( ! array_key_exists( 'billing_form', $elementor_list ) ) {

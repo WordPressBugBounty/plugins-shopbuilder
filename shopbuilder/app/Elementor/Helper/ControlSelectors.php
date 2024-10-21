@@ -597,8 +597,8 @@ class ControlSelectors {
 				// 'rtwpvg-thumb-ml' => '{{WRAPPER}} .rtsb-product-images .rtwpvg-has-product-thumbnail .rtwpvg-thumbnail-position-left .rtwpvg-slider-wrapper',
 				// 'rtwpvg-thumb-mr' => '{{WRAPPER}} .rtsb-product-images .rtwpvg-has-product-thumbnail .rtwpvg-thumbnail-position-right .rtwpvg-slider-wrapper',
 				// ],
-				'thumb_border'                   => '{{WRAPPER}} .rtsb-product-images div.images .flex-control-thumbs li img, {{WRAPPER}} .rtsb-product-images .rtwpvg-thumbnail-image img',
-				'thumbs_border_radius'           => '{{WRAPPER}} .rtsb-product-images div.images .flex-control-thumbs li img, {{WRAPPER}} .rtsb-product-images :is( .rtwpvg-thumbnail-image, img)',
+				'thumb_border'                   => '{{WRAPPER}} .rtsb-product-images div.images .flex-control-thumbs li img, {{WRAPPER}} .rtsb-product-images .rtwpvg-thumbnail-image img, {{WRAPPER}} .rtsb-product-images .rtwpvg-grid-layout .rtwpvg-gallery-image',
+				'thumbs_border_radius'           => '{{WRAPPER}} .rtsb-product-images div.images .flex-control-thumbs li img, {{WRAPPER}} .rtsb-product-images :is( .rtwpvg-thumbnail-image, img), {{WRAPPER}} .rtsb-product-images .rtwpvg-grid-layout .rtwpvg-gallery-image',
 				'flash_sale_typography'          => '{{WRAPPER}} .rtsb-product-images .onsale',
 				'product_flash_sale_color'       => '{{WRAPPER}} .rtsb-product-images .onsale',
 				'flash_sale_bg_color'            => '{{WRAPPER}} .rtsb-product-images .onsale',
@@ -1069,25 +1069,26 @@ class ControlSelectors {
 				'fields_label_typo'           => '{{WRAPPER}} .woocommerce-billing-fields label',
 				'fields_label_color'          => '{{WRAPPER}} .woocommerce-billing-fields label',
 				'fields_label_reguired_color' => '{{WRAPPER}} .woocommerce-billing-fields label .required',
-				'fields_label_margin'         => '{{WRAPPER}} .woocommerce-billing-fields label',
+				'fields_label_margin'         => '{{WRAPPER}} .woocommerce-billing-fields label:not(.radio)',
 
 				// Input Fields.
+				'textarea_fields_height'      => '{{WRAPPER}} .woocommerce-billing-fields textarea',
 				'fields_height'               => '{{WRAPPER}} .woocommerce-billing-fields input:not([type=checkbox],[type=radio]), {{WRAPPER}} .rtsb-form-billing .select2-selection--single, {{WRAPPER}} .woocommerce-billing-fields select',
-				'fields_border'               => '{{WRAPPER}} .woocommerce-billing-fields input:not([type=checkbox],[type=radio]), {{WRAPPER}} .woocommerce-billing-fields .select2-selection--single, {{WRAPPER}} .woocommerce-billing-fields select',
+				'fields_border'               => '{{WRAPPER}} .woocommerce-billing-fields :is(input, textarea), {{WRAPPER}} .woocommerce-billing-fields .select2-selection--single, {{WRAPPER}} .woocommerce-billing-fields select',
 
-				'fields_border_radius'        => '{{WRAPPER}} .woocommerce-billing-fields input:not([type=checkbox],[type=radio]), {{WRAPPER}} .woocommerce-billing-fields .select2-selection--single, {{WRAPPER}} .woocommerce-billing-fields select',
+				'fields_border_radius'        => '{{WRAPPER}} .woocommerce-billing-fields :is(input, textarea):not([type=checkbox],[type=radio]), {{WRAPPER}} .woocommerce-billing-fields .select2-selection--single, {{WRAPPER}} .woocommerce-billing-fields select',
 
-				'fields_text_color'           => '{{WRAPPER}} .woocommerce-billing-fields input:not([type=checkbox],[type=radio]), {{WRAPPER}} .woocommerce-billing-fields .select2-selection--single, {{WRAPPER}} .woocommerce-billing-fields select',
-				'fields_bg_color'             => '{{WRAPPER}} .woocommerce-billing-fields input:not([type=checkbox],[type=radio]), {{WRAPPER}} .woocommerce-billing-fields .select2-selection--single, {{WRAPPER}} .woocommerce-billing-fields select',
+				'fields_text_color'           => '{{WRAPPER}} .woocommerce-billing-fields :is(input, textarea):not([type=checkbox],[type=radio]), {{WRAPPER}} .woocommerce-billing-fields .select2-selection--single, {{WRAPPER}} .woocommerce-billing-fields select',
+				'fields_bg_color'             => '{{WRAPPER}} .woocommerce-billing-fields :is(input, textarea):not([type=checkbox],[type=radio]), {{WRAPPER}} .woocommerce-billing-fields .select2-selection--single, {{WRAPPER}} .woocommerce-billing-fields select',
 
 				// Hover.
-				'fields_hover_border'         => '{{WRAPPER}} .woocommerce-billing-fields input:not([type=checkbox],[type=radio]):is(:hover, :focus, :active), {{WRAPPER}} .woocommerce-billing-fields .select2-container--open .select2-selection--single, {{WRAPPER}} .woocommerce-billing-fields select:is(:hover, :focus, :active,:focus-visible)',
+				'fields_hover_border'         => '{{WRAPPER}} .woocommerce-billing-fields :is(input, textarea):not([type=checkbox],[type=radio]):is(:hover, :focus, :active), {{WRAPPER}} .woocommerce-billing-fields .select2-container--open .select2-selection--single, {{WRAPPER}} .woocommerce-billing-fields select:is(:hover, :focus, :active,:focus-visible)',
 
-				'fields_border_radius_hover'  => '{{WRAPPER}} .woocommerce-billing-fields input:not([type=checkbox],[type=radio]):is(:hover, :focus, :active), {{WRAPPER}} .woocommerce-billing-fields .select2-container--open .select2-selection--single, {{WRAPPER}} .woocommerce-billing-fields select:is(:hover, :focus, :active,:focus-visible)',
+				'fields_border_radius_hover'  => '{{WRAPPER}} .woocommerce-billing-fields :is(input, textarea):not([type=checkbox],[type=radio]):is(:hover, :focus, :active), {{WRAPPER}} .woocommerce-billing-fields .select2-container--open .select2-selection--single, {{WRAPPER}} .woocommerce-billing-fields select:is(:hover, :focus, :active,:focus-visible)',
 
-				'fields_hover_text_color'     => '{{WRAPPER}} .woocommerce-billing-fields input:not([type=checkbox],[type=radio]):is(:hover, :focus, :active), {{WRAPPER}} , {{WRAPPER}} .woocommerce-billing-fields .select2-container--open .select2-selection--single',
-				'fields_hover_bg_color'       => '{{WRAPPER}} .woocommerce-billing-fields input:not([type=checkbox],[type=radio]):is(:hover, :focus, :active), {{WRAPPER}} .woocommerce-billing-fields .select2-container--open .select2-selection--single',
-				'fields_padding'              => '{{WRAPPER}} .woocommerce-billing-fields input:not([type=checkbox],[type=radio]),{{WRAPPER}} .rtsb-form-billing .select2-container--default .select2-selection--single, {{WRAPPER}} .woocommerce-billing-fields :is( select, .select2-selection--single )',
+				'fields_hover_text_color'     => '{{WRAPPER}} .woocommerce-billing-fields :is(input, textarea):not([type=checkbox],[type=radio]):is(:hover, :focus, :active), {{WRAPPER}} , {{WRAPPER}} .woocommerce-billing-fields .select2-container--open .select2-selection--single',
+				'fields_hover_bg_color'       => '{{WRAPPER}} .woocommerce-billing-fields :is(input, textarea):not([type=checkbox],[type=radio]):is(:hover, :focus, :active), {{WRAPPER}} .woocommerce-billing-fields .select2-container--open .select2-selection--single',
+				'fields_padding'              => '{{WRAPPER}} .woocommerce-billing-fields :is(input, textarea):not([type=checkbox],[type=radio]),{{WRAPPER}} .rtsb-form-billing .select2-container--default .select2-selection--single, {{WRAPPER}} .woocommerce-billing-fields :is( select, .select2-selection--single )',
 
 				'form_row_margin'             => '{{WRAPPER}} .woocommerce-billing-fields p.form-row',
 				'form_wrapper_margin'         => '{{WRAPPER}} .woocommerce-billing-fields .woocommerce-billing-fields__field-wrapper',
@@ -1102,9 +1103,10 @@ class ControlSelectors {
 				'fields_label_typo'           => '{{WRAPPER}} .rtsb-form-shipping .shipping_address label',
 				'fields_label_color'          => '{{WRAPPER}} .rtsb-form-shipping .shipping_address label',
 				'fields_label_reguired_color' => '{{WRAPPER}} .rtsb-form-shipping .shipping_address label .required',
-				'fields_label_margin'         => '{{WRAPPER}} .rtsb-form-shipping .shipping_address label',
+				'fields_label_margin'         => '{{WRAPPER}} .rtsb-form-shipping .shipping_address label:not(.radio)',
 
 				// Input Fields.
+				'textarea_fields_height'      => '{{WRAPPER}} .rtsb-form-shipping textarea',
 				'fields_height'               => '{{WRAPPER}} .rtsb-form-shipping input:not([type=checkbox],[type=radio]), {{WRAPPER}} .rtsb-form-shipping .select2-selection--single, {{WRAPPER}} .rtsb-form-shipping select',
 				'fields_border'               => '{{WRAPPER}} .rtsb-form-shipping :is( input:not([type=checkbox],[type=radio]), textarea ), {{WRAPPER}} .rtsb-form-shipping .select2-selection--single, {{WRAPPER}} .rtsb-form-shipping select',
 
@@ -1139,23 +1141,24 @@ class ControlSelectors {
 				'fields_label_typo'           => '{{WRAPPER}} .rtsb-form-order-note label',
 				'fields_label_color'          => '{{WRAPPER}} .rtsb-form-order-note label',
 				'fields_label_reguired_color' => '{{WRAPPER}} .rtsb-form-order-note label .required',
-				'fields_label_margin'         => '{{WRAPPER}} .rtsb-form-order-note label',
+				'fields_label_margin'         => '{{WRAPPER}} .rtsb-form-order-note label:not(.radio)',
 
 				// Input Fields.
-				'fields_height'               => '{{WRAPPER}} .rtsb-form-order-note textarea',
-				'fields_border'               => '{{WRAPPER}} .rtsb-form-order-note textarea',
-				'fields_border_radius'        => '{{WRAPPER}} .rtsb-form-order-note textarea',
-				'fields_text_color'           => '{{WRAPPER}} .rtsb-form-order-note textarea',
-				'fields_bg_color'             => '{{WRAPPER}} .rtsb-form-order-note textarea',
+				'textarea_fields_height'      => '{{WRAPPER}} .rtsb-form-order-note textarea',
+				'fields_height'               => '{{WRAPPER}} .rtsb-form-order-note input:not([type=checkbox],[type=radio]), {{WRAPPER}} .rtsb-form-order-note .select2-selection--single, {{WRAPPER}} .rtsb-form-order-note select',
+				'fields_border'               => '{{WRAPPER}} .rtsb-form-order-note :is( textarea, input, select, .select2-selection--multiple )',
+				'fields_border_radius'        => '{{WRAPPER}} .rtsb-form-order-note :is( input:not([type=checkbox],[type=radio]), textarea )',
+				'fields_text_color'           => '{{WRAPPER}} .rtsb-form-order-note :is( textarea, input, select, .select2-selection--multiple )',
+				'fields_bg_color'             => '{{WRAPPER}} .rtsb-form-order-note :is( textarea, input, select, .select2-selection--multiple )',
 
 				// Hover.
-				'fields_hover_border'         => '{{WRAPPER}} .rtsb-form-order-note textarea:is(:hover, :focus, :active)',
+				'fields_hover_border'         => '{{WRAPPER}} .rtsb-form-order-note :is( input:not([type=checkbox],[type=radio]), textarea ):is(:hover, :focus, :active)',
 
-				'fields_border_radius_hover'  => '{{WRAPPER}} .rtsb-form-order-note textarea:is(:hover, :focus, :active)',
-				'fields_hover_text_color'     => '{{WRAPPER}} .rtsb-form-order-note textarea:is(:hover, :focus, :active)',
-				'fields_hover_bg_color'       => '{{WRAPPER}} .rtsb-form-order-note textarea:is(:hover, :focus, :active)',
+				'fields_border_radius_hover'  => '{{WRAPPER}} .rtsb-form-order-note :is( input:not([type=checkbox],[type=radio]), textarea ):is(:hover, :focus, :active)',
+				'fields_hover_text_color'     => '{{WRAPPER}} .rtsb-form-order-note :is( input:not([type=checkbox],[type=radio]), textarea ):is(:hover, :focus, :active)',
+				'fields_hover_bg_color'       => '{{WRAPPER}} .rtsb-form-order-note :is( input:not([type=checkbox],[type=radio]), textarea ):is(:hover, :focus, :active)',
 
-				'fields_padding'              => '{{WRAPPER}} .rtsb-form-order-note textarea',
+				'fields_padding'              => '{{WRAPPER}} .rtsb-form-order-note :is( input:not([type=checkbox],[type=radio]), textarea )',
 				'form_row_margin'             => '{{WRAPPER}} .rtsb-form-order-note .woocommerce-input-wrapper',
 				'form_wrapper_margin'         => '{{WRAPPER}} .rtsb-form-order-note .woocommerce-input-wrapper',
 

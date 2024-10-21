@@ -113,7 +113,7 @@ class ActionHooks {
 	 */
 	public static function woocommerce_checkout_coupon_form() {
 		echo '<div class="rtsb-notice">';
-		woocommerce_checkout_coupon_form();
+			woocommerce_checkout_coupon_form();
 		echo '</div>';
 	}
 
@@ -134,7 +134,6 @@ class ActionHooks {
 		wc_empty_cart_message();
 		echo '</div>';
 	}
-
 
 	/**
 	 * @param int    $post_id Post Ids.

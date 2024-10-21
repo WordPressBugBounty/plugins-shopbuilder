@@ -1,430 +1,226 @@
 <?php
+/**
+ * Get Help
+ */
+
 // Do not allow directly accessing this file.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit( 'This script cannot be accessed directly.' );
 }
-/**
- * Get Help
- */
-$iframe  = 'https://www.youtube.com/embed/videoseries?si=BRbMu5oVNJvsOtPY&amp;list=PLSR3AlpVWfs6GVZtNTXZpAfjHimBGNvCG';
-$pro     = 'https://www.radiustheme.com/downloads/woocommerce-bundle/';
-$doc     = 'https://www.radiustheme.com/docs/shopbuilder/getting-started/installation/';
-$contact = 'https://www.radiustheme.com/contact/';
-$fb      = 'https://www.facebook.com/groups/234799147426640/';
-$rt      = 'https://www.radiustheme.com/';
-$review  = 'https://wordpress.org/support/plugin/shopbuilder/reviews/?filter=5#new-post';
-$has_pro = rtsb()->has_pro();
 
+$playlist     = 'https://youtube.com/playlist?list=PLSR3AlpVWfs6GVZtNTXZpAfjHimBGNvCG&si=_wEdUpNVjEBJCvwa';
+$banner       = rtsb()->get_assets_uri( 'images/help-banner.jpg' );
+$youtube      = rtsb()->get_assets_uri( 'images/youtube-icon.svg' );
+$watch        = rtsb()->get_assets_uri( 'images/watch-on-youtube.svg' );
+$pro          = 'https://www.radiustheme.com/downloads/woocommerce-bundle/';
+$pro_banner   = rtsb()->get_assets_uri( 'images/admin-banner.jpg' );
+$contact      = 'https://www.radiustheme.com/contact/';
+$fb           = 'https://www.facebook.com/groups/234799147426640/';
+$rt           = 'https://www.radiustheme.com/';
+$has_pro      = rtsb()->has_pro();
+$testimonials = [
+	[
+		'content' => 'I don’t know much about coding and I am just trying to set up a simple online shop without it looking like a 3 year old made it! This plugin did it and saved me hours and hours! I love their simple layout and easy to import templates.',
+		'image'   => rtsb()->get_assets_uri( 'images/admin-testimonial/review-clients-2.png' ),
+		'name'    => 'Once Upon a Tree',
+		'stars'   => 5,
+	],
+	[
+		'content' => 'I strongly recommend this solution for creating unique design for your next WooCommerce store. In comparison with alternatives – ShopBuilder is the best. Support is amazing and fast. Thanks for this plugin!',
+		'image'   => rtsb()->get_assets_uri( 'images/admin-testimonial/review-clients-3.png' ),
+		'name'    => 'codeorlov',
+		'stars'   => 5,
+	],
+	[
+		'content' => 'I love this plugin. It’s simple but exactly what I was looking for. Easy install, quick response from the developer. Finally, an easy way to monetize my Shop.',
+		'image'   => rtsb()->get_assets_uri( 'images/admin-testimonial/review-clients-1.png' ),
+		'name'    => 'Mahabub Hasan',
+		'stars'   => 5,
+	],
+];
+$actions      = [
+	[
+		'title'        => 'Documentation Guide',
+		'description'  => 'Explore our easy-to-follow documentation, complete with step-by-step guides, screenshots, and videos to simplify your setup process.',
+		'icon_class'   => 'rtsb-documentation-icon',
+		'button_label' => 'View Documentation',
+		'button_link'  => 'https://www.radiustheme.com/docs/shopbuilder/getting-started/installation/',
+	],
+	[
+		'title'        => 'Need Any Help?',
+		'description'  => 'Stuck with something? Please create a <a href="' . esc_url( $contact ) . '" target="_blank">ticket here</a> or post on <a href="' . esc_url( $fb ) . '" target="_blank">facebook group</a>. For emergency case join our <a href="' . esc_url( $rt ) . '" target="_blank">live chat</a>.',
+		'icon_class'   => 'rtsb-support-icon',
+		'button_label' => 'Get Support',
+		'button_link'  => $contact,
+	],
+	[
+		'title'        => 'Happy with Our Work?',
+		'description'  => 'Thank you for choosing <strong>ShopBuilder</strong>. If you have found our plugin useful, please consider giving us a 5-star rating on WordPress.org. It will help us to grow.',
+		'icon_class'   => 'rtsb-rating-icon',
+		'button_label' => 'Yes, You Deserve It',
+		'button_link'  => 'https://wordpress.org/support/plugin/shopbuilder/reviews/?filter=5#new-post',
+	],
+];
 ?>
-	<style>
-	.rtsb-help-wrapper {
-		width: 60%;
-		margin: 0 auto;
-	}
-	.rt-document-box {
-		background-color: #fff;
-		-webkit-box-shadow: 0 1px 18px 0 rgba(0,0,0,.08);
-		box-shadow: 0 1px 18px 0 rgba(0,0,0,.08);
-		border-radius: 4px;
-		padding: 30px 20px;
-		display: -webkit-box;
-		display: -ms-flexbox;
-		display: flex;
-	}
-	.rt-document-box .rt-box-icon {
-		height: 30px;
-		width: 30px;
-		background-color: #ecf1ff;
-		border-radius: 50%;
-		display: -webkit-box;
-		display: -ms-flexbox;
-		display: flex;
-		-webkit-box-align: center;
-		-ms-flex-align: center;
-		align-items: center;
-		-webkit-box-pack: center;
-		-ms-flex-pack: center;
-		justify-content: center;
-		-ms-flex-line-pack: center;
-		align-content: center;
-		margin-right: 10px;
-	}
-	.rt-document-box .rt-box-icon i {
-		font-size: 20px;
-		color: #4360ef;
-	}
-	.rt-document-box .rt-box-content {
-		-webkit-box-flex: 1;
-		-ms-flex: 1;
-		flex: 1;
-		display:flex;
-		flex-wrap:wrap;
-	}
-	.rt-document-box .rt-box-content.rtsb-feature-list{
-		display:block;
-	}
-	.rt-document-box .rt-box-content .rt-box-title {
-		margin: 0 0 12px 0;
-		font-size: 20px;
-		color: #000;
-		font-weight: 600;
-	}
-	.rt-document-box+.rt-document-box {
-		margin-top: 30px;
-	}
-	body .rt-admin-btn {
-		text-align: center;
-		display: inline-block;
-		font-size: 15px;
-		font-weight: 400;
-		color: #5d3dfd;
-		text-decoration: none;
-		padding: 9px 18px;
-		border-radius: 4px;
-		position: relative;
-		z-index: 2;
-		line-height: 1.4;
-		-webkit-transition: all .3s ease-in-out;
-		transition: all .3s ease-in-out;
-		height: auto;
-		border: 2px solid #4360ef;
-		margin-top: auto;
-	}
-	body .rt-admin-btn:hover {
-		background-color: #4360ef;
-		color: #fff;
-		text-decoration: none;
-	}
-	.rtsb-help-section .embed-wrapper {
-		position: relative;
-		display: block;
-		width: calc(100% - 40px);
-		padding: 0;
-		overflow: hidden;
-	}
-	.rtsb-help-section .embed-wrapper::before {
-		display: block;
-		content: "";
-		padding-top: 56.25%;
-	}
-	.rtsb-help-section iframe {
-		position: absolute;
-		top: 0;
-		bottom: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-		border: 0;
-	}
-	.rtsb-help-wrapper .rt-document-box .rt-box-title {
-		margin-bottom: 30px;
-	}
-	.rtsb-help-wrapper .rt-document-box .rt-box-icon {
-		margin-top: -6px;
-	}
-	.rtsb-help-wrapper .rtsb-help-section {
-		margin-top: 30px;
-	}
-	.rtsb-feature-list ul {
-		column-count: 2;
-		column-gap: 30px;
-		margin-bottom: 0;
-	}
-	.rtsb-feature-list ul li {
-		padding: 0 0 12px;
-		margin-bottom: 0;
-		width: 100%;
-		font-size: 14px;
-	}
-	.rtsb-feature-list ul li:last-child {
-		padding-bottom: 0;
-	}
-	.rtsb-feature-list ul li i {
-		color: #4C6FFF;
-	}
-	.rtsb-pro-feature-content {
-		display: flex;
-		flex-wrap: wrap;
-	}
-	.rtsb-pro-feature-content .rt-document-box + .rt-document-box {
-		margin-left: 30px;
-	}
-	.rtsb-pro-feature-content .rt-document-box {
-		flex: 0 0 calc(33.3333% - 60px);
-		margin-top: 30px;
-	}
-	.rtsb-testimonials {
-		display: flex;
-		flex-wrap: wrap;
-	}
-	.rtsb-testimonials .rtsb-testimonial + .rtsb-testimonial  {
-		margin-left: 30px;
-	}
-	.rtsb-testimonials .rtsb-testimonial  {
-		flex: 0 0 calc(50% - 30px);
-		display:flex;
-		flex-wrap:wrap;
-	}
-	.rtsb-testimonial .client-info {
-		display: flex;
-		flex-wrap: wrap;
-		font-size: 14px;
-		align-items: center;
-	}
-	.rtsb-testimonial .client-info img {
-		width: 60px;
-		height: 60px;
-		object-fit: cover;
-		border-radius: 50%;
-		margin-right: 10px;
-		border: 1px solid #ddd;
-		-webkit-box-shadow: 0 1px 3px rgb(0, 0, 0, 0.2);
-		box-shadow: 0 1px 3px rgb(0, 0, 0, 0.2);
-	}
-	.rtsb-testimonial .client-info .rtsb-star {
-		color: #4C6FFF;
-	}
-	.rtsb-testimonial .client-info .client-name {
-		display: block;
-		color: #000;
-		font-size: 16px;
-		font-weight: 600;
-		margin: 8px 0 0;
-	}
-	.rtsb-call-to-action {
-		background-size: cover;
-		background-repeat: no-repeat;
-		background-position: left center;
-		height: 150px;
-		color: #ffffff;
-		margin: 30px 0;
-	}
-	.rtsb-call-to-action a {
-		color: inherit;
-		display: flex;
-		flex-wrap: wrap;
-		width: 100%;
-		height: 100%;
-		flex: 1;
-		align-items: center;
-		font-size: 28px;
-		font-weight: 700;
-		text-decoration: none;
-		margin-left: 130px;
-		position: relative;
-		outline: none;
-		-webkit-box-shadow: none;
-		box-shadow: none;
-	}
-	.rtsb-call-to-action a::before {
-		content: "";
-		position: absolute;
-		left: -30px;
-		top: 50%;
-		height: 30%;
-		width: 5px;
-		background: #fff;
-		-webkit-transform: translateY(-50%);
-		transform: translateY(-50%);
-	}
-	.rtsb-call-to-action:hover a {
-		text-decoration: underline;
-	}
-	.rtsb-testimonial p {
-		text-align: justify;
-		flex-basis:100%;
-	}
-	@media all and (max-width: 1400px) {
-		.rtsb-help-wrapper {
-			width: 80%;
-		}
-	}
-	@media all and (max-width: 1025px) {
-		.rtsb-pro-feature-content .rt-document-box {
-			flex: 0 0 calc(50% - 55px)
-		}
-		.rtsb-pro-feature-content .rt-document-box + .rt-document-box + .rt-document-box {
-			margin-left: 0;
-		}
-	}
-	@media all and (max-width: 991px) {
-		.rtsb-help-wrapper {
-			width: calc(100% - 40px);
-		}
-		.rtsb-call-to-action a {
-			justify-content: center;
-			margin-left: auto;
-			margin-right: auto;
-			text-align: center;
-		}
-		.rtsb-call-to-action a::before {
-			content: none;
-		}
-	}
-	@media all and (max-width: 600px) {
-		.rt-document-box .rt-box-content .rt-box-title {
-			line-height: 28px;
-		}
-		.rtsb-help-section .embed-wrapper {
-			width: 100%;
-		}
-		.rtsb-feature-list ul {
-			column-count: 1;
-		}
-		.rtsb-feature-list ul li {
-			width: 100%;
-		}
-		.rtsb-call-to-action a {
-			padding-left: 25px;
-			padding-right: 25px;
-			font-size: 20px;
-			line-height: 28px;
-			width: 80%;
-		}
-		.rtsb-testimonials {
-			display: block;
-		}
-		.rtsb-testimonials .rtsb-testimonial + .rtsb-testimonial {
-			margin-left: 0;
-			margin-top: 30px;
-			padding-top: 30px;
-			border-top: 1px solid #ddd;
-		}
-		.rtsb-pro-feature-content .rt-document-box {
-			width: 100%;
-			flex: auto;
-		}
-		.rtsb-pro-feature-content .rt-document-box + .rt-document-box {
-			margin-left: 0;
-		}
 
-		.rtsb-help-wrapper .rt-document-box {
-			display: block;
-			position: relative;
-		}
-
-		.rtsb-help-wrapper .rt-document-box .rt-box-icon {
-			position: absolute;
-			left: 20px;
-			top: 30px;
-			margin-top: 0;
-		}
-
-		.rt-document-box .rt-box-content .rt-box-title {
-			margin-left: 45px;
-		}
-	}
-</style>
-	<div class="rtsb-help-wrapper" >
-		<div class="rtsb-help-section rt-document-box">
-			<div class="rt-box-icon"><i class="dashicons dashicons-media-document"></i></div>
-			<div class="rt-box-content">
-				<h3 class="rt-box-title">Thank you for installing ShopBuilder</h3>
-				<div class="embed-wrapper">
-					<iframe src="<?php echo esc_url( $iframe ); ?>" title="Shop Builder" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-				</div>
+<div class="wrap rtsb-help-wrap">
+	<div class="rtsb-settings-page-wrapper">
+		<div class="rtsb-header-area">
+			<div class="rtsb-header-logo-wrap">
+				<img src="<?php echo esc_url( rtsb()->get_assets_uri( 'images/icon/ShopBuilder-Logo.svg' ) ); ?>" alt="ShopBuilder">
+			</div>
+			<div class="rtsb-header-title-wrap">
+				<h1 class="rtsb-title"><?php echo esc_html__( 'ShopBuilder Help Center', 'shopbuilder' ); ?></h1>
 			</div>
 		</div>
-		<?php if ( ! $has_pro ) { ?>
-			<div class="rt-document-box">
-			<div class="rt-box-icon"><i class="dashicons dashicons-megaphone"></i></div>
-			<div class="rt-box-content rtsb-feature-list">
-				<h3 class="rt-box-title">Pro Features</h3>
-				<ul>
-					<li><i class="dashicons dashicons-saved"></i> AJAX Product Filter Widget.</li>
-					<li><i class="dashicons dashicons-saved"></i> Product Share – Single Product Widget.</li>
-					<li><i class="dashicons dashicons-saved"></i> Sales Count – Single Product Widget.</li>
-					<li><i class="dashicons dashicons-saved"></i> Flash Sale Countdown – Single Product Widget.</li>
-					<li><i class="dashicons dashicons-saved"></i> Size Chart – Single Product Widget.</li>
-					<li><i class="dashicons dashicons-saved"></i> Quick Checkout – Single Product Widget.</li>
-					<li><i class="dashicons dashicons-saved"></i> Coupon Form – Checkout Widget.</li>
-					<li><i class="dashicons dashicons-saved"></i> Order Details Table.</li>
-					<li><i class="dashicons dashicons-saved"></i> Order Billing Address.</li>
-					<li><i class="dashicons dashicons-saved"></i>  Order Shipping Address.</li>
-					<li><i class="dashicons dashicons-saved"></i> Account Dashboard.</li>
-					<li><i class="dashicons dashicons-saved"></i>  Account Orders.</li>
-					<li><i class="dashicons dashicons-saved"></i> Account Billing Address.</li>
-					<li><i class="dashicons dashicons-saved"></i> Account Edit / Details.</li>
-					<li><i class="dashicons dashicons-saved"></i> Account Order Shipping.</li>
-					<li><i class="dashicons dashicons-saved"></i> Account Order Billing.</li>
-					<li><i class="dashicons dashicons-saved"></i> Edit Billing Address.</li>
-					<li><i class="dashicons dashicons-saved"></i> Edit Shipping Address.</li>
-					<li><i class="dashicons dashicons-saved"></i> Login Register Form.</li>
-					<li><i class="dashicons dashicons-saved"></i> More Feature...</li>
-				</ul>
-			</div>
-		</div>
-			<div class="rtsb-call-to-action" style="background-image: url('<?php echo esc_url( rtsb()->get_assets_uri( 'images/admin-banner.jpg' ) ); ?>')">
-				<a href="<?php echo esc_url( $pro ); ?>" target="_blank" class="rt-update-pro-btn">
-					Update to Pro & Get More Features
-				</a>
-			</div>
-		<?php } ?>
-		<div class="rt-document-box">
-			<div class="rt-box-icon"><i class="dashicons dashicons-thumbs-up"></i></div>
-			<div class="rt-box-content">
-				<h3 class="rt-box-title">Happy clients of the ShopBuilder</h3>
-				<div class="rtsb-testimonials">
-					<div class="rtsb-testimonial">
-						<p>I strongly recommend this solution for creating unique design for your next WooCommerce store. In comparison with alternatives – ShopBuilder is the best. Support is amazing and fast. Thanks for this plugin!</p>
-						<div class="client-info">
-							<img src="<?php echo esc_url( rtsb()->get_assets_uri( 'images/admin-testimonial/review-clients-3.png' ) ); ?>">
-							<div>
-								<div class="rtsb-star">
-									<i class="dashicons dashicons-star-filled"></i>
-									<i class="dashicons dashicons-star-filled"></i>
-									<i class="dashicons dashicons-star-filled"></i>
-									<i class="dashicons dashicons-star-filled"></i>
-									<i class="dashicons dashicons-star-filled"></i>
-								</div>
-								<span class="client-name">codeorlov</span>
-							</div>
+		<div class="rtsb-settings-tabs-wrap">
+			<div class="rtsb-settings-tab-content">
+				<div class="rtsb-ss-wrap">
+					<div class="rtsb-ss-header-area">
+						<div class="rtsb-ss-header">
+							<h2 class="rtsb-title"><?php echo esc_html__( 'ShopBuilder Essentials: Video Tutorials for Every Feature', 'shopbuilder' ); ?></h2>
+							<p class="rtsb-description"><?php echo esc_html__( 'Discover how to make the most of ShopBuilder with our detailed tutorial playlist. From basic setup to advanced customization, these videos will guide you every step of the way.', 'shopbuilder' ); ?></p>
 						</div>
 					</div>
-					<div class="rtsb-testimonial">
-						<p>I love this plugin. It’s simple but exactly what I was looking for. Easy install, quick response from the developer. Finally, an easy way to monetize my Shop.</p>
-						<div class="client-info">
-							<img src="<?php echo esc_url( rtsb()->get_assets_uri( 'images/admin-testimonial/review-clients-1.png' ) ); ?>">
-							<div>
-								<div class="rtsb-star">
-									<i class="dashicons dashicons-star-filled"></i>
-									<i class="dashicons dashicons-star-filled"></i>
-									<i class="dashicons dashicons-star-filled"></i>
-									<i class="dashicons dashicons-star-filled"></i>
-									<i class="dashicons dashicons-star-filled"></i>
-								</div>
-								<span class="client-name">Mahabub Hasan</span>
+
+					<div class="rtsb-ss-item-list-wrap">
+						<div class="rtsb-playlist-container">
+							<a href="<?php echo esc_url( $playlist ); ?>" target="_blank">
+								<img src="<?php echo esc_url( $banner ); ?>" class="rtsb-playlist-banner" alt="How to create WooCommerce pages with ShopBuilder">
+								<img src="<?php echo esc_url( $youtube ); ?>" class="rtsb-playlist-icon" alt="Youtube">
+								<img src="<?php echo esc_url( $watch ); ?>" class="rtsb-watch-icon" alt="Watch on Youtube">
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="rtsb-settings-tab-content">
+				<div class="rtsb-ss-wrap">
+					<div class="rtsb-ss-header-area">
+						<div class="rtsb-ss-header">
+							<h2 class="rtsb-title"><?php echo esc_html__( 'Hear from Our Happy Clients', 'shopbuilder' ); ?></h2>
+							<p class="rtsb-description"><?php echo esc_html__( 'See how ShopBuilder is making an impact with real feedback from happy customers around the world.', 'shopbuilder' ); ?></p>
+						</div>
+					</div>
+
+					<div class="rtsb-ss-item-list-wrap">
+						<div class="rtsb-testimonial-container">
+							<div class="rtsb-testimonials">
+								<?php
+								foreach ( $testimonials as $testimonial ) {
+									?>
+									<div class="rtsb-testimonial">
+										<p><?php echo esc_html( $testimonial['content'] ); ?></p>
+										<div class="client-info">
+											<img src="<?php echo esc_url( $testimonial['image'] ); ?>" alt="Client Image">
+											<div class="client-details">
+												<div class="rtsb-star">
+													<?php for ( $i = 0; $i < $testimonial['stars']; $i++ ) : ?>
+														<i class="dashicons dashicons-star-filled"></i>
+													<?php endfor; ?>
+												</div>
+												<span class="client-name"><?php echo esc_html( $testimonial['name'] ); ?></span>
+											</div>
+										</div>
+									</div>
+									<?php
+								}
+								?>
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-		</div>
-		<div class="rtsb-pro-feature-content">
-			<div class="rt-document-box">
-				<div class="rt-box-icon"><i class="dashicons dashicons-media-document"></i></div>
-				<div class="rt-box-content">
-					<h3 class="rt-box-title">Documentation</h3>
-					<p>Get started by spending some time with the documentation we included step by step process with screenshots with video.</p>
-					<a href="<?php echo esc_url( $doc ); ?>" target="_blank" class="rt-admin-btn">Documentation</a>
+
+			<?php
+			if ( ! $has_pro ) {
+				?>
+				<div class="rtsb-settings-tab-content">
+					<div class="rtsb-ss-wrap">
+						<div class="rtsb-ss-header-area">
+							<div class="rtsb-ss-header">
+								<h2 class="rtsb-title"><?php echo esc_html__( 'Go Pro for Enhanced Functionality', 'shopbuilder' ); ?></h2>
+								<p class="rtsb-description"><?php echo esc_html__( 'Elevate your projects with exclusive Pro features that enhance functionality, powerful modules for advanced customization, and more template design support.', 'shopbuilder' ); ?></p>
+							</div>
+						</div>
+
+						<div class="rtsb-ss-item-list-wrap">
+							<div class="rtsb-features-container">
+								<ul>
+									<li><i class="dashicons dashicons-saved"></i> AJAX Product Filter Widget</li>
+									<li><i class="dashicons dashicons-saved"></i> Product Category Specific Archive Page</li>
+									<li><i class="dashicons dashicons-saved"></i> Product Specific Details Page</li>
+									<li><i class="dashicons dashicons-saved"></i> Product Category / Tag-Specific Details Page</li>
+									<li><i class="dashicons dashicons-saved"></i> Thank You / Order Received Page</li>
+									<li><i class="dashicons dashicons-saved"></i> My Account Pages</li>
+									<li><i class="dashicons dashicons-saved"></i> Quick View Template</li>
+									<li><i class="dashicons dashicons-saved"></i> Custom Endpoint Builder</li>
+									<li><i class="dashicons dashicons-saved"></i> Advanced Product Tabs for Creating Custom Tab</li>
+									<li><i class="dashicons dashicons-saved"></i> Special Product Query i.e., on Sale, Featured, etc.</li>
+									<li><i class="dashicons dashicons-saved"></i> Ajax, Load More and Infinite Scroll Pagination</li>
+									<li><i class="dashicons dashicons-saved"></i> Category Ajax Tab Filter</li>
+									<li><i class="dashicons dashicons-saved"></i> Product Gallery Images Slider</li>
+									<li><i class="dashicons dashicons-saved"></i> Product Add-Ons Module</li>
+									<li><i class="dashicons dashicons-saved"></i> Sales Notification Module</li>
+									<li><i class="dashicons dashicons-saved"></i> Flash Sale Countdown Module</li>
+									<li><i class="dashicons dashicons-saved"></i> Quick Checkout Module</li>
+									<li><i class="dashicons dashicons-saved"></i> Pre-Order Module</li>
+									<li><i class="dashicons dashicons-saved"></i> Multi-Step Checkout Module</li>
+									<li><i class="dashicons dashicons-saved"></i> Customize My Account Module</li>
+									<li><i class="dashicons dashicons-saved"></i> Currency Switcher Module</li>
+									<li><i class="dashicons dashicons-saved"></i> Back Order Module</li>
+									<li><i class="dashicons dashicons-saved"></i> Checkout Fields Editor Module</li>
+									<li><i class="dashicons dashicons-saved"></i> Many more features...</li>
+								</ul>
+							</div>
+						</div>
+					</div>
 				</div>
-			</div>
-			<div class="rt-document-box">
-				<div class="rt-box-icon"><i class="dashicons dashicons-sos"></i></div>
-				<div class="rt-box-content">
-					<h3 class="rt-box-title">Need Help?</h3>
-					<p>Stuck with something? Please create a
-						<a href="<?php echo esc_url( $contact ); ?>">ticket here</a> or post on <a href="<?php echo esc_url( $fb ); ?>">facebook group</a>. For emergency case join our <a href="<?php echo esc_url( $rt ); ?>">live chat</a>.</p>
-					<a href="<?php echo esc_url( $contact ); ?>" target="_blank" class="rt-admin-btn">Get Support</a>
+
+				<div class="rtsb-settings-tab-content pro-banner">
+					<div class="rtsb-ss-wrap">
+						<div class="rtsb-ss-item-list-wrap">
+							<div class="rtsb-pro-banner-container">
+								<div class="rtsb-pro-banner">
+									<a href="<?php echo esc_url( $pro ); ?>" target="_blank">
+										<img class="rtsb-upgrade-pro" src="<?php echo esc_url( $pro_banner ); ?>" alt="Upgrade to Pro">
+										<img class="rtsb-get-pro" src="<?php echo esc_url( rtsb()->get_assets_uri( 'images/get-pro.svg' ) ); ?>" alt="Get Pro">
+									</a>
+								</div>
+							</div>
+						</div>
+					</div>
 				</div>
-			</div>
-			<div class="rt-document-box">
-				<div class="rt-box-icon"><i class="dashicons dashicons-smiley"></i></div>
-				<div class="rt-box-content">
-					<h3 class="rt-box-title">Happy Our Work?</h3>
-					<p>If you are happy with <strong>Food Menu</strong> plugin, please add a rating. It would be glad to us.</p>
-					<a href="<?php echo esc_url( $review ); ?>" class="rt-admin-btn" target="_blank">Post Review</a>
+				<?php
+			}
+			?>
+
+			<div class="rtsb-settings-tab-content rtsb-action-content">
+				<div class="rtsb-ss-item-list-wrap">
+						<div class="rtsb-actions-container">
+							<div class="rtsb-actions">
+								<?php
+								foreach ( $actions as $box ) {
+									?>
+									<div class="rtsb-action-box">
+										<div class="rtsb-box-icon"><div class="rtsb-help-icon <?php echo esc_attr( $box['icon_class'] ); ?>"></div></div>
+										<div class="rtsb-box-content">
+											<h3 class="rtsb-box-title"><?php echo esc_html( $box['title'] ); ?></h3>
+											<p><?php echo wp_kses_post( $box['description'] ); ?></p>
+											<a href="<?php echo esc_url( $box['button_link'] ); ?>" class="rtsb-button" target="_blank">
+												<?php echo esc_html( $box['button_label'] ); ?>
+											</a>
+										</div>
+									</div>
+									<?php
+								}
+								?>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
 	</div>
+</div>

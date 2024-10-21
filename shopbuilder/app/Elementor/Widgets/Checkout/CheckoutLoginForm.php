@@ -27,7 +27,7 @@ class CheckoutLoginForm extends ElementorWidgetBase {
 	 * @param mixed $args default arg.
 	 */
 	public function __construct( $data = [], $args = null ) {
-		$this->rtsb_name = esc_html__( 'Login Form', 'shopbuilder' );
+		$this->rtsb_name = esc_html__( 'Checkout Login Form', 'shopbuilder' );
 		$this->rtsb_base = 'rtsb-checkout-login-form';
 		parent::__construct( $data, $args );
 	}

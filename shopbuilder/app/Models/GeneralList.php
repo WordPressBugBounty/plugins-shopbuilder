@@ -214,11 +214,16 @@ class GeneralList extends ListModel {
 						'help'  => esc_html__( 'Switch on to customize billing form fields.', 'shopbuilder' ),
 					],
 					'fields'       => [
+						'checkout_billing_info'          => [
+							'id'          => 'checkout_billing_info',
+							'type'        => 'title',
+							'label'       => __( 'The below form fields customization will be disabled when the <strong><u>Checkout Fields Editor</u></strong> module is activated.', 'shopbuilder' ),
+							'customClass' => 'checkout-notice',
+						],
 						'billing_first_name_heading'     => [
 							'id'    => 'billing_first_name_heading',
 							'type'  => 'title',
 							'label' => esc_html__( 'First Name', 'shopbuilder' ),
-							// 'tab'         => 'name',
 						],
 						'billing_first_name'             => [
 							'id'          => 'billing_first_name',
@@ -236,20 +241,18 @@ class GeneralList extends ListModel {
 									'label' => 'Required Field',
 								],
 							],
-							// 'tab'         => 'name',
 						],
 						'billing_first_name_label'       => [
 							'id'         => 'billing_first_name_label',
 							'label'      => esc_html__( 'First name Label', 'shopbuilder' ),
 							'type'       => 'text',
 							'help'       => esc_html__( 'Leave empty to set default.', 'shopbuilder' ),
-							// 'tab'   => 'name',
 							'dependency' => [
 								'rules' => [
 									[
 										'item'     => 'general.billing_form.billing_first_name',
 										'value'    => 'show',
-										'operator' => '==', // 'operator' => 'any','in', !in' only valid for multiple value //
+										'operator' => '==',
 									],
 								],
 							],
@@ -259,13 +262,12 @@ class GeneralList extends ListModel {
 							'label'      => esc_html__( 'First name Placeholder', 'shopbuilder' ),
 							'type'       => 'text',
 							'help'       => esc_html__( 'Leave empty to set default.', 'shopbuilder' ),
-							// 'tab'   => 'name',
 							'dependency' => [
 								'rules' => [
 									[
 										'item'     => 'general.billing_form.billing_first_name',
 										'value'    => 'show',
-										'operator' => '==', // 'operator' => 'any','in', !in' only valid for multiple value //
+										'operator' => '==',
 									],
 								],
 							],
@@ -275,7 +277,6 @@ class GeneralList extends ListModel {
 							'id'    => 'billing_last_name_heading',
 							'type'  => 'title',
 							'label' => esc_html__( 'Last Name', 'shopbuilder' ),
-							// 'tab'         => 'name',
 						],
 						'billing_last_name'              => [
 							'id'          => 'billing_last_name',
@@ -293,7 +294,6 @@ class GeneralList extends ListModel {
 									'label' => 'Required Field',
 								],
 							],
-							// 'tab'         => 'name',
 						],
 
 						'billing_last_name_label'        => [
@@ -301,7 +301,6 @@ class GeneralList extends ListModel {
 							'label'      => esc_html__( 'Last name label', 'shopbuilder' ),
 							'type'       => 'text',
 							'help'       => esc_html__( 'Leave empty to set default.', 'shopbuilder' ),
-							// 'tab'   => 'name',
 							'dependency' => [
 								'rules' => [
 									[
@@ -317,7 +316,6 @@ class GeneralList extends ListModel {
 							'label'      => esc_html__( 'Last name Placeholder', 'shopbuilder' ),
 							'type'       => 'text',
 							'help'       => esc_html__( 'Leave empty to set default.', 'shopbuilder' ),
-							// 'tab'   => 'name',
 							'dependency' => [
 								'rules' => [
 									[
@@ -333,7 +331,6 @@ class GeneralList extends ListModel {
 							'id'    => 'billing_company_heading',
 							'type'  => 'title',
 							'label' => esc_html__( 'Company', 'shopbuilder' ),
-							// 'tab'         => 'company',
 						],
 						'billing_company'                => [
 							'id'          => 'billing_company',
@@ -354,7 +351,6 @@ class GeneralList extends ListModel {
 									'label' => 'Required Field',
 								],
 							],
-							// 'tab'         => 'company',
 						],
 
 						'billing_company_label'          => [
@@ -362,7 +358,6 @@ class GeneralList extends ListModel {
 							'label'      => esc_html__( 'Company label', 'shopbuilder' ),
 							'type'       => 'text',
 							'help'       => esc_html__( 'Leave empty to set default.', 'shopbuilder' ),
-							// 'tab'   => 'company',
 							'dependency' => [
 								'rules' => [
 									[
@@ -378,7 +373,6 @@ class GeneralList extends ListModel {
 							'label'      => esc_html__( 'Company Placeholder', 'shopbuilder' ),
 							'type'       => 'text',
 							'help'       => esc_html__( 'Leave empty to set default.', 'shopbuilder' ),
-							// 'tab'   => 'company',
 							'dependency' => [
 								'rules' => [
 									[
@@ -394,7 +388,6 @@ class GeneralList extends ListModel {
 							'id'    => 'billing_country_heading',
 							'type'  => 'title',
 							'label' => esc_html__( 'Country', 'shopbuilder' ),
-							// 'tab'         => 'country',
 						],
 						'billing_country'                => [
 							'id'          => 'billing_country',
@@ -415,7 +408,6 @@ class GeneralList extends ListModel {
 									// 'disabled' => true,
 								],
 							],
-							// 'tab'         => 'country',
 						],
 
 						'billing_country_label'          => [
@@ -423,7 +415,6 @@ class GeneralList extends ListModel {
 							'label'      => esc_html__( 'Country label', 'shopbuilder' ),
 							'type'       => 'text',
 							'help'       => esc_html__( 'Leave empty to set default.', 'shopbuilder' ),
-							// 'tab'   => 'country',
 							'dependency' => [
 								'rules' => [
 									[
@@ -438,7 +429,6 @@ class GeneralList extends ListModel {
 							'id'    => 'billing_address_1_heading',
 							'type'  => 'title',
 							'label' => esc_html__( 'Address 1', 'shopbuilder' ),
-							// 'tab'         => 'address',
 						],
 						'billing_address_1'              => [
 							'id'          => 'billing_address_1',
@@ -456,7 +446,6 @@ class GeneralList extends ListModel {
 									'label' => 'Required Field',
 								],
 							],
-							// 'tab'         => 'address',
 						],
 
 						'billing_address_1_label'        => [
@@ -464,7 +453,6 @@ class GeneralList extends ListModel {
 							'label'      => esc_html__( 'Address 1 label', 'shopbuilder' ),
 							'type'       => 'text',
 							'help'       => esc_html__( 'Leave empty to set default.', 'shopbuilder' ),
-							// 'tab'   => 'address',
 							'dependency' => [
 								'rules' => [
 									[
@@ -480,7 +468,6 @@ class GeneralList extends ListModel {
 							'label'      => esc_html__( 'Address 1 Placeholder', 'shopbuilder' ),
 							'type'       => 'text',
 							'help'       => esc_html__( 'Leave empty to set default.', 'shopbuilder' ),
-							// 'tab'   => 'address',
 							'dependency' => [
 								'rules' => [
 									[
@@ -495,7 +482,6 @@ class GeneralList extends ListModel {
 							'id'         => 'billing_address_2_heading',
 							'type'       => 'title',
 							'label'      => esc_html__( 'Address 2', 'shopbuilder' ),
-							// 'tab'   => 'address',
 							'dependency' => [
 								'rules' => [
 									[
@@ -511,7 +497,6 @@ class GeneralList extends ListModel {
 							'label'       => esc_html__( 'Address 2', 'shopbuilder' ),
 							'type'        => 'checkbox',
 							'orientation' => 'vertical',
-							// 'tab'   => 'address',
 							'value'       => [
 								'show',
 								'required' === get_option( 'woocommerce_checkout_address_2_field', 'optional' ) ? 'required' : 'optional',
@@ -539,7 +524,6 @@ class GeneralList extends ListModel {
 							'label'      => esc_html__( 'Address 2 label', 'shopbuilder' ),
 							'type'       => 'text',
 							'help'       => esc_html__( 'Leave empty to set default.', 'shopbuilder' ),
-							// 'tab'   => 'address',
 							'dependency' => [
 								'rules' => [
 									[
@@ -560,7 +544,6 @@ class GeneralList extends ListModel {
 							'label'      => esc_html__( 'Address 2 Placeholder', 'shopbuilder' ),
 							'type'       => 'text',
 							'help'       => esc_html__( 'Leave empty to set default.', 'shopbuilder' ),
-							// 'tab'   => 'address',
 							'dependency' => [
 								'rules' => [
 									[
@@ -580,7 +563,6 @@ class GeneralList extends ListModel {
 							'id'    => 'billing_city_heading',
 							'type'  => 'title',
 							'label' => esc_html__( 'Town / City', 'shopbuilder' ),
-							// 'tab'         => 'city',
 						],
 						'billing_city'                   => [
 							'id'          => 'billing_city',
@@ -588,7 +570,6 @@ class GeneralList extends ListModel {
 							'type'        => 'checkbox',
 							'orientation' => 'vertical',
 							'value'       => [ 'show', 'required' ],
-							// 'tab'         => 'city',
 							'options'     => [
 								[
 									'value' => 'show',
@@ -606,7 +587,6 @@ class GeneralList extends ListModel {
 							'label'      => esc_html__( 'Town / City label', 'shopbuilder' ),
 							'type'       => 'text',
 							'help'       => esc_html__( 'Leave empty to set default.', 'shopbuilder' ),
-							// 'tab'         => 'city',
 							'dependency' => [
 								'rules' => [
 									[
@@ -622,7 +602,6 @@ class GeneralList extends ListModel {
 							'label'      => esc_html__( 'City placeholder', 'shopbuilder' ),
 							'type'       => 'text',
 							'help'       => esc_html__( 'Leave empty to set default.', 'shopbuilder' ),
-							// 'tab'         => 'city',
 							'dependency' => [
 								'rules' => [
 									[
@@ -637,7 +616,6 @@ class GeneralList extends ListModel {
 							'id'    => 'billing_city_heading',
 							'type'  => 'title',
 							'label' => esc_html__( 'State', 'shopbuilder' ),
-							// 'tab'         => 'state',
 						],
 						'billing_state'                  => [
 							'id'          => 'billing_state',
@@ -655,7 +633,6 @@ class GeneralList extends ListModel {
 									'label' => 'Required Field',
 								],
 							],
-							// 'tab'         => 'state',
 						],
 
 						'billing_state_label'            => [
@@ -664,7 +641,6 @@ class GeneralList extends ListModel {
 							'type'       => 'text',
 							'help'       => esc_html__( 'Leave empty to set default.', 'shopbuilder' ),
 							// 'help'       => esc_html__( 'Leave empty to set default. If the Shipping Form is enabled, the State field is mandatory.', 'shopbuilder' ),
-							// 'tab'         => 'state',
 							'dependency' => [
 								'rules' => [
 									[
@@ -679,7 +655,6 @@ class GeneralList extends ListModel {
 							'id'    => 'billing_postcode_heading',
 							'type'  => 'title',
 							'label' => esc_html__( 'Postcode / ZIP', 'shopbuilder' ),
-							// 'tab'         => 'postcode',
 						],
 						'billing_postcode'               => [
 							'id'          => 'billing_postcode',
@@ -697,14 +672,12 @@ class GeneralList extends ListModel {
 									'label' => 'Required Field',
 								],
 							],
-							// 'tab'         => 'postcode',
 						],
 						'billing_postcode_label'         => [
 							'id'         => 'billing_postcode_label',
 							'label'      => esc_html__( 'Postcode / ZIP label', 'shopbuilder' ),
 							'type'       => 'text',
 							'help'       => esc_html__( 'Leave empty to set default.', 'shopbuilder' ),
-							// 'tab'         => 'postcode',
 							'dependency' => [
 								'rules' => [
 									[
@@ -720,7 +693,6 @@ class GeneralList extends ListModel {
 							'label'      => esc_html__( 'Postcode / ZIP placeholder', 'shopbuilder' ),
 							'type'       => 'text',
 							'help'       => esc_html__( 'Leave empty to set default.', 'shopbuilder' ),
-							// 'tab'         => 'postcode',
 							'dependency' => [
 								'rules' => [
 									[
@@ -735,14 +707,12 @@ class GeneralList extends ListModel {
 							'id'    => 'billing_phone_heading',
 							'type'  => 'title',
 							'label' => esc_html__( 'Phone', 'shopbuilder' ),
-							// 'tab'         => 'phone',
 						],
 						'billing_phone'                  => [
 							'id'          => 'billing_phone',
 							'label'       => esc_html__( 'Phone', 'shopbuilder' ),
 							'type'        => 'checkbox',
 							'orientation' => 'vertical',
-							// 'tab'         => 'phone',
 							'value'       => [
 								'show',
 								'required' === get_option( 'woocommerce_checkout_phone_field', 'required' ) ? 'required' : 'optional',
@@ -764,7 +734,6 @@ class GeneralList extends ListModel {
 							'label'      => esc_html__( 'Phone field label', 'shopbuilder' ),
 							'type'       => 'text',
 							'help'       => esc_html__( 'Leave empty to set default.', 'shopbuilder' ),
-							// 'tab'         => 'phone',
 							'dependency' => [
 								'rules' => [
 									[
@@ -780,7 +749,6 @@ class GeneralList extends ListModel {
 							'label'      => esc_html__( 'Phone field placeholder', 'shopbuilder' ),
 							'type'       => 'text',
 							'help'       => esc_html__( 'Leave empty to set default.', 'shopbuilder' ),
-							// 'tab'         => 'phone',
 							'dependency' => [
 								'rules' => [
 									[
@@ -795,14 +763,12 @@ class GeneralList extends ListModel {
 							'id'    => 'billing_email_heading',
 							'type'  => 'title',
 							'label' => esc_html__( 'Email', 'shopbuilder' ),
-							// 'tab'         => 'email',
 						],
 						'billing_email'                  => [
 							'id'          => 'billing_email',
 							'label'       => esc_html__( 'Email address', 'shopbuilder' ),
 							'type'        => 'checkbox',
 							'orientation' => 'vertical',
-							// 'tab'         => 'email',
 							'value'       => [ 'show', 'required' ],
 							'options'     => [
 								[
@@ -820,7 +786,6 @@ class GeneralList extends ListModel {
 							'label'      => esc_html__( 'Email address field label', 'shopbuilder' ),
 							'type'       => 'text',
 							'help'       => esc_html__( 'Leave empty to set default.', 'shopbuilder' ),
-							// 'tab'         => 'email',
 							'dependency' => [
 								'rules' => [
 									[
@@ -836,7 +801,6 @@ class GeneralList extends ListModel {
 							'label'      => esc_html__( 'Email address field placeholder', 'shopbuilder' ),
 							'type'       => 'text',
 							'help'       => esc_html__( 'Leave empty to set default.', 'shopbuilder' ),
-							// 'tab'         => 'email',
 							'dependency' => [
 								'rules' => [
 									[
@@ -863,11 +827,16 @@ class GeneralList extends ListModel {
 						'help'  => esc_html__( 'Switch on to customize shipping form fields.', 'shopbuilder' ),
 					],
 					'fields'       => [
+						'checkout_shipping_info'          => [
+							'id'          => 'checkout_shipping_info',
+							'type'        => 'title',
+							'label'       => __( 'The below form fields customization will be disabled when the <strong><u>Checkout Fields Editor</u></strong> module is activated.', 'shopbuilder' ),
+							'customClass' => 'checkout-notice',
+						],
 						'shipping_first_name_heading'     => [
 							'id'    => 'shipping_first_name_heading',
 							'type'  => 'title',
 							'label' => esc_html__( 'First Name', 'shopbuilder' ),
-							// 'tab'         => 'name',
 						],
 						'shipping_first_name'             => [
 							'id'          => 'shipping_first_name',
@@ -885,14 +854,12 @@ class GeneralList extends ListModel {
 									'label' => 'Required Field',
 								],
 							],
-							// 'tab'         => 'name',
 						],
 						'shipping_first_name_label'       => [
 							'id'         => 'shipping_first_name_label',
 							'label'      => esc_html__( 'First name Label', 'shopbuilder' ),
 							'type'       => 'text',
 							'help'       => esc_html__( 'Leave empty to set default.', 'shopbuilder' ),
-							// 'tab'   => 'name',
 							'dependency' => [
 								'rules' => [
 									[
@@ -908,7 +875,6 @@ class GeneralList extends ListModel {
 							'label'      => esc_html__( 'First name Placeholder', 'shopbuilder' ),
 							'type'       => 'text',
 							'help'       => esc_html__( 'Leave empty to set default.', 'shopbuilder' ),
-							// 'tab'   => 'country',
 							'dependency' => [
 								'rules' => [
 									[
@@ -923,7 +889,6 @@ class GeneralList extends ListModel {
 							'id'    => 'shipping_first_last_heading',
 							'type'  => 'title',
 							'label' => esc_html__( 'Last Name', 'shopbuilder' ),
-							// 'tab'         => 'name',
 						],
 						'shipping_last_name'              => [
 							'id'          => 'shipping_last_name',
@@ -941,7 +906,6 @@ class GeneralList extends ListModel {
 									'label' => 'Required Field',
 								],
 							],
-							// 'tab'         => 'name',
 						],
 
 						'shipping_last_name_label'        => [
@@ -949,7 +913,6 @@ class GeneralList extends ListModel {
 							'label'      => esc_html__( 'Last name label', 'shopbuilder' ),
 							'type'       => 'text',
 							'help'       => esc_html__( 'Leave empty to set default.', 'shopbuilder' ),
-							// 'tab'   => 'name',
 							'dependency' => [
 								'rules' => [
 									[
@@ -965,7 +928,6 @@ class GeneralList extends ListModel {
 							'label'      => esc_html__( 'Last name Placeholder', 'shopbuilder' ),
 							'type'       => 'text',
 							'help'       => esc_html__( 'Leave empty to set default.', 'shopbuilder' ),
-							// 'tab'   => 'country',
 							'dependency' => [
 								'rules' => [
 									[
@@ -980,7 +942,6 @@ class GeneralList extends ListModel {
 							'id'    => 'shipping_company_heading',
 							'type'  => 'title',
 							'label' => esc_html__( 'Company', 'shopbuilder' ),
-							// 'tab'         => 'name',
 						],
 						'shipping_company'                => [
 							'id'          => 'shipping_company',
@@ -998,7 +959,6 @@ class GeneralList extends ListModel {
 									'label' => 'Required Field',
 								],
 							],
-							// 'tab'         => 'company',
 						],
 
 						'shipping_company_label'          => [
@@ -1006,7 +966,6 @@ class GeneralList extends ListModel {
 							'label'      => esc_html__( 'Company label', 'shopbuilder' ),
 							'type'       => 'text',
 							'help'       => esc_html__( 'Leave empty to set default.', 'shopbuilder' ),
-							// 'tab'   => 'company',
 							'dependency' => [
 								'rules' => [
 									[
@@ -1022,7 +981,6 @@ class GeneralList extends ListModel {
 							'label'      => esc_html__( 'Shipping company Placeholder', 'shopbuilder' ),
 							'type'       => 'text',
 							'help'       => esc_html__( 'Leave empty to set default.', 'shopbuilder' ),
-							// 'tab'   => 'country',
 							'dependency' => [
 								'rules' => [
 									[
@@ -1037,7 +995,6 @@ class GeneralList extends ListModel {
 							'id'    => 'shipping_country_heading',
 							'type'  => 'title',
 							'label' => esc_html__( 'Country', 'shopbuilder' ),
-							// 'tab'         => 'name',
 						],
 						'shipping_country'                => [
 							'id'          => 'shipping_country',
@@ -1057,7 +1014,6 @@ class GeneralList extends ListModel {
 									// 'disabled' => true,
 								],
 							],
-							// 'tab'         => 'country',
 						],
 
 						'shipping_country_label'          => [
@@ -1079,7 +1035,6 @@ class GeneralList extends ListModel {
 							'id'    => 'shipping_address_1_heading',
 							'type'  => 'title',
 							'label' => esc_html__( 'Address 1', 'shopbuilder' ),
-							// 'tab'         => 'name',
 						],
 						'shipping_address_1'              => [
 							'id'          => 'shipping_address_1',
@@ -1097,7 +1052,6 @@ class GeneralList extends ListModel {
 									'label' => 'Required Field',
 								],
 							],
-							// 'tab'         => 'country',
 						],
 
 						'shipping_address_1_label'        => [
@@ -1105,7 +1059,6 @@ class GeneralList extends ListModel {
 							'label'      => esc_html__( 'Address 1 label', 'shopbuilder' ),
 							'type'       => 'text',
 							'help'       => esc_html__( 'Leave empty to set default.', 'shopbuilder' ),
-							// 'tab'   => 'country',
 							'dependency' => [
 								'rules' => [
 									[
@@ -1121,7 +1074,6 @@ class GeneralList extends ListModel {
 							'label'      => esc_html__( 'Address 1 Placeholder', 'shopbuilder' ),
 							'type'       => 'text',
 							'help'       => esc_html__( 'Leave empty to set default.', 'shopbuilder' ),
-							// 'tab'   => 'country',
 							'dependency' => [
 								'rules' => [
 									[
@@ -1136,7 +1088,6 @@ class GeneralList extends ListModel {
 							'id'         => 'shipping_address_2_heading',
 							'type'       => 'title',
 							'label'      => esc_html__( 'Address 2', 'shopbuilder' ),
-							// 'tab'         => 'name',
 							'dependency' => [
 								'rules' => [
 									[
@@ -1160,7 +1111,6 @@ class GeneralList extends ListModel {
 								],
 							],
 							'help'        => esc_html__( 'if "Address 1" is hidden then this field also hides.', 'shopbuilder' ),
-							// 'tab'         => 'country',
 							'dependency'  => [
 								'rules' => [
 									[
@@ -1177,7 +1127,6 @@ class GeneralList extends ListModel {
 							'label'      => esc_html__( 'Address 2 label', 'shopbuilder' ),
 							'type'       => 'text',
 							'help'       => esc_html__( 'Leave empty to set default.', 'shopbuilder' ),
-							// 'tab'   => 'country',
 							'dependency' => [
 								'rules' => [
 									[
@@ -1198,7 +1147,6 @@ class GeneralList extends ListModel {
 							'label'      => esc_html__( 'Address 2 Placeholder', 'shopbuilder' ),
 							'type'       => 'text',
 							'help'       => esc_html__( 'Leave empty to set default.', 'shopbuilder' ),
-							// 'tab'   => 'country',
 							'dependency' => [
 								'rules' => [
 									[
@@ -1218,7 +1166,6 @@ class GeneralList extends ListModel {
 							'id'    => 'shipping_city_heading',
 							'type'  => 'title',
 							'label' => esc_html__( 'Town / City', 'shopbuilder' ),
-							// 'tab'         => 'name',
 						],
 						'shipping_city'                   => [
 							'id'          => 'shipping_city',
@@ -1236,14 +1183,12 @@ class GeneralList extends ListModel {
 									'label' => 'Required Field',
 								],
 							],
-							// 'tab'         => 'country',
 						],
 						'shipping_city_label'             => [
 							'id'         => 'shipping_city_label',
 							'label'      => esc_html__( 'Town / City label', 'shopbuilder' ),
 							'type'       => 'text',
 							'help'       => esc_html__( 'Leave empty to set default.', 'shopbuilder' ),
-							// 'tab'   => 'country',
 							'dependency' => [
 								'rules' => [
 									[
@@ -1259,7 +1204,6 @@ class GeneralList extends ListModel {
 							'label'      => esc_html__( 'Shipping city placeholder', 'shopbuilder' ),
 							'type'       => 'text',
 							'help'       => esc_html__( 'Leave empty to set default.', 'shopbuilder' ),
-							// 'tab'   => 'country',
 							'dependency' => [
 								'rules' => [
 									[
@@ -1274,7 +1218,6 @@ class GeneralList extends ListModel {
 							'id'    => 'shipping_state_heading',
 							'type'  => 'title',
 							'label' => esc_html__( 'Others', 'shopbuilder' ),
-							// 'tab'         => 'name',
 						],
 						'shipping_state'                  => [
 							'id'          => 'shipping_state',
@@ -1292,7 +1235,6 @@ class GeneralList extends ListModel {
 									'label' => 'Required Field',
 								],
 							],
-							// 'tab'         => 'country',
 						],
 						//
 						// 'shipping_state_label'            => [
@@ -1300,7 +1242,6 @@ class GeneralList extends ListModel {
 						// 'label'      => esc_html__( 'State label', 'shopbuilder' ),
 						// 'type'       => 'text',
 						// 'help'       => esc_html__( 'Leave empty to set default.', 'shopbuilder' ),
-						// 'tab'   => 'country',
 						// 'dependency' => [
 						// 'rules' => [
 						// [
@@ -1315,7 +1256,6 @@ class GeneralList extends ListModel {
 						// 'id'    => 'shipping_postcode_heading',
 						// 'type'  => 'title',
 						// 'label' => esc_html__( 'Postcode / ZIP', 'shopbuilder' ),
-						// 'tab'         => 'name',
 						// ],
 						'shipping_postcode'               => [
 							'id'          => 'shipping_postcode',
@@ -1329,14 +1269,12 @@ class GeneralList extends ListModel {
 									'label' => 'Show Postcode / ZIP?',
 								],
 							],
-							// 'tab'         => 'country',
 						],
 						// 'shipping_postcode_label'         => [
 						// 'id'         => 'shipping_postcode_label',
 						// 'label'      => esc_html__( 'Postcode / ZIP label', 'shopbuilder' ),
 						// 'type'       => 'text',
 						// 'help'       => esc_html__( 'Leave empty to set default. ', 'shopbuilder' ),
-						// 'tab'   => 'country',
 						// 'dependency' => [
 						// 'rules' => [
 						// [
@@ -1352,7 +1290,6 @@ class GeneralList extends ListModel {
 						// 'label'      => esc_html__( 'Postcode / ZIP placeholder', 'shopbuilder' ),
 						// 'type'       => 'text',
 						// 'help'       => esc_html__( 'Leave empty to set default.', 'shopbuilder' ),
-						// 'tab'   => 'country',
 						// 'dependency' => [
 						// 'rules' => [
 						// [
