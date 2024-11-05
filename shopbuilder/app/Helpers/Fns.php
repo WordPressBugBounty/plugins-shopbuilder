@@ -2351,8 +2351,12 @@ class Fns {
 							$rep_title = [];
 							if ( ! empty( $raw_value ) && is_array( $raw_value ) ) {
 								foreach ( $raw_value as $key => $value ) {
-									$the_value_decoded = json_decode( stripslashes_deep( $value ) );
-									$cr                = $the_value_decoded->title ?? '';
+									if ( is_string( $value ) ) {
+										$the_value_decoded = json_decode( stripslashes_deep( $value ) );
+									} else {
+										$the_value_decoded = $value;
+									}
+									$cr = $the_value_decoded->title ?? '';
 									if ( in_array( $cr, $rep_title, true ) ) {
 										continue;
 									}
@@ -3073,5 +3077,29 @@ class Fns {
 		if ( ! empty( $dynamic_css ) ) {
 			wp_add_inline_style( $style_handle, $dynamic_css );
 		}
+	}
+
+	/**
+	 * Pro version notice.
+	 *
+	 * @param string $ver Pro Version.
+	 *
+	 * @return array[]
+	 */
+	public static function pro_version_notice( $ver ) {
+		return [
+			'version_check' => [
+				'id'          => 'version_check',
+				'type'        => 'title',
+				'label'       => sprintf(
+					/* translators: 1: required version, 2: link to the Plugins page */
+					esc_html__( 'To access all features and settings of this module, please ensure that \'ShopBuilder Pro\' is updated to version %1$s. Update to the latest version %2$s.', 'shopbuilder' ),
+					'<br /><u><b>' . esc_html( $ver ?? '1.5.0' ) . ' or higher</b></u>',
+					'<a class="pro-update-required" href="' . esc_url( admin_url( 'plugins.php' ) ) . '" target="_blank" title="Go to the Plugin Page">from the Plugins page</a>'
+				),
+				'tab'         => 'billing_fields',
+				'customClass' => 'checkout-notice',
+			],
+		];
 	}
 }

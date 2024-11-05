@@ -56,7 +56,7 @@ class ProductsSettings {
 			'show_flash_sale'   => [
 				'label'       => esc_html__( 'Flash Sale Badge', 'shopbuilder' ),
 				'type'        => 'switch',
-				'description' => esc_html__( 'Switch on to show flash sale badge.', 'shopbuilder' ),
+				'description' => esc_html__( 'Enable to display the flash sale badge. This control will apply if the module doesn\'t hide default flash sale badges.', 'shopbuilder' ),
 				'default'     => 'yes',
 			],
 			'show_rating'       => [

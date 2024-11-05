@@ -1365,18 +1365,88 @@ class SettingsFields {
 			'layout!'     => [ 'category-layout1', 'category-layout2' ],
 		];
 
-		$fields['badges_section'] = $obj->start_section(
+		$fields['badges_section']       = $obj->start_section(
 			esc_html__( 'Badges', 'shopbuilder' ),
 			self::$tab,
 			[],
 			$condition
 		);
+		$fields['enable_badges_module'] = [
+			'type'        => 'switch',
+			'label'       => esc_html__( 'Enable Badges Module?', 'shopbuilder' ),
+			'description' => esc_html__( 'Switch on to integrate Badge module.', 'shopbuilder' ),
+			'label_on'    => esc_html__( 'On', 'shopbuilder' ),
+			'label_off'   => esc_html__( 'Off', 'shopbuilder' ),
+			'condition'   => [ 'layout!' => [ 'category-single-layout1', 'category-single-layout2', 'category-layout1', 'category-layout2', 'category-layout3' ] ],
+		];
+		$fields['badges_module_notice'] = [
+			'type'      => 'html',
+			'raw'       => sprintf(
+				'<span style="display: block; background: #fffbf1; padding: 10px; line-height: 1.4; color: #bd3a3a; border: 1px solid #bd3a3a30;">%s</span>',
+				sprintf(
+					/* translators: 1: link to the Modules page */
+					__(
+						'<b>Note:</b> Badges Module needs to be enabled in the <a href="%1$s" target="_blank">ShopBuilder Modules Settings</a>. From there you can create and customize different badges.',
+						'shopbuilder'
+					),
+					esc_url( admin_url( 'admin.php?page=rtsb-settings' ) )
+				)
+			),
+			'separator' => rtsb()->has_pro() ? 'default' : 'after',
+			'condition' => [ 'enable_badges_module' => [ 'yes' ] ],
+		];
+
+		$fields['badges_module_direction'] = [
+			'type'        => 'select',
+			'options'     => [
+				'row'    => esc_html__( 'Horizontal', 'shopbuilder' ),
+				'column' => esc_html__( 'Vertical', 'shopbuilder' ),
+			],
+			'label'       => esc_html__( 'Group Badge Direction', 'shopbuilder' ),
+			'description' => esc_html__( 'Please choose the group badge direction.', 'shopbuilder' ),
+			'condition'   => [ 'enable_badges_module' => [ 'yes' ] ],
+			'default'     => 'row',
+			'label_block' => true,
+			'classes'     => $obj->pro_class(),
+			'separator'   => rtsb()->has_pro() ? 'before-short' : 'default',
+			'selectors'   => [
+				$obj->selectors['badges_module']['direction'] => 'flex-direction: {{VALUE}} !important;',
+			],
+		];
+
+		$fields['badges_module_alignment'] = [
+			'type'        => 'choose',
+			'options'     => [
+				'start'  => [
+					'title' => esc_html__( 'Left', 'shopbuilder' ),
+					'icon'  => 'eicon-text-align-left',
+				],
+				'center' => [
+					'title' => esc_html__( 'Center', 'shopbuilder' ),
+					'icon'  => 'eicon-text-align-center',
+				],
+				'end'    => [
+					'title' => esc_html__( 'Right', 'shopbuilder' ),
+					'icon'  => 'eicon-text-align-right',
+				],
+			],
+			'label'       => esc_html__( 'Group Badge Alignment', 'shopbuilder' ),
+			'description' => esc_html__( 'Please choose the group badge alignment.', 'shopbuilder' ),
+			'condition'   => [ 'enable_badges_module' => [ 'yes' ] ],
+			'default'     => 'start',
+			'separator'   => rtsb()->has_pro() ? 'default' : 'before',
+			'label_block' => true,
+			'selectors'   => [
+				$obj->selectors['badges_module']['alignment'] => 'align-items: {{VALUE}} !important;',
+			],
+		];
 
 		$fields['custom_badge_preset'] = [
-			'type'    => 'rtsb-image-selector',
-			'label'   => esc_html__( 'Custom Badge Appearance', 'shopbuilder' ),
-			'options' => ControlHelper::badge_presets(),
-			'default' => 'preset1',
+			'type'      => 'rtsb-image-selector',
+			'label'     => esc_html__( 'Custom Badge Appearance', 'shopbuilder' ),
+			'options'   => ControlHelper::badge_presets(),
+			'default'   => 'preset1',
+			'condition' => [ 'enable_badges_module!' => [ 'yes' ] ],
 		];
 
 		$fields['sale_badges_type'] = [
@@ -1389,7 +1459,10 @@ class SettingsFields {
 			],
 			'default'     => 'percentage',
 			'label_block' => true,
-			'condition'   => [ 'layout!' => [ 'category-single-layout1', 'category-single-layout2', 'category-layout1', 'category-layout2', 'category-layout3' ] ],
+			'condition'   => [
+				'layout!'               => [ 'category-single-layout1', 'category-single-layout2', 'category-layout1', 'category-layout2', 'category-layout3' ],
+				'enable_badges_module!' => [ 'yes' ],
+			],
 		];
 
 		$fields['sale_badges_text'] = [
@@ -1399,8 +1472,9 @@ class SettingsFields {
 			'description' => esc_html__( 'Please enter the sale badge text.', 'shopbuilder' ),
 			'label_block' => true,
 			'condition'   => [
-				'sale_badges_type' => [ 'text' ],
-				'layout!'          => [ 'category-single-layout1', 'category-single-layout2', 'category-layout1', 'category-layout2', 'category-layout3' ],
+				'sale_badges_type'      => [ 'text' ],
+				'layout!'               => [ 'category-single-layout1', 'category-single-layout2', 'category-layout1', 'category-layout2', 'category-layout3' ],
+				'enable_badges_module!' => [ 'yes' ],
 			],
 		];
 
@@ -1410,7 +1484,10 @@ class SettingsFields {
 			'default'     => esc_html__( 'Out of Stock', 'shopbuilder' ),
 			'description' => esc_html__( 'Please enter the out of stock badge text.', 'shopbuilder' ),
 			'label_block' => true,
-			'condition'   => [ 'layout!' => [ 'category-single-layout1', 'category-single-layout2', 'category-layout1', 'category-layout2', 'category-layout3' ] ],
+			'condition'   => [
+				'layout!'               => [ 'category-single-layout1', 'category-single-layout2', 'category-layout1', 'category-layout2', 'category-layout3' ],
+				'enable_badges_module!' => [ 'yes' ],
+			],
 		];
 
 		$fields['custom_badge_text'] = [
@@ -1419,7 +1496,10 @@ class SettingsFields {
 			'description' => esc_html__( 'Please enter the custom badge text.', 'shopbuilder' ),
 			'label_block' => true,
 			'default'     => esc_html__( 'Popular', 'shopbuilder' ),
-			'condition'   => [ 'layout' => [ 'category-single-layout1', 'category-single-layout2', 'category-layout1', 'category-layout2' ] ],
+			'condition'   => [
+				'layout'                => [ 'category-single-layout1', 'category-single-layout2', 'category-layout1', 'category-layout2' ],
+				'enable_badges_module!' => [ 'yes' ],
+			],
 		];
 
 		$fields['badges_section_end'] = $obj->end_section();

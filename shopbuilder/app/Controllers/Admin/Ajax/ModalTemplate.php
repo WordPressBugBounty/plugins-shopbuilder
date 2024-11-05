@@ -367,7 +367,7 @@ class ModalTemplate {
 							} elseif ( 'product_tags' === $product_page_for ) {
 								$set_default_option_name = BuilderFns::option_name_product_page_specific_tag_set_default( $post_id );
 							}
-							$default_id = TemplateSettings::instance()->get_option( $set_default_option_name );
+							$default_id = ! empty( $set_default_option_name ) && TemplateSettings::instance()->get_option( $set_default_option_name );
 							if ( $default_id ) {
 								$template_default = $post_id;
 							}
@@ -389,7 +389,7 @@ class ModalTemplate {
 								   id="default_template"
 								   name="default_template"
 								   value="default_template"
-									<?php echo esc_attr( ( $post_id && absint( $post_id ) === absint( $template_default ) ) ? 'checked' : '' ); ?>
+									<?php echo esc_attr( ( $post_id && ( absint( $post_id ) === absint( $template_default ) ) ) ? 'checked' : '' ); ?>
 						>
 							<span class="rtsb-slider rtsb-round ">
 								<span class="rtsb-loader"></span>

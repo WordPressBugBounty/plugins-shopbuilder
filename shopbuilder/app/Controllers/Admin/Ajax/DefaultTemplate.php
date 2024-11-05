@@ -45,14 +45,14 @@ class DefaultTemplate {
 		$default_page_id = isset( $_POST['set_default_page_id'] ) && 'publish' === get_post_status( $_POST['set_default_page_id'] ) ? absint( wp_unslash( $_POST['set_default_page_id'] ) ) : null; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		$page_id         = isset( $_POST['page_id'] ) && 'publish' === get_post_status( $_POST['page_id'] ) ? absint( wp_unslash( $_POST['page_id'] ) ) : null; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		Cache::clear_transient_cache();
-		$the_cat_option   = BuilderFns::archive_option_name_by_template_id( $page_id );
-		$the_cats         = TemplateSettings::instance()->get_option( $the_cat_option );
-		$option_name      = BuilderFns::option_name( $page_type );
-		$product_page_for = get_post_meta( $page_id, '_is_product_page_template_for', true );
-
+		$the_cat_option     = BuilderFns::archive_option_name_by_template_id( $page_id );
+		$the_cats           = TemplateSettings::instance()->get_option( $the_cat_option );
+		$option_name        = BuilderFns::option_name( $page_type );
+		$product_page_for   = get_post_meta( $page_id, '_is_product_page_template_for', true );
 		$is_can_set_default = true;
 		switch ( $page_type ) {
 			case 'product':
+				$product_page_for = empty( $product_page_for ) ? 'all_products' : $product_page_for;
 				if ( 'all_products' !== $product_page_for ) {
 					$is_can_set_default = null;
 				}
@@ -64,6 +64,7 @@ class DefaultTemplate {
 				break;
 			default:
 		}
+
 		if ( $is_can_set_default ) {
 			TemplateSettings::instance()->set_option( $option_name, $default_page_id );
 		}

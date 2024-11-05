@@ -3,8 +3,8 @@ Contributors: techlabpro1, mamunur105, srafiz
 Donate link:
 Tags: Elementor, Woocommerce Builder, Elementor Woocommerce Builder, Woocommerce, Woocommerce Product
 Requires at least: 5.5
-Tested up to: 6.6
-Stable tag: 2.3.0
+Tested up to: 6.7
+Stable tag: 2.4.0
 Requires PHP: 7.4
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -334,6 +334,13 @@ If you like the ShopBuilder Plugin, then consider checking out our other WordPre
 == Screenshots ==
 
 == Changelog ==
+
+= 2.4.0 ( November 05, 2024 ) =
+* Feature: Introducing the 'Product Badges' module for adding customizable badges to products.
+* Fix: Resolved form input field compatibility issues in Mozilla Firefox.
+* Fix: Addressed a sorting issue with the 'Sort by Price' option in the general widgets.
+* Fix: Corrected query compatibility for general widgets on product details pages.
+* Tweak: Implemented a version check notification for the pro-plugin to ensure module functionalities.
 
 = 2.3.0 ( October 21, 2024 ) =
 * Feature: Introducing the 'Checkout Fields Editor' module for editing checkout fields.

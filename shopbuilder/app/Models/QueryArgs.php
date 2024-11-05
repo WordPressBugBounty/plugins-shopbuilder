@@ -189,6 +189,11 @@ class QueryArgs {
 			if ( 'menu_order' === $order_by ) {
 				$this->args['orderby'] = 'menu_order title';
 			}
+
+			if ( 'price' === $order_by ) {
+				$this->args['orderby']  = 'meta_value_num';
+				$this->args['meta_key'] = '_price'; // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
+			}
 		}
 
 		return $this;

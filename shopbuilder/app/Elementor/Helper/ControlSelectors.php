@@ -745,6 +745,10 @@ class ControlSelectors {
 					'position_x'    => '',
 					'position_y'    => '',
 				],
+				'badges_module'                  => [
+					'direction' => '{{WRAPPER}} .rtsb-promotion .rtsb-badge-group-style',
+					'alignment' => '{{WRAPPER}} .rtsb-promotion .rtsb-badge-group-style',
+				],
 			],
 		];
 
@@ -1466,6 +1470,10 @@ class ControlSelectors {
 					'rtsb_el_content_border'       => '{{WRAPPER}} .rtsb-elementor-container .rtsb-product-content, {{WRAPPER}} .rtsb-elementor-container .rtsb-row:not(.rtsb-category-layout2) .rtsb-category-content, {{WRAPPER}} .rtsb-elementor-container .rtsb-category-layout2 .category-title-with-image',
 					'content_border_hover_color'   => '{{WRAPPER}} .rtsb-elementor-container .rtsb-product-content:hover, {{WRAPPER}} .rtsb-elementor-container .rtsb-row:not(.rtsb-category-layout2) .rtsb-category-content:hover, {{WRAPPER}} .rtsb-elementor-container .rtsb-category-layout2 .category-title-with-image:hover',
 					'content_border_radius'        => '{{WRAPPER}} .rtsb-elementor-container .rtsb-product-content, {{WRAPPER}} .rtsb-elementor-container .rtsb-row:not(.rtsb-category-layout2) .rtsb-category-content, {{WRAPPER}} .rtsb-elementor-container .rtsb-category-layout2 .category-title-with-image',
+				],
+				'badges_module'  => [
+					'direction' => '{{WRAPPER}} .rtsb-promotion .rtsb-badge-group-style',
+					'alignment' => '{{WRAPPER}} .rtsb-promotion .rtsb-badge-group-style',
 				],
 			]
 		);

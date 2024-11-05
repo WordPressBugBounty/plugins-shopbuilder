@@ -8,9 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use RadiusTheme\SB\Helpers\Fns;
-use RadiusTheme\SB\Modules\Compare\CompareInstaller;
 use RadiusTheme\SB\Traits\SingletonTrait;
-use RadiusTheme\SBPRO\Modules\Badges\BadgesFns;
 
 final class QuickView {
 	/**

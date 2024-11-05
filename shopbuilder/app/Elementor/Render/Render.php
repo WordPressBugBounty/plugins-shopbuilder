@@ -241,9 +241,15 @@ class Render {
 
 		$i = 0;
 
-		foreach ( $products as $product ) {
+		global $product;
+		$isGlobalProduct = false;
+		if ( $product instanceof WC_Product ) {
+			$isGlobalProduct = $product;
+		}
+
+		foreach ( $products as $_product ) {
 			$i++;
-			$GLOBALS['product'] = $product;
+			$GLOBALS['product'] = $_product;
 			$layout             = RenderHelpers::filter_layout( esc_html( $settings['layout'] ), $template );
 
 			/**
@@ -252,7 +258,7 @@ class Render {
 			do_action( 'rtsb_before_product_template_render' );
 
 			// Loop arg.
-			$arg = $this->arg_dataset( $settings, $product, $settings['lazy_load'], $i );
+			$arg = $this->arg_dataset( $settings, $_product, $settings['lazy_load'], $i );
 
 			// Get template.
 			$html .= Fns::load_template( $template . $layout, $arg, true );
@@ -264,7 +270,9 @@ class Render {
 
 			unset( $GLOBALS['product'] );
 		}
-
+		if ( $isGlobalProduct ) {
+			$GLOBALS['product'] = $isGlobalProduct;
+		}
 		return $html;
 	}
 
