@@ -2100,7 +2100,7 @@ class ModuleList extends ListModel {
 			'new_arrival'  => esc_html__( 'New Arrival Products', 'shopbuilder' ),
 		];
 
-		if ( rtsb()->has_pro() && FnsPro::is_module_active( 'pre_order' ) ) {
+		if ( rtsb()->has_pro() && method_exists( FnsPro::class, 'is_module_active' ) && FnsPro::is_module_active( 'pre_order' ) ) {
 			$items['pre_order'] = esc_html__( 'Pre-Order Products', 'shopbuilder' );
 		}
 

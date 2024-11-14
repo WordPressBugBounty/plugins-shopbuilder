@@ -87,25 +87,20 @@ class ProductStock extends ElementorWidgetBase {
 		$_product    = $product;
 		$product     = Fns::get_product();
 		$controllers = $this->get_settings_for_display();
-        $this->theme_support();
+		$this->theme_support();
 		add_filter( 'woocommerce_get_availability_text', [ $this, 'set_icons' ], 10, 2 );
-		$data = [
+		$data         = [
 			'template'    => 'elementor/single-product/stock',
 			'controllers' => $controllers,
 		];
-
 		$availability = $product->get_availability();
-		if ( $this->is_builder_mode() ) {
-			 if ( empty( $availability['availability'] ) ) {
-				echo '<div class="rtsb-product-stock"><p class="stock in-stock">' . esc_html__( 'Stock availability.', 'shopbuilder' ) . '</p></div>';
-              }
-		}
-
 		if ( ! empty( $availability['availability'] ) ) {
-			Fns::load_template( $data['template'], $data );
+			$data['content'] = wc_get_stock_html( $product );
+		} else {
+			$data['content'] = '<p class="stock in-stock"><i aria-hidden="true" class="rtsb-icon rtsb-icon-check-alt"></i>' . esc_html__( 'In stock', 'shopbuilder' ) . '</p>';
 		}
-        $this->theme_support( 'render_reset' );
+		Fns::load_template( $data['template'], $data );
+		$this->theme_support( 'render_reset' );
 		$product = $_product; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 	}
-
 }

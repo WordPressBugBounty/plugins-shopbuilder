@@ -609,11 +609,17 @@ class RenderHelpers {
 		if ( ! rtsb()->has_pro() || $is_carousel ) {
 			$masonry_class = ' rtsb-even';
 		}
+
 		if ( $is_carousel && ! empty( $settings['raw_settings']['always_show_nav'] ) ) {
 			$classes .= ' always-show-nav';
 		}
+
 		if ( ! empty( $settings['raw_settings']['inner_slider_always_show_nav'] ) ) {
 			$classes .= ' inner-slider-always-show-nav';
+		}
+
+		if ( empty( $settings['raw_settings']['cols_mobile'] ) ) {
+			$classes .= ' rtsb-mobile-flex-row';
 		}
 
 		$classes .= ' rtsb-' . $layout . $masonry_class . $loader_class;

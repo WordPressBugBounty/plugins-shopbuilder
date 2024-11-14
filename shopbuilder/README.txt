@@ -4,7 +4,7 @@ Donate link:
 Tags: Elementor, Woocommerce Builder, Elementor Woocommerce Builder, Woocommerce, Woocommerce Product
 Requires at least: 5.5
 Tested up to: 6.7
-Stable tag: 2.4.0
+Stable tag: 2.4.1
 Requires PHP: 7.4
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -334,6 +334,14 @@ If you like the ShopBuilder Plugin, then consider checking out our other WordPre
 == Screenshots ==
 
 == Changelog ==
+
+= 2.4.1 ( November 14, 2024 ) =
+* Add: Ensured compatibility with the latest version of WooCommerce.
+* Fix: Resolved PHP warnings caused by undefined variables in shop templates.
+* Fix: Corrected a responsive issue causing grid products to overlap with adjacent sections.
+* Fix: Addressed a compatibility issue with the 'Product Badges' module.
+* Tweak: Displayed an empty rating icon when products have no ratings.
+* Tweak: Ensured the stock availability text is always visible in the single product stock widget.
 
 = 2.4.0 ( November 05, 2024 ) =
 * Feature: Introducing the 'Product Badges' module for adding customizable badges to products.
