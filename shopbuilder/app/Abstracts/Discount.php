@@ -56,15 +56,12 @@ abstract class Discount {
 		$start         = strtotime( $this->options['start_date'] );
 		$end           = strtotime( $this->options['end_date'] );
 
-		if ( $this->options['global_check'] ) {
-			return;
-		}
-
+		$global = $this->options['global_check'] ?? 'rtsb__notice';
 		// Black Friday Notice.
-		if ( ! rtsb()->has_pro() && $start <= $current && $current <= $end ) {
+		if ( $start <= $current && $current <= $end ) {
 			if ( get_option( $this->options['option_name'] ) != '1' ) {
-				if ( ! isset( $GLOBALS['rtsb__notice'] ) ) {
-					$GLOBALS['rtsb__notice'] = 'rtsb__notice';
+				if ( ! isset( $GLOBALS[ $global ] ) ) {
+					$GLOBALS[ $global ] = $global;
 					$this->offer_notice();
 				}
 			}
@@ -161,12 +158,12 @@ abstract class Discount {
 						 src="<?php echo esc_url( $this->options['image_url'] ); ?>"
 						 width="100px"
 						 height="100px"/>
-					<h3><?php echo sprintf( '%s – %s', esc_html( $this->options['plugin_name'] ), esc_html( $this->options['notice_for'] ) ); ?></h3>
+					<h3 style="display: flex; align-items: center;"><?php echo sprintf( '%s – %s', esc_html( $this->options['plugin_name'] ), wp_kses_post( $this->options['notice_for'] ) ); ?></h3>
 
 					<p class="notice-text">
 						<?php echo wp_kses_post( $this->options['notice_message'] ); ?>
 					</p>
-					<p>
+					<p style="display: flex; align-items: center;">
 						<a class="button button-primary"
 						   href="<?php echo esc_url( $this->options['download_link'] ); ?>" target="_blank">Buy Now</a>
 						<a class="button button-dismiss" href="#">Dismiss</a>
@@ -174,7 +171,8 @@ abstract class Discount {
 				</div>
 
 				<?php
-			}
+			},
+            9
 		);
 
 		add_action(

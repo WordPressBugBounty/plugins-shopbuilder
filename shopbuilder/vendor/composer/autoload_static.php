@@ -33,7 +33,7 @@ class ComposerStaticInitad65d966a50af80832671dac9bb81d57
         'RadiusTheme\\SB\\Controllers\\Admin\\Ajax\\CreateTemplate' => __DIR__ . '/../..' . '/app/Controllers/Admin/Ajax/CreateTemplate.php',
         'RadiusTheme\\SB\\Controllers\\Admin\\Ajax\\DefaultTemplate' => __DIR__ . '/../..' . '/app/Controllers/Admin/Ajax/DefaultTemplate.php',
         'RadiusTheme\\SB\\Controllers\\Admin\\Ajax\\ModalTemplate' => __DIR__ . '/../..' . '/app/Controllers/Admin/Ajax/ModalTemplate.php',
-        'RadiusTheme\\SB\\Controllers\\Admin\\Notice\\EarlyBirdDiscount' => __DIR__ . '/../..' . '/app/Controllers/Admin/Notice/EarlyBirdDiscount.php',
+        'RadiusTheme\\SB\\Controllers\\Admin\\Notice\\BFDiscount' => __DIR__ . '/../..' . '/app/Controllers/Admin/Notice/BFDiscount.php',
         'RadiusTheme\\SB\\Controllers\\Admin\\Notice\\Review' => __DIR__ . '/../..' . '/app/Controllers/Admin/Notice/Review.php',
         'RadiusTheme\\SB\\Controllers\\Admin\\Notice\\Upgrade' => __DIR__ . '/../..' . '/app/Controllers/Admin/Notice/Upgrade.php',
         'RadiusTheme\\SB\\Controllers\\Admin\\PluginRow' => __DIR__ . '/../..' . '/app/Controllers/Admin/PluginRow.php',

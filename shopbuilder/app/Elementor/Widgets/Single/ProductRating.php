@@ -48,7 +48,7 @@ class ProductRating extends ElementorWidgetBase {
 				'label' => esc_html__( 'General', 'shopbuilder' ),
 				'tab'   => 'style',
 			],
-			'rating_align'                  => [
+			'rating_align'                 => [
 				'mode'      => 'responsive',
 				'label'     => esc_html__( 'Alignment', 'shopbuilder' ),
 				'type'      => 'choose',
@@ -103,7 +103,6 @@ class ProductRating extends ElementorWidgetBase {
 			],
 		];
 		return array_merge( $fields, ReviewsStarSettings::widget_fields( $this ) );
-
 	}
 
 	/**
@@ -116,8 +115,8 @@ class ProductRating extends ElementorWidgetBase {
 		$_product    = $product;
 		$_post       = $post;
 		$controllers = $this->get_settings_for_display();
-        $this->theme_support();
-		$product     = Fns::get_product();
+		$this->theme_support();
+		$product = Fns::get_product();
 
 		if ( $this->is_builder_mode() ) {
 			// Overriding Global.
@@ -139,9 +138,8 @@ class ProductRating extends ElementorWidgetBase {
 		];
 
 		Fns::load_template( $data['template'], $data );
-        $this->theme_support( 'render_reset' );
+		$this->theme_support( 'render_reset' );
 		$product = $_product; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-		$post = $_post;
+		$post    = $_post;
 	}
-
 }

@@ -63,6 +63,7 @@ class WidgetsSupport {
 		return '';
 	}
 
+
 	/**
 	 * Astra Wrapper
 	 *
@@ -100,7 +101,6 @@ class WidgetsSupport {
 					add_filter( 'astra_addon_shop_cards_buttons_html', [ $this, 'astra_flash_sale_html_remove' ] );
 				}
 			}
-
 		}
 		$this->widgets->apply_hooks_set_default();
 
@@ -108,23 +108,29 @@ class WidgetsSupport {
 		if ( class_exists( 'WooProductVariationSwatches' ) ) {
 			$swatches_position = rtwpvs()->get_option( 'archive_swatches_position' );
 			if ( 'before_title_and_price' == $swatches_position && class_exists( ShopPage::class ) ) {
-				remove_action( 'woocommerce_before_shop_loop_item_title', [
-					ShopPage::class,
-					'archive_variation_swatches',
-				], 35 );
-				add_action( 'astra_woo_shop_title_before', [
-					ShopPage::class,
-					'archive_variation_swatches',
-				], 35 );
+				remove_action(
+					'woocommerce_before_shop_loop_item_title',
+					[
+						ShopPage::class,
+						'archive_variation_swatches',
+					],
+					35
+				);
+				add_action(
+					'astra_woo_shop_title_before',
+					[
+						ShopPage::class,
+						'archive_variation_swatches',
+					],
+					35
+				);
 			}
-
 		}
 
 		// Remove Action Button.
 		add_filter( 'rtsb/module/wishlist/show_button', '__return_false' );
 		add_filter( 'rtsb/module/quick_view/show_button', '__return_false' );
 		add_filter( 'rtsb/module/compare/show_button', '__return_false' );
-
 	}
 
 	/**
@@ -164,7 +170,14 @@ class WidgetsSupport {
 	public function render_reset_rtsb_products_archive() {
 		$this->astra_product_loop_reset_default();
 	}
-
+	/**
+	 * The function name comes from the widget base name "rtsb-products-archive". This is for theme support prefix with render.
+	 *
+	 * @return void
+	 */
+	public function render_rtsb_product_rating() {
+		remove_filter( 'woocommerce_product_get_rating_html', [ \Astra_Woocommerce::get_instance(), 'rating_markup' ], 10 );
+	}
 	/**
 	 * The function name comes from the widget base name "rtsb-products-archive". This is for theme support prefix with render.
 	 *
@@ -225,7 +238,7 @@ class WidgetsSupport {
 	 * @return void
 	 */
 	public function render_rtsb_product_onsale() {
-		add_filter( 'woocommerce_sale_flash', array( \Astra_Woocommerce::get_instance(), 'get_sale_flash_markup' ), 10, 3 );
+		add_filter( 'woocommerce_sale_flash', [ \Astra_Woocommerce::get_instance(), 'get_sale_flash_markup' ], 10, 3 );
 	}
 	/**
 	 * Cross Sell Product.
@@ -323,8 +336,8 @@ class WidgetsSupport {
 	 * @return array
 	 */
 	public function widget_controls_flash_sale( $fields ) {
-		$selector                                                           = '{{WRAPPER}} .products .product .ast-onsale-card';
-		$fields['flash_sale_typography']['selector']                        = $selector;
+		$selector                                    = '{{WRAPPER}} .products .product .ast-onsale-card';
+		$fields['flash_sale_typography']['selector'] = $selector;
 		$fields['product_flash_sale_color']['selectors'][ $selector ]       = 'color: {{VALUE}};';
 		$fields['flash_sale_bg_color']['selectors'][ $selector ]            = 'background-color: {{VALUE}};';
 		$fields['flash_sale_badge_width']['selectors'][ $selector ]         = 'width: {{SIZE}}{{UNIT}};display:flex; justify-content: center;';
@@ -333,7 +346,4 @@ class WidgetsSupport {
 
 		return $fields;
 	}
-
-
 }
-

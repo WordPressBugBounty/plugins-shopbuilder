@@ -4,7 +4,7 @@ Donate link:
 Tags: Elementor, Woocommerce Builder, Elementor Woocommerce Builder, Woocommerce, Woocommerce Product
 Requires at least: 5.5
 Tested up to: 6.7
-Stable tag: 2.4.1
+Stable tag: 2.4.2
 Requires PHP: 7.4
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -334,6 +334,12 @@ If you like the ShopBuilder Plugin, then consider checking out our other WordPre
 == Screenshots ==
 
 == Changelog ==
+
+= 2.4.2 ( November 18, 2024 ) =
+* Fix: Resolved a responsive issue causing grid products to overlap with adjacent sections.
+* Fix: Addressed a spacing issue affecting action button displays on the frontend.
+* Fix: Rectified double rendering of rating icons on single product pages when using the Astra theme.
+* Update: Improved admin notice functionality.
 
 = 2.4.1 ( November 14, 2024 ) =
 * Add: Ensured compatibility with the latest version of WooCommerce.

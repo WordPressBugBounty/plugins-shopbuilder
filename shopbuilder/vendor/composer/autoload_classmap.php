@@ -18,7 +18,7 @@ return array(
     'RadiusTheme\\SB\\Controllers\\Admin\\Ajax\\CreateTemplate' => $baseDir . '/app/Controllers/Admin/Ajax/CreateTemplate.php',
     'RadiusTheme\\SB\\Controllers\\Admin\\Ajax\\DefaultTemplate' => $baseDir . '/app/Controllers/Admin/Ajax/DefaultTemplate.php',
     'RadiusTheme\\SB\\Controllers\\Admin\\Ajax\\ModalTemplate' => $baseDir . '/app/Controllers/Admin/Ajax/ModalTemplate.php',
-    'RadiusTheme\\SB\\Controllers\\Admin\\Notice\\EarlyBirdDiscount' => $baseDir . '/app/Controllers/Admin/Notice/EarlyBirdDiscount.php',
+    'RadiusTheme\\SB\\Controllers\\Admin\\Notice\\BFDiscount' => $baseDir . '/app/Controllers/Admin/Notice/BFDiscount.php',
     'RadiusTheme\\SB\\Controllers\\Admin\\Notice\\Review' => $baseDir . '/app/Controllers/Admin/Notice/Review.php',
     'RadiusTheme\\SB\\Controllers\\Admin\\Notice\\Upgrade' => $baseDir . '/app/Controllers/Admin/Notice/Upgrade.php',
     'RadiusTheme\\SB\\Controllers\\Admin\\PluginRow' => $baseDir . '/app/Controllers/Admin/PluginRow.php',

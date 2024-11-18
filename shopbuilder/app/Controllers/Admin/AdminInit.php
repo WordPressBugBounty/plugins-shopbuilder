@@ -59,7 +59,7 @@ class AdminInit {
 	public function upgrade() {
 		Notice\Upgrade::instance();
 		Notice\Review::instance();
-		Notice\EarlyBirdDiscount::instance();
+		Notice\BFDiscount::instance();
 	}
 
 	public function init() {
