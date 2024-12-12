@@ -130,6 +130,7 @@ class CheckoutEditorBase {
 			$field['required'] = 'on' === ( $field['isRequired'] ?? '' );
 			$field['class']    = ! empty( $field['custom_class'] ) ? explode( ',', $field['custom_class'] ) : [];
 			$field['class'][]  = 'rtsb-input-field';
+			$field['class'][]  = 'rtsb-form-field-type-' . $field['type'];
 			if ( ! empty( $field['validation'] ) && 'default' !== $field['validation'] ) {
 				$field['validate'] = [ $field['validation'] ];
 			}

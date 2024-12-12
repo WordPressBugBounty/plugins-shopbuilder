@@ -35,6 +35,7 @@ class Review {
 	 * @return void
 	 */
 	public function check_installation_time() {
+
 		$nobug = get_option( 'rtsb_admin_review_spare_me' );
 		$rated = get_option( 'rtsb_admin_review_rated' );
 
@@ -128,6 +129,9 @@ class Review {
 	 * Display Admin Notice, asking for a review
 	 **/
 	public function display_admin_notice() {
+		if ( isset( $GLOBALS['woobundle_notice'] ) || isset( $GLOBALS['rtsb__notice'] ) ) {
+			return;
+		}
 		global $pagenow;
 
 		$exclude = [

@@ -163,7 +163,6 @@ class WidgetsSupport {
 	}
 
 	/**
-	 * .
 	 *
 	 * @return void
 	 */

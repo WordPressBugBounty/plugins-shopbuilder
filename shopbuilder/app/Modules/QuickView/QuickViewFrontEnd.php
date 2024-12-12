@@ -50,7 +50,7 @@ class QuickViewFrontEnd {
 	 * @since  1.0.0
 	 */
 	public function quick_view_action_template() {
-
+        wp_enqueue_style('elementor-frontend');
 		// Image.
 		add_action( 'rtsb/wcqv/product/image', 'woocommerce_show_product_sale_flash', 10 );
 		add_action( 'rtsb/wcqv/product/image', 'woocommerce_show_product_images', 20 );

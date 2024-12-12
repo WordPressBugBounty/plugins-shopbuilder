@@ -50,7 +50,6 @@ class Fns {
 		return isset( $_REQUEST[ rtsb()->nonceId ] ) ? sanitize_text_field( $_REQUEST[ rtsb()->nonceId ] ) : null;
 	}
 
-
 	/**
 	 * Set Cookie or Session
 	 *
@@ -1837,7 +1836,7 @@ class Fns {
 		$max_percentage = '';
 
 		if ( $product->is_type( 'simple' ) ) {
-			$max_percentage = ( ( $product->get_regular_price() - $product->get_sale_price() ) / $product->get_regular_price() ) * 100;
+			$max_percentage = $product->get_sale_price() ? ( ( $product->get_regular_price() - $product->get_sale_price() ) / $product->get_regular_price() ) * 100 : 0;
 		} elseif ( $product->is_type( 'variable' ) ) {
 			$max_percentage = 0;
 
@@ -2194,7 +2193,7 @@ class Fns {
 					break;
 				case 'reddit':
 					$link['link']           = esc_url( 'https://reddit.com/submit?url=' . $link['url'] . '&title=' . $link['title'] );
-					$link['icon']           = '<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512"><title>ionicons-v5_logos</title><path d="M324,256a36,36,0,1,0,36,36A36,36,0,0,0,324,256Z"/><circle cx="188" cy="292" r="36" transform="translate(-97.43 94.17) rotate(-22.5)"/><path d="M496,253.77c0-31.19-25.14-56.56-56-56.56a55.72,55.72,0,0,0-35.61,12.86c-35-23.77-80.78-38.32-129.65-41.27l22-79L363.15,103c1.9,26.48,24,47.49,50.65,47.49,28,0,50.78-23,50.78-51.21S441,48,413,48c-19.53,0-36.31,11.19-44.85,28.77l-90-17.89L247.05,168.4l-4.63.13c-50.63,2.21-98.34,16.93-134.77,41.53A55.38,55.38,0,0,0,72,197.21c-30.89,0-56,25.37-56,56.56a56.43,56.43,0,0,0,28.11,49.06,98.65,98.65,0,0,0-.89,13.34c.11,39.74,22.49,77,63,105C146.36,448.77,199.51,464,256,464s109.76-15.23,149.83-42.89c40.53-28,62.85-65.27,62.85-105.06a109.32,109.32,0,0,0-.84-13.3A56.32,56.32,0,0,0,496,253.77ZM414,75a24,24,0,1,1-24,24A24,24,0,0,1,414,75ZM42.72,253.77a29.6,29.6,0,0,1,29.42-29.71,29,29,0,0,1,13.62,3.43c-15.5,14.41-26.93,30.41-34.07,47.68A30.23,30.23,0,0,1,42.72,253.77ZM390.82,399c-35.74,24.59-83.6,38.14-134.77,38.14S157,423.61,121.29,399c-33-22.79-51.24-52.26-51.24-83A78.5,78.5,0,0,1,75,288.72c5.68-15.74,16.16-30.48,31.15-43.79a155.17,155.17,0,0,1,14.76-11.53l.3-.21,0,0,.24-.17c35.72-24.52,83.52-38,134.61-38s98.9,13.51,134.62,38l.23.17.34.25A156.57,156.57,0,0,1,406,244.92c15,13.32,25.48,28.05,31.16,43.81a85.44,85.44,0,0,1,4.31,17.67,77.29,77.29,0,0,1,.6,9.65C442.06,346.77,423.86,376.24,390.82,399Zm69.6-123.92c-7.13-17.28-18.56-33.29-34.07-47.72A29.09,29.09,0,0,1,440,224a29.59,29.59,0,0,1,29.41,29.71A30.07,30.07,0,0,1,460.42,275.1Z"/><path d="M323.23,362.22c-.25.25-25.56,26.07-67.15,26.27-42-.2-66.28-25.23-67.31-26.27h0a4.14,4.14,0,0,0-5.83,0l-13.7,13.47a4.15,4.15,0,0,0,0,5.89h0c3.4,3.4,34.7,34.23,86.78,34.45,51.94-.22,83.38-31.05,86.78-34.45h0a4.16,4.16,0,0,0,0-5.9l-13.71-13.47a4.13,4.13,0,0,0-5.81,0Z"/></svg>';
+					$link['icon']           = '<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512"><path d="M324,256a36,36,0,1,0,36,36A36,36,0,0,0,324,256Z"/><circle cx="188" cy="292" r="36" transform="translate(-97.43 94.17) rotate(-22.5)"/><path d="M496,253.77c0-31.19-25.14-56.56-56-56.56a55.72,55.72,0,0,0-35.61,12.86c-35-23.77-80.78-38.32-129.65-41.27l22-79L363.15,103c1.9,26.48,24,47.49,50.65,47.49,28,0,50.78-23,50.78-51.21S441,48,413,48c-19.53,0-36.31,11.19-44.85,28.77l-90-17.89L247.05,168.4l-4.63.13c-50.63,2.21-98.34,16.93-134.77,41.53A55.38,55.38,0,0,0,72,197.21c-30.89,0-56,25.37-56,56.56a56.43,56.43,0,0,0,28.11,49.06,98.65,98.65,0,0,0-.89,13.34c.11,39.74,22.49,77,63,105C146.36,448.77,199.51,464,256,464s109.76-15.23,149.83-42.89c40.53-28,62.85-65.27,62.85-105.06a109.32,109.32,0,0,0-.84-13.3A56.32,56.32,0,0,0,496,253.77ZM414,75a24,24,0,1,1-24,24A24,24,0,0,1,414,75ZM42.72,253.77a29.6,29.6,0,0,1,29.42-29.71,29,29,0,0,1,13.62,3.43c-15.5,14.41-26.93,30.41-34.07,47.68A30.23,30.23,0,0,1,42.72,253.77ZM390.82,399c-35.74,24.59-83.6,38.14-134.77,38.14S157,423.61,121.29,399c-33-22.79-51.24-52.26-51.24-83A78.5,78.5,0,0,1,75,288.72c5.68-15.74,16.16-30.48,31.15-43.79a155.17,155.17,0,0,1,14.76-11.53l.3-.21,0,0,.24-.17c35.72-24.52,83.52-38,134.61-38s98.9,13.51,134.62,38l.23.17.34.25A156.57,156.57,0,0,1,406,244.92c15,13.32,25.48,28.05,31.16,43.81a85.44,85.44,0,0,1,4.31,17.67,77.29,77.29,0,0,1,.6,9.65C442.06,346.77,423.86,376.24,390.82,399Zm69.6-123.92c-7.13-17.28-18.56-33.29-34.07-47.72A29.09,29.09,0,0,1,440,224a29.59,29.59,0,0,1,29.41,29.71A30.07,30.07,0,0,1,460.42,275.1Z"/><path d="M323.23,362.22c-.25.25-25.56,26.07-67.15,26.27-42-.2-66.28-25.23-67.31-26.27h0a4.14,4.14,0,0,0-5.83,0l-13.7,13.47a4.15,4.15,0,0,0,0,5.89h0c3.4,3.4,34.7,34.23,86.78,34.45,51.94-.22,83.38-31.05,86.78-34.45h0a4.16,4.16,0,0,0,0-5.9l-13.71-13.47a4.13,4.13,0,0,0-5.81,0Z"/></svg>';
 					$link['attr_title']     = esc_html__( 'Share on Reddit', 'shopbuilder' );
 					$link['social_network'] = 'Reddit';
 					$link['social_action']  = 'Share';
@@ -2797,9 +2796,11 @@ class Fns {
 		if ( isset( self::$cache[ $cache_key ] ) ) {
 			return self::$cache[ $cache_key ];
 		}
-
-		// Get the product publish date.
-		$publish_timestamp = strtotime( $product->get_date_created()->date_i18n( 'Y-m-d H:i:s' ) );
+		$date_created = $product->get_date_created();
+		if ( ! $date_created ) {
+			return false;
+		}
+		$publish_timestamp = strtotime( $date_created->date_i18n( 'Y-m-d H:i:s' ) );
 
 		// Calculate the difference in days.
 		$days_difference = abs( time() - $publish_timestamp ) / ( 60 * 60 * 24 );
@@ -2936,6 +2937,67 @@ class Fns {
 		];
 	}
 
+	/**
+	 * Retrieve an array of custom icons with their HTML representation.
+	 *
+	 * @return array
+	 */
+	public static function get_icons() {
+		$icon        = self::get_custom_icon_names();
+		$icons_array = [];
+		foreach ( $icon as $value ) {
+			$icons_array[ $value ] = '<i class="rtsb-icon rtsb-icon-' . $value . '"></i> <span class="icon-name">' . ucfirst( str_replace( '-', ' ', $value ) ) . '</span>';
+		}
+		return $icons_array;
+	}
+
+	/**
+	 * Generates HTML markup for displaying an endpoint icon.
+	 *
+	 * @param array   $data     The endpoint data containing icon information.
+	 * @param string  $endpoint The endpoint identifier.
+	 * @param boolean $wrapper  Whether to wrap the icon in a span element.
+	 *
+	 * @return string
+	 */
+	public static function get_icon_html( $data, $wrapper = true ) {
+		if ( empty( $data ) || 'none' === $data['icon_source'] ) {
+			return '';
+		}
+		$endpoint = '';
+		$html     = $wrapper ? '<span class="icon ' . esc_attr( $endpoint ) . '_icon">' : '';
+
+		if ( 'select_icon' === $data['icon_source'] ) {
+			$html .= '<i class="rtsb-icon rtsb-icon-' . esc_attr( $data['custom_icon'] ) . '"></i>';
+		} else {
+			$icon_html = '';
+			$icon_url  = $data['image_icon']['source'] ?? '';
+			$icon_id   = $data['image_icon']['id'] ?? 0;
+			$extension = ! empty( $icon_url ) ? strtolower( substr( strrchr( $data['image_icon']['source'], '.' ), 1 ) ) : '';
+
+			if ( 'svg' === $extension ) {
+				$content = file_get_contents( $icon_url ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+				$is_svg  = strpos( $content, '<svg' );
+
+				if ( false !== $is_svg ) {
+					$icon_html = substr( $content, $is_svg );
+				}
+			} else {
+				$attr = [
+					'class' => 'rtsb-icon-img',
+					'alt'   => esc_html( ucfirst( $endpoint ) ) . esc_html__( ' Icon', 'shopbuilder' ),
+				];
+
+				$icon_html = wp_get_attachment_image( absint( $icon_id ), 'full', true, $attr );
+			}
+
+			$html .= $icon_html;
+		}
+
+		$html .= $wrapper ? '</span>' : '';
+
+		return $html;
+	}
 	/**
 	 * Flushes rewrite rules.
 	 *
@@ -3086,18 +3148,33 @@ class Fns {
 	 *
 	 * @return array[]
 	 */
-	public static function pro_version_notice( $ver ) {
+	public static function pro_version_notice( $ver, $tab = 'billing_fields', $name = 'ShopBuilder', $enable_free_Link = true ) {
 		return [
 			'version_check' => [
 				'id'          => 'version_check',
 				'type'        => 'title',
 				'label'       => sprintf(
-					/* translators: 1: required version, 2: link to the Plugins page */
-					esc_html__( 'To access all features and settings of this module, please ensure that \'ShopBuilder Pro\' is updated to version %1$s. Update to the latest version %2$s.', 'shopbuilder' ),
-					'<br /><u><b>' . esc_html( $ver ?? '1.5.0' ) . ' or higher</b></u>',
-					'<a class="pro-update-required" href="' . esc_url( admin_url( 'plugins.php' ) ) . '" target="_blank" title="Go to the Plugin Page">from the Plugins page</a>'
+				/* translators: 1: required version, 2: link to the Plugins page */
+					esc_html__(
+						'To access all features and settings of this module, please ensure that "%1$s" is updated to version %2$s. %3$s',
+						'shopbuilder'
+					),
+					$name,
+					sprintf(
+						'<br /><u><b>%s</b></u>',
+						esc_html( $ver ?? '1.5.0' ) . ' or higher'
+					),
+					$enable_free_Link
+						? sprintf(
+							'%s <a class="pro-update-required" href="%s" target="_blank" title="%s">%s</a>',
+							esc_attr__( 'Update to the latest version', 'shopbuilder' ),
+							esc_url( admin_url( 'plugins.php' ) ),
+							esc_attr__( 'Go to the Plugin Page', 'shopbuilder' ),
+							esc_html__( 'from the Plugins page', 'shopbuilder' )
+						)
+						: ''
 				),
-				'tab'         => 'billing_fields',
+				'tab'         => $tab,
 				'customClass' => 'checkout-notice',
 			],
 		];

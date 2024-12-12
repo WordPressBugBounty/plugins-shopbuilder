@@ -10,6 +10,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 $themes = [
 	[
+		'theme_name'    => 'ShopBuilder – Flutter Woocommerce Mobile App',
+		'thumbnail'     => esc_url( rtsb()->get_assets_uri( 'images/admin-themes/flutter-app.png' ) ),
+		'purchase_link' => 'https://shopbuilderwp.com/shopbuilder-apps/shopbuilder-flutter-woocommerce-mobile-app/',
+	],
+	[
 		'theme_name'    => 'EasyShop - Woocommerce WordPress Theme',
 		'thumbnail'     => esc_url( rtsb()->get_assets_uri( 'images/admin-themes/easyshop-theme.jpg' ) ),
 		'purchase_link' => 'https://shopbuilderwp.com/theme/easyshop/',
@@ -34,10 +39,22 @@ $themes = [
 		'demo_link'     => 'https://www.radiustheme.com/demo/shopbuilder/partshop/',
 	],
 	[
-		'theme_name'    => 'Markeet - Woocommerce WordPress Theme',
+		'theme_name'    => 'Markeet - General Woocommerce WordPress Theme',
 		'thumbnail'     => esc_url( rtsb()->get_assets_uri( 'images/admin-themes/markeet-theme.jpg' ) ),
 		'purchase_link' => 'https://shopbuilderwp.com/theme/markeet/',
 		'demo_link'     => 'https://www.radiustheme.com/demo/shopbuilder/markeet/',
+	],
+	[
+		'theme_name'    => 'Elektra - Electronics Woocommerce WordPress Theme',
+		'thumbnail'     => esc_url( rtsb()->get_assets_uri( 'images/admin-themes/elektra-theme.png' ) ),
+		'purchase_link' => 'https://shopbuilderwp.com/theme/elektra/',
+		'demo_link'     => 'https://www.radiustheme.com/demo/shopbuilder/elektra/',
+	],
+	[
+		'theme_name'    => 'oMart - Organic Woocommerce WordPress Theme',
+		'thumbnail'     => esc_url( rtsb()->get_assets_uri( 'images/admin-themes/omart-theme.png' ) ),
+		'purchase_link' => 'https://shopbuilderwp.com/theme/omart/',
+		'demo_link'     => 'https://www.radiustheme.com/demo/shopbuilder/omart/',
 	],
 	[
 		'theme_name' => 'More Themes are Coming Soon',
@@ -53,7 +70,7 @@ $themes = [
 				<img src="<?php echo esc_url( rtsb()->get_assets_uri( 'images/icon/ShopBuilder-Logo.svg' ) ); ?>" alt="ShopBuilder" loading="lazy">
 			</div>
 			<div class="rtsb-header-title-wrap">
-				<h1 class="rtsb-title"><?php echo esc_html__( 'ShopBuilder Themes', 'shopbuilder' ); ?></h1>
+				<h1 class="rtsb-title"><?php echo esc_html__( 'ShopBuilder Themes & Apps', 'shopbuilder' ); ?></h1>
 			</div>
 		</div>
 		<div class="rtsb-settings-tabs-wrap">
@@ -62,7 +79,7 @@ $themes = [
 					<div class="rtsb-ss-header-area">
 						<div class="rtsb-ss-header">
 							<h2 class="rtsb-title"><?php echo esc_html__( 'WooCommerce Themes with ShopBuilder', 'shopbuilder' ); ?></h2>
-							<p class="rtsb-description"><?php echo esc_html__( 'Discover our beautiful WooCommerce themes, expertly crafted for easy setup and customization with the Shopbuilder plugin.', 'shopbuilder' ); ?></p>
+							<p class="rtsb-description"><?php echo esc_html__( 'Discover our beautiful WooCommerce themes and apps, expertly crafted for easy setup and customization with the Shopbuilder plugin.', 'shopbuilder' ); ?></p>
 						</div>
 					</div>
 
@@ -80,9 +97,14 @@ $themes = [
 											<h3 class="rtsb-ss-item-title"><?php echo esc_html( $theme['theme_name'] ); ?></h3>
 											<div class="rtsb-ss-item-buttons">
 												<?php
-												if ( ! empty( $theme['demo_link'] ) || ! empty( $theme['purchase_link'] ) ) {
+												if ( ! empty( $theme['demo_link'] ) ) {
 													?>
 													<a href="<?php echo esc_url( $theme['demo_link'] ); ?>" class="rtsb-button rtsb-button-demo" target="_blank"><?php echo esc_html__( 'View Demo', 'shopbuilder' ); ?></a>
+													<?php
+												}
+
+												if ( ! empty( $theme['purchase_link'] ) ) {
+													?>
 													<a href="<?php echo esc_url( $theme['purchase_link'] ); ?>" class="rtsb-button rtsb-button-purchase" target="_blank"><?php echo esc_html__( 'Buy Now', 'shopbuilder' ); ?></a>
 													<?php
 												}

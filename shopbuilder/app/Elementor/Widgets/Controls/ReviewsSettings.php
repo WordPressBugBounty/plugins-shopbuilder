@@ -66,6 +66,26 @@ class ReviewsSettings {
 				'label'    => esc_html__( 'Typography', 'shopbuilder' ),
 				'selector' => self::$selectors['button_typography'],
 			],
+			'submit_button_height'      => [
+				'mode'       => 'responsive',
+				'label'      => esc_html__( 'Submit button height (px)', 'shopbuilder' ),
+				'type'       => 'slider',
+				'size_units' => [ 'px' ],
+				'range'      => [
+					'px' => [
+						'min'  => 10,
+						'max'  => 300,
+						'step' => 1,
+					],
+				],
+				'default'    => [
+					'unit' => 'px',
+					'size' => 100,
+				],
+				'selectors'  => [
+					self::$selectors['submit_button_height'] => 'height: {{SIZE}}{{UNIT}}!important;',
+				],
+			],
 			'submit_button_alignment'   => [
 				'label'     => esc_html__( 'Alignment', 'shopbuilder' ),
 				'type'      => 'choose',
@@ -76,7 +96,6 @@ class ReviewsSettings {
 					self::$selectors['submit_button_alignment']['float'] => 'float: none;',
 				],
 			],
-
 			'button_tabs_start'         => [
 				'mode' => 'tabs_start',
 			],
@@ -174,7 +193,7 @@ class ReviewsSettings {
 					self::$selectors['button_margin'] => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			],
-			'butotn_section_end'        => [
+			'button_section_end'        => [
 				'mode' => 'section_end',
 			],
 		];

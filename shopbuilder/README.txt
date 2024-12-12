@@ -4,7 +4,7 @@ Donate link:
 Tags: Elementor, Woocommerce Builder, Elementor Woocommerce Builder, Woocommerce, Woocommerce Product
 Requires at least: 5.5
 Tested up to: 6.7
-Stable tag: 2.4.2
+Stable tag: 2.5.0
 Requires PHP: 7.4
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -244,6 +244,11 @@ With myaccount page widgets, you can easily create your woocommerce myaccount pa
 👉 [Documentation](https://www.radiustheme.com/docs/shopbuilder/my-account/account-navigation/)
 
 
+== REVIEW FROM WORDPRESS COMMUNITY EXPERT ==
+
+[youtube https://www.youtube.com/watch?v=5jXcAoCfCJA]
+
+
 Whether you're a WooCommerce beginner or a seasoned pro, ShopBuilder is the perfect plugin to help you create custom WooCommerce layouts with ease.
 
 == Need Any Help? ==
@@ -257,7 +262,7 @@ Whether you're a WooCommerce beginner or a seasoned pro, ShopBuilder is the perf
 
 If you like the ShopBuilder Plugin, then consider checking out our other WordPress Plugins:
 
-* [Classified Lisitng](https://wordpress.org/plugins/classified-listing/) – Best Classified ads and Directory WordPress Plugin
+* [Classified Listing](https://wordpress.org/plugins/classified-listing/) – Best Classified ads and Directory WordPress Plugin
 
 * [The Post Grid](https://wordpress.org/plugins/the-post-grid/) – Shortcode, Gutenberg Blocks and Elementor Addon for Post Grid.
 
@@ -334,6 +339,16 @@ If you like the ShopBuilder Plugin, then consider checking out our other WordPre
 == Screenshots ==
 
 == Changelog ==
+
+= 2.5.0 ( December 12, 2024 ) =
+* Feature: Introducing the new Shopify Checkout module to transform the WooCommerce checkout experience.
+* Add: Compatibility with the "Germanized for WooCommerce" plugin.
+* Add: Support for Elementor SVG Icons across all widgets.
+* Fix: Resolved issues with Elementor CSS class selectors in the cart table.
+* Fix: Corrected title issue with the Reddit social icon.
+* Update: Added button height control for the Comment Form widget.
+* Tweak: Added a notice for the backend color input field when no color is selected.
+* Tweak: Improved and optimized code for backend input fields.
 
 = 2.4.2 ( November 18, 2024 ) =
 * Fix: Resolved a responsive issue causing grid products to overlap with adjacent sections.

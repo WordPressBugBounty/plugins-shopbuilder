@@ -33,11 +33,11 @@ class BFDiscount extends Discount {
 			'option_name'    => 'woobundle_black_friday_offer_2024',
 			'global_check'   => 'woobundle_notice' ,
 			'plugin_name'    => 'ShopBuilder',
-			'notice_for'     => 'WooCommerce Bundle [Black Friday <img style="width: 40px;position: relative;" src="' . rtsb()->get_assets_uri( 'images/deal.gif' ) . '" />]',
+			'notice_for'     => 'WooCommerce Bundle [Black Friday <img style="width: 60px;position: relative;" src="' . rtsb()->get_assets_uri( 'images/deal.gif' ) . '" />]',
 			'download_link'  => 'https://www.radiustheme.com/downloads/woocommerce-bundle/',
 			'start_date'     => '18 November 2024',
 			'end_date'       => '15 January 2025',
-			'notice_message' => 'Enjoy savings of up to 50% with our <b>ShopBuilder Elementor Addon</b>, <b>Variation Swatches</b>, <b>Variation Gallery</b>, and <b>Themes</b>!',
+			'notice_message' => 'Enjoy savings of <strong style="font-size: 20px; color:red;"> up to 50% </strong> with our <b>ShopBuilder Elementor Addon</b>, <b>Variation Swatches</b>, <b>Variation Gallery</b>, and <b>Themes</b>!',
 		];
 	}
 }

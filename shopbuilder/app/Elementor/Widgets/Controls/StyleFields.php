@@ -2142,7 +2142,10 @@ class StyleFields {
 		$css_selectors = $obj->selectors['slider_buttons'];
 		$title         = esc_html__( 'Slider Buttons', 'shopbuilder' );
 		$selectors     = [
-			'arrow_size'          => [ $css_selectors['arrow_size'] => 'font-size: {{SIZE}}{{UNIT}};' ],
+			'arrow_size'          => [
+				$css_selectors['arrow_size']['icon'] => 'font-size: {{SIZE}}{{UNIT}};',
+				$css_selectors['arrow_size']['svg']  => 'width: {{SIZE}}{{UNIT}};',
+			],
 			'arrow_width'         => [ $css_selectors['arrow_width'] => 'width: {{SIZE}}{{UNIT}};' ],
 			'arrow_height'        => [ $css_selectors['arrow_height'] => 'height: {{SIZE}}{{UNIT}};' ],
 			'arrow_line_height'   => [ $css_selectors['arrow_line_height'] => 'line-height: {{SIZE}}{{UNIT}};' ],

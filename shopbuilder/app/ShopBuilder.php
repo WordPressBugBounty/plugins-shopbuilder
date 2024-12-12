@@ -7,13 +7,13 @@
 
 namespace RadiusTheme\SB;
 
-use RadiusTheme\SB\Controllers\CacheController;
 use RadiusTheme\SB\Helpers\Migration;
 use RadiusTheme\SB\Helpers\Installation;
 use RadiusTheme\SB\Modules\ModuleManager;
 use RadiusTheme\SB\Traits\SingletonTrait;
 use RadiusTheme\SB\Controllers\Shortcodes;
 use RadiusTheme\SB\Controllers\Dependencies;
+use RadiusTheme\SB\Controllers\CacheController;
 use RadiusTheme\SB\Controllers\Admin\AdminInit;
 use RadiusTheme\SB\Controllers\AssetsController;
 use RadiusTheme\SB\Controllers\BuilderController;
@@ -22,6 +22,7 @@ use RadiusTheme\SB\Controllers\Hooks\FilterHooks;
 use RadiusTheme\SB\Controllers\Hooks\ActionHooks;
 use RadiusTheme\SB\Controllers\Frontend\Ajax\AddToCart;
 use RadiusTheme\SB\Controllers\Frontend\Ajax\AjaxLogin;
+use RadiusTheme\SB\Controllers\Frontend\Ajax\UpdateCheckoutSection;
 
 // Do not allow directly accessing this file.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -175,6 +176,7 @@ final class ShopBuilder {
 		// Ajax.
 		AddToCart::instance();
 		AjaxLogin::instance();
+		UpdateCheckoutSection::instance();
 
 		BuilderController::instance();
 		FilterHooks::init_hooks();
@@ -210,4 +212,3 @@ final class ShopBuilder {
 		return 'https://shopbuilderwp.com/';
 	}
 }
-

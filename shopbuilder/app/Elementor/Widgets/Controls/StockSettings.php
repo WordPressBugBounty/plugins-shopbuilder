@@ -91,7 +91,8 @@ class StockSettings {
 					'unit' => 'px',
 				],
 				'selectors'  => [
-					$widget->selectors['icon_size'] => 'font-size: {{SIZE}}{{UNIT}}',
+					$widget->selectors['icon_size']['icon'] => 'font-size: {{SIZE}}{{UNIT}}',
+					$widget->selectors['icon_size']['svg'] => 'width: {{SIZE}}{{UNIT}}',
 				],
 			],
 			'icon_gap'                  => [

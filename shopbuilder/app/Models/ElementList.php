@@ -1178,7 +1178,7 @@ class ElementList extends ListModel {
 	 */
 	protected function thankyou_page_widget_list() {
 		return [
-			'order_received_text'    => apply_filters(
+			'order_received_text'      => apply_filters(
 				'rtsb/elements/order_received_text/options',
 				[
 					'id'            => 'order_received_text',
@@ -1190,7 +1190,7 @@ class ElementList extends ListModel {
 					'fields'        => [],
 				]
 			),
-			'order_details_summary'  => apply_filters(
+			'order_details_summary'    => apply_filters(
 				'rtsb/elements/order_details_summary/options',
 				[
 					'id'            => 'order_details_summary',
@@ -1202,7 +1202,7 @@ class ElementList extends ListModel {
 					'fields'        => [],
 				]
 			),
-			'order_details_table'    => apply_filters(
+			'order_details_table'      => apply_filters(
 				'rtsb/elements/order_details_table/options',
 				[
 					'id'            => 'order_details_table',
@@ -1214,7 +1214,7 @@ class ElementList extends ListModel {
 					'fields'        => [],
 				]
 			),
-			'downloadable_products'  => apply_filters(
+			'downloadable_products'    => apply_filters(
 				'rtsb/elements/downloadable_products/options',
 				[
 					'id'            => 'downloadable_products',
@@ -1226,7 +1226,7 @@ class ElementList extends ListModel {
 					'fields'        => [],
 				]
 			),
-			'order_billing_address'  => apply_filters(
+			'order_billing_address'    => apply_filters(
 				'rtsb/elements/order_billing_address/options',
 				[
 					'id'            => 'order_billing_address',
@@ -1238,11 +1238,23 @@ class ElementList extends ListModel {
 					'fields'        => [],
 				]
 			),
-			'order_shipping_address' => apply_filters(
+			'order_shipping_address'   => apply_filters(
 				'rtsb/elements/order_shipping_address/options',
 				[
 					'id'            => 'order_shipping_address',
 					'title'         => esc_html__( 'Order Shipping Address', 'shopbuilder' ),
+					'category'      => 'thank_you',
+					'is_front_page' => 'thank_you',
+					'active'        => 'on',
+					'package'       => $this->pro_package(),
+					'fields'        => [],
+				]
+			),
+			'order_custom_fields_data' => apply_filters(
+				'rtsb/elements/order_custom_fields_data/options',
+				[
+					'id'            => 'order_custom_fields_data',
+					'title'         => esc_html__( 'Checkout Form Custom Fields Data', 'shopbuilder' ),
 					'category'      => 'thank_you',
 					'is_front_page' => 'thank_you',
 					'active'        => 'on',

@@ -12,9 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 ?>
 <div class="rtsb-checkout-payment">
 	<?php
-	if ( ! empty( WC()->cart ) && ! WC()->cart->is_empty() ) {
 		woocommerce_checkout_payment();
-	}
 	?>
 </div>
 

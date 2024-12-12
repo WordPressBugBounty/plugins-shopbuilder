@@ -81,7 +81,7 @@ class Notice extends ElementorWidgetBase {
 		$this->apply_the_hooks();
 		$this->theme_support();
 
-		if ( $this->is_builder_mode() ) {
+		if ( $this->is_edit_mode() ) {
 			$all_notices = [
 				'success' => [
 					[

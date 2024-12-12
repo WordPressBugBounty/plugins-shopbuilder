@@ -29,9 +29,9 @@ $wrapper_classes = ! empty( $controllers['table_horizontal_scroll_on_mobile'] ) 
 	?>
 
 	<div id="order_review" class="woocommerce-checkout-review-order<?php echo esc_attr( $addons ? ' has-product-addons' : '' ); ?>">
-		<?php woocommerce_order_review(); ?>
+		<?php do_action( 'woocommerce_checkout_order_review' ); ?>
 	</div>
 
-	<?php // do_action( 'woocommerce_checkout_after_order_review' ); ?>
+	<?php do_action( 'woocommerce_checkout_after_order_review' ); ?>
 
 </div>

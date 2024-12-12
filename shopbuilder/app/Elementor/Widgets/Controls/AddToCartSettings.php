@@ -371,12 +371,16 @@ class AddToCartSettings {
 						'max' => 200,
 					],
 				],
+				'default'   => [
+					'unit' => 'px',
+					'size' => '50',
+				],
 				'selectors' => [
 					self::$selectors['variation_height'] => 'height: {{SIZE}}{{UNIT}};',
 				],
 			],
 			'variation_width'            => [
-				'label'      => esc_html__( 'Width', 'shopbuilder' ),
+				'label'      => esc_html__( 'Min Width', 'shopbuilder' ),
 				'size_units' => [ 'px', '%' ],
 				'type'       => 'slider',
 				'range'      => [
@@ -390,7 +394,7 @@ class AddToCartSettings {
 					],
 				],
 				'selectors'  => [
-					self::$selectors['variation_width'] => 'width: {{SIZE}}{{UNIT}};',
+					self::$selectors['variation_width'] => 'min-width: {{SIZE}}{{UNIT}};',
 				],
 			],
 			'variation_border'           => [
@@ -408,10 +412,11 @@ class AddToCartSettings {
 				],
 			],
 			'variation_padding'          => [
-				'label'      => esc_html__( 'Padding', 'shopbuilder' ),
-				'type'       => 'dimensions',
-				'size_units' => [ 'px' ],
-				'default'    => [
+				'label'       => esc_html__( 'Padding ', 'shopbuilder' ),
+				'description' => esc_html__( 'Note: Only for Select And Button Field.', 'shopbuilder' ),
+				'type'        => 'dimensions',
+				'size_units'  => [ 'px' ],
+				'default'     => [
 					'top'      => '10',
 					'right'    => '10',
 					'bottom'   => '10',
@@ -419,8 +424,8 @@ class AddToCartSettings {
 					'unit'     => 'px',
 					'isLinked' => true,
 				],
-				'separator'  => 'default',
-				'selectors'  => [
+				'separator'   => 'default',
+				'selectors'   => [
 					self::$selectors['variation_padding'] => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			],

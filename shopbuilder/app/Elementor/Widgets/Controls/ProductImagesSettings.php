@@ -442,7 +442,8 @@ class ProductImagesSettings {
 					],
 				],
 				'selectors'  => [
-					self::$selectors['zoom_icon_size'] => 'font-size: {{SIZE}}{{UNIT}};',
+					self::$selectors['zoom_icon_size']['icon'] => 'font-size: {{SIZE}}{{UNIT}};',
+					self::$selectors['zoom_icon_size']['svg'] => 'width: {{SIZE}}{{UNIT}};',
 				],
 				'separator'  => 'before',
 			],

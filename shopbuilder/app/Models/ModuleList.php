@@ -12,6 +12,7 @@ use RadiusTheme\SB\Models\Base\ListModel;
 use RadiusTheme\SB\Modules\Badges\Badges;
 use RadiusTheme\SB\Modules\CheckoutEditor\CheckoutEditorInit;
 use RadiusTheme\SB\Modules\CheckoutEditor\CheckoutFns;
+use RadiusTheme\SB\Modules\ShopifyCheckout\ShopifyCheckout;
 use RadiusTheme\SB\Traits\SingletonTrait;
 use RadiusTheme\SB\Modules\Compare\Compare;
 use RadiusTheme\SB\Modules\WishList\Wishlist;
@@ -740,17 +741,17 @@ class ModuleList extends ListModel {
 								'html'       => sprintf(
 								/* translators: 1: The shortcode.*/
 									esc_html__( 'Choose where to show button on the product page. Copy this shortcode %1$s and paste it where you want to show the button.', 'shopbuilder' ),
-									'<code>[rtsb_wishlist_button]</code> '
+									'<code>[rtsb_compare_button]</code> '
 								),
 								'dependency' => [
 									'rules' => [
 										[
-											'item'     => 'modules.wishlist.show_btn_product_page',
+											'item'     => 'modules.compare.show_btn_product_page',
 											'value'    => 'on',
 											'operator' => '==',
 										],
 										[
-											'item'     => 'modules.wishlist.product_btn_position',
+											'item'     => 'modules.compare.product_btn_position',
 											'value'    => 'shortcode',
 											'operator' => '==',
 										],
@@ -1303,11 +1304,1457 @@ class ModuleList extends ListModel {
 					'fields'       => Fns::pro_version_notice( '1.6.0' ),
 				]
 			),
+			'shopify_checkout'       => apply_filters(
+				'rtsb/module/shopify_checkout/options',
+				[
+					'id'           => 'shopify_checkout',
+					'active'       => '',
+					'title'        => esc_html__( 'Shopify Checkout', 'shopbuilder' ),
+					'base_class'   => ShopifyCheckout::class,
+					'active_field' => [
+						'label' => esc_html__( 'Enable Shopify Checkout?', 'shopbuilder' ),
+						'help'  => esc_html__( 'Switch on to enable Shopify Checkout module.', 'shopbuilder' ),
+					],
+					'fields'       => $this->shopify_checkout_options(),
+					'tabs'         => [
+						'general'    => [
+							'title' => esc_html__( 'General', 'shopbuilder' ),
+						],
+						'multi-step' => [
+							'title' => esc_html__( 'Multi-Step', 'shopbuilder' ),
+						],
+						'styles'     => [
+							'title' => esc_html__( 'General Styles', 'shopbuilder' ),
+						],
+						'btn-styles' => [
+							'title' => esc_html__( 'Button Styles', 'shopbuilder' ),
+						],
+					],
+				]
+			),
 		];
 		return apply_filters( 'rtsb/core/modules/raw_list', $list );
 	}
 
+	/**
+	 * Get All Menu
+	 */
+	public function get_all_menu() {
+		$manus     = [
+			'none' => esc_html__( 'None', 'shopbuilder' ),
+		];
+		$nav_menus = wp_get_nav_menus();
+		if ( empty( $nav_menus ) ) {
+			return $manus;
+		}
+		foreach ( $nav_menus as $menu ) {
+			 $manus[ $menu->slug ] = $menu->name;
+		}
+		return $manus;
+	}
+	/**
+	 * Sticky add-to-cart module options.
+	 *
+	 * @return array
+	 */
+	public function shopify_checkout_options() {
+		$notice = [];
+		if ( defined( 'RTSBPRO_VERSION' ) && version_compare( RTSBPRO_VERSION, '1.8.0', '<' ) ) {
+			$notice = Fns::pro_version_notice( '1.8.0', 'general', 'ShopBuilder Pro', false );
+		}
+		$fields = $notice + [
+			'general_settings'                      => [
+				'id'    => 'general_settings',
+				'type'  => 'title',
+				'label' => esc_html__( 'Settings', 'shopbuilder' ),
+				'tab'   => 'general',
+			],
+			'shopify_page_logo'                     => [
+				'id'    => 'shopify_page_logo',
+				'type'  => 'fileupload',
+				'label' => esc_html__( 'Upload Checkout Page Logo', 'shopbuilder' ),
+				'help'  => esc_html__( 'Please upload your custom logo to display on the checkout page.', 'shopbuilder' ),
+				'tab'   => 'general',
+			],
+			'shopify_logo_height'                   => [
+				'id'    => 'shopify_logo_height',
+				'label' => esc_html__( 'Logo Height (px)', 'shopbuilder' ),
+				'help'  => esc_html__( 'Specify the height of the checkout page logo in px.', 'shopbuilder' ),
+				'type'  => 'slider',
+				'min'   => 10,
+				'max'   => 200,
+				'unit'  => 'px',
+				'value' => 40,
+				'tab'   => 'general',
+			],
+			'cart_icon_source'                      => [
+				'id'      => 'cart_icon_source',
+				'label'   => esc_html__( 'Cart Icon', 'shopbuilder' ),
+				'help'    => sprintf(
+				// translators: %s for pro message.
+					__( 'Choose a cart icon to display in your checkout\'s header. <br />%s', 'shopbuilder' ),
+					! rtsb()->has_pro()
+						? sprintf(
+							'<a target="_blank" href="%s">%s </a> %s ',
+							esc_url( rtsb()->pro_version_link() ),
+							esc_html__( 'Upgrade to PRO', 'shopbuilder' ),
+							esc_html__( 'to unlock custom image icon.', 'shopbuilder' )
+						)
+						: ''
+				),
+				'type'    => 'select',
+				'value'   => 'none',
+				'isPro'   => ! rtsb()->has_pro(),
+				'options' => [
+					'none'        => esc_html__( 'None', 'shopbuilder' ),
+					'select_icon' => esc_html__( 'Select Icon', 'shopbuilder' ),
+					'upload_icon' => esc_html__( 'Upload Icon', 'shopbuilder' ),
+				],
+				'tab'     => 'general',
+			],
+			'cart_icon'                             => [
+				'id'         => 'cart_icon',
+				'label'      => esc_html__( 'Select Cart Icon', 'shopbuilder' ),
+				'help'       => esc_html__( 'Please choose the icon.', 'shopbuilder' ),
+				'type'       => 'icon_select',
+				'searchable' => true,
+				'options'    => Fns::get_icons(),
+				'value'      => 'cart-2',
+				'tab'        => 'general',
+				'dependency' => [
+					'rules' => [
+						[
+							'item'     => 'modules.shopify_checkout.cart_icon_source',
+							'value'    => 'select_icon',
+							'operator' => '==',
+						],
+					],
+				],
+			],
 
+			'cart_image_icon'                       => [
+				'id'         => 'cart_image_icon',
+				'type'       => 'fileupload',
+				'label'      => esc_html__( 'Upload Custom Icon', 'shopbuilder' ),
+				'help'       => esc_html__( 'Please upload your custom image icon.', 'shopbuilder' ),
+				'tab'        => 'general',
+				'dependency' => [
+					'rules' => [
+						[
+							'item'     => 'modules.shopify_checkout.cart_icon_source',
+							'value'    => 'upload_icon',
+							'operator' => '==',
+						],
+					],
+				],
+			],
+
+			'email_field_title'                     => [
+				'id'    => 'email_field_title',
+				'type'  => 'text',
+				'label' => esc_html__( 'Email Field Section Title', 'shopbuilder' ),
+				'help'  => esc_html__( 'Enter the custom title to be displayed above the email field section.', 'shopbuilder' ),
+				'value' => esc_html__( 'Contact', 'shopbuilder' ),
+				'tab'   => 'general',
+			],
+
+			'billing_address_field_title'           => [
+				'id'    => 'billing_address_field_title',
+				'type'  => 'text',
+				'label' => esc_html__( 'Billing Fields Section Title', 'shopbuilder' ),
+				'help'  => esc_html__( 'Enter the custom title to be displayed above the billing fields section', 'shopbuilder' ),
+				'value' => esc_html__( 'Billing address', 'shopbuilder' ),
+				'tab'   => 'general',
+			],
+
+			'enable_multi_step'                     => [
+				'id'    => 'enable_multi_step',
+				'type'  => 'switch',
+				'isPro' => ! rtsb()->has_pro(),
+				'label' => esc_html__( 'Multi-Step Checkout', 'shopbuilder' ),
+				'help'  => esc_html__( 'Enable multi-step checkout to simplify the purchasing process.', 'shopbuilder' ),
+				'tab'   => 'multi-step',
+			],
+			'step_menu_settings'                    => [
+				'id'         => 'step_menu_settings',
+				'type'       => 'title',
+				'label'      => esc_html__( 'Step Settings ', 'shopbuilder' ),
+				'tab'        => 'multi-step',
+				'dependency' => [
+					'rules' => [
+						[
+							'item'     => 'modules.shopify_checkout.enable_multi_step',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+					],
+				],
+			],
+
+			'show_step_menu'                        => [
+				'id'         => 'show_step_menu',
+				'type'       => 'switch',
+				'isPro'      => ! rtsb()->has_pro(),
+				'label'      => esc_html__( 'Show Step Menu', 'shopbuilder' ),
+				'help'       => esc_html__( 'Enable to display the step navigation menu during checkout.', 'shopbuilder' ),
+				'tab'        => 'multi-step',
+				'value'      => 'on',
+				'dependency' => [
+					'rules' => [
+						[
+							'item'     => 'modules.shopify_checkout.enable_multi_step',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+					],
+				],
+			],
+			'show_cart_menu'                        => [
+				'id'         => 'show_cart_menu',
+				'type'       => 'switch',
+				'isPro'      => ! rtsb()->has_pro(),
+				'label'      => esc_html__( 'Show Cart Menu', 'shopbuilder' ),
+				'help'       => esc_html__( 'Enable this option to display the cart item in the step menu.', 'shopbuilder' ),
+				'tab'        => 'multi-step',
+				'dependency' => [
+					'rules' => [
+						[
+							'item'     => 'modules.shopify_checkout.enable_multi_step',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+						[
+							'item'     => 'modules.shopify_checkout.show_step_menu',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+					],
+				],
+			],
+			'cart_text'                             => [
+				'id'         => 'cart_text',
+				'type'       => 'text',
+				'isPro'      => ! rtsb()->has_pro(),
+				'label'      => esc_html__( 'Cart Step Title', 'shopbuilder' ),
+				'help'       => esc_html__( 'Enter the cart step menu title.', 'shopbuilder' ),
+				'value'      => esc_html__( 'Cart', 'shopbuilder' ),
+				'tab'        => 'multi-step',
+				'dependency' => [
+					'rules' => [
+						[
+							'item'     => 'modules.shopify_checkout.show_step_menu',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+						[
+							'item'     => 'modules.shopify_checkout.show_cart_menu',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+					],
+				],
+			],
+
+			'billing_text'                          => [
+				'id'         => 'billing_text',
+				'type'       => 'text',
+				'isPro'      => ! rtsb()->has_pro(),
+				'label'      => esc_html__( 'Billing Step Title', 'shopbuilder' ),
+				'help'       => esc_html__( 'Enter the billing step menu title.', 'shopbuilder' ),
+				'value'      => esc_html__( 'Billing', 'shopbuilder' ),
+				'tab'        => 'multi-step',
+				'dependency' => [
+					'rules' => [
+						[
+							'item'     => 'modules.shopify_checkout.enable_multi_step',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+						[
+							'item'     => 'modules.shopify_checkout.show_step_menu',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+					],
+				],
+			],
+
+			'shipping_text'                         => [
+				'id'         => 'shipping_text',
+				'type'       => 'text',
+				'isPro'      => ! rtsb()->has_pro(),
+				'label'      => esc_html__( 'Shipping Step Title', 'shopbuilder' ),
+				'help'       => esc_html__( 'Enter the shipping step menu title.', 'shopbuilder' ),
+				'value'      => esc_html__( 'Shipping', 'shopbuilder' ),
+				'tab'        => 'multi-step',
+				'dependency' => [
+					'rules' => [
+						[
+							'item'     => 'modules.shopify_checkout.enable_multi_step',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+						[
+							'item'     => 'modules.shopify_checkout.show_step_menu',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+					],
+				],
+			],
+
+			'shipping_method_text'                  => [
+				'id'         => 'shipping_method_text',
+				'type'       => 'text',
+				'isPro'      => ! rtsb()->has_pro(),
+				'label'      => esc_html__( 'Shipping Method Step Title', 'shopbuilder' ),
+				'help'       => esc_html__( 'Enter the shipping method step menu title.', 'shopbuilder' ),
+				'value'      => esc_html__( 'Shipping Method ', 'shopbuilder' ),
+				'tab'        => 'multi-step',
+				'dependency' => [
+					'rules' => [
+						[
+							'item'     => 'modules.shopify_checkout.enable_multi_step',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+						[
+							'item'     => 'modules.shopify_checkout.show_step_menu',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+					],
+				],
+			],
+
+			'payment_text'                          => [
+				'id'         => 'payment_text',
+				'type'       => 'text',
+				'isPro'      => ! rtsb()->has_pro(),
+				'label'      => esc_html__( 'Payment Method Step Title', 'shopbuilder' ),
+				'help'       => esc_html__( 'Enter the payment method step menu title.', 'shopbuilder' ),
+				'value'      => esc_html__( 'Payment', 'shopbuilder' ),
+				'tab'        => 'multi-step',
+				'dependency' => [
+					'rules' => [
+						[
+							'item'     => 'modules.shopify_checkout.enable_multi_step',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+						[
+							'item'     => 'modules.shopify_checkout.show_step_menu',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+					],
+				],
+			],
+
+			'next_button_settings'                  => [
+				'id'         => 'next_button_settings',
+				'type'       => 'title',
+				'label'      => esc_html__( 'Button Settings', 'shopbuilder' ),
+				'tab'        => 'multi-step',
+				'dependency' => [
+					'rules' => [
+						[
+							'item'     => 'modules.shopify_checkout.enable_multi_step',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+					],
+				],
+			],
+
+			'shop_continue_btn'                     => [
+				'id'         => 'shop_continue_btn',
+				'type'       => 'switch',
+				'isPro'      => ! rtsb()->has_pro(),
+				'label'      => esc_html__( 'Show Next Button', 'shopbuilder' ),
+				'help'       => esc_html__( 'Enable this option to display the \'Next\' button.', 'shopbuilder' ),
+				'tab'        => 'multi-step',
+				'value'      => 'on',
+				'dependency' => [
+					'rules' => [
+						[
+							'item'     => 'modules.shopify_checkout.enable_multi_step',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+					],
+				],
+			],
+			'continue_btn_text_for_shipping'        => [
+				'id'         => 'continue_btn_text_for_shipping',
+				'type'       => 'text',
+				'isPro'      => ! rtsb()->has_pro(),
+				'label'      => esc_html__( 'Next Button Label for Shipping', 'shopbuilder' ),
+				'value'      => esc_html__( 'Next', 'shopbuilder' ),
+				'tab'        => 'multi-step',
+				'dependency' => [
+					'rules' => [
+						[
+							'item'     => 'modules.shopify_checkout.enable_multi_step',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+						[
+							'item'     => 'modules.shopify_checkout.shop_continue_btn',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+					],
+				],
+			],
+			'continue_btn_text_for_shipping_method' => [
+				'id'         => 'continue_btn_text_for_shipping_method',
+				'type'       => 'text',
+				'isPro'      => ! rtsb()->has_pro(),
+				'label'      => esc_html__( 'Next Button Label for Shipping Method', 'shopbuilder' ),
+				'value'      => esc_html__( 'Next', 'shopbuilder' ),
+				'tab'        => 'multi-step',
+				'dependency' => [
+					'rules' => [
+						[
+							'item'     => 'modules.shopify_checkout.enable_multi_step',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+						[
+							'item'     => 'modules.shopify_checkout.shop_continue_btn',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+					],
+				],
+			],
+			'continue_btn_text_for_payment'         => [
+				'id'         => 'continue_btn_text_for_payment',
+				'type'       => 'text',
+				'label'      => esc_html__( 'Next Button Label for Payment', 'shopbuilder' ),
+				'value'      => esc_html__( 'Next', 'shopbuilder' ),
+				'tab'        => 'multi-step',
+				'dependency' => [
+					'rules' => [
+						[
+							'item'     => 'modules.shopify_checkout.enable_multi_step',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+						[
+							'item'     => 'modules.shopify_checkout.shop_continue_btn',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+					],
+				],
+			],
+			'shop_return_btn'                       => [
+				'id'         => 'shop_return_btn',
+				'type'       => 'switch',
+				'isPro'      => ! rtsb()->has_pro(),
+				'label'      => esc_html__( 'Show Back Button', 'shopbuilder' ),
+				'help'       => esc_html__( 'Enable this option to display the \'Back\' button.', 'shopbuilder' ),
+				'tab'        => 'multi-step',
+				'value'      => 'on',
+				'dependency' => [
+					'rules' => [
+						[
+							'item'     => 'modules.shopify_checkout.enable_multi_step',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+					],
+				],
+			],
+			'return_btn_text_for_billing'           => [
+				'id'         => 'return_btn_text_for_billing',
+				'type'       => 'text',
+				'isPro'      => ! rtsb()->has_pro(),
+				'label'      => esc_html__( 'Back Button Label for Billing', 'shopbuilder' ),
+				'value'      => esc_html__( 'Prev', 'shopbuilder' ),
+				'tab'        => 'multi-step',
+				'dependency' => [
+					'rules' => [
+						[
+							'item'     => 'modules.shopify_checkout.enable_multi_step',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+						[
+							'item'     => 'modules.shopify_checkout.shop_return_btn',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+					],
+				],
+			],
+
+			'return_btn_text_for_shipping'          => [
+				'id'         => 'return_btn_text_for_shipping',
+				'type'       => 'text',
+				'isPro'      => ! rtsb()->has_pro(),
+				'label'      => esc_html__( 'Back Button Label for Shipping', 'shopbuilder' ),
+				'value'      => esc_html__( 'Prev', 'shopbuilder' ),
+				'tab'        => 'multi-step',
+				'dependency' => [
+					'rules' => [
+						[
+							'item'     => 'modules.shopify_checkout.enable_multi_step',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+						[
+							'item'     => 'modules.shopify_checkout.shop_return_btn',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+					],
+				],
+			],
+
+			'return_btn_text_for_shipping_method'   => [
+				'id'         => 'return_btn_text_for_shipping_method',
+				'type'       => 'text',
+				'isPro'      => ! rtsb()->has_pro(),
+				'label'      => esc_html__( 'Back Button Label for Shipping Method', 'shopbuilder' ),
+				'value'      => esc_html__( 'Prev', 'shopbuilder' ),
+				'tab'        => 'multi-step',
+				'dependency' => [
+					'rules' => [
+						[
+							'item'     => 'modules.shopify_checkout.enable_multi_step',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+						[
+							'item'     => 'modules.shopify_checkout.shop_return_btn',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+					],
+				],
+			],
+
+			'order_review_settings'                 => [
+				'id'    => 'order_review_settings',
+				'type'  => 'title',
+				'label' => esc_html__( 'Order Reviews', 'shopbuilder' ),
+				'tab'   => 'general',
+			],
+			'order_review_item_link'                => [
+				'id'    => 'order_review_item_link',
+				'type'  => 'switch',
+				'label' => esc_html__( 'Link Product Titles', 'shopbuilder' ),
+				'help'  => esc_html__( 'Enable to make product titles clickable, linking to their product pages.', 'shopbuilder' ),
+				'value' => '',
+				'tab'   => 'general',
+			],
+			'extra_content'                         => [
+				'id'          => 'extra_content',
+				'label'       => esc_html__( 'Display Additional Data', 'shopbuilder' ),
+				'help'        => esc_html__( 'Enter custom text to display below the Order Review section. You can include custom HTML content. Shortcodes are also supported here.', 'shopbuilder' ),
+				'type'        => 'text_editor',
+				'isPro'       => ! rtsb()->has_pro(),
+				'sanitize_fn' => 'pass_all',
+				'tab'         => 'general',
+			],
+
+			'footer_settings'                       => [
+				'id'    => 'footer_settings',
+				'type'  => 'title',
+				'label' => esc_html__( 'Footer', 'shopbuilder' ),
+				'tab'   => 'general',
+			],
+
+			'footer_menu'                           => [
+				'id'      => 'footer_menu',
+				'label'   => esc_html__( 'Footer Menu', 'shopbuilder' ),
+				'help'    => esc_html__( 'Select a menu to display in the footer section of your checkout page.', 'shopbuilder' ),
+				'type'    => 'select',
+				'value'   => 'none',
+				'options' => $this->get_all_menu(),
+				'tab'     => 'general',
+			],
+
+			'footer_text'                           => [
+				'id'    => 'footer_text',
+				'type'  => 'text',
+				'label' => esc_html__( 'Footer Text', 'shopbuilder' ),
+				'help'  => esc_html__( 'Enter custom text to display in the footer section of your checkout page. You can use {year} placeholder to display the current year.', 'shopbuilder' ),
+				'value' => esc_html__( 'Copyright @{year} | All rights reserved', 'shopbuilder' ),
+				'tab'   => 'general',
+			],
+
+			// Place Order.
+			'login_button_styles_settings'          => [
+				'id'    => 'login_button_styles_settings',
+				'type'  => 'title',
+				'tab'   => 'btn-styles',
+				'label' => esc_html__( 'Login Button Style', 'shopbuilder' ),
+			],
+			'login_button_height'                   => [
+				'id'    => 'login_button_height',
+				'label' => esc_html__( 'Height (px)', 'shopbuilder' ),
+				'type'  => 'slider',
+				'min'   => 10,
+				'max'   => 100,
+				'unit'  => 'px',
+				'value' => 50,
+				'tab'   => 'btn-styles',
+			],
+			'login_button_width'                    => [
+				'id'    => 'login_button_width',
+				'label' => esc_html__( 'Width (px)', 'shopbuilder' ),
+				'type'  => 'slider',
+				'min'   => 10,
+				'max'   => 1000,
+				'unit'  => 'px',
+				'tab'   => 'btn-styles',
+			],
+			'login_button_font_size'                => [
+				'id'    => 'login_button_font_size',
+				'label' => esc_html__( 'Font Size (px)', 'shopbuilder' ),
+				'type'  => 'slider',
+				'min'   => 10,
+				'max'   => 50,
+				'unit'  => 'px',
+				'value' => 15,
+				'tab'   => 'btn-styles',
+			],
+			'login_button_bg_color'                 => [
+				'id'    => 'login_button_bg_color',
+				'label' => esc_html__( 'Background Color', 'shopbuilder' ),
+				'tab'   => 'btn-styles',
+				'type'  => 'color',
+			],
+			'login_button_hover_bg_color'           => [
+				'id'    => 'login_button_hover_bg_color',
+				'label' => esc_html__( 'Hover Background Color', 'shopbuilder' ),
+				'tab'   => 'btn-styles',
+				'type'  => 'color',
+			],
+			'login_button_color'                    => [
+				'id'    => 'login_button_color',
+				'label' => esc_html__( 'Color', 'shopbuilder' ),
+				'tab'   => 'btn-styles',
+				'type'  => 'color',
+			],
+			'login_button_hover_color'              => [
+				'id'    => 'login_button_hover_color',
+				'label' => esc_html__( 'Hover Color', 'shopbuilder' ),
+				'tab'   => 'btn-styles',
+				'type'  => 'color',
+			],
+			'login_button_border_color'             => [
+				'id'    => 'login_button_border_color',
+				'label' => esc_html__( 'Border Color', 'shopbuilder' ),
+				'tab'   => 'btn-styles',
+				'type'  => 'color',
+			],
+			'login_button_hover_border_color'       => [
+				'id'    => 'login_button_hover_border_color',
+				'label' => esc_html__( 'Hover Border Color', 'shopbuilder' ),
+				'tab'   => 'btn-styles',
+				'type'  => 'color',
+			],
+
+			// Place Order.
+			'place_order_button_styles_settings'    => [
+				'id'    => 'place_order_button_styles_settings',
+				'type'  => 'title',
+				'tab'   => 'btn-styles',
+				'label' => esc_html__( 'Place Order Button Style', 'shopbuilder' ),
+			],
+			'place_order_button_height'             => [
+				'id'    => 'place_order_button_height',
+				'label' => esc_html__( 'Height (px)', 'shopbuilder' ),
+				'type'  => 'slider',
+				'min'   => 10,
+				'max'   => 100,
+				'unit'  => 'px',
+				'value' => 50,
+				'tab'   => 'btn-styles',
+			],
+			'place_order_button_width'              => [
+				'id'    => 'place_order_button_width',
+				'label' => esc_html__( 'Width (px)', 'shopbuilder' ),
+				'type'  => 'slider',
+				'min'   => 10,
+				'max'   => 1000,
+				'unit'  => 'px',
+				'tab'   => 'btn-styles',
+			],
+			'place_order_button_font_size'          => [
+				'id'    => 'place_order_button_font_size',
+				'label' => esc_html__( 'Font Size (px)', 'shopbuilder' ),
+				'type'  => 'slider',
+				'min'   => 10,
+				'max'   => 50,
+				'unit'  => 'px',
+				'value' => 15,
+				'tab'   => 'btn-styles',
+			],
+			'place_order_button_bg_color'           => [
+				'id'    => 'place_order_button_bg_color',
+				'label' => esc_html__( 'Background Color', 'shopbuilder' ),
+				'tab'   => 'btn-styles',
+				'type'  => 'color',
+			],
+			'place_order_button_hover_bg_color'     => [
+				'id'    => 'place_order_button_hover_bg_color',
+				'label' => esc_html__( 'Hover Background Color', 'shopbuilder' ),
+				'tab'   => 'btn-styles',
+				'type'  => 'color',
+			],
+			'place_order_button_color'              => [
+				'id'    => 'place_order_button_color',
+				'label' => esc_html__( 'Color', 'shopbuilder' ),
+				'tab'   => 'btn-styles',
+				'type'  => 'color',
+			],
+			'place_order_button_hover_color'        => [
+				'id'    => 'place_order_button_hover_color',
+				'label' => esc_html__( 'Hover Color', 'shopbuilder' ),
+				'tab'   => 'btn-styles',
+				'type'  => 'color',
+			],
+			'place_order_button_border_color'       => [
+				'id'    => 'place_order_button_border_color',
+				'label' => esc_html__( 'Border Color', 'shopbuilder' ),
+				'tab'   => 'btn-styles',
+				'type'  => 'color',
+			],
+			'place_order_button_hover_border_color' => [
+				'id'    => 'place_order_button_hover_border_color',
+				'label' => esc_html__( 'Hover Border Color', 'shopbuilder' ),
+				'tab'   => 'btn-styles',
+				'type'  => 'color',
+			],
+
+			// Next Button.
+			'next_button_styles_settings'           => [
+				'id'         => 'next_button_styles_settings',
+				'type'       => 'title',
+				'tab'        => 'btn-styles',
+				'label'      => esc_html__( 'Next Button Style', 'shopbuilder' ),
+				'dependency' => [
+					'rules' => [
+						[
+							'item'     => 'modules.shopify_checkout.enable_multi_step',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+						[
+							'item'     => 'modules.shopify_checkout.shop_continue_btn',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+					],
+				],
+			],
+			'next_button_height'                    => [
+				'id'         => 'next_button_height',
+				'isPro'      => ! rtsb()->has_pro(),
+				'label'      => esc_html__( 'Height (px)', 'shopbuilder' ),
+				'type'       => 'slider',
+				'min'        => 10,
+				'max'        => 100,
+				'unit'       => 'px',
+				'value'      => 50,
+				'tab'        => 'btn-styles',
+				'dependency' => [
+					'rules' => [
+						[
+							'item'     => 'modules.shopify_checkout.enable_multi_step',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+						[
+							'item'     => 'modules.shopify_checkout.shop_continue_btn',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+					],
+				],
+			],
+			'next_button_width'                     => [
+				'id'         => 'next_button_width',
+				'label'      => esc_html__( 'Width (px)', 'shopbuilder' ),
+				'type'       => 'slider',
+				'min'        => 10,
+				'max'        => 1000,
+				'unit'       => 'px',
+				'tab'        => 'btn-styles',
+				'dependency' => [
+					'rules' => [
+						[
+							'item'     => 'modules.shopify_checkout.enable_multi_step',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+						[
+							'item'     => 'modules.shopify_checkout.shop_continue_btn',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+					],
+				],
+			],
+			'next_button_font_size'                 => [
+				'id'         => 'next_button_font_size',
+				'isPro'      => ! rtsb()->has_pro(),
+				'label'      => esc_html__( 'Font Size (px)', 'shopbuilder' ),
+				'type'       => 'slider',
+				'min'        => 10,
+				'max'        => 50,
+				'unit'       => 'px',
+				'value'      => 15,
+				'tab'        => 'btn-styles',
+				'dependency' => [
+					'rules' => [
+						[
+							'item'     => 'modules.shopify_checkout.enable_multi_step',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+						[
+							'item'     => 'modules.shopify_checkout.shop_continue_btn',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+					],
+				],
+			],
+			'next_button_bg_color'                  => [
+				'id'         => 'next_button_bg_color',
+				'isPro'      => ! rtsb()->has_pro(),
+				'label'      => esc_html__( 'Background Color', 'shopbuilder' ),
+				'tab'        => 'btn-styles',
+				'type'       => 'color',
+				'dependency' => [
+					'rules' => [
+						[
+							'item'     => 'modules.shopify_checkout.enable_multi_step',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+						[
+							'item'     => 'modules.shopify_checkout.shop_continue_btn',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+					],
+				],
+			],
+			'next_button_hover_bg_color'            => [
+				'id'         => 'next_button_hover_bg_color',
+				'isPro'      => ! rtsb()->has_pro(),
+				'label'      => esc_html__( 'Hover Background Color', 'shopbuilder' ),
+				'tab'        => 'btn-styles',
+				'type'       => 'color',
+				'dependency' => [
+					'rules' => [
+						[
+							'item'     => 'modules.shopify_checkout.enable_multi_step',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+						[
+							'item'     => 'modules.shopify_checkout.shop_continue_btn',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+					],
+				],
+			],
+			'next_button_color'                     => [
+				'id'         => 'next_button_color',
+				'isPro'      => ! rtsb()->has_pro(),
+				'label'      => esc_html__( 'Color', 'shopbuilder' ),
+				'tab'        => 'btn-styles',
+				'type'       => 'color',
+				'dependency' => [
+					'rules' => [
+						[
+							'item'     => 'modules.shopify_checkout.enable_multi_step',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+						[
+							'item'     => 'modules.shopify_checkout.shop_continue_btn',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+					],
+				],
+			],
+			'next_button_hover_color'               => [
+				'id'         => 'next_button_hover_color',
+				'isPro'      => ! rtsb()->has_pro(),
+				'label'      => esc_html__( 'Hover Color', 'shopbuilder' ),
+				'tab'        => 'btn-styles',
+				'type'       => 'color',
+				'dependency' => [
+					'rules' => [
+						[
+							'item'     => 'modules.shopify_checkout.enable_multi_step',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+						[
+							'item'     => 'modules.shopify_checkout.shop_continue_btn',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+					],
+				],
+			],
+			'next_button_border_color'              => [
+				'id'         => 'next_button_border_color',
+				'isPro'      => ! rtsb()->has_pro(),
+				'label'      => esc_html__( 'Border Color', 'shopbuilder' ),
+				'tab'        => 'btn-styles',
+				'type'       => 'color',
+				'dependency' => [
+					'rules' => [
+						[
+							'item'     => 'modules.shopify_checkout.enable_multi_step',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+						[
+							'item'     => 'modules.shopify_checkout.shop_continue_btn',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+					],
+				],
+			],
+			'next_button_hover_border_color'        => [
+				'id'         => 'next_button_hover_border_color',
+				'isPro'      => ! rtsb()->has_pro(),
+				'label'      => esc_html__( 'Hover Border Color', 'shopbuilder' ),
+				'tab'        => 'btn-styles',
+				'type'       => 'color',
+				'dependency' => [
+					'rules' => [
+						[
+							'item'     => 'modules.shopify_checkout.enable_multi_step',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+						[
+							'item'     => 'modules.shopify_checkout.shop_continue_btn',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+					],
+				],
+			],
+			'prev_button_styles_settings'           => [
+				'id'         => 'prev_button_styles_settings',
+				'type'       => 'title',
+				'tab'        => 'btn-styles',
+				'label'      => esc_html__( 'Prev Button Style', 'shopbuilder' ),
+				'dependency' => [
+					'rules' => [
+						[
+							'item'     => 'modules.shopify_checkout.enable_multi_step',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+						[
+							'item'     => 'modules.shopify_checkout.shop_return_btn',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+					],
+				],
+
+			],
+			'prev_button_height'                    => [
+				'id'         => 'prev_button_height',
+				'isPro'      => ! rtsb()->has_pro(),
+				'label'      => esc_html__( 'Height (px)', 'shopbuilder' ),
+				'type'       => 'slider',
+				'min'        => 10,
+				'max'        => 100,
+				'unit'       => 'px',
+				'value'      => 50,
+				'tab'        => 'btn-styles',
+				'dependency' => [
+					'rules' => [
+						[
+							'item'     => 'modules.shopify_checkout.enable_multi_step',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+						[
+							'item'     => 'modules.shopify_checkout.shop_return_btn',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+					],
+				],
+			],
+			'prev_button_width'                     => [
+				'id'         => 'prev_button_width',
+				'label'      => esc_html__( 'Width (px)', 'shopbuilder' ),
+				'type'       => 'slider',
+				'min'        => 10,
+				'max'        => 1000,
+				'unit'       => 'px',
+				'tab'        => 'btn-styles',
+				'dependency' => [
+					'rules' => [
+						[
+							'item'     => 'modules.shopify_checkout.enable_multi_step',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+						[
+							'item'     => 'modules.shopify_checkout.shop_return_btn',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+					],
+				],
+			],
+			'prev_button_font_size'                 => [
+				'id'         => 'prev_button_font_size',
+				'isPro'      => ! rtsb()->has_pro(),
+				'label'      => esc_html__( 'Font Size (px)', 'shopbuilder' ),
+				'type'       => 'slider',
+				'min'        => 10,
+				'max'        => 50,
+				'unit'       => 'px',
+				'value'      => 15,
+				'tab'        => 'btn-styles',
+				'dependency' => [
+					'rules' => [
+						[
+							'item'     => 'modules.shopify_checkout.enable_multi_step',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+						[
+							'item'     => 'modules.shopify_checkout.shop_return_btn',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+					],
+				],
+			],
+			'prev_button_bg_color'                  => [
+				'id'         => 'prev_button_bg_color',
+				'isPro'      => ! rtsb()->has_pro(),
+				'label'      => esc_html__( 'Background Color', 'shopbuilder' ),
+				'tab'        => 'btn-styles',
+				'type'       => 'color',
+				'dependency' => [
+					'rules' => [
+						[
+							'item'     => 'modules.shopify_checkout.enable_multi_step',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+						[
+							'item'     => 'modules.shopify_checkout.shop_return_btn',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+					],
+				],
+			],
+			'prev_button_hover_bg_color'            => [
+				'id'         => 'prev_button_hover_bg_color',
+				'label'      => esc_html__( 'Hover Background Color', 'shopbuilder' ),
+				'isPro'      => ! rtsb()->has_pro(),
+				'tab'        => 'btn-styles',
+				'type'       => 'color',
+				'dependency' => [
+					'rules' => [
+						[
+							'item'     => 'modules.shopify_checkout.enable_multi_step',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+						[
+							'item'     => 'modules.shopify_checkout.shop_return_btn',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+					],
+				],
+			],
+			'prev_button_color'                     => [
+				'id'         => 'prev_button_color',
+				'label'      => esc_html__( 'Color', 'shopbuilder' ),
+				'isPro'      => ! rtsb()->has_pro(),
+				'tab'        => 'btn-styles',
+				'type'       => 'color',
+				'dependency' => [
+					'rules' => [
+						[
+							'item'     => 'modules.shopify_checkout.enable_multi_step',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+						[
+							'item'     => 'modules.shopify_checkout.shop_return_btn',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+					],
+				],
+			],
+			'prev_button_hover_color'               => [
+				'id'         => 'prev_button_hover_color',
+				'label'      => esc_html__( 'Hover Color', 'shopbuilder' ),
+				'isPro'      => ! rtsb()->has_pro(),
+				'tab'        => 'btn-styles',
+				'type'       => 'color',
+				'dependency' => [
+					'rules' => [
+						[
+							'item'     => 'modules.shopify_checkout.enable_multi_step',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+						[
+							'item'     => 'modules.shopify_checkout.shop_return_btn',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+					],
+				],
+			],
+			'prev_button_border_color'              => [
+				'id'         => 'prev_button_border_color',
+				'label'      => esc_html__( 'Border Color', 'shopbuilder' ),
+				'isPro'      => ! rtsb()->has_pro(),
+				'tab'        => 'btn-styles',
+				'type'       => 'color',
+				'dependency' => [
+					'rules' => [
+						[
+							'item'     => 'modules.shopify_checkout.enable_multi_step',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+						[
+							'item'     => 'modules.shopify_checkout.shop_return_btn',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+					],
+				],
+			],
+			'prev_button_hover_border_color'        => [
+				'id'         => 'prev_button_hover_border_color',
+				'label'      => esc_html__( 'Hover Border Color', 'shopbuilder' ),
+				'isPro'      => ! rtsb()->has_pro(),
+				'tab'        => 'btn-styles',
+				'type'       => 'color',
+				'dependency' => [
+					'rules' => [
+						[
+							'item'     => 'modules.shopify_checkout.enable_multi_step',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+						[
+							'item'     => 'modules.shopify_checkout.shop_return_btn',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+					],
+				],
+			],
+			'coupon_button_styles_settings'         => [
+				'id'    => 'coupon_button_styles_settings',
+				'type'  => 'title',
+				'tab'   => 'btn-styles',
+				'label' => esc_html__( 'Apply Coupon Button Style', 'shopbuilder' ),
+			],
+			'coupon_height'                         => [
+				'id'    => 'coupon_height',
+				'label' => esc_html__( 'Coupon Field And Button Height (px)', 'shopbuilder' ),
+				'type'  => 'slider',
+				'min'   => 10,
+				'max'   => 100,
+				'unit'  => 'px',
+				'value' => 50,
+				'tab'   => 'btn-styles',
+			],
+			'coupon_button_font_size'               => [
+				'id'    => 'coupon_button_font_size',
+				'label' => esc_html__( 'Font Size (px)', 'shopbuilder' ),
+				'type'  => 'slider',
+				'min'   => 10,
+				'max'   => 50,
+				'unit'  => 'px',
+				'value' => 15,
+				'tab'   => 'btn-styles',
+			],
+			'coupon_button_bg_color'                => [
+				'id'    => 'coupon_button_bg_color',
+				'label' => esc_html__( 'Background Color', 'shopbuilder' ),
+				'tab'   => 'btn-styles',
+				'type'  => 'color',
+			],
+			'coupon_button_hover_bg_color'          => [
+				'id'    => 'coupon_button_hover_bg_color',
+				'label' => esc_html__( 'Hover Background Color', 'shopbuilder' ),
+				'tab'   => 'btn-styles',
+				'type'  => 'color',
+			],
+			'coupon_button_color'                   => [
+				'id'    => 'coupon_button_color',
+				'label' => esc_html__( 'Color', 'shopbuilder' ),
+				'tab'   => 'btn-styles',
+				'type'  => 'color',
+			],
+			'coupon_button_hover_color'             => [
+				'id'    => 'coupon_button_hover_color',
+				'label' => esc_html__( 'Hover Color', 'shopbuilder' ),
+				'tab'   => 'btn-styles',
+				'type'  => 'color',
+			],
+			'coupon_button_border_color'            => [
+				'id'    => 'coupon_button_border_color',
+				'label' => esc_html__( 'Border Color', 'shopbuilder' ),
+				'tab'   => 'btn-styles',
+				'type'  => 'color',
+			],
+			'coupon_button_hover_border_color'      => [
+				'id'    => 'coupon_button_hover_border_color',
+				'label' => esc_html__( 'Hover Border Color', 'shopbuilder' ),
+				'tab'   => 'btn-styles',
+				'type'  => 'color',
+			],
+
+			'header_cart_icon_styles'               => [
+				'id'         => 'header_cart_icon_styles',
+				'type'       => 'title',
+				'tab'        => 'styles',
+				'label'      => esc_html__( 'Header Cart Icon Style', 'shopbuilder' ),
+				'dependency' => [
+					'rules' => [
+						[
+							'item'     => 'modules.shopify_checkout.cart_icon_source',
+							'value'    => 'none',
+							'operator' => '!=',
+						],
+					],
+				],
+			],
+
+			'shopify_cart_icon_height'              => [
+				'id'         => 'shopify_cart_icon_height',
+				'label'      => esc_html__( 'Cart Icon Height (px)', 'shopbuilder' ),
+				'type'       => 'slider',
+				'min'        => 10,
+				'max'        => 200,
+				'unit'       => 'px',
+				'value'      => 40,
+				'tab'        => 'styles',
+				'dependency' => [
+					'rules' => [
+						[
+							'item'     => 'modules.shopify_checkout.cart_icon_source',
+							'value'    => 'upload_icon',
+							'operator' => '==',
+						],
+					],
+				],
+			],
+
+			'header_cart_icon_color'                => [
+				'id'         => 'step_menu_color',
+				'label'      => esc_html__( 'Color', 'shopbuilder' ),
+				'tab'        => 'styles',
+				'type'       => 'color',
+				'dependency' => [
+					'rules' => [
+						[
+							'item'     => 'modules.shopify_checkout.cart_icon_source',
+							'value'    => 'select_icon',
+							'operator' => '==',
+						],
+					],
+				],
+			],
+			'header_cart_icon_hover_color'          => [
+				'id'         => 'header_cart_icon_hover_color',
+				'label'      => esc_html__( 'Hover Color', 'shopbuilder' ),
+				'tab'        => 'styles',
+				'type'       => 'color',
+				'dependency' => [
+					'rules' => [
+						[
+							'item'     => 'modules.shopify_checkout.cart_icon_source',
+							'value'    => 'select_icon',
+							'operator' => '==',
+						],
+					],
+				],
+			],
+			'header_cart_icon_font_size'            => [
+				'id'         => 'header_cart_icon_font_size',
+				'label'      => esc_html__( 'Font Size (px)', 'shopbuilder' ),
+				'type'       => 'slider',
+				'min'        => 10,
+				'max'        => 50,
+				'unit'       => 'px',
+				'value'      => 15,
+				'tab'        => 'styles',
+				'dependency' => [
+					'rules' => [
+						[
+							'item'     => 'modules.shopify_checkout.cart_icon_source',
+							'value'    => 'select_icon',
+							'operator' => '==',
+						],
+					],
+				],
+			],
+			'footer_menu_styles_settings'           => [
+				'id'    => 'footer_menu_styles_settings',
+				'type'  => 'title',
+				'tab'   => 'styles',
+				'label' => esc_html__( 'Footer Style', 'shopbuilder' ),
+			],
+			'footer_menu_color'                     => [
+				'id'    => 'footer_menu_color',
+				'label' => esc_html__( 'Menu Color', 'shopbuilder' ),
+				'tab'   => 'styles',
+				'type'  => 'color',
+			],
+			'footer_menu_hover_color'               => [
+				'id'    => 'footer_menu_hover_color',
+				'label' => esc_html__( 'Menu Hover Color', 'shopbuilder' ),
+				'tab'   => 'styles',
+				'type'  => 'color',
+			],
+			'footer_menu_font_size'                 => [
+				'id'    => 'footer_menu_font_size',
+				'label' => esc_html__( 'Menu Font Size (px)', 'shopbuilder' ),
+				'type'  => 'slider',
+				'min'   => 10,
+				'max'   => 50,
+				'unit'  => 'px',
+				'value' => 15,
+				'tab'   => 'styles',
+			],
+			'footer_text_size'                      => [
+				'id'    => 'footer_text_size',
+				'label' => esc_html__( 'Footer Text Font Size (px)', 'shopbuilder' ),
+				'type'  => 'slider',
+				'min'   => 10,
+				'max'   => 50,
+				'unit'  => 'px',
+				'value' => 15,
+				'tab'   => 'styles',
+			],
+			'footer_text_color'                     => [
+				'id'    => 'footer_text_color',
+				'label' => esc_html__( 'Footer Text Color', 'shopbuilder' ),
+				'tab'   => 'styles',
+				'type'  => 'color',
+			],
+			'step_menu_styles_settings'             => [
+				'id'         => 'step_menu_styles_settings',
+				'type'       => 'title',
+				'tab'        => 'styles',
+				'label'      => esc_html__( 'Step Menu Style', 'shopbuilder' ),
+				'dependency' => [
+					'rules' => [
+						[
+							'item'     => 'modules.shopify_checkout.enable_multi_step',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+						[
+							'item'     => 'modules.shopify_checkout.show_step_menu',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+					],
+				],
+			],
+			'step_menu_color'                       => [
+				'id'         => 'step_menu_color',
+				'label'      => esc_html__( 'Color', 'shopbuilder' ),
+				'isPro'      => ! rtsb()->has_pro(),
+				'tab'        => 'styles',
+				'type'       => 'color',
+				'dependency' => [
+					'rules' => [
+						[
+							'item'     => 'modules.shopify_checkout.enable_multi_step',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+						[
+							'item'     => 'modules.shopify_checkout.show_step_menu',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+					],
+				],
+			],
+			'step_menu_hover_color'                 => [
+				'id'         => 'step_menu_hover_color',
+				'label'      => esc_html__( 'Hover Color', 'shopbuilder' ),
+				'isPro'      => ! rtsb()->has_pro(),
+				'tab'        => 'styles',
+				'type'       => 'color',
+				'dependency' => [
+					'rules' => [
+						[
+							'item'     => 'modules.shopify_checkout.enable_multi_step',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+						[
+							'item'     => 'modules.shopify_checkout.show_step_menu',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+					],
+				],
+			],
+			'step_menu_font_size'                   => [
+				'id'         => 'step_menu_font_size',
+				'label'      => esc_html__( 'Font Size (px)', 'shopbuilder' ),
+				'isPro'      => ! rtsb()->has_pro(),
+				'type'       => 'slider',
+				'min'        => 10,
+				'max'        => 50,
+				'unit'       => 'px',
+				'value'      => 15,
+				'tab'        => 'styles',
+				'dependency' => [
+					'rules' => [
+						[
+							'item'     => 'modules.shopify_checkout.enable_multi_step',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+						[
+							'item'     => 'modules.shopify_checkout.show_step_menu',
+							'value'    => 'on',
+							'operator' => '==',
+						],
+					],
+				],
+			],
+		];
+		return $fields;
+	}
 	/**
 	 * @return array
 	 */

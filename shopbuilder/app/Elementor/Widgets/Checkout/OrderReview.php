@@ -40,6 +40,22 @@ class OrderReview extends ElementorWidgetBase {
 	public function widget_fields() {
 		return OrderReviewSettings::widget_fields( $this );
 	}
+
+	/**
+	 * Widget Field.
+	 *
+	 * @return void
+	 */
+	public function apply_hooks() {
+		// Remove Payment Button.
+		remove_action( 'woocommerce_checkout_order_review', 'woocommerce_checkout_payment' );
+		remove_action( 'woocommerce_checkout_order_review', 'woocommerce_checkout_payment', 20 );
+		// Germanized for WooCommerce.
+		if ( function_exists( 'woocommerce_gzd_template_order_submit' ) ) {
+			remove_action( 'woocommerce_checkout_order_review', 'woocommerce_gzd_template_order_submit', 21 );
+		}
+	}
+
 	/**
 	 * Set Widget Keyword.
 	 *
@@ -58,7 +74,7 @@ class OrderReview extends ElementorWidgetBase {
 		if ( $this->has_checkout_restriction() ) {
 			return;
 		}
-
+		$this->apply_hooks();
 		$this->theme_support();
 
 		$data = [

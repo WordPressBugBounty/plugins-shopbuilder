@@ -1317,7 +1317,7 @@ class CartTableSettings {
 				'mode'       => 'responsive',
 				'size_units' => [ 'px' ],
 				'selectors'  => [
-					self::$selectors['coupon_padding'] => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					self::$selectors['coupon_padding'] => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}} !important;',
 				],
 				'separator'  => 'before',
 			],
