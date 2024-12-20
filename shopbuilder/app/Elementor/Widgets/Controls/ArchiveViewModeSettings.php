@@ -52,7 +52,8 @@ class ArchiveViewModeSettings {
 				'type'       => 'slider',
 				'size_units' => [ 'px' ],
 				'selectors'  => [
-					$widget->selectors['icon_size'] => 'font-size: {{SIZE}}{{UNIT}};',
+					$widget->selectors['icon_size']['icon'] => 'font-size: {{SIZE}}{{UNIT}};',
+					$widget->selectors['icon_size']['svg'] => 'width: {{SIZE}}{{UNIT}};',
 				],
 			],
 			'mode_button_align'              => [

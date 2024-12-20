@@ -105,10 +105,12 @@ class AssetsController {
 			'src'    => rtsb()->get_assets_uri( 'css/frontend/frontend' . $rtl_suffix . '.css' ),
 		];
 
+		/*
 		$this->styles[] = [
 			'handle' => 'swiper',
 			'src'    => rtsb()->get_assets_uri( 'vendor/swiper/css/swiper-bundle.min.css' ),
 		];
+		*/
 
 		if ( BuilderFns::is_builder_preview() && 'elementor' == Fns::page_edit_with( get_the_ID() ) ) {
 			$this->styles[] = [
@@ -270,6 +272,7 @@ class AssetsController {
 		 * Register scripts.
 		 */
 		$this->register_public_scripts();
+		// wp_enqueue_style( 'swiper' );
 		/**
 		 * Enqueue scripts.
 		 */
@@ -277,7 +280,6 @@ class AssetsController {
 			/**
 			 * Styles.
 			 */
-			wp_enqueue_style( 'swiper' );
 			wp_enqueue_style( 'photoswipe' );
 			wp_enqueue_style( 'photoswipe-default-skin' );
 			wp_enqueue_style( 'elementor-editor-style-fix' );

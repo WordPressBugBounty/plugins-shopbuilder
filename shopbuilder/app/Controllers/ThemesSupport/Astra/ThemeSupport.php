@@ -33,6 +33,7 @@ class ThemeSupport {
 		add_filter( 'astra_dynamic_post_structure_posttypes', [ __CLASS__, 'astra_post_types' ], 15 );
 		add_filter( 'rtsb/elementor/archive/products_per_page', [ __CLASS__, 'astra_products_per_page' ] );
 		remove_filter( 'woocommerce_get_stock_html', 'astra_woo_product_in_stock' );
+		remove_filter( 'woocommerce_product_get_rating_html', [ Astra_Woocommerce::get_instance(), 'rating_markup' ], 10 );
 	}
 	/**
 	 * Get class instance.

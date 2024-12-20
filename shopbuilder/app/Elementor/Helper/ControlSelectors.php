@@ -251,7 +251,10 @@ class ControlSelectors {
 			'cart_icon_gap'                  => '{{WRAPPER}} .products .product :is(a.add_to_cart_button, a.product_type_simple, a.product_type_grouped )',
 			'cart_icon_size'                 => '{{WRAPPER}} .products .product :is(a.add_to_cart_button, a.product_type_simple, a.product_type_grouped ) :is(i, span, svg):not(.ahfb-svg-iconset):not(.ast-card-action-tooltip)',
 			// Slider.
-			'slider_arrow_icon_size'         => '{{WRAPPER}} .rtsb-carousel-slider .rtsb-slider-btn',
+			'slider_arrow_icon_size'         => [
+				'icon' => '{{WRAPPER}} .rtsb-carousel-slider .rtsb-slider-btn 1',
+				'svg'  => '{{WRAPPER}} .rtsb-carousel-slider .rtsb-slider-btn svg',
+			],
 			'slider_arrow_size'              => '{{WRAPPER}} .rtsb-carousel-slider .rtsb-slider-btn',
 			'arrows_color'                   => '{{WRAPPER}} .rtsb-carousel-slider .rtsb-slider-btn',
 			'arrows_bg_color'                => '{{WRAPPER}} .rtsb-carousel-slider .rtsb-slider-btn',
@@ -278,7 +281,10 @@ class ControlSelectors {
 			'pagination_margin'              => '{{WRAPPER}} .woocommerce-pagination',
 			'pagination_width'               => '{{WRAPPER}} .woocommerce-pagination .page-numbers:not(ul,div)',
 			'pagination_height'              => '{{WRAPPER}} .woocommerce-pagination .page-numbers:not(ul,div)',
-			'pagination_icon_size'           => '{{WRAPPER}} .woocommerce-pagination .page-numbers:not(ul,div) i',
+			'pagination_icon_size'           => [
+				'icon' => '{{WRAPPER}} .woocommerce-pagination .page-numbers:not(ul,div) i',
+				'svg'  => '{{WRAPPER}} .woocommerce-pagination .page-numbers:not(ul,div) svg',
+			],
 			// Review Star.
 			'review_star_icon_default_color' => '{{WRAPPER}} .products .product .star-rating::before, {{WRAPPER}} p.stars a:before, {{WRAPPER}} p.stars a:hover~a:before, {{WRAPPER}} p.stars.selected a.active~a:before',
 			'review_star_icon_color'         => '{{WRAPPER}} .products .product .star-rating span::before, {{WRAPPER}} p.stars.selected a.active:before, {{WRAPPER}} p.stars:hover a:before, {{WRAPPER}} p.stars.selected a:not(.active):before, {{WRAPPER}} p.stars.selected a.active:before',
@@ -507,7 +513,10 @@ class ControlSelectors {
 			'rtsb-product-add-to-cart'     => [
 				'button_height'                     => '{{WRAPPER}} .rtsb-product-add-to-cart .cart .button',
 				'button_width'                      => '{{WRAPPER}} .rtsb-product-add-to-cart .cart .button',
-				'cart_icon_align'                   => '{{WRAPPER}} .rtsb-product-add-to-cart .cart .button i',
+				'cart_icon_align'                   => [
+					'icon' => '{{WRAPPER}} .rtsb-product-add-to-cart .cart .button i',
+					'svg'  => '{{WRAPPER}} .rtsb-product-add-to-cart .cart .button svg',
+				],
 				'cart_icon_gap'                     => '{{WRAPPER}} .rtsb-product-add-to-cart .cart .button',
 				'button_typography'                 => '{{WRAPPER}} .rtsb-product-add-to-cart .cart .button',
 				'button_text_color_normal'          => '{{WRAPPER}} .rtsb-product-add-to-cart .cart .button',
@@ -803,7 +812,10 @@ class ControlSelectors {
 				'text_shadow' => '{{WRAPPER}} .rtsb-archive-description',
 			],
 			'rtsb-archive-product-mode'    => [
-				'icon_size'                      => '{{WRAPPER}} .rtsb-archive-view-mode a',
+				'icon_size'                      => [
+					'icon' => '{{WRAPPER}} .rtsb-archive-view-mode i',
+					'svg'  => '{{WRAPPER}} .rtsb-archive-view-mode svg',
+				],
 				'mode_button_align'              => '{{WRAPPER}}',
 				'mode_button_height'             => '{{WRAPPER}} .rtsb-archive-view-mode a',
 				'mode_button_width'              => '{{WRAPPER}} .rtsb-archive-view-mode a',
@@ -930,14 +942,10 @@ class ControlSelectors {
 				'coupon_input_width'                    => '{{WRAPPER}} .woocommerce-cart-form .coupon input',
 				'coupon_padding'                        => '{{WRAPPER}} .woocommerce-cart-form .coupon input',
 				'coupon_border_radius'                  => '{{WRAPPER}} .woocommerce-cart-form .coupon input',
-				'input_border'                          => '{{WRAPPER}} .woocommerce-cart-form input',
+				'coupon_input_border'                   => '{{WRAPPER}} .woocommerce-cart-form .coupon .input-text',
 				'input_text_color'                      => '{{WRAPPER}} .woocommerce-cart-form input',
 				'input_bg_color'                        => '{{WRAPPER}} .woocommerce-cart-form input',
-				'empty_notice_typography'               => '{{WRAPPER}} .rtsb-cart-table .cart-empty',
-				'empty_notice_bg_color'                 => '{{WRAPPER}} .rtsb-cart-table .cart-empty',
-				'empty_notice_text_color'               => '{{WRAPPER}} .rtsb-cart-table .cart-empty',
-				'empty_notice_border_color'             => '{{WRAPPER}} .rtsb-cart-table .cart-empty',
-				'empty_notice_padding'                  => '{{WRAPPER}} .rtsb-cart-table .cart-empty',
+
 				'return_shop_button_typography'         => '{{WRAPPER}} .return-to-shop .button',
 				'return_shop_button_height'             => '{{WRAPPER}} .return-to-shop .button',
 				'return_shop_button_text_color_normal'  => '{{WRAPPER}} .return-to-shop .button',
@@ -949,14 +957,18 @@ class ControlSelectors {
 				'return_shop_button_border_radius'      => '{{WRAPPER}} .return-to-shop .button',
 				'return_shop_button_padding'            => '{{WRAPPER}} .return-to-shop .button',
 				'return_shop_button_margin'             => '{{WRAPPER}} .return-to-shop .button',
-				'notice_typography'                     => '{{WRAPPER}} .woocommerce-notices-wrapper .woocommerce-message',
-				'notice_padding'                        => '{{WRAPPER}} .woocommerce-notices-wrapper .woocommerce-message',
-				'notice_bg_color'                       => '{{WRAPPER}} .woocommerce-notices-wrapper .woocommerce-message',
-				'notice_text_color'                     => '{{WRAPPER}} .woocommerce-notices-wrapper .woocommerce-message',
-				'notice_border_color'                   => '{{WRAPPER}} .woocommerce-notices-wrapper .woocommerce-message',
-				'error_notice_bg_color'                 => '{{WRAPPER}} .woocommerce-notices-wrapper .woocommerce-error',
-				'error_notice_text_color'               => '{{WRAPPER}} .woocommerce-notices-wrapper .woocommerce-error li',
-				'error_notice_border_color'             => '{{WRAPPER}} .woocommerce-notices-wrapper .woocommerce-error',
+
+				'notice_typography'                     => '{{WRAPPER}} .rtsb-cart-table .wc-block-components-notice-banner',
+				'notice_padding'                        => '{{WRAPPER}} .rtsb-cart-table .wc-block-components-notice-banner',
+				'notice_bg_color'                       => '{{WRAPPER}} .rtsb-cart-table .wc-block-components-notice-banner',
+				'notice_text_color'                     => '{{WRAPPER}} .rtsb-cart-table .wc-block-components-notice-banner',
+				'notice_border_color'                   => '{{WRAPPER}} .rtsb-cart-table .wc-block-components-notice-banner',
+
+				'icon_color'                            => '{{WRAPPER}} .rtsb-cart-table .wc-block-components-notice-banner svg',
+				'notice_icon_size'                      => '{{WRAPPER}} .rtsb-cart-table .wc-block-components-notice-banner svg',
+				'icon_bg_color'                         => '{{WRAPPER}} .rtsb-cart-table .wc-block-components-notice-banner svg',
+				'icon_margin'                           => '{{WRAPPER}} .rtsb-cart-table .wc-block-components-notice-banner svg',
+
 				'table_thumbnail_width'                 => '{{WRAPPER}} .shop_table :is( .product-thumbnail, .product-data ) img',
 				'table_thumbnail_border_radius'         => '{{WRAPPER}} .shop_table :is( .product-thumbnail, .product-data ) img',
 				'table_thumbnail_padding'               => '{{WRAPPER}} .shop_table :is( .product-thumbnail, .product-data )',
@@ -1416,7 +1428,7 @@ class ControlSelectors {
 					'image_gap'          => '{{WRAPPER}} .rtsb-product .rtsb-list-item,{{WRAPPER}} .rtsb-elementor-container .rtsb-list-layout6 .rtsb-product .rtsb-list-item .rtsb-product-content',
 					'grid_alignment'     => [
 						'text_align'      => '{{WRAPPER}} .rtsb-elementor-container, {{WRAPPER}} .rtsb-elementor-container .rtsb-grid-layout3 .rtsb-product-content, {{WRAPPER}} .rtsb-elementor-container .rtsb-grid-layout4 .rtsb-product-content',
-						'justify_content' => '{{WRAPPER}} .rtsb-elementor-container .rtsb-category-list, {{WRAPPER}} .rtsb-elementor-container .price-wrapper, {{WRAPPER}} .rtsb-elementor-container [class*=list-layout] .rtsb-product-category, {{WRAPPER}} .rtsb-elementor-container .rtwpvs-archive-variation-wrapper, {{WRAPPER}} .rtsb-elementor-container .product-rating, {{WRAPPER}} .rtsb-elementor-container .category-title-with-count, {{WRAPPER}} .rtsb-elementor-container .rtsb-grid-layout3 .rtsb-product-content .rtsb-product-category,{{WRAPPER}} .rtsb-elementor-container .rtsb-grid-layout4 .rtsb-product-content .rtsb-product-category,{{WRAPPER}} .rtsb-grid-layout4 .rtsb-content-footer.has-cart-text .rtsb-action-button-list',
+						'justify_content' => '{{WRAPPER}} .rtsb-elementor-container .rtsb-product-category, {{WRAPPER}} .rtsb-elementor-container .rtsb-category-list, {{WRAPPER}} .rtsb-elementor-container .price-wrapper, {{WRAPPER}} .rtsb-elementor-container [class*=list-layout] .rtsb-product-category, {{WRAPPER}} .rtsb-elementor-container .rtwpvs-archive-variation-wrapper, {{WRAPPER}} .rtsb-elementor-container .product-rating, {{WRAPPER}} .rtsb-elementor-container .category-title-with-count, {{WRAPPER}} .rtsb-elementor-container .rtsb-grid-layout3 .rtsb-product-content .rtsb-product-category,{{WRAPPER}} .rtsb-elementor-container .rtsb-grid-layout4 .rtsb-product-content .rtsb-product-category,{{WRAPPER}} .rtsb-grid-layout4 .rtsb-content-footer.has-cart-text .rtsb-action-button-list',
 					],
 				],
 				'color_scheme'   => [

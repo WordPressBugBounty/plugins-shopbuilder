@@ -423,7 +423,7 @@ class ProductsSettings {
 		$fields = [
 			'flash_sale_section_start'       => [
 				'mode'      => 'section_start',
-				'label'     => esc_html__( 'Flash Sale', 'shopbuilder' ),
+				'label'     => esc_html__( 'Flash Sale ( Default Badges )', 'shopbuilder' ),
 				'tab'       => 'style',
 				'condition' => [
 					'show_flash_sale' => 'yes',
@@ -901,7 +901,8 @@ class ProductsSettings {
 					'size' => '',
 				],
 				'selectors' => [
-					$this->selectors['pagination_icon_size'] => 'font-size: {{SIZE}}{{UNIT}};',
+					$this->selectors['pagination_icon_size']['icon'] => 'font-size: {{SIZE}}{{UNIT}};',
+					$this->selectors['pagination_icon_size']['svg'] => 'width: {{SIZE}}{{UNIT}};',
 				],
 			],
 

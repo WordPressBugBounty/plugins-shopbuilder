@@ -78,7 +78,7 @@ $themes = [
 				<div class="rtsb-ss-wrap">
 					<div class="rtsb-ss-header-area">
 						<div class="rtsb-ss-header">
-							<h2 class="rtsb-title"><?php echo esc_html__( 'WooCommerce Themes with ShopBuilder', 'shopbuilder' ); ?></h2>
+							<h2 class="rtsb-title"><?php echo esc_html__( 'WooCommerce Themes & Apps with ShopBuilder', 'shopbuilder' ); ?></h2>
 							<p class="rtsb-description"><?php echo esc_html__( 'Discover our beautiful WooCommerce themes and apps, expertly crafted for easy setup and customization with the Shopbuilder plugin.', 'shopbuilder' ); ?></p>
 						</div>
 					</div>

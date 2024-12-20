@@ -304,7 +304,25 @@ class WidgetsSupport {
 				'library' => 'fa-solid',
 			];
 		}
-
+		$astra_onsale_card = '{{WRAPPER}} .products .product .ast-onsale-card';
+		if ( ! empty( $fields['flash_sale_typography']['selector'] ) ) {
+			$fields['flash_sale_typography']['selector'] = $fields['flash_sale_typography']['selector'] . ',' . $astra_onsale_card;
+		}
+		if ( ! empty( $fields['product_flash_sale_color']['selectors'] ) ) {
+			$fields['product_flash_sale_color']['selectors'][ $astra_onsale_card ] = 'color: {{VALUE}};';
+		}
+		if ( ! empty( $fields['flash_sale_bg_color']['selectors'] ) ) {
+			$fields['flash_sale_bg_color']['selectors'][ $astra_onsale_card ] = 'background-color: {{VALUE}};';
+		}
+		if ( ! empty( $fields['flash_sale_badge_width']['selectors'] ) ) {
+			$fields['flash_sale_badge_width']['selectors'][ $astra_onsale_card ] = 'width: {{SIZE}}{{UNIT}}; text-align: center;';
+		}
+		if ( ! empty( $fields['flash_sale_badge_height']['selectors'] ) ) {
+			$fields['flash_sale_badge_height']['selectors'][ $astra_onsale_card ] = 'height: {{SIZE}}{{UNIT}};';
+		}
+		if ( ! empty( $fields['flash_sale_badge_border_radius']['selectors'] ) ) {
+			$fields['flash_sale_badge_border_radius']['selectors'][ $astra_onsale_card ] = 'border-radius: {{SIZE}}{{UNIT}};';
+		}
 		return $fields;
 	}
 

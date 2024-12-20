@@ -406,7 +406,9 @@ abstract class ElementorWidgetBase extends Widget_Base {
 				rtsbProductPageInit();
 			}, 1000);
 			<?php if ( rtsb()->has_pro() ) { ?>
-				rtsbFilters();
+				if (typeof rtsbFilters === 'function') {
+					rtsbFilters();
+				}
 				setTimeout( function (){
 					window.rtsbCountdownApply();
 				}, 1000 );

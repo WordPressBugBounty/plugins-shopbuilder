@@ -84,7 +84,8 @@ class AddToCartSettings {
 					'quantity_style!' => 'default',
 				],
 				'selectors' => [
-					self::$selectors['cart_icon_align'] => 'order: {{VALUE}};',
+					self::$selectors['cart_icon_align']['icon'] => 'order: {{VALUE}};',
+					self::$selectors['cart_icon_align']['svg'] => 'order: {{VALUE}};',
 				],
 			],
 			'cart_icon_gap'   => [

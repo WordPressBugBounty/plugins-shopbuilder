@@ -80,7 +80,7 @@ final class ShopBuilder {
 	private function __construct() {
 		$this->define_constants();
 		$this->post_type     = 'product';
-		$this->current_theme = wp_get_theme()->get( 'Template' ) ? wp_get_theme()->get( 'Template' ) : wp_get_theme()->get( 'TextDomain' );
+		$this->current_theme = wp_get_theme()->get( 'Template' ) ? wp_get_theme()->get( 'Template' ) : ( wp_get_theme()->get( 'TextDomain' ) ? wp_get_theme()->get( 'TextDomain' ) : strtolower( str_replace( ' ', '', wp_get_theme()->get( 'Name' ) ) ) );
 		add_action( 'init', [ $this, 'language' ] );
 		add_action( 'plugins_loaded', [ $this, 'init' ], 15 );
 

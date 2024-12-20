@@ -107,9 +107,9 @@ abstract class AdditionalQueryCustomLayout extends ElementorWidgetBase {
 		$sections = array_merge(
 			$content_visibility,
 			Controls\SettingsFields::content_ordering( $this ),
+			Controls\SettingsFields::section_title( $this ),
 			Controls\SettingsFields::image( $this ),
 			Controls\SettingsFields::action_buttons( $this ),
-			Controls\SettingsFields::section_title( $this ),
 			Controls\SettingsFields::product_title( $this ),
 			Controls\SettingsFields::product_excerpt( $this ),
 			Controls\SettingsFields::badges( $this ),

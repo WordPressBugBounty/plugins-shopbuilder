@@ -4,15 +4,15 @@
  * Plugin Name:                ShopBuilder - Elementor WooCommerce Builder Addons
  * Plugin URI:                 https://shopbuilderwp.com/
  * Description:                WooCommerce Page Builder for Elementor
- * Version:                    2.5.0
+ * Version:                    2.5.1
  * Author:                     RadiusTheme
  * Author URI:                 https://radiustheme.com
  * Text Domain:                shopbuilder
  * Domain Path:                /languages
  * WC requires at least:       3.2
- * WC tested up to:            9.4
- * Elementor tested up to:     3.25
- * Elementor Pro tested up to: 3.25
+ * WC tested up to:            9.5
+ * Elementor tested up to:     3.26
+ * Elementor Pro tested up to: 3.26
  * License:                    GPLv3
  * License URI:                http://www.gnu.org/licenses/gpl-3.0.html
  *

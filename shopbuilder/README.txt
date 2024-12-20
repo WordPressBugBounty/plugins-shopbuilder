@@ -4,7 +4,7 @@ Donate link:
 Tags: Elementor, Woocommerce Builder, Elementor Woocommerce Builder, Woocommerce, Woocommerce Product
 Requires at least: 5.5
 Tested up to: 6.7
-Stable tag: 2.5.0
+Stable tag: 2.5.1
 Requires PHP: 7.4
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -339,6 +339,19 @@ If you like the ShopBuilder Plugin, then consider checking out our other WordPre
 == Screenshots ==
 
 == Changelog ==
+
+= 2.5.1 ( December 19, 2024 ) =
+* Fix: Ensured compatibility with the latest Elementor version by merging Swiper Slider CSS.
+* Fix: Resolved the non-clickable Elementor edit mode button issue.
+* Fix: Addressed a conflict with Elementor Image Selector Control.
+* Fix: Adjusted coupon button height in the cart table.
+* Fix: Resolved various CSS issues related to the Astra theme.
+* Fix: Corrected support for Elementor SVG icons across multiple widgets.
+* Fix: Addressed ‘rtsbFilters’ undefined JS error in Elementor editor mode.
+* Fix: Rectified double rendering of rating icons on shop page when using the Astra theme.
+* Update: Added support for blank button text in Compare, Wishlist, and Quick View modules.
+* Update: Removed unused widget controls for better usability.
+* Tweak: Enhanced plugin settings field to handle empty input values.
 
 = 2.5.0 ( December 12, 2024 ) =
 * Feature: Introducing the new Shopify Checkout module to transform the WooCommerce checkout experience.

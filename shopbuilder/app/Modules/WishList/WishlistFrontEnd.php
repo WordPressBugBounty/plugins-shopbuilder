@@ -308,7 +308,7 @@ class WishlistFrontEnd {
 			'parent_product_id' => $product_parent ?: $product->get_id(),
 			'product_type'      => $product_type,
 			'button_text'       => $button_text,
-			'show_button_text'  => false,
+			'show_button_text'  => ! empty( Fns::get_option( 'modules', 'wishlist', 'button_text', '' ) ),
 			'left_text'         => apply_filters( 'rtsb/module/wishlist/button_left_text', '' ),
 			'right_text'        => apply_filters( 'rtsb/module/wishlist/button_right_text', '' ),
 		];

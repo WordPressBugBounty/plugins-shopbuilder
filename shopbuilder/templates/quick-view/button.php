@@ -11,12 +11,13 @@
 /**
  * Template variables:
  *
- * @var $product_id                int Current product id
- * @var $button_text               string Button text
- * @var $icon_html                 string Icon for Add to Wishlist button
- * @var $classes                   string Classed for Add to Wishlist button
- * @var $left_text                 string Html allowed
- * @var $right_text                string Html allowed
+ * @var $product_id                int
+ * @var $button_text               string
+ * @var $icon_html                 string
+ * @var $classes                   string
+ * @var $left_text                 string
+ * @var $right_text                string
+ * @var $has_button_text           bool
  */
 
 defined( 'ABSPATH' ) || die( 'Keep Silent' );
@@ -33,7 +34,13 @@ use RadiusTheme\SB\Helpers\Fns;
 		<?php Fns::print_html( $icon_html ); ?>
 		<?php echo wp_kses( $right_text, Fns::get_kses_array() ); ?>
 	</span>
-	<span class="button-text">
-		<?php echo esc_attr( $button_text ); ?>
-	</span>
+	<?php
+	if ( $has_button_text ) {
+		?>
+		<span class="button-text">
+			<?php echo esc_attr( $button_text ); ?>
+		</span>
+		<?php
+	}
+	?>
 </a>

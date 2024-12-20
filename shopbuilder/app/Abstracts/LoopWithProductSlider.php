@@ -115,7 +115,7 @@ abstract class LoopWithProductSlider extends ElementorWidgetBase {
 	public function script_init() {
 		wp_dequeue_script( 'rtsb-public' );
 
-		wp_enqueue_style( 'swiper' );
+		//wp_enqueue_style( 'swiper' );
 		wp_enqueue_script( 'swiper' );
 		wp_enqueue_script( 'rtsb-public' );
 	}

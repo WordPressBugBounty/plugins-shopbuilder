@@ -44,7 +44,7 @@ class SliderSettings {
 				),
 				'content_classes' => 'elementor-panel-heading-title',
 				'separator'       => 'default',
-				'condition' => [
+				'condition'       => [
 					'show_arrows!' => '',
 				],
 			],
@@ -65,7 +65,8 @@ class SliderSettings {
 					'size' => 25,
 				],
 				'selectors'  => [
-					$selector['slider_arrow_icon_size'] => 'font-size: {{SIZE}}{{UNIT}};',
+					$selector['slider_arrow_icon_size']['icon'] => 'font-size: {{SIZE}}{{UNIT}};',
+					$selector['slider_arrow_icon_size']['svg'] => 'width: {{SIZE}}{{UNIT}};',
 				],
 				'condition'  => [
 					'show_arrows!' => '',
@@ -108,7 +109,7 @@ class SliderSettings {
 			'arrows_color'              => [
 				'label'     => esc_html__( 'Color', 'shopbuilder' ),
 				'type'      => 'color',
-				
+
 				'selectors' => [
 					$selector['arrows_color'] => 'color: {{VALUE}};',
 				],
@@ -123,7 +124,7 @@ class SliderSettings {
 			'arrows_border_color'       => [
 				'label'     => esc_html__( 'Border Color', 'shopbuilder' ),
 				'type'      => 'color',
-				
+
 				'selectors' => [
 					$selector['arrows_border_color'] => 'border-color: {{VALUE}};',
 				],
@@ -155,7 +156,7 @@ class SliderSettings {
 			'arrows_hover_border_color' => [
 				'label'     => esc_html__( 'Border Color', 'shopbuilder' ),
 				'type'      => 'color',
-				
+
 				'selectors' => [
 					$selector['arrows_hover_border_color'] => 'border-color: {{VALUE}};',
 				],
@@ -166,9 +167,9 @@ class SliderSettings {
 			'arrows_tabs_end'           => [
 				'mode' => 'tabs_end',
 			],
-			//'style_section_end'         => [
-			//	'mode' => 'section_end',
-			//],
+			// 'style_section_end'         => [
+			// 'mode' => 'section_end',
+			// ],
 			'slider_dots_style'         => [
 				'type'            => 'html',
 				'raw'             => sprintf(
@@ -177,7 +178,7 @@ class SliderSettings {
 				),
 				'content_classes' => 'elementor-panel-heading-title',
 				'separator'       => 'default',
-				'condition' => [
+				'condition'       => [
 					'show_arrows!' => '',
 				],
 			],
@@ -197,7 +198,7 @@ class SliderSettings {
 					'size' => 30,
 				],
 				'selectors'  => [
-					$selector['dots_gap']  => 'padding-bottom: {{SIZE}}{{UNIT}};',
+					$selector['dots_gap'] => 'padding-bottom: {{SIZE}}{{UNIT}};',
 				],
 				'condition'  => [
 					'show_dots!' => '',
@@ -228,7 +229,7 @@ class SliderSettings {
 			'dot_color'                 => [
 				'label'     => esc_html__( 'Dot\'s Color', 'shopbuilder' ),
 				'type'      => 'color',
-				
+
 				'selectors' => [
 					$selector['dot_color'] => 'background: {{VALUE}};',
 				],
@@ -236,7 +237,7 @@ class SliderSettings {
 			'dot_active_color'          => [
 				'label'     => esc_html__( 'Dot\'s Active Color', 'shopbuilder' ),
 				'type'      => 'color',
-				
+
 				'selectors' => [
 					$selector['dot_active_color'] => 'background: {{VALUE}};',
 				],
@@ -362,5 +363,4 @@ class SliderSettings {
 
 		return $fields;
 	}
-
 }

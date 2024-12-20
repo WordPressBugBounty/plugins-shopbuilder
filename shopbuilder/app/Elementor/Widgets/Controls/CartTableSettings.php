@@ -43,7 +43,6 @@ class CartTableSettings {
 			   self::image_settings() +
 			   self::table_button( $widget ) +
 			   self::input_style() +
-			   self::cart_empty() +
 			   QuantityFields::quantity_style_fields( $widget ) +
 			   self::return_shop_button_style() +
 			   self::notice_style();
@@ -164,27 +163,7 @@ class CartTableSettings {
 				'tab'   => 'style',
 				'label' => esc_html__( 'Cart Table', 'shopbuilder' ),
 			],
-			// 'cart_table_width'               => [
-			// 'mode'       => 'responsive',
-			// 'label'      => esc_html__( 'Table Minimum Width', 'shopbuilder' ),
-			// 'type'       => 'slider',
-			// 'separator'  => 'default',
-			// 'size_units' => [ 'px', '%' ],
-			// 'range'      => [
-			// 'px' => [
-			// 'min'  => 320,
-			// 'max'  => 3000,
-			// 'step' => 5,
-			// ],
-			// '%'  => [
-			// 'min' => 0,
-			// 'max' => 100,
-			// ],
-			// ],
-			// 'selectors'  => [
-			// self::$selectors['cart_table_width'] => 'min-width: {{SIZE}}{{UNIT}};',
-			// ],
-			// ],
+
 			'cart_element_alignment'               => [
 				'mode'      => 'responsive',
 				'type'      => 'choose',
@@ -223,15 +202,6 @@ class CartTableSettings {
 					self::$selectors['table_column_header_padding'] => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			],
-			// 'table_content_column_padding'   => [
-			// 'label'      => esc_html__( 'Column Padding (px)', 'shopbuilder' ),
-			// 'type'       => 'dimensions',
-			// 'mode'       => 'responsive',
-			// 'size_units' => [ 'px' ],
-			// 'selectors'  => [
-			// self::$selectors['table_content_column_padding'] => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
-			// ],
-			// ],
 
 			'cart_table_col_padding'               => [
 				'label'      => esc_html__( 'Column Padding(px)', 'shopbuilder' ),
@@ -426,16 +396,6 @@ class CartTableSettings {
 					self::$selectors['cart_table_even_row_text_color'] => 'color: {{VALUE}};',
 				],
 			],
-
-			// 'cart_table_even_row_padding'    => [
-			// 'label'      => esc_html__( 'Row Padding(px)', 'shopbuilder' ),
-			// 'type'       => 'dimensions',
-			// 'mode'       => 'responsive',
-			// 'size_units' => [ 'px' ],
-			// 'selectors'  => [
-			// self::$selectors['cart_table_even_row_padding'] => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
-			// ],
-			// ],
 
 			'cart_remove_icon_heading'             => [
 				'type'            => 'html',
@@ -1131,46 +1091,38 @@ class CartTableSettings {
 	 */
 	public static function notice_style() {
 		$fields = [
-			'notice_section'            => [
+			'notice_section'      => [
 				'mode'  => 'section_start',
 				'tab'   => 'style',
-				'label' => esc_html__( 'Notice ', 'shopbuilder' ),
+				'label' => esc_html__( 'Cart Empty Notice ', 'shopbuilder' ),
 			],
-			'notice_typography'         => [
+			'notice_typography'   => [
 				'mode'     => 'group',
 				'type'     => 'typography',
 				'label'    => esc_html__( 'Typography', 'shopbuilder' ),
 				'selector' => self::$selectors['notice_typography'],
 			],
-			'notice_padding'            => [
+			'notice_padding'      => [
 				'label'      => esc_html__( 'Padding (px)', 'shopbuilder' ),
 				'type'       => 'dimensions',
 				'mode'       => 'responsive',
 				'size_units' => [ 'px' ],
 				'selectors'  => [
-					self::$selectors['notice_padding'] => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					self::$selectors['notice_padding'] => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}} !important;',
 				],
 				'separator'  => 'before',
 			],
 
-			'notice_tabs_start'         => [
-				'mode' => 'tabs_start',
-			],
 			// Tab For normal view.
-			'notice_normal'             => [
-				'mode'  => 'tab_start',
-				'label' => esc_html__( 'Success Message', 'shopbuilder' ),
-			],
-			'notice_bg_color'           => [
+			'notice_bg_color'     => [
 				'label'     => esc_html__( 'Background Color', 'shopbuilder' ),
 				'type'      => 'color',
-
 				'separator' => 'default',
 				'selectors' => [
 					self::$selectors['notice_bg_color'] => 'background-color: {{VALUE}};',
 				],
 			],
-			'notice_text_color'         => [
+			'notice_text_color'   => [
 				'label'     => esc_html__( 'Color', 'shopbuilder' ),
 				'type'      => 'color',
 
@@ -1178,7 +1130,7 @@ class CartTableSettings {
 					self::$selectors['notice_text_color'] => 'color: {{VALUE}};',
 				],
 			],
-			'notice_border_color'       => [
+			'notice_border_color' => [
 				'label'     => esc_html__( 'Border Color', 'shopbuilder' ),
 				'type'      => 'color',
 
@@ -1186,46 +1138,54 @@ class CartTableSettings {
 					self::$selectors['notice_border_color'] => 'border-color: {{VALUE}};',
 				],
 			],
-			'notice_normal_end'         => [
-				'mode' => 'tab_end',
+			'icon_heading'        => [
+				'type'            => 'html',
+				'raw'             => sprintf(
+					'<h3 class="rtsb-elementor-group-heading">%s</h3>',
+					esc_html__( 'Icon', 'shopbuilder' )
+				),
+				'content_classes' => 'elementor-panel-heading-title',
+				'separator'       => 'default',
 			],
-			'notice_hover'              => [
-				'mode'  => 'tab_start',
-				'label' => esc_html__( 'Error Messsage', 'shopbuilder' ),
-			],
-			'error_notice_bg_color'     => [
-				'label'     => esc_html__( 'Background Color', 'shopbuilder' ),
-				'type'      => 'color',
-				'separator' => 'default',
-
+			'notice_icon_size'    => [
+				'label'     => esc_html__( 'Notice Icon Size', 'shopbuilder' ),
+				'type'      => 'slider',
+				'mode'      => 'responsive',
+				'range'     => [
+					'px' => [
+						'min' => 0,
+						'max' => 100,
+					],
+				],
 				'selectors' => [
-					self::$selectors['error_notice_bg_color'] => 'background-color: {{VALUE}};',
+					self::$selectors['notice_icon_size'] => 'width: {{SIZE}}{{UNIT}};',
 				],
 			],
-			'error_notice_text_color'   => [
-				'label'     => esc_html__( 'Color', 'shopbuilder' ),
+			'icon_color'          => [
+				'label'     => esc_html__( 'Icon Color', 'shopbuilder' ),
 				'type'      => 'color',
-
+				'separator' => 'before',
 				'selectors' => [
-					self::$selectors['error_notice_text_color'] => 'color: {{VALUE}};',
+					self::$selectors['icon_color'] => 'color: {{VALUE}};fill: currentColor;',
 				],
 			],
-			'error_notice_border_color' => [
-				'label'     => esc_html__( 'Border Color', 'shopbuilder' ),
+			'icon_bg_color'       => [
+				'label'     => esc_html__( 'Icon Background Color', 'shopbuilder' ),
 				'type'      => 'color',
-
 				'selectors' => [
-					self::$selectors['error_notice_border_color'] => 'border-color: {{VALUE}};',
+					self::$selectors['icon_bg_color'] => 'background-color: {{VALUE}};fill: currentColor;',
 				],
 			],
-			'notice_hover_end'          => [
-				'mode' => 'tab_end',
+			'icon_margin'         => [
+				'label'      => esc_html__( 'Icon Margin (px)', 'shopbuilder' ),
+				'type'       => 'dimensions',
+				'mode'       => 'responsive',
+				'size_units' => [ 'px' ],
+				'selectors'  => [
+					self::$selectors['icon_margin'] => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				],
 			],
-			'notice_tabs_end'           => [
-				'mode' => 'tabs_end',
-			],
-
-			'notice_section_end'        => [
+			'notice_section_end'  => [
 				'mode' => 'section_end',
 			],
 		];
@@ -1262,6 +1222,10 @@ class CartTableSettings {
 						'max' => 500,
 					],
 				],
+				'default'   => [
+					'unit' => 'px',
+					'size' => '180',
+				],
 				'selectors' => [
 					self::$selectors['coupon_input_width'] => 'width: {{SIZE}}{{UNIT}} !important;',
 				],
@@ -1279,10 +1243,10 @@ class CartTableSettings {
 					self::$selectors['coupon_input_height'] => 'height: {{SIZE}}{{UNIT}} !important;',
 				],
 			],
-			'input_border'             => [
+			'coupon_input_border'      => [
 				'mode'       => 'group',
 				'type'       => 'border',
-				'selector'   => self::$selectors['input_border'],
+				'selector'   => self::$selectors['coupon_input_border'],
 				'size_units' => [ 'px' ],
 			],
 			'coupon_border_radius'     => [
@@ -1322,66 +1286,6 @@ class CartTableSettings {
 				'separator'  => 'before',
 			],
 			'coupon_style_section_end' => [
-				'mode' => 'section_end',
-			],
-		];
-
-		return $fields;
-	}
-
-	/**
-	 * Widget Field
-	 *
-	 * @return array
-	 */
-	public static function cart_empty() {
-		$fields = [
-			'empty_notice_section'      => [
-				'mode'  => 'section_start',
-				'tab'   => 'style',
-				'label' => esc_html__( 'Cart Empty', 'shopbuilder' ),
-			],
-
-			'empty_notice_typography'   => [
-				'mode'     => 'group',
-				'type'     => 'typography',
-				'label'    => esc_html__( 'Typography', 'shopbuilder' ),
-				'selector' => self::$selectors['empty_notice_typography'],
-			],
-			'empty_notice_bg_color'     => [
-				'label'     => esc_html__( 'Background Color', 'shopbuilder' ),
-				'type'      => 'color',
-				'selectors' => [
-					self::$selectors['empty_notice_bg_color'] => 'background-color: {{VALUE}};',
-				],
-			],
-			'empty_notice_text_color'   => [
-				'label'     => esc_html__( 'Color', 'shopbuilder' ),
-				'type'      => 'color',
-
-				'selectors' => [
-					self::$selectors['empty_notice_text_color'] => 'color: {{VALUE}};',
-				],
-			],
-			'empty_notice_border_color' => [
-				'label'     => esc_html__( 'Border Color', 'shopbuilder' ),
-				'type'      => 'color',
-
-				'selectors' => [
-					self::$selectors['empty_notice_border_color'] => 'border-color: {{VALUE}};',
-				],
-			],
-			'empty_notice_padding'      => [
-				'label'      => esc_html__( 'Padding (px)', 'shopbuilder' ),
-				'type'       => 'dimensions',
-				'mode'       => 'responsive',
-				'size_units' => [ 'px' ],
-				'selectors'  => [
-					self::$selectors['empty_notice_padding'] => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
-				],
-				'separator'  => 'before',
-			],
-			'empty_notice_section_end'  => [
 				'mode' => 'section_end',
 			],
 		];

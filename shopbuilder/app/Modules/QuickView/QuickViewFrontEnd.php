@@ -50,7 +50,7 @@ class QuickViewFrontEnd {
 	 * @since  1.0.0
 	 */
 	public function quick_view_action_template() {
-        wp_enqueue_style('elementor-frontend');
+		wp_enqueue_style( 'elementor-frontend' );
 		// Image.
 		add_action( 'rtsb/wcqv/product/image', 'woocommerce_show_product_sale_flash', 10 );
 		add_action( 'rtsb/wcqv/product/image', 'woocommerce_show_product_images', 20 );
@@ -86,8 +86,8 @@ class QuickViewFrontEnd {
 			remove_action( 'woocommerce_product_thumbnails', 'woocommerce_show_product_thumbnails', 20 );
 		}
 		if ( ! defined( 'RTWPVG_VERSION' ) ) {
-			//add_action( 'woocommerce_product_thumbnails', [ $this, 'woocommerce_product_thumbnails_before' ], 1 );
-			//add_action( 'woocommerce_product_thumbnails', [ $this, 'woocommerce_product_thumbnails_after' ], 25 );
+			// add_action( 'woocommerce_product_thumbnails', [ $this, 'woocommerce_product_thumbnails_before' ], 1 );
+			// add_action( 'woocommerce_product_thumbnails', [ $this, 'woocommerce_product_thumbnails_after' ], 25 );
 		}
 
 		ob_start();
@@ -179,7 +179,6 @@ class QuickViewFrontEnd {
 		if ( $product instanceof WC_Product ) {
 			do_action( 'rtsb/modules/quick_view/print_button', $product->get_id() );
 		}
-
 	}
 
 
@@ -204,12 +203,13 @@ class QuickViewFrontEnd {
 		// get product type.
 		$product_type = $product->get_type();
 		$params       = [
-			'classes'      => $classes,
-			'product_id'   => $product->get_id(),
-			'product_type' => $product_type,
-			'button_text'  => $button_text,
-			'left_text'    => apply_filters( 'rtsb/module/quick_view/button_left_text', '' ),
-			'right_text'   => apply_filters( 'rtsb/module/quick_view/button_right_text', '' ),
+			'classes'         => $classes,
+			'product_id'      => $product->get_id(),
+			'product_type'    => $product_type,
+			'button_text'     => $button_text,
+			'has_button_text' => ! empty( Fns::get_option( 'modules', 'quick_view', 'button_text', '' ) ),
+			'left_text'       => apply_filters( 'rtsb/module/quick_view/button_left_text', '' ),
+			'right_text'      => apply_filters( 'rtsb/module/quick_view/button_right_text', '' ),
 		];
 		// let third party developer filter options.
 		$atts = apply_filters( 'rtsb/module/quick_view/button_params', $params );
@@ -242,13 +242,13 @@ class QuickViewFrontEnd {
 
 	public function enqueue() {
 
-        wp_enqueue_style( 'elementor-icons-fa-regular' );
+		wp_enqueue_style( 'elementor-icons-fa-regular' );
 
-         wp_enqueue_style( 'elementor-icons-fa-solid' );
-         wp_enqueue_style( 'elementor-icons-shared-0' );
-        // wp_enqueue_style( 'elementor-frontend' );
+		 wp_enqueue_style( 'elementor-icons-fa-solid' );
+		 wp_enqueue_style( 'elementor-icons-shared-0' );
+		// wp_enqueue_style( 'elementor-frontend' );
 
-        if ( ! class_exists('WooProductVariationGallery') && current_theme_supports( 'wc-product-gallery-slider' )  ) {
+		if ( ! class_exists( 'WooProductVariationGallery' ) && current_theme_supports( 'wc-product-gallery-slider' ) ) {
 			wp_enqueue_script( 'flexslider' );
 		}
 
@@ -278,7 +278,7 @@ class QuickViewFrontEnd {
 			RTSB_VERSION,
 			true
 		);
-        wp_enqueue_style( 'rtsb-modules' );
+		wp_enqueue_style( 'rtsb-modules' );
 		wp_enqueue_script( 'rtsb-quick-view' );
 
 		// Allow user to load custom style and scripts!
