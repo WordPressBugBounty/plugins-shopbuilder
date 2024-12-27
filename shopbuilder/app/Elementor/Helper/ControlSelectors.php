@@ -1413,7 +1413,9 @@ class ControlSelectors {
 			[
 				'columns'        => [
 					'cols'               => '{{WRAPPER}} .rtsb-elementor-container .rtsb-row',
+					'masonry'            => '{{WRAPPER}} .rtsb-elementor-container .rtsb-row.rtsb-masonry',
 					'list_cols'          => '{{WRAPPER}} .rtsb-elementor-container .rtsb-row[class*="list-layout"]',
+					'list_masonry'       => '{{WRAPPER}} .rtsb-elementor-container .rtsb-row[class*="list-layout"].rtsb-masonry',
 					'grid_gap'           => [
 						'padding'        => '{{WRAPPER}} .rtsb-elementor-container [class*=rtsb-col-]',
 						'margin'         => '{{WRAPPER}} .rtsb-elementor-container .rtsb-row',

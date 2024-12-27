@@ -4,7 +4,7 @@ Donate link:
 Tags: Elementor, Woocommerce Builder, Elementor Woocommerce Builder, Woocommerce, Woocommerce Product
 Requires at least: 5.5
 Tested up to: 6.7
-Stable tag: 2.5.1
+Stable tag: 2.5.2
 Requires PHP: 7.4
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -340,7 +340,12 @@ If you like the ShopBuilder Plugin, then consider checking out our other WordPre
 
 == Changelog ==
 
-= 2.5.1 ( December 19, 2024 ) =
+= 2.5.2 (December 27, 2024) =
+* Add: Enhanced compatibility with new modules and features.
+* Fix: Resolved a PHP fatal error encountered with the Astra theme.
+* Fix: Addressed an issue with the plugin version update notifications.
+
+= 2.5.1 (December 19, 2024) =
 * Fix: Ensured compatibility with the latest Elementor version by merging Swiper Slider CSS.
 * Fix: Resolved the non-clickable Elementor edit mode button issue.
 * Fix: Addressed a conflict with Elementor Image Selector Control.
@@ -353,7 +358,7 @@ If you like the ShopBuilder Plugin, then consider checking out our other WordPre
 * Update: Removed unused widget controls for better usability.
 * Tweak: Enhanced plugin settings field to handle empty input values.
 
-= 2.5.0 ( December 12, 2024 ) =
+= 2.5.0 (December 12, 2024) =
 * Feature: Introducing the new Shopify Checkout module to transform the WooCommerce checkout experience.
 * Add: Compatibility with the "Germanized for WooCommerce" plugin.
 * Add: Support for Elementor SVG Icons across all widgets.
@@ -363,13 +368,13 @@ If you like the ShopBuilder Plugin, then consider checking out our other WordPre
 * Tweak: Added a notice for the backend color input field when no color is selected.
 * Tweak: Improved and optimized code for backend input fields.
 
-= 2.4.2 ( November 18, 2024 ) =
+= 2.4.2 (November 18, 2024) =
 * Fix: Resolved a responsive issue causing grid products to overlap with adjacent sections.
 * Fix: Addressed a spacing issue affecting action button displays on the frontend.
 * Fix: Rectified double rendering of rating icons on single product pages when using the Astra theme.
 * Update: Improved admin notice functionality.
 
-= 2.4.1 ( November 14, 2024 ) =
+= 2.4.1 (November 14, 2024) =
 * Add: Ensured compatibility with the latest version of WooCommerce.
 * Fix: Resolved PHP warnings caused by undefined variables in shop templates.
 * Fix: Corrected a responsive issue causing grid products to overlap with adjacent sections.
@@ -377,14 +382,14 @@ If you like the ShopBuilder Plugin, then consider checking out our other WordPre
 * Tweak: Displayed an empty rating icon when products have no ratings.
 * Tweak: Ensured the stock availability text is always visible in the single product stock widget.
 
-= 2.4.0 ( November 05, 2024 ) =
+= 2.4.0 (November 05, 2024) =
 * Feature: Introducing the 'Product Badges' module for adding customizable badges to products.
 * Fix: Resolved form input field compatibility issues in Mozilla Firefox.
 * Fix: Addressed a sorting issue with the 'Sort by Price' option in the general widgets.
 * Fix: Corrected query compatibility for general widgets on product details pages.
 * Tweak: Implemented a version check notification for the pro-plugin to ensure module functionalities.
 
-= 2.3.0 ( October 21, 2024 ) =
+= 2.3.0 (October 21, 2024) =
 * Feature: Introducing the 'Checkout Fields Editor' module for editing checkout fields.
 * Add: Support for variation product image sizes on the archive page.
 * Add: Admin 'Themes' page.
@@ -393,7 +398,7 @@ If you like the ShopBuilder Plugin, then consider checking out our other WordPre
 * Fix: Corrected a styling issue in the checkout order review widget.
 * Update: Improved UI for the admin 'Get Help' page.
 
-= 2.2.2 ( September 24, 2024 ) =
+= 2.2.2 (September 24, 2024) =
 * Add: Enhanced compatibility with new modules and features.
 * Fix: Resolved an issue where the "Clear Cache" button resulted in unintended page redirection.
 * Fix: Addressed an error which occurred when the preview product was unavailable on the Preview page.
@@ -401,12 +406,12 @@ If you like the ShopBuilder Plugin, then consider checking out our other WordPre
 * Fix: Rectified a JS issue preventing proper add-to-cart functionality for variable products.
 * Update: Updated dependency libraries for enhanced stability and security.
 
-= 2.2.1 ( August 21, 2024 ) =
+= 2.2.1 (August 21, 2024) =
 * Fix: Resolved an issue where the color picker in the admin settings was non-responsive.
 * Fix: Addressed a deprecation issue related to PHP 8.2.
 * Update: Restricted guest user interaction with the Template Builder preview page.
 
-= 2.2.0 ( August 12, 2024 ) =
+= 2.2.0 (August 12, 2024) =
 * Add: Compatibility with the "Products Visibility by User Roles" plugin.
 * Add: Support for SVG icon in the add-to-cart button on the product details page & cart page.
 * Fix: Resolved an issue where default values in the settings repeater were not being saved correctly.
@@ -417,21 +422,21 @@ If you like the ShopBuilder Plugin, then consider checking out our other WordPre
 * Enhancement: Improved the functionalities and caching mechanisms of the template builder.
 * Update: Refined the UX and clarity of texts within the template builder.
 
-= 2.1.15 ( July 10, 2024 ) =
+= 2.1.15 (July 10, 2024) =
 * Add: Enhanced compatibility with new modules and features.
 * Add: Clear cache button in the dashboard top-bar for clearing caches related to ShopBuilder.
 * Add: Introduced new Elementor style controls within general widgets.
 * Update: Improved data structure for Settings Repeater and Number fields.
 * Performance: Implemented an advanced caching mechanism in the template builder.
 
-= 2.1.14 ( July 01, 2024 ) =
+= 2.1.14 (July 01, 2024) =
 * Fix: Resolved an issue regarding loading of custom templates in Elementor elements.
 
-= 2.1.13 ( June 28, 2024 ) =
+= 2.1.13 (June 28, 2024) =
 * Fix: Resolved the Local File Inclusion (LFI) vulnerability in Elementor elements.
 * Fix: Addressed an issue causing images to not load in the Product Image widget.
 
-= 2.1.12 ( June 10, 2024 ) =
+= 2.1.12 (June 10, 2024) =
 * Add: Controls for variation stock text style in the single Add-to-Cart widget.
 * Fix: Corrected the incorrect count issue in the wishlist counter.
 * Fix: Resolved discrepancies with Elementor CSS class selectors.
@@ -440,7 +445,7 @@ If you like the ShopBuilder Plugin, then consider checking out our other WordPre
 * Fix: Addressed multiple issues in the admin settings fields.
 * Fix: Resolved compatibility issue with the admin Logo URL when using WPML.
 
-= 2.1.11 ( May 20, 2024 ) =
+= 2.1.11 (May 20, 2024) =
 * Add: Enhanced compatibility with new modules and features.
 * Fix: Resolved a "My Account" widget register issue.
 * Fix: Addressed an issue related to wishlist endpoints.
@@ -453,13 +458,13 @@ If you like the ShopBuilder Plugin, then consider checking out our other WordPre
 * Update: Improved UI for the Settings Repeater field.
 * Update: Updated dependency libraries for enhanced stability and security.
 
-= 2.1.10 ( April 22, 2024 ) =
+= 2.1.10 (April 22, 2024) =
 * Add: Compatibility with the WPML plugin.
 * Fix: Corrected various text-domain issues.
 * Fix: Resolved an issue with notices on the checkout page.
 * Fix: Addressed an issue related to product stock text in the Astra theme.
 
-= 2.1.9 ( April 07, 2024 ) =
+= 2.1.9 (April 07, 2024) =
 * Fix: Addressed a module security issue.
 * Fix: Resolved visibility support for out of stock products.
 * Fix: Rectified auto-redirection bug in the Quick View.
@@ -467,7 +472,7 @@ If you like the ShopBuilder Plugin, then consider checking out our other WordPre
 * Fix: Resolved an HTML validation issue.
 * Update: Product pagination with visible range support.
 
-= 2.1.8 ( March 29, 2024 ) =
+= 2.1.8 (March 29, 2024) =
 * Add: Compatibility with new module and features.
 * Add: Global styles for Quick View modal.
 * Fix: Outdated notice for WooCommerce templates.
@@ -480,14 +485,14 @@ If you like the ShopBuilder Plugin, then consider checking out our other WordPre
 * Fix: Issue with Quick View icon.
 * Fix: Resolved various CSS issues.
 
-= 2.1.7 ( March 06, 2024 ) =
+= 2.1.7 (March 06, 2024) =
 * Add: Compatibility with the B2BKing plugin.
 * Fix: Sale price color inconsistency in Elementor widget.
 * Fix: Addressed some translation issues.
 * Fix: Resolved template caching problems.
 * Fix: Corrected style inconsistencies.
 
-= 2.1.6 ( February 28, 2024 ) =
+= 2.1.6 (February 28, 2024) =
 * Add: Notice templates.
 * Add: Introduced new settings for cart and checkout widgets.
 * Add: Included an option to hide the wishlist icon for guest users.
@@ -503,17 +508,17 @@ If you like the ShopBuilder Plugin, then consider checking out our other WordPre
 * Enhancement: Backend security system with authorization.
 * Update: General Notice widget for improved functionality.
 
-= 2.1.5 ( February 15, 2024 ) =
+= 2.1.5 (February 15, 2024) =
 * Add: Compatibility with Product Badge module.
 * Fix: Corrected default value saving mechanism.
 * Fix: Resolved Template Builder API issue in offline mode.
 * Fix: Addressed some CSS issues.
 * Fix: Resolved some caching issues.
 
-= 2.1.4 ( February 07, 2024 ) =
+= 2.1.4 (February 07, 2024) =
 * Fix: Resolved a critical PHP error.
 
-= 2.1.3 ( February 06, 2024 ) =
+= 2.1.3 (February 06, 2024) =
 * Fix: Resolved Checkout page 500 error issue.
 * Fix: Addressed a PHP warning regarding an undefined index.
 * Fix: Resolved Cart page shipping calculation issue.
@@ -522,7 +527,7 @@ If you like the ShopBuilder Plugin, then consider checking out our other WordPre
 * Update: Enhanced Elementor render system and conducted code cleanups.
 * Optimization: Optimized and reduced the size of the frontend JS file for improved performance.
 
-= 2.1.2 ( January 26, 2024 ) =
+= 2.1.2 (January 26, 2024) =
 * Add: Archive variable product Ajax add to cart.
 * Add: Toaster notification hide settings.
 * Fix: Shop page URL issue.
@@ -536,7 +541,7 @@ If you like the ShopBuilder Plugin, then consider checking out our other WordPre
 * Update: Notice system.
 * Tweak: Ordering & result count templates.
 
-= 2.1.1 ( January 19, 2024 ) =
+= 2.1.1 (January 19, 2024) =
 * Add: Admin 'Get Help' page.
 * Add: Admin review notice.
 * Add: Some new widget controls.
@@ -549,7 +554,7 @@ If you like the ShopBuilder Plugin, then consider checking out our other WordPre
 * Tweak: Some complex functionalities' optimization.
 * Tweak: Admin notice functionality.
 
-= 2.1.0 ( January 05, 2024 ) =
+= 2.1.0 (January 05, 2024) =
 * Fix: Removed unused data attributes from widgets.
 * Fix: Product counting issue in tags.
 * Fix: Some template builder issues.
@@ -562,7 +567,7 @@ If you like the ShopBuilder Plugin, then consider checking out our other WordPre
 * Performance: Implement advanced caching mechanism.
 * Performance: Editor preview page optimization.
 
-= 2.0.3 ( December 01, 2023 ) =
+= 2.0.3 (December 01, 2023) =
 * Fix: Editor slider height issue.
 * Fix: Variation swatches compatibility issue.
 * Fix: Some CSS selectors issue.
@@ -570,11 +575,11 @@ If you like the ShopBuilder Plugin, then consider checking out our other WordPre
 * Update: Swiper library.
 * Tweak: Swiper JS conditional loading.
 
-= 2.0.2 ( November 17, 2023 ) =
+= 2.0.2 (November 17, 2023) =
 * Add: Admin notice.
 * Fix: Product view mode & sorting compatibility.
 
-= 2.0.1 ( November 13, 2023 ) =
+= 2.0.1 (November 13, 2023) =
 * Add: RTL Support.
 * Add: Elementor Custom Breakpoints Support.
 * Fix: Custom widget support for all product types.
@@ -582,7 +587,7 @@ If you like the ShopBuilder Plugin, then consider checking out our other WordPre
 * Fix: Billing/Shipping Form Issue.
 * Fix: Some Style issues.
 
-= 2.0.0 ( November 03, 2023 ) =
+= 2.0.0 (November 03, 2023) =
 * Add: New Templates
 * Add: New Widgets
 * Add: Compatibility with PHP 8.2
@@ -595,30 +600,30 @@ If you like the ShopBuilder Plugin, then consider checking out our other WordPre
 * Update: Template Import System
 * Enhancement: Many under the hood optimisations
 
-= 1.1.4 ( July 11, 2023 ) =
+= 1.1.4 (July 11, 2023) =
 * Fix: Template error.
 
-= 1.1.3 ( June 06, 2023 ) =
+= 1.1.3 (June 06, 2023) =
 * Fix: Sanitization, Text domain issue.
 * Fix: Trademark issue.
 
-= 1.1.2 ( June 23, 2023 ) =
+= 1.1.2 (June 23, 2023) =
 * Fix: Upsell issue.
 * Fix: Review star button.
 * Fix: Quick view modal issue.
 
-= 1.1.1 ( May 25, 2023 ) =
+= 1.1.1 (May 25, 2023) =
 * Fix: Translation issues.
 * Fix: Element section ID Issue.
 * Fix: Settings page multilingual compatibility.
 
-= 1.1.0 ( April 10, 2023 ) =
+= 1.1.0 (April 10, 2023) =
 * Add: Feature - Checkout Page Builder.
 * Fix: Some CSS issues.
 
-= 1.0.1 ( March 10, 2023 ) =
+= 1.0.1 (March 10, 2023) =
 * Fix: Product image gallery selector CSS.
 * Fix: Wishlist issue.
 
-= 1.0.0 ( March 09, 2023 ) =
+= 1.0.0 (March 09, 2023) =
 * Stable version release

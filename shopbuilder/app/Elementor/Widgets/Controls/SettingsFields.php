@@ -527,7 +527,10 @@ class SettingsFields {
 			'label'       => esc_html__( 'Activate Product Image Gallery Slider', 'shopbuilder' ),
 			'description' => esc_html__( 'Switch on to display product image gallery slider.', 'shopbuilder' ),
 			'classes'     => $obj->pro_class(),
-			'condition'   => [ 'show_featured_image' => [ 'yes' ] ],
+			'condition'   => [
+				'show_featured_image' => [ 'yes' ],
+				'grid_style!'         => [ 'masonry' ],
+			],
 		];
 
 		$fields['show_hover_image'] = [

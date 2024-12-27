@@ -367,13 +367,31 @@ class LayoutFields {
 			'description'    => esc_html__( 'Please select the number of columns to show per row.', 'shopbuilder' ),
 			'options'        => ControlHelper::layout_columns(),
 			'label_block'    => true,
+			'render_type'    => 'template',
 			'default'        => '0',
 			'tablet_default' => '2',
 			'mobile_default' => '1',
 			'required'       => true,
+			'separator'      => rtsb()->has_pro() ? 'default' : 'default elementor-control-separator-after',
 			'selectors'      => [
-				$obj->selectors['columns']['cols'] => 'grid-template-columns: repeat({{VALUE}}, minmax(0, 1fr));',
+				$obj->selectors['columns']['cols']         => 'grid-template-columns: repeat({{VALUE}}, minmax(0, 1fr));',
+				$obj->selectors['columns']['masonry']      => '--rtsb-masonry-columns: {{VALUE}};',
+				$obj->selectors['columns']['list_masonry'] => '--rtsb-masonry-list-columns: {{VALUE}};',
 			],
+		];
+
+		$fields['grid_style'] = [
+			'type'        => 'select2',
+			'label'       => esc_html__( 'Layout Grid Style', 'shopbuilder' ),
+			'options'     => [
+				'even'    => esc_html__( 'Default', 'shopbuilder' ),
+				'masonry' => esc_html__( 'Masonry', 'shopbuilder' ),
+				'equal'   => esc_html__( 'Equal Height', 'shopbuilder' ),
+			],
+			'label_block' => true,
+			'default'     => 'even',
+			'description' => esc_html__( 'Please select the layout grid style.', 'shopbuilder' ),
+			'classes'     => $obj->pro_class(),
 		];
 
 		$fields['image_width'] = [
@@ -393,6 +411,7 @@ class LayoutFields {
 				'size' => 32,
 			],
 			'description' => esc_html__( 'Please select the image width in %.', 'shopbuilder' ),
+			'separator'   => rtsb()->has_pro() ? 'default' : 'before',
 			'selectors'   => [
 				$obj->selectors['columns']['image_width']['image'] => 'flex-basis: {{SIZE}}{{UNIT}}; max-width: {{SIZE}}{{UNIT}};',
 				// $obj->selectors['columns']['image_width']['content'] => 'flex-basis: calc(100% - {{SIZE}}{{UNIT}}); max-width: calc(100% - {{SIZE}}{{UNIT}});',
@@ -441,23 +460,6 @@ class LayoutFields {
 			],
 			'condition'   => [ 'layout' => [ 'list-layout3' ] ],
 		];
-
-		// Todo: Need to add later.
-		/*
-		$fields['grid_style'] = [
-			'type'        => 'select2',
-			'label'       => esc_html__( 'Grid Style', 'shopbuilder' ),
-			'options'     => [
-				'even'    => esc_html__( 'Even', 'shopbuilder' ),
-				'masonry' => esc_html__( 'Masonry', 'shopbuilder' ),
-				'equal'   => esc_html__( 'Equal Height', 'shopbuilder' ),
-			],
-			'label_block' => true,
-			'default'     => 'even',
-			'description' => esc_html__( 'Please select the grid style.', 'shopbuilder' ),
-			'classes'     => $obj->pro_class(),
-		];
-		*/
 
 		return apply_filters( 'rtsb/elements/elementor/columns_control', $fields, $obj );
 	}

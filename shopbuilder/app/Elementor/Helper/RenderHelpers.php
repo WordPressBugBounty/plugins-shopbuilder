@@ -9,8 +9,9 @@
 
 namespace RadiusTheme\SB\Elementor\Helper;
 
-use RadiusTheme\SB\Helpers\BuilderFns;
+use Elementor\Plugin;
 use RadiusTheme\SB\Helpers\Fns;
+use RadiusTheme\SB\Helpers\BuilderFns;
 
 // Do not allow directly accessing this file.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -600,10 +601,12 @@ class RenderHelpers {
 			$classes .= ' rtsb-slider-layout';
 		}
 
-		if ( 'even' === $grid_type ) {
-			$masonry_class = ' rtsb-even';
+		if ( 'equal' === $grid_type ) {
+			$masonry_class = ' rtsb-equal';
 		} elseif ( 'masonry' === $grid_type ) {
 			$masonry_class = ' rtsb-masonry';
+		} else {
+			$masonry_class = ' rtsb-even';
 		}
 
 		if ( ! rtsb()->has_pro() || $is_carousel ) {
@@ -685,7 +688,7 @@ class RenderHelpers {
 		$t_col            = 0 === $meta['t_cols'] ? 2 : $meta['t_cols'];
 		$m_col            = 0 === $meta['m_cols'] ? 1 : $meta['m_cols'];
 
-		if ( \Elementor\Plugin::$instance->breakpoints->has_custom_breakpoints() ) {
+		if ( Plugin::$instance->breakpoints->has_custom_breakpoints() ) {
 			// Widescreen.
 			$w_col   = self::get_data( $settings, 'cols_widescreen' );
 			$w_col   = 0 === $w_col ? self::default_columns( $meta['layout'] ) : $w_col;
@@ -938,8 +941,9 @@ class RenderHelpers {
 	 * @return void
 	 */
 	public static function register_scripts( $scripts ) {
-		$caro   = false;
-		$script = [];
+		$caro    = false;
+		$masonry = false;
+		$script  = [];
 
 		$script[] = 'jquery';
 
@@ -947,6 +951,10 @@ class RenderHelpers {
 			if ( ! empty( $sc ) ) {
 				if ( 'isCarousel' === $sc ) {
 					$caro = $value;
+				}
+
+				if ( 'isMasonry' === $sc ) {
+					$masonry = $value;
 				}
 			}
 		}
@@ -957,6 +965,10 @@ class RenderHelpers {
 			 */
 			if ( $caro ) {
 				$script[] = 'swiper';
+			}
+
+			if ( $masonry ) {
+				$script[] = 'masonry';
 			}
 
 			$script[] = 'rtsb-imagesloaded';

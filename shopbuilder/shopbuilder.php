@@ -4,7 +4,7 @@
  * Plugin Name:                ShopBuilder - Elementor WooCommerce Builder Addons
  * Plugin URI:                 https://shopbuilderwp.com/
  * Description:                WooCommerce Page Builder for Elementor
- * Version:                    2.5.1
+ * Version:                    2.5.2
  * Author:                     RadiusTheme
  * Author URI:                 https://radiustheme.com
  * Text Domain:                shopbuilder
@@ -29,7 +29,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Define Constants.
  */
-define( 'RTSB_VERSION', '2.5.0' );
+define( 'RTSB_VERSION', '2.5.2' );
 define( 'RTSB_FILE', __FILE__ );
 define( 'RTSB_PATH', plugin_dir_path( __FILE__ ) );
 define( 'RTSB_ACTIVE_FILE_NAME', plugin_basename( __FILE__ ) );

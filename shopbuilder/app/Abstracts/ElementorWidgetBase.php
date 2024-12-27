@@ -389,6 +389,7 @@ abstract class ElementorWidgetBase extends Widget_Base {
 			return;
 		}
 		$ajaxurl = admin_url( 'admin-ajax.php' );
+
 		if ( in_array( 'sitepress-multilingual-cms/sitepress.php', get_option( 'active_plugins' ) ) ) {
 			$ajaxurl = admin_url( 'admin-ajax.php?lang=' . ICL_LANGUAGE_CODE );
 		}
@@ -406,6 +407,12 @@ abstract class ElementorWidgetBase extends Widget_Base {
 				rtsbProductPageInit();
 			}, 1000);
 			<?php if ( rtsb()->has_pro() ) { ?>
+				var isMasonry = jQuery('.rtsb-elementor-container .rtsb-masonry');
+
+				if(isMasonry.length > 0) {
+					isMasonry.masonry();
+				}
+
 				if (typeof rtsbFilters === 'function') {
 					rtsbFilters();
 				}

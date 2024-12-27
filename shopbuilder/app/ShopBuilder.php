@@ -90,7 +90,9 @@ final class ShopBuilder {
 		// Register Plugin Deactivate Hook.
 		register_deactivation_hook( RTSB_FILE, [ Installation::class, 'deactivation' ] );
 
-		SupportController::instance();
+		if ( Dependencies::instance()->check() ) {
+			SupportController::instance();
+		}
 
 		// HPOS Declare compatibility.
 		add_action(

@@ -374,7 +374,7 @@ class AddToCartSettings {
 				],
 				'default'   => [
 					'unit' => 'px',
-					'size' => '50',
+					'size' => '30',
 				],
 				'selectors' => [
 					self::$selectors['variation_height'] => 'height: {{SIZE}}{{UNIT}};',
@@ -393,6 +393,10 @@ class AddToCartSettings {
 						'min' => 0,
 						'max' => 100,
 					],
+				],
+				'default'    => [
+					'unit' => 'px',
+					'size' => '30',
 				],
 				'selectors'  => [
 					self::$selectors['variation_width'] => 'min-width: {{SIZE}}{{UNIT}};',

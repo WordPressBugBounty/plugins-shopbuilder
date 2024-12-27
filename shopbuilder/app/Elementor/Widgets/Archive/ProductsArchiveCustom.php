@@ -172,12 +172,14 @@ class ProductsArchiveCustom extends ElementorWidgetBase {
 			'description'    => esc_html__( 'Please select the number of columns to show per row for list layout.', 'shopbuilder' ),
 			'options'        => ControlHelper::layout_columns(),
 			'label_block'    => true,
+			'render_type'    => 'template',
 			'default'        => '1',
 			'tablet_default' => '2',
 			'mobile_default' => '1',
 			'required'       => true,
 			'selectors'      => [
 				$this->selectors['columns']['list_cols'] => 'grid-template-columns: repeat({{VALUE}}, minmax(0, 1fr));',
+				$this->selectors['columns']['list_masonry'] => '--rtsb-masonry-list-columns: {{VALUE}};',
 			],
 		];
 

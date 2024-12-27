@@ -94,10 +94,16 @@ class Render {
 		$tooltip_attr = 'list' == $view_mode && ! empty( $metas['tooltip_position_list'] ) ? esc_attr( $metas['tooltip_position_list'] ) : $metas['tooltip_position'];
 		$has_pro      = rtsb()->has_pro();
 		$has_filters  = $has_pro && ! empty( $settings['tax_filter'] );
+		$grid_style   = $settings['grid_style'] ?? 'even';
 
 		// Set default layout.
 		if ( ! $has_pro && ! in_array( $layout, array_keys( Fns::free_layouts() ), true ) ) {
 			$layout = RenderHelpers::set_default_layout( $layout );
+		}
+
+		if ( $has_pro && 'masonry' === $grid_style ) {
+			$style_attr .= '; --rtsb-masonry-columns: ' . esc_attr( RenderHelpers::default_columns( $layout ) );
+			$style_attr .= '; --rtsb-masonry-list-columns: ' . esc_attr( RenderHelpers::default_columns( $layout ) );
 		}
 
 		// Container classes.
@@ -142,6 +148,7 @@ class Render {
 		$script_generator['layout']     = $layout_id;
 		$script_generator['rand']       = absint( $rand );
 		$script_generator['isCarousel'] = preg_match( '/slider/', $layout );
+		$script_generator['isMasonry']  = $has_pro && 'masonry' === $grid_style;
 
 		// Register scripts in the wp_footer action.
 		add_action(
@@ -807,7 +814,11 @@ class Render {
 		$arg['grid']         .= 'rtsb-col-grid ';
 
 		if ( ! $fullwidth ) {
-			$arg['class'] .= ' even-grid-item ';
+			if ( 'masonry' === $meta['grid_type'] ) {
+				$arg['class'] .= 'masonry-grid-item ';
+			} else {
+				$arg['class'] .= 'even-grid-item ';
+			}
 		}
 
 		if ( ! empty( $meta['active_cat_slider'] ) ) {
@@ -916,8 +927,13 @@ class Render {
 		$is_carousel = preg_match( '/slider/', $layout );
 
 		if ( ! $is_carousel ) {
-			$arg['grid']  .= 'rtsb-col-grid ';
-			$arg['class'] .= ' even-grid-item ';
+			$arg['grid'] .= 'rtsb-col-grid ';
+
+			if ( 'masonry' === $meta['grid_type'] ) {
+				$arg['class'] .= 'masonry-grid-item ';
+			} else {
+				$arg['class'] .= 'even-grid-item ';
+			}
 		} else {
 			$arg['grid'] .= 'rtsb-col-grid rtsb-col-full rtsb-slide-item swiper-slide ';
 		}
