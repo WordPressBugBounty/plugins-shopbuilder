@@ -41,8 +41,6 @@ class BuilderCpt {
 		add_filter( 'parse_query', [ $this, 'query_filter' ] );
 		// add filter for search.
 		add_action( 'restrict_manage_posts', [ $this, 'add_filter' ] );
-
-		add_action( 'in_admin_header', [ $this, 'remove_all_notices' ], 1000 );
 	}
 
 
@@ -332,7 +330,7 @@ class BuilderCpt {
 	 */
 	public function builder_template( $template ) {
 		$builder_page_id = BuilderFns::is_builder_preview() ? get_the_ID() : BuilderFns::builder_page_id_by_page();
-		if ( $builder_page_id ) {
+		if ( defined( 'ELEMENTOR_VERSION' ) && $builder_page_id ) { // Elementor Check.
 			$page_template = get_post_meta( $builder_page_id, '_wp_page_template', true );
 			$new_template  = RTSB_ABSPATH . 'page-templates/builder-template.php';
 			if ( 'elementor_canvas' === $page_template ) {
@@ -391,14 +389,4 @@ class BuilderCpt {
 		return $actions;
 	}
 
-	/**
-	 * Remove admin notices
-	 */
-	public function remove_all_notices() {
-		$screen = get_current_screen();
-		if ( 'edit-rtsb_builder' === $screen->id ) {
-			remove_all_actions( 'admin_notices' );
-			remove_all_actions( 'all_admin_notices' );
-		}
-	}
 }

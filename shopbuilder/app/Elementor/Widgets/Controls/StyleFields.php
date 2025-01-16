@@ -2212,6 +2212,10 @@ class StyleFields {
 					'step' => 1,
 				],
 			],
+			'default'   => [
+				'unit' => 'px',
+				'size' => 13,
+			],
 			'condition' => $arrow_condition,
 			'selectors' => $selectors['arrow_size'],
 		];

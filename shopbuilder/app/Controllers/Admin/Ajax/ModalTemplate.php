@@ -57,6 +57,15 @@ class ModalTemplate {
 			];
 			wp_send_json( $return );
 		}
+		if ( ! defined( 'ELEMENTOR_VERSION' ) ) {
+			$return = [
+				'success' => true,
+				'title'   => $title,
+				'content' => '<h2 style="text-align: center;">' . esc_html__( 'Permission Denied. Please Install elementor', 'shopbuilder' ) . '</h2>',
+			];
+
+			wp_send_json( $return );
+		}
 
 		add_filter( 'option_' . Uploads_Manager::UNFILTERED_FILE_UPLOADS_KEY, '__return_true' );
 		Plugin::$instance->files_manager->clear_cache();

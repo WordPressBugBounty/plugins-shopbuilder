@@ -8,7 +8,6 @@ use RadiusTheme\SB\Controllers\Admin\Ajax as Ajax;
 use RadiusTheme\SB\Helpers\Fns;
 use RadiusTheme\SB\Traits\SingletonTrait;
 
-
 class AdminInit {
 	/**
 	 * Parent Menu Page Slug
@@ -32,8 +31,6 @@ class AdminInit {
 	use SingletonTrait;
 
 	public function __construct() {
-		// $this->menu_link_part = admin_url( 'admin.php?page=rtsb' );
-		$this->remove_all_notices();
 		$this->init();
 		$this->ajax_actions();
 		$this->upgrade();
@@ -46,8 +43,10 @@ class AdminInit {
 	 */
 	public function ajax_actions() {
 		Ajax\DefaultTemplate::instance();
+		if ( defined( 'ELEMENTOR_VERSION' ) ) { // Elementor Check.
+			Ajax\CreateTemplate::instance();
+		}
 		Ajax\ModalTemplate::instance();
-		Ajax\CreateTemplate::instance();
 		Ajax\AdminSettings::instance();
 	}
 
@@ -64,6 +63,7 @@ class AdminInit {
 
 	public function init() {
 		add_action( 'admin_menu', [ $this, 'add_menu' ], 25 );
+		add_action( 'in_admin_header', [ $this, 'in_admin_header_functionality' ], 1000 );
 		PluginRow::instance();
 	}
 
@@ -130,24 +130,36 @@ class AdminInit {
 	}
 
 	/**
-	 * Remove admin notices
+	 * Admin Header
 	 */
-	public function remove_all_notices() {
-		add_action(
-			'in_admin_header',
-			function () {
-				$screen = get_current_screen();
-
-				if ( in_array(
-					$screen->base,
-					[ 'shopbuilder_page_rtsb-settings', 'shopbuilder_page_rtsb-license', 'shopbuilder_page_rtsb-themes' ],
-					true
-				) ) {
-					remove_all_actions( 'admin_notices' );
-					remove_all_actions( 'all_admin_notices' );
-				}
-			},
-			1000
-		);
+	public function in_admin_header_functionality() {
+		$screen            = get_current_screen();
+		$isBuilderTemplate = 'edit-rtsb_builder' === $screen->id;
+		$pages             = [
+			'shopbuilder_page_rtsb-get-help',
+			'shopbuilder_page_rtsb-settings',
+			'shopbuilder_page_rtsb-license',
+			'shopbuilder_page_rtsb-themes',
+		];
+		$isSettingsPage    = in_array( $screen->base, $pages, true );
+		if ( $isBuilderTemplate || $isSettingsPage ) {
+			remove_all_actions( 'admin_notices' );
+			remove_all_actions( 'all_admin_notices' );
+		}
+		if ( ! defined( 'ELEMENTOR_VERSION' ) && $isBuilderTemplate ) {
+			?>
+			<div class='rtsb-message-for-elementor-missing'>
+				<div class="rtsb-builder-notice-content">
+					<?php
+					echo sprintf(
+						/* translators: %s: Elementor */
+						esc_html__( 'To build your WooCommerce pages, please Install and Activate the %s Plugin.', 'shopbuilder' ),
+						'<a href="' . esc_url( admin_url( 'plugin-install.php?s=elementor&tab=search&type=term' ) ) . '" target="_blank">' . esc_html__( 'Elementor Website Builder', 'shopbuilder' ) . '</a>'
+					);
+					?>
+				</div>
+			</div>
+			<?php
+		}
 	}
 }

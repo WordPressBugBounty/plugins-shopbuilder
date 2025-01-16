@@ -25,8 +25,6 @@ class Review {
 	private function __construct() {
 		add_action( 'admin_init', [ $this, 'check_installation_time' ], 10 );
 		add_action( 'admin_init', [ $this, 'notice_actions' ], 5 );
-
-		$this->remove_all_notices();
 	}
 
 	/**
@@ -304,20 +302,4 @@ class Review {
 		}
 	}
 
-	/**
-	 * Remove admin notices
-	 */
-	public function remove_all_notices() {
-		add_action(
-			'in_admin_header',
-			function () {
-				$screen = get_current_screen();
-				if ( in_array( $screen->base, [ 'shopbuilder_page_rtsb-get-help' ], true ) ) {
-					remove_all_actions( 'admin_notices' );
-					remove_all_actions( 'all_admin_notices' );
-				}
-			},
-			1000
-		);
-	}
 }

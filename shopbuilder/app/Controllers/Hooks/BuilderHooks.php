@@ -70,9 +70,9 @@ class BuilderHooks {
 			$classes[] = 'woocommerce-cart';
 			// $indexToRemove = array_search( 'woocommerce' , $classes);
 			// if ($indexToRemove !== false) {
-			// 	unset($classes[$indexToRemove]);
+			// unset($classes[$indexToRemove]);
 			// }
-		} else{
+		} else {
 			$classes[] = 'woocommerce';
 		}
 
@@ -108,7 +108,7 @@ class BuilderHooks {
 		if ( $this->builder_page_id ) {
 			if ( did_action( 'elementor/loaded' ) && 'elementor' === $this->page_edit_with ) {
 				$this->elementor_frontend();
-			} else {
+			} elseif ( 'gutenberg' === $this->page_edit_with ) {
 				$this->gutenberg_frontend();
 			}
 		}

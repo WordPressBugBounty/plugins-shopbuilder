@@ -78,7 +78,7 @@ abstract class AdditionalQueryCustomLayout extends ElementorWidgetBase {
 			)
 		);
 
-		unset( $fields['grid_style'] );
+		// unset( $fields['grid_style'] );
 
 		return $fields;
 	}

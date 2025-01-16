@@ -4,7 +4,7 @@ Donate link:
 Tags: Elementor, Woocommerce Builder, Elementor Woocommerce Builder, Woocommerce, Woocommerce Product
 Requires at least: 5.5
 Tested up to: 6.7
-Stable tag: 2.5.2
+Stable tag: 2.5.3
 Requires PHP: 7.4
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -339,6 +339,15 @@ If you like the ShopBuilder Plugin, then consider checking out our other WordPre
 == Screenshots ==
 
 == Changelog ==
+
+= 2.5.3 (January 16, 2025) =
+* Add: Eliminated the dependency on the Elementor plugin, enabling modules to function smoothly without it.
+* Fix: Resolved the issue where slider settings were missing in the Product Slider widget.
+* Fix: Addressed compatibility problems with the masonry layout.
+* Fix: Rectified the display issue in the Product Details tab when the description tab is empty.
+* Fix: Corrected responsive issues with the action buttons in general widgets.
+* Tweak: Introduced a caching mechanism to optimize the retrieval of product gallery images.
+* Update: Implemented a dashboard notice to alert users if Elementor is not installed.
 
 = 2.5.2 (December 27, 2024) =
 * Add: Enhanced compatibility with new modules and features.

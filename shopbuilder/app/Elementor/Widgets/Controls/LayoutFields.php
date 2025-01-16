@@ -519,6 +519,17 @@ class LayoutFields {
 			'classes'        => $obj->pro_class(),
 		];
 
+		$fields['grid_style'] = [
+			'type'        => 'select',
+			'label'       => esc_html__( 'Layout Grid Style', 'shopbuilder' ),
+			'options'     => [
+				'even' => esc_html__( 'Default', 'shopbuilder' ),
+			],
+			'label_block' => true,
+			'default'     => 'even',
+			'description' => esc_html__( 'Please select the layout grid style.', 'shopbuilder' ),
+		];
+
 		$fields['image_width'] = [
 			'type'        => 'slider',
 			'mode'        => 'responsive',

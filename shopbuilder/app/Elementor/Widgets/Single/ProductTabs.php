@@ -12,11 +12,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit( 'This script cannot be accessed directly.' );
 }
 
+use WC_Product;
+use RadiusTheme\SB\Helpers\Fns;
+use RadiusTheme\SB\Helpers\BuilderFns;
 use RadiusTheme\SB\Abstracts\ElementorWidgetBase;
 use RadiusTheme\SB\Elementor\Widgets\Controls\ProductTabsSettings;
-use RadiusTheme\SB\Helpers\BuilderFns;
-use RadiusTheme\SB\Helpers\ElementorDataMap;
-use RadiusTheme\SB\Helpers\Fns;
 
 /**
  * Product Description class
@@ -114,26 +114,38 @@ class ProductTabs extends ElementorWidgetBase {
 	}
 
 	/**
-	 * @param $tabs
+	 * Product Tabs.
 	 *
-	 * @return mixed
+	 * @param array $tabs Existing tabs.
+	 *
+	 * @return array
 	 */
 	public function woocommerce_product_tabs( $tabs ) {
+		global $product;
+
+		if ( ! $product instanceof WC_Product ) {
+			$product = wc_get_product();
+		}
+
 		$controllers = $this->get_settings_for_display();
+		$description = $product ? $product->get_description() : '';
+
 		if ( $this->is_edit_mode() ) {
 			add_filter(
 				'the_content',
-				function ( $content ) {
+				function () {
 					return "This is only for preview text. Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text.";
 				},
 				99
 			);
 		}
-		if ( empty( $controllers['description'] ) ) {
+
+		if ( empty( $controllers['description'] ) || empty( $description ) ) {
 			unset( $tabs['description'] );
 		} elseif ( ! empty( $controllers['description_nav_text'] ) ) {
 			$tabs['description']['title'] = $controllers['description_nav_text'];
 		}
+
 		if ( empty( $controllers['additional_information'] ) ) {
 			unset( $tabs['additional_information'] );
 		} elseif ( ! empty( $tabs['additional_information'] ) && ! empty( $controllers['additional_information_nav_text'] ) ) {
@@ -175,8 +187,6 @@ class ProductTabs extends ElementorWidgetBase {
 				1
 			);
 		}
-
-        // wp_enqueue_style( 'woodmart-style' );
 
 		$this->apply_hooks();
 		$this->theme_support();

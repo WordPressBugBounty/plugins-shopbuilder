@@ -3179,4 +3179,36 @@ class Fns {
 			],
 		];
 	}
+
+	/**
+	 * Get product gallery ids.
+	 *
+	 * @param object $product Product object.
+	 *
+	 * @return mixed
+	 */
+	public static function get_cached_gallery_ids( $product ) {
+		$product_id = $product->get_id();
+		$cache_key  = 'rtsb_product_gallery_ids_' . $product_id;
+
+		if ( isset( self::$cache[ $cache_key ] ) ) {
+			return self::$cache[ $cache_key ];
+		}
+
+		$cached_result = wp_cache_get( $cache_key, 'shopbuilder' );
+
+		if ( false !== $cached_result ) {
+			self::$cache[ $cache_key ] = $cached_result;
+
+			return $cached_result;
+		}
+
+		$gallery_ids               = $product->get_gallery_image_ids();
+		self::$cache[ $cache_key ] = $gallery_ids;
+
+		wp_cache_set( $cache_key, $gallery_ids, 'shopbuilder', 12 * HOUR_IN_SECONDS );
+		Cache::set_data_cache_key( $cache_key );
+
+		return $gallery_ids;
+	}
 }

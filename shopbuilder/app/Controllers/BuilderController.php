@@ -61,14 +61,11 @@ class BuilderController {
 		}
 
 		BuilderCpt::instance();
-
-		$this->elementor_init();
-		$this->both_builder_frontend();
-
-		// add_action( 'elementor/init', [ $this, 'elementor_init' ] );
-		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'editor_scripts' ] );
-		// add_action( 'template_redirect', [ $this, 'both_builder_frontend' ], 99 );
-
+		if ( defined( 'ELEMENTOR_VERSION' ) ) {
+			$this->elementor_init();
+			$this->both_builder_frontend();
+			add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'editor_scripts' ] );
+		}
 		// RT Select2 Ajax.
 		add_action( 'wp_ajax_rtsb_select2_object_search', [ $this, 'select2_ajax_posts_filter_autocomplete' ] );
 		add_action( 'wp_ajax_nopriv_rtsb_select2_object_search', [ $this, 'select2_ajax_posts_filter_autocomplete' ] );

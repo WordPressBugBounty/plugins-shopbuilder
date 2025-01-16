@@ -5,6 +5,8 @@
  * @var $controllers  array settings as array
  */
 
+use RadiusTheme\SB\Helpers\Fns;
+
 // Do not allow directly accessing this file.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit( 'This script cannot be accessed directly.' );
@@ -17,7 +19,7 @@ if ( empty( $product ) ) {
 }
 $parent_class  = ! empty( $controllers['sale_flash_badge'] ) ? 'rtsb-sale-flash-position-' . $controllers['flash_sale_position'] : '';
 $lightbox_icon = ! empty( $controllers['show_zoom'] ) ? $controllers['lightbox_icon'] : '';
-$gallery_class = $product && $product->get_gallery_image_ids() ? ' has-product-gallery' : ' no-product-gallery';
+$gallery_class = ! empty( Fns::get_cached_gallery_ids( $product ) ) ? ' has-product-gallery' : ' no-product-gallery';
 
 ?>
 <div class="rtsb-product-images <?php echo esc_attr( $parent_class . $gallery_class ); ?>" data-zoom-icon="<?php echo esc_attr( $lightbox_icon ); ?>">

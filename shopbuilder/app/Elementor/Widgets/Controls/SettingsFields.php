@@ -533,6 +533,18 @@ class SettingsFields {
 			],
 		];
 
+		$fields['show_product_gallery_thumb'] = [
+			'type'        => 'switch',
+			'label'       => esc_html__( 'Activate Image Gallery Thumbnail', 'shopbuilder' ),
+			'description' => esc_html__( 'Switch on to display product image gallery thumbnail slider.', 'shopbuilder' ),
+			'classes'     => $obj->pro_class(),
+			'condition'   => [
+				'show_featured_image'  => [ 'yes' ],
+				'show_product_gallery' => [ 'yes' ],
+				'grid_style!'          => [ 'masonry' ],
+			],
+		];
+
 		$fields['show_hover_image'] = [
 			'type'        => 'switch',
 			'label'       => esc_html__( 'Display Gallery Image on Hover?', 'shopbuilder' ),
@@ -595,8 +607,63 @@ class SettingsFields {
 
 		$fields = array_merge( $fields, self::image_size_controls( 'grid' ) );
 
-		$fields['image_section_end'] = $obj->end_section();
+		$fields['thumb_image_note']            = $obj->el_heading(
+			esc_html__( 'Thumbnail Slider', 'shopbuilder' ),
+			'before',
+			[],
+			[
+				'show_featured_image'        => [ 'yes' ],
+				'show_product_gallery'       => [ 'yes' ],
+				'show_product_gallery_thumb' => [ 'yes' ],
+				'grid_style!'                => [ 'masonry' ],
+			],
+		);
+		$fields['gallery_thumb_column_number'] = [
+			'label'      => esc_html__( 'Gallery Thumb Image Column', 'shopbuilder' ),
+			'classes'    => $obj->pro_class(),
+			'type'       => 'slider',
+			'size_units' => [ 'px' ],
+			'range'      => [
+				'px' => [
+					'min'  => 2,
+					'max'  => 10,
+					'step' => 1,
+				],
+			],
+			'default'    => [
+				'size' => 3,
+			],
+			'condition'  => [
+				'show_featured_image'        => [ 'yes' ],
+				'show_product_gallery'       => [ 'yes' ],
+				'show_product_gallery_thumb' => [ 'yes' ],
+				'grid_style!'                => [ 'masonry' ],
+			],
+		];
+		$fields['gallery_thumb_column_gap']    = [
+			'label'      => esc_html__( 'Gallery Thumb Column Gap', 'shopbuilder' ),
+			'classes'    => $obj->pro_class(),
+			'type'       => 'slider',
+			'size_units' => [ 'px' ],
+			'range'      => [
+				'px' => [
+					'min'  => 2,
+					'max'  => 30,
+					'step' => 1,
+				],
+			],
+			'default'    => [
+				'size' => 10,
+			],
+			'condition'  => [
+				'show_featured_image'        => [ 'yes' ],
+				'show_product_gallery'       => [ 'yes' ],
+				'show_product_gallery_thumb' => [ 'yes' ],
+				'grid_style!'                => [ 'masonry' ],
+			],
+		];
 
+		$fields['thumb_image_section_end'] = $obj->end_section();
 		return $fields;
 	}
 
@@ -1332,7 +1399,7 @@ class SettingsFields {
 
 		$fields['swatch_type'] = [
 			'type'        => 'select2',
-			'label'       => esc_html__( 'Swatches Type', 'shopbuilder' ),
+			'label'       => esc_html__( 'Color Swatches Type', 'shopbuilder' ),
 			'description' => esc_html__( 'Please select the variation swatches display type (only work with color swatch).', 'shopbuilder' ),
 			'options'     => [
 				'square' => esc_html__( 'Square', 'shopbuilder' ),

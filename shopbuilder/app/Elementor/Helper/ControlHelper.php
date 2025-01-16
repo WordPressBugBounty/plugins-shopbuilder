@@ -184,7 +184,7 @@ class ControlHelper {
 		return apply_filters(
 			'rtsb/elements/elementor/single_product_tab_layouts',
 			[
-				'layout1'        => [
+				'layout1' => [
 					'title' => esc_html__( 'Layout 1', 'shopbuilder' ),
 					'url'   => esc_url( rtsb()->get_assets_uri( 'images/layout/tab-01.png' ) ),
 				],
