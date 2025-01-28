@@ -196,7 +196,6 @@ class Render {
 
 		if ( $is_carousel ) {
 			$slider_data = RenderHelpers::slider_data( $settings, $raw_settings );
-
 			// Adding slider render attributes.
 			$this->add_attribute(
 				'rtsb_slider_attr_' . $rand,
@@ -1414,6 +1413,44 @@ class Render {
 	}
 
 	/**
+	 * Add link render attributes.
+	 *
+	 * @param array|string $element   The HTML element.
+	 * @param array        $url_control      Array of link settings.
+	 * @param bool         $overwrite         Optional. Whether to overwrite existing
+	 *                                        attribute. Default is false, not to overwrite.
+	 *
+	 * @return Render
+	 */
+	public function add_link_attributes( $element, array $url_control, $overwrite = false ) {
+		$attributes = [];
+
+		if ( ! empty( $url_control['url'] ) ) {
+			$allowed_protocols = array_merge( wp_allowed_protocols(), [ 'skype', 'viber' ] );
+
+			$attributes['href'] = esc_url( $url_control['url'], $allowed_protocols );
+		}
+
+		if ( ! empty( $url_control['is_external'] ) ) {
+			$attributes['target'] = '_blank';
+		}
+
+		if ( ! empty( $url_control['nofollow'] ) ) {
+			$attributes['rel'] = 'nofollow';
+		}
+
+		if ( ! empty( $url_control['custom_attributes'] ) ) {
+			$attributes = array_merge( $attributes, Utils::parse_custom_attributes( $url_control['custom_attributes'] ) );
+		}
+
+		if ( $attributes ) {
+			$this->add_attribute( $element, $attributes, null, $overwrite );
+		}
+
+		return $this;
+	}
+
+	/**
 	 * Get render attribute string.
 	 *
 	 * @param string $element The element.
@@ -1426,5 +1463,26 @@ class Render {
 		}
 
 		return Utils::render_html_attributes( $this->attributes[ $element ] );
+	}
+
+	/**
+	 * Function to render link attributes.
+	 *
+	 * @param string $id Element ID.
+	 * @param array  $control_name Control name.
+	 * @param string $class_name Class name.
+	 *
+	 * @return string
+	 */
+	public function render_link_attributes( $id, $control_name, $class_name = 'logo-img-link' ) {
+		$this->add_attribute( $id, 'class', $class_name );
+
+		if ( ! empty( $control_name['url'] ) ) {
+			$this->add_link_attributes( $id, $control_name );
+		} else {
+			$this->add_attribute( $id, 'role', 'button' );
+		}
+
+		return $this->get_attribute_string( $id );
 	}
 }

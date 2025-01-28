@@ -10,6 +10,25 @@
 
 namespace RadiusTheme\SB\Elementor\Helper;
 
+use RadiusTheme\SB\Elementor\Widgets\General\{AdvancedHeading,
+	DropCaps,
+	ShopBuilderButton,
+	CallToAction,
+	InfoBox,
+	FlipBox,
+	Counter,
+	CountDown,
+	PricingTable,
+	ProgressBar,
+	ImageAccordion,
+	ShopBuilderFaq,
+	LogoSliderAndGrid,
+	Testimonial,
+	TeamMember,
+	PostList,
+	PostGrid
+};
+
 // Do not allow directly accessing this file.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit( 'This script cannot be accessed directly.' );
@@ -19,6 +38,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * BuilderFns class
  */
 class ControlSelectors {
+
 	/**
 	 * Get Widget Selectors.
 	 *
@@ -319,7 +339,6 @@ class ControlSelectors {
 				'breadcrumbs_typography' => '{{WRAPPER}} .rtsb-breadcrumb .woocommerce-breadcrumb',
 				'icon_color'             => '{{WRAPPER}} .rtsb-breadcrumb .woocommerce-breadcrumb .breadcrumb-separator i,{{WRAPPER}} .rtsb-breadcrumb .woocommerce-breadcrumb .breadcrumb-separator',
 			],
-
 			'rtsb-wc-notice'                  => [
 				'notice_typography'            => '{{WRAPPER}} .rtsb-notice :is(.woocommerce-message, .woocommerce-error, .wc-block-components-notice-banner)',
 				'notice_icon_size'             => [
@@ -376,33 +395,27 @@ class ControlSelectors {
 				'notice_icon_gap'              => '{{WRAPPER}} .rtsb-notice .wc-block-components-notice-banner',
 				'notice_border_radius'         => '{{WRAPPER}} .rtsb-notice .wc-block-components-notice-banner',
 			],
-
 			'rtsb-products-grid'              => array_merge(
 				self::general_common_selectors(),
 				self::general_product_selectors()
 			),
-
 			'rtsb-products-list'              => array_merge(
 				self::general_common_selectors(),
 				self::general_product_selectors()
 			),
-
 			'rtsb-products-slider'            => array_merge(
 				self::general_common_selectors(),
 				self::general_product_selectors(),
 				self::general_slider_selectors(),
 			),
-
 			'rtsb-product-categories-general' => array_merge(
 				self::general_common_selectors(),
 				self::general_cat_selectors()
 			),
-
 			'rtsb-products-single-category'   => array_merge(
 				self::general_common_selectors(),
 				self::general_cat_selectors()
 			),
-
 			'rtsb-social-share'               => array_merge(
 				self::social_share(),
 			),
@@ -420,10 +433,26 @@ class ControlSelectors {
 				'header_cell_width'          => '{{WRAPPER}} .rtsb-wishlist-content table thead th',
 				'item_cell_width'            => '{{WRAPPER}} .rtsb-wishlist-content table tbody td',
 			],
+			'rtsb-advanced-heading'           => AdvancedHeading\Selectors::get_selectors(),
+			'rtsb-dropcaps'                   => DropCaps\Selectors::get_selectors(),
+			'rtsb-shopbuilder-button'         => ShopBuilderButton\Selectors::get_selectors(),
+			'rtsb-call-to-action'             => CallToAction\Selectors::get_selectors(),
+			'rtsb-info-box'                   => InfoBox\Selectors::get_selectors(),
+			'rtsb-pricing-table'              => PricingTable\Selectors::get_selectors(),
+			'rtsb-flip-box'                   => FlipBox\Selectors::get_selectors(),
+			'rtsb-counter'                    => Counter\Selectors::get_selectors(),
+			'rtsb-countdown-addon'            => CountDown\Selectors::get_selectors(),
+			'rtsb-progress-bar-addon'         => ProgressBar\Selectors::get_selectors(),
+			'rtsb-image-accordion-addon'      => ImageAccordion\Selectors::get_selectors(),
+			'rtsb-shopbuilder-faq'            => ShopBuilderFaq\Selectors::get_selectors(),
+			'rtsb-logo-slider-and-grid'       => LogoSliderAndGrid\Selectors::get_selectors(),
+			'rtsb-testimonial'                => Testimonial\Selectors::get_selectors(),
+			'rtsb-team-member'                => TeamMember\Selectors::get_selectors(),
+			'rtsb-post-list'                  => PostList\Selectors::get_selectors(),
+			'rtsb-post-grid'                  => PostGrid\Selectors::get_selectors(),
 		];
 
 		return apply_filters( 'rtsb/elements/elementor/widget/general/selectors', $selectors );
-
 	}
 
 	/**

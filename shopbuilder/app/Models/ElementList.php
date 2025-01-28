@@ -12,7 +12,6 @@ use RadiusTheme\SB\Elementor\Widgets\Cart;
 use RadiusTheme\SB\Elementor\Widgets\Checkout;
 use RadiusTheme\SB\Elementor\Widgets\General;
 use RadiusTheme\SB\Elementor\Widgets\Single;
-use RadiusTheme\SB\Helpers\Fns;
 use RadiusTheme\SB\Models\Base\ListModel;
 use RadiusTheme\SB\Traits\SingletonTrait;
 use RadiusTheme\SBPRO\Elementor\Widgets\Checkout as CheckoutPro;
@@ -126,7 +125,6 @@ class ElementList extends ListModel {
 					'fields'     => [],
 				]
 			),
-
 			'products_slider'           => apply_filters(
 				'rtsb/elements/products_slider/options',
 				[
@@ -139,7 +137,17 @@ class ElementList extends ListModel {
 					'fields'     => [],
 				]
 			),
-
+			'highlighted_product'       => apply_filters(
+				'rtsb/elements/highlighted_product/options',
+				[
+					'id'       => 'highlighted_product',
+					'title'    => esc_html__( 'Highlighted Product', 'shopbuilder' ),
+					'category' => 'general',
+					'active'   => '',
+					'package'  => $this->pro_package(),
+					'fields'   => [],
+				]
+			),
 			'products_single_cateogory' => apply_filters(
 				'rtsb/elements/products_single_cateogory/options',
 				[
@@ -158,6 +166,29 @@ class ElementList extends ListModel {
 					'id'         => 'product_cateogories',
 					'title'      => esc_html__( 'Product Categories', 'shopbuilder' ),
 					'base_class' => General\ProductCategories::class,
+					'category'   => 'general',
+					'active'     => 'on',
+					'package'    => 'free',
+					'fields'     => [],
+				]
+			),
+			'product_lookbook'          => apply_filters(
+				'rtsb/elements/product_lookbook/options',
+				[
+					'id'       => 'product_lookbook',
+					'title'    => esc_html__( 'Product LookBook', 'shopbuilder' ),
+					'category' => 'general',
+					'active'   => '',
+					'package'  => $this->pro_package(),
+					'fields'   => [],
+				]
+			),
+			'rtsb_wishlist'             => apply_filters(
+				'rtsb/elements/rtsb_wishlist/options',
+				[
+					'id'         => 'rtsb_wishlist',
+					'title'      => esc_html__( 'Wishlist Table', 'shopbuilder' ),
+					'base_class' => General\Wishlist::class,
 					'category'   => 'general',
 					'active'     => 'on',
 					'package'    => 'free',
@@ -200,30 +231,221 @@ class ElementList extends ListModel {
 					'fields'     => [],
 				]
 			),
-			'rtsb_wishlist'             => apply_filters(
-				'rtsb/elements/rtsb_wishlist/options',
+			'advanced_heading'          => apply_filters(
+				'rtsb/elements/advanced_heading/options',
 				[
-					'id'         => 'rtsb_wishlist',
-					'title'      => esc_html__( 'Wishlist Table', 'shopbuilder' ),
-					'base_class' => General\Wishlist::class,
+					'id'         => 'advanced_heading',
+					'title'      => esc_html__( 'Advanced Heading', 'shopbuilder' ),
+					'base_class' => General\AdvancedHeading\AdvancedHeading::class,
 					'category'   => 'general',
 					'active'     => 'on',
 					'package'    => 'free',
 					'fields'     => [],
 				]
 			),
-			'highlighted_product'       => apply_filters(
-				'rtsb/elements/highlighted_product/options',
+			'dropcaps'                  => apply_filters(
+				'rtsb/elements/dropcaps/options',
 				[
-					'id'       => 'highlighted_product',
-					'title'    => esc_html__( 'Highlighted Product', 'shopbuilder' ),
+					'id'         => 'dropcaps',
+					'title'      => esc_html__( 'Dropcaps', 'shopbuilder' ),
+					'base_class' => General\DropCaps\DropCaps::class,
+					'category'   => 'general',
+					'active'     => 'on',
+					'package'    => 'free',
+					'fields'     => [],
+				]
+			),
+			'shopbuilder_button'        => apply_filters(
+				'rtsb/elements/shopbuilder_button/options',
+				[
+					'id'         => 'shopbuilder_button',
+					'title'      => esc_html__( 'Advanced Button', 'shopbuilder' ),
+					'base_class' => General\ShopBuilderButton\ShopBuilderButton::class,
+					'category'   => 'general',
+					'active'     => 'on',
+					'package'    => 'free',
+					'fields'     => [],
+				]
+			),
+			'shopbuilder_cta'           => apply_filters(
+				'rtsb/elements/shopbuilder_cta/options',
+				[
+					'id'         => 'shopbuilder_cta',
+					'title'      => esc_html__( 'Call To Action', 'shopbuilder' ),
+					'base_class' => General\CallToAction\CallToAction::class,
+					'category'   => 'general',
+					'active'     => 'on',
+					'package'    => 'free',
+					'fields'     => [],
+				]
+			),
+			'shopbuilder_info_box'      => apply_filters(
+				'rtsb/elements/shopbuilder_info_box/options',
+				[
+					'id'         => 'shopbuilder_info_box',
+					'title'      => esc_html__( 'Info Box', 'shopbuilder' ),
+					'base_class' => General\InfoBox\InfoBox::class,
+					'category'   => 'general',
+					'active'     => 'on',
+					'package'    => 'free',
+					'fields'     => [],
+				]
+			),
+			'shopbuilder_flip_box'      => apply_filters(
+				'rtsb/elements/shopbuilder_flip_box/options',
+				[
+					'id'         => 'shopbuilder_flip_box',
+					'title'      => esc_html__( 'Flip Box', 'shopbuilder' ),
+					'base_class' => General\FlipBox\FlipBox::class,
+					'category'   => 'general',
+					'active'     => 'on',
+					'package'    => 'free',
+					'fields'     => [],
+				]
+			),
+			'shopbuilder_pricing_table' => apply_filters(
+				'rtsb/elements/shopbuilder_pricing_table/options',
+				[
+					'id'         => 'shopbuilder_pricing_table',
+					'title'      => esc_html__( 'Pricing Table', 'shopbuilder' ),
+					'base_class' => General\PricingTable\PricingTable::class,
+					'category'   => 'general',
+					'active'     => 'on',
+					'package'    => 'free',
+					'fields'     => [],
+				]
+			),
+			'image_hotspots'            => apply_filters(
+				'rtsb/elements/image_hotspots/options',
+				[
+					'id'       => 'image_hotspots',
+					'title'    => esc_html__( 'Image Hotspots', 'shopbuilder' ),
 					'category' => 'general',
 					'active'   => '',
 					'package'  => $this->pro_package(),
 					'fields'   => [],
 				]
 			),
-
+			'shopbuilder_counter'       => apply_filters(
+				'rtsb/elements/shopbuilder_counter/options',
+				[
+					'id'         => 'shopbuilder_counter',
+					'title'      => esc_html__( 'Fun Facts', 'shopbuilder' ),
+					'base_class' => General\Counter\Counter::class,
+					'category'   => 'general',
+					'active'     => 'on',
+					'package'    => 'free',
+					'fields'     => [],
+				]
+			),
+			'shopbuilder_countdown'     => apply_filters(
+				'rtsb/elements/shopbuilder_countdown/options',
+				[
+					'id'         => 'shopbuilder_countdown',
+					'title'      => esc_html__( 'Countdown', 'shopbuilder' ),
+					'base_class' => General\CountDown\CountDown::class,
+					'category'   => 'general',
+					'active'     => 'on',
+					'package'    => 'free',
+					'fields'     => [],
+				]
+			),
+			'shopbuilder_progress_bar'  => apply_filters(
+				'rtsb/elements/shopbuilder_progress_bar/options',
+				[
+					'id'         => 'shopbuilder_progress_bar',
+					'title'      => esc_html__( 'Progress Bar', 'shopbuilder' ),
+					'base_class' => General\ProgressBar\ProgressBar::class,
+					'category'   => 'general',
+					'active'     => 'on',
+					'package'    => 'free',
+					'fields'     => [],
+				]
+			),
+			'image_accordion'           => apply_filters(
+				'rtsb/elements/image_accordion/options',
+				[
+					'id'         => 'image_accordion',
+					'title'      => esc_html__( 'Image Accordion', 'shopbuilder' ),
+					'base_class' => General\ImageAccordion\ImageAccordion::class,
+					'category'   => 'general',
+					'active'     => 'on',
+					'package'    => 'free',
+					'fields'     => [],
+				]
+			),
+			'shopbuilder_faq'           => apply_filters(
+				'rtsb/elements/shopbuilder_faq/options',
+				[
+					'id'         => 'shopbuilder_faq',
+					'title'      => esc_html__( 'FAQ', 'shopbuilder' ),
+					'base_class' => General\ShopBuilderFaq\ShopBuilderFaq::class,
+					'category'   => 'general',
+					'active'     => 'on',
+					'package'    => 'free',
+					'fields'     => [],
+				]
+			),
+			'logo_slider_and_grid'      => apply_filters(
+				'rtsb/elements/logo_slider_and_grid/options',
+				[
+					'id'         => 'logo_slider_and_grid',
+					'title'      => esc_html__( 'Logo Slider and Grid', 'shopbuilder' ),
+					'base_class' => General\LogoSliderAndGrid\LogoSliderAndGrid::class,
+					'category'   => 'general',
+					'active'     => 'on',
+					'package'    => 'free',
+					'fields'     => [],
+				]
+			),
+			'testimonial'               => apply_filters(
+				'rtsb/elements/testimonial/options',
+				[
+					'id'         => 'testimonial',
+					'title'      => esc_html__( 'Testimonials', 'shopbuilder' ),
+					'base_class' => General\Testimonial\Testimonial::class,
+					'category'   => 'general',
+					'active'     => 'on',
+					'package'    => 'free',
+					'fields'     => [],
+				]
+			),
+			'team_member'               => apply_filters(
+				'rtsb/elements/team_member/options',
+				[
+					'id'         => 'team_member',
+					'title'      => esc_html__( 'Team Members', 'shopbuilder' ),
+					'base_class' => General\TeamMember\TeamMember::class,
+					'category'   => 'general',
+					'active'     => 'on',
+					'package'    => 'free',
+					'fields'     => [],
+				]
+			),
+			'post_grid'                 => apply_filters(
+				'rtsb/elements/post_grid/options',
+				[
+					'id'         => 'post_grid',
+					'title'      => esc_html__( 'Post Grid', 'shopbuilder' ),
+					'base_class' => General\PostGrid\PostGrid::class,
+					'category'   => 'general',
+					'active'     => 'on',
+					'package'    => 'free',
+					'fields'     => [],
+				]
+			),
+			'post_list'                 => apply_filters(
+				'rtsb/elements/post_list/options',
+				[
+					'id'         => 'post_list',
+					'title'      => esc_html__( 'Post List', 'shopbuilder' ),
+					'base_class' => General\PostList\PostList::class,
+					'category'   => 'general',
+					'active'     => 'on',
+					'package'    => 'free',
+					'fields'     => [],
+				]
+			),
 		];
 
 		return apply_filters( 'rtsb/core/elements/general/widget_list', $list );

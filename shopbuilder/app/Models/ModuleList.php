@@ -2869,6 +2869,7 @@ class ModuleList extends ListModel {
 						],
 					],
 				],
+				/*
 				'loop_priority_note'                => [
 					'type'       => 'raw',
 					'label'      => ' ',
@@ -2884,6 +2885,7 @@ class ModuleList extends ListModel {
 					],
 					'tab'        => 'group',
 				],
+				*/
 				'group_position_hook_priority'      => [
 					'id'         => 'group_position_hook_priority',
 					'type'       => 'number',
@@ -2897,8 +2899,8 @@ class ModuleList extends ListModel {
 						'rules' => [
 							[
 								'item'     => 'modules.product_badges.loop_group_position',
-								'value'    => 'above_image',
-								'operator' => '!=',
+								'value'    => 'custom',
+								'operator' => '==',
 							],
 						],
 					],
@@ -2988,6 +2990,7 @@ class ModuleList extends ListModel {
 						],
 					],
 				],
+                /*
 				'product_page_priority_note'        => [
 					'type'       => 'raw',
 					'label'      => ' ',
@@ -3003,6 +3006,7 @@ class ModuleList extends ListModel {
 					],
 					'tab'        => 'group',
 				],
+                */
 				'product_page_group_hook_priority'  => [
 					'id'         => 'product_page_group_hook_priority',
 					'type'       => 'number',
@@ -3016,8 +3020,8 @@ class ModuleList extends ListModel {
 						'rules' => [
 							[
 								'item'     => 'modules.product_badges.product_page_group_position',
-								'value'    => [ 'shortcode', 'above_image' ],
-								'operator' => '!in',
+								'value'    => 'custom',
+								'operator' => '==',
 							],
 						],
 					],

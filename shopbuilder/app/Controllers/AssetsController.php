@@ -87,12 +87,17 @@ class AssetsController {
 	 * @return object
 	 */
 	private function get_public_styles() {
-		$rtl_suffix     = is_rtl() ? '-rtl' : '';
+		$rtl_suffix = is_rtl() ? '-rtl' : '';
+
+		$this->styles[] = [
+			'handle' => 'rtsb-odometer',
+			'src'    => rtsb()->get_assets_uri( 'vendor/odometer/css/odometer.min.css' ),
+		];
+
 		$this->styles[] = [
 			'handle' => 'rtsb-fonts',
 			'src'    => rtsb()->get_assets_uri( 'css/frontend/rtsb-fonts.css' ),
 		];
-
 		if ( rtsb()->has_pro() ) {
 			$this->styles[] = [
 				'handle' => 'rtsb-noui-slider',
@@ -100,6 +105,15 @@ class AssetsController {
 			];
 		}
 
+		$pro_version     = defined( 'RTSBPRO_VERSION' ) ? RTSBPRO_VERSION : '0';
+		$addon_condition = version_compare( $pro_version, '1.9.0', '<' );
+
+		if ( $addon_condition ) {
+			$this->styles[] = [
+				'handle' => 'rtsb-general-addons',
+				'src'    => rtsb()->get_assets_uri( 'css/frontend/general-addons' . $rtl_suffix . '.css' ),
+			];
+		}
 		$this->styles[] = [
 			'handle' => 'rtsb-frontend',
 			'src'    => rtsb()->get_assets_uri( 'css/frontend/frontend' . $rtl_suffix . '.css' ),
@@ -161,6 +175,18 @@ class AssetsController {
 		$this->scripts[] = [
 			'handle' => 'swiper',
 			'src'    => esc_url( $default_swiper_path ),
+			'deps'   => [ 'jquery' ],
+			'footer' => true,
+		];
+		$this->scripts[] = [
+			'handle' => 'rtsb-waypoints',
+			'src'    => rtsb()->get_assets_uri( 'vendor/waypoints/js/jquery.waypoints.min.js' ),
+			'deps'   => [ 'jquery' ],
+			'footer' => true,
+		];
+		$this->scripts[] = [
+			'handle' => 'rtsb-odometer',
+			'src'    => rtsb()->get_assets_uri( 'vendor/odometer/js/odometer.min.js' ),
 			'deps'   => [ 'jquery' ],
 			'footer' => true,
 		];
@@ -229,6 +255,20 @@ class AssetsController {
 				'handle' => 'rtsb-sticky-sidebar',
 				'src'    => rtsbpro()->get_assets_uri( 'vendors/sticky-sidebar/sticky-sidebar.min.js' ),
 				'deps'   => [ 'jquery' ],
+				'footer' => true,
+			];
+
+			$this->scripts[] = [
+				'handle' => 'rtsb-popper',
+				'src'    => rtsbpro()->get_assets_uri( 'vendors/tippy/popper.min.js' ),
+				'deps'   => [ 'jquery' ],
+				'footer' => true,
+			];
+
+			$this->scripts[] = [
+				'handle' => 'rtsb-tippy',
+				'src'    => rtsbpro()->get_assets_uri( 'vendors/tippy/tippy.min.js' ),
+				'deps'   => [ 'jquery', 'rtsb-popper' ],
 				'footer' => true,
 			];
 		}

@@ -4,7 +4,7 @@ Donate link:
 Tags: Elementor, Woocommerce Builder, Elementor Woocommerce Builder, Woocommerce, Woocommerce Product
 Requires at least: 5.5
 Tested up to: 6.7
-Stable tag: 2.5.3
+Stable tag: 2.6.0
 Requires PHP: 7.4
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -340,6 +340,29 @@ If you like the ShopBuilder Plugin, then consider checking out our other WordPre
 
 == Changelog ==
 
+= 2.6.0 (January 28, 2025) =
+* New: Introduced Seventeen (17) new Elementor general widgets:
+  - Advanced Heading
+  - Dropcaps
+  - Advanced Button
+  - Call To Action
+  - Info Box
+  - Flip Box
+  - Pricing Table
+  - Fun Facts
+  - Countdown
+  - Progress Bar
+  - Image Accordion
+  - FAQ
+  - Logo Slider and Grid
+  - Testimonials
+  - Team Members
+  - Post Grid
+  - Post List
+* Fix: Resolved Select2 compatibility issue on the WooCommerce checkout page.
+* Tweak: Improved and refactored codebase for Elementor general widgets.
+* Tweak: Enhanced hover effects for galleries in Elementor general widgets.
+
 = 2.5.3 (January 16, 2025) =
 * Add: Eliminated the dependency on the Elementor plugin, enabling modules to function smoothly without it.
 * Fix: Resolved the issue where slider settings were missing in the Product Slider widget.
@@ -375,7 +398,7 @@ If you like the ShopBuilder Plugin, then consider checking out our other WordPre
 * Fix: Corrected title issue with the Reddit social icon.
 * Update: Added button height control for the Comment Form widget.
 * Tweak: Added a notice for the backend color input field when no color is selected.
-* Tweak: Improved and optimized code for backend input fields.
+* Tweak: Improved and optimized codes for backend input fields.
 
 = 2.4.2 (November 18, 2024) =
 * Fix: Resolved a responsive issue causing grid products to overlap with adjacent sections.

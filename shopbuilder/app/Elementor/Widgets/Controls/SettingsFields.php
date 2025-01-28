@@ -579,7 +579,7 @@ class SettingsFields {
 			'label'       => esc_html__( 'Gallery Image Hover Animation', 'shopbuilder' ),
 			'description' => esc_html__( 'Please choose gallery image hover animation.', 'shopbuilder' ),
 			'options'     => [
-				'fade'        => esc_html__( 'Fade', 'shopbuilder' ),
+				'fade'        => esc_html__( 'Default (Fade)', 'shopbuilder' ),
 				'slide'       => esc_html__( 'Slide Up', 'shopbuilder' ),
 				'slide-down'  => esc_html__( 'Slide Down', 'shopbuilder' ),
 				'slide-left'  => esc_html__( 'Slide Left', 'shopbuilder' ),

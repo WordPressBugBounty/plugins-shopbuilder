@@ -411,11 +411,18 @@ class RenderHelpers {
 	 */
 	public static function default_columns( $layout ) {
 		switch ( $layout ) {
+			case 'rtsb-post-grid-layout1':
+			case 'rtsb-post-grid-layout2':
+			case 'rtsb-post-grid-layout3':
+			case 'rtsb-team-layout1':
+			case 'rtsb-team-layout2':
+			case 'rtsb-testimonial-layout2':
 			case 'grid-layout2':
 			case 'slider-layout2':
 				$columns = 3;
 				break;
-
+			case 'rtsb-post-list-layout1':
+			case 'rtsb-post-list-layout2':
 			case 'list-layout1':
 			case 'list-layout2':
 			case 'list-layout3':
@@ -423,14 +430,19 @@ class RenderHelpers {
 			case 'list-layout5':
 				$columns = 1;
 				break;
-
+			case 'rtsb-team-layout4':
+			case 'rtsb-testimonial-layout1':
+			case 'rtsb-testimonial-layout3':
+			case 'rtsb-testimonial-layout4':
+			case 'rtsb-testimonial-layout5':
 			case 'list-layout4':
 			case 'list-layout6':
 			case 'slider-layout5':
 			case 'slider-layout8':
 				$columns = 2;
 				break;
-
+			case 'rtsb-logo-layout1':
+			case 'rtsb-logo-layout2':
 			case 'grid-layout6':
 			case 'grid-layout9':
 				$columns = 5;
@@ -546,7 +558,7 @@ class RenderHelpers {
 	 * @return string
 	 */
 	public static function filter_layout( $layout, $template = '' ) {
-		$allowed_patterns = apply_filters( 'rtsb/elementor/custom_layout', [ 'grid', 'list', 'slider', 'category', 'toyup', 'zilly' ] );
+		$allowed_patterns = apply_filters( 'rtsb/elementor/custom_layout', [ 'grid', 'list', 'slider', 'category', 'toyup', 'zilly', 'rtsb' ] );
 		$layout_part      = explode( '-', $layout );
 		$default          = 'grid-layout1';
 
@@ -620,7 +632,6 @@ class RenderHelpers {
 		if ( ! empty( $settings['raw_settings']['inner_slider_always_show_nav'] ) ) {
 			$classes .= ' inner-slider-always-show-nav';
 		}
-
 		if ( empty( $settings['raw_settings']['cols_mobile'] ) ) {
 			$classes .= ' rtsb-mobile-flex-row';
 		}

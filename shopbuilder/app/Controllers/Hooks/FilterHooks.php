@@ -168,9 +168,9 @@ class FilterHooks {
 				'fill'            => true,
 			];
 
-			$tags['g']     = [ 'fill' => true ];
-			$tags['title'] = [ 'title' => true ];
-			$tags['path']  = [
+			$tags['g']      = [ 'fill' => true ];
+			$tags['title']  = [ 'title' => true ];
+			$tags['path']   = [
 				'd'               => true,
 				'fill'            => true,
 				'stroke-width'    => true,
@@ -179,6 +179,13 @@ class FilterHooks {
 				'fill-rule'       => true,
 				'clip-rule'       => true,
 				'stroke'          => true,
+			];
+			$tags['circle'] = [
+				'r'     => true,
+				'cx'    => true,
+				'cy'    => true,
+				'class' => true,
+				'style' => true,
 			];
 		}
 

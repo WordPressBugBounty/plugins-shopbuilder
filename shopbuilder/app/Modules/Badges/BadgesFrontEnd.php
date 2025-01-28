@@ -382,7 +382,7 @@ class BadgesFrontEnd {
 	 */
 	public function badges_position() {
 		// Single Page Badges Position.
-		$product_hook_priority = ( $this->options['product_page_group_hook_priority'] ?? 10 );
+		$product_hook_priority = ( $this->options['product_page_group_hook_priority'] ?? null );
 
 		$positions = apply_filters(
 			'rtsb/module/product_page_badges/positions',
@@ -409,7 +409,7 @@ class BadgesFrontEnd {
 				],
 				'custom'             => [
 					'hook'     => ( $this->options['product_page_custom_hook_name'] ?? '' ),
-					'priority' => $product_hook_priority,
+					'priority' => $product_hook_priority ?? 10,
 				],
 			]
 		);
@@ -420,7 +420,7 @@ class BadgesFrontEnd {
 			add_action( $positions[ $product_page_position ]['hook'], [ $this, 'add_group_badges_for_product' ], isset( $positions[ $product_page_position ]['priority'] ) ? absint( $positions[ $product_page_position ]['priority'] ) : '' );
 		}
 
-		$loop_hook_priority = ( $this->options['group_position_hook_priority'] ?? 10 );
+		$loop_hook_priority = ( $this->options['group_position_hook_priority'] ?? null );
 
 		// Shop Page/ Any Product Query loop.
 		$positions = apply_filters(

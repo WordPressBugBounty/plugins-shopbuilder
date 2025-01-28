@@ -416,6 +416,7 @@ abstract class ElementorWidgetBase extends Widget_Base {
 				if (typeof rtsbFilters === 'function') {
 					rtsbFilters();
 				}
+
 				setTimeout( function (){
 					window.rtsbCountdownApply();
 				}, 1000 );

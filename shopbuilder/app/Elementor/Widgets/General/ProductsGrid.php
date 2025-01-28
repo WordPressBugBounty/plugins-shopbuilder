@@ -227,7 +227,6 @@ class ProductsGrid extends ElementorWidgetBase {
 	 * @return void
 	 */
 	protected function render() {
-
 		$settings = $this->get_settings_for_display();
 		$template = 'elementor/general/grid/';
 

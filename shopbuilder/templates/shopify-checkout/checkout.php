@@ -43,6 +43,7 @@ if ( class_exists( 'Astra_Woocommerce' ) ) {
 	remove_action( 'woocommerce_checkout_billing', [ WC()->checkout(), 'checkout_form_shipping' ] );
 	add_action( 'woocommerce_checkout_shipping', [ WC()->checkout(), 'checkout_form_shipping' ] );
 }
+do_action( 'rtsb_before_shopify_checkout_form' );
 ?>
 	<div class="rtsb-checkout-page-full-width rtsb-shopify-checkout-form-and-summery">
 
@@ -163,6 +164,6 @@ if ( class_exists( 'Astra_Woocommerce' ) ) {
 
 	</div>
 
-
+<?php do_action( 'rtsb_after_shopify_checkout_form' ); ?>
 
 <?php Fns::load_template( 'shopify-checkout/shopify-footer', [] ); ?>
