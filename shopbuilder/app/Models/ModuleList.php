@@ -1301,7 +1301,7 @@ class ModuleList extends ListModel {
 						'label' => esc_html__( 'Enable Sticky Add-To-Cart?', 'shopbuilder' ),
 						'help'  => esc_html__( 'Switch on to enable sticky add-to-cart module.', 'shopbuilder' ),
 					],
-					'fields'       => Fns::pro_version_notice( '1.6.0' ),
+					'fields'       => Fns::pro_version_notice( '1.7.0' ),
 				]
 			),
 			'shopify_checkout'       => apply_filters(
@@ -1332,6 +1332,50 @@ class ModuleList extends ListModel {
 					],
 				]
 			),
+			'smart_coupons'          => apply_filters(
+				'rtsb/module/smart_coupons/options',
+				[
+					'id'           => 'smart_coupons',
+					'active'       => '',
+					'title'        => esc_html__( 'Smart Coupons', 'shopbuilder' ),
+					'package'      => $this->pro_package(),
+					'active_field' => [
+						'label' => esc_html__( 'Enable Smart Coupons?', 'shopbuilder' ),
+						'help'  => esc_html__( 'Switch on to enable smart coupons module.', 'shopbuilder' ),
+					],
+					'fields'       => Fns::pro_version_notice( '1.10.0' ),
+				]
+			),
+			'bulk_discounts'         => apply_filters(
+				'rtsb/module/bulk_discounts/options',
+				[
+					'id'           => 'bulk_discounts',
+					'active'       => '',
+					'title'        => esc_html__( 'Bulk Discounts', 'shopbuilder' ),
+					'active_field' => [
+						'label' => esc_html__( 'Enable Bulk Discount?', 'shopbuilder' ),
+						'help'  => esc_html__( 'Switch on to enable Discount Rules module.', 'shopbuilder' ),
+					],
+					'package'      => $this->pro_package(),
+					'fields'       => Fns::pro_version_notice( '1.10.0' ),
+				]
+			),
+			/*
+			'bogo_bxgy_discounts'    => apply_filters(
+				'rtsb/module/bogo_bxgy_discounts/options',
+				[
+					'id'           => 'bogo_bxgy_discounts',
+					'active'       => '',
+					'title'        => esc_html__( 'BOGO And Buy X Get Y', 'shopbuilder' ),
+					'active_field' => [
+						'label' => esc_html__( 'Enable Discount Rules?', 'shopbuilder' ),
+						'help'  => esc_html__( 'Switch on to enable Discount Rules module.', 'shopbuilder' ),
+					],
+					'package'      => $this->pro_package(),
+					'fields'       => Fns::pro_version_notice( '1.11.0' ),
+				]
+			),
+			*/
 		];
 		return apply_filters( 'rtsb/core/modules/raw_list', $list );
 	}
@@ -2990,7 +3034,7 @@ class ModuleList extends ListModel {
 						],
 					],
 				],
-                /*
+				/*
 				'product_page_priority_note'        => [
 					'type'       => 'raw',
 					'label'      => ' ',
@@ -3006,7 +3050,7 @@ class ModuleList extends ListModel {
 					],
 					'tab'        => 'group',
 				],
-                */
+				*/
 				'product_page_group_hook_priority'  => [
 					'id'         => 'product_page_group_hook_priority',
 					'type'       => 'number',

@@ -227,20 +227,20 @@ class Render extends GeneralAddons {
 		?>
 		<?php
 		if ( $has_badge ) {
-			if ( 'rtsb-pricing-table-badge-preset4' !== $badge_style ) {
-				?>
-				<span class="rtsb-ribbon-span <?php echo esc_attr( $badge_style . ' ' . $badge_position . ' ' . 'has-' . $badge_bg_type ); ?>">
-					<?php Fns::print_html( $badge_text ); ?>
-					<span class="triangle-bar bar-one"> </span>
-					<span class="triangle-bar bar-two"></span>
-				</span>
-				<?php
-			} elseif ( 'rtsb-pricing-table-badge-preset4' === $badge_style ) {
+			if ( 'rtsb-pricing-table-badge-preset4' === $badge_style ) {
 				?>
 				<span class="rtsb-ribbon-span <?php echo esc_attr( $badge_style . ' ' . $badge_position . ' ' . 'has-' . $badge_bg_type ); ?>">
 					<span class="badge-icon">
 						 <?php Fns::print_html( $feature_icon_svg ); ?>
 					</span>
+				</span>
+				<?php
+			} else {
+				?>
+				<span class="rtsb-ribbon-span <?php echo esc_attr( $badge_style . ' ' . $badge_position . ' ' . 'has-' . $badge_bg_type ); ?>">
+					<?php Fns::print_html( $badge_text ); ?>
+					<span class="triangle-bar bar-one"> </span>
+					<span class="triangle-bar bar-two"></span>
 				</span>
 				<?php
 			}

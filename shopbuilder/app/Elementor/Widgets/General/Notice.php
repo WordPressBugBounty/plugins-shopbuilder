@@ -53,21 +53,6 @@ class Notice extends ElementorWidgetBase {
 	/**
 	 * @return void
 	 */
-	//public static function get_notice_template( $template, $template_name ) {
-	//	switch ( $template_name ) {
-	//		case 'notices/success.php':
-	//		case 'notices/error.php':
-	//		case 'notices/notice.php':
-	//			$rtsb_template = 'elementor/general/' . str_replace( '.php', '', $template_name );
-	//			$template      = Fns::locate_template( $rtsb_template ) ?? $template;
-	//			break;
-	//	}
-	//	return $template;
-	//}
-
-	/**
-	 * @return void
-	 */
 	public function apply_the_hooks() {
 
 	}

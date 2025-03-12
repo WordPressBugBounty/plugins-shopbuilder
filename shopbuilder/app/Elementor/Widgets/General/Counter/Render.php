@@ -54,7 +54,7 @@ class Render extends GeneralAddons {
 			'has_prefix'             => ! empty( $this->settings['display_prefix'] ) && ! empty( $this->settings['count_prefix'] ),
 			'has_suffix'             => ! empty( $this->settings['display_suffix'] ) && ! empty( $this->settings['count_suffix'] ),
 			'prefix'                 => $this->settings['count_prefix'] ?? '+',
-			'suffix'                 => $this->settings['suffix'] ?? '+',
+			'suffix'                 => $this->settings['count_suffix'] ?? '+',
 			'icon_html'              => $this->render_icon_image(),
 			'icon_type'              => $this->settings['counter_icon_type'] ?? 'icon',
 			'icon_bg_type'           => ! empty( $this->settings['counter_icon_style_gradient_bg_background'] ) ? $this->settings['counter_icon_style_gradient_bg_background'] : 'classic',
@@ -121,7 +121,7 @@ class Render extends GeneralAddons {
 
 		$icon = $this->settings['counter_icon'] ?? '';
 
-		if ( 'icon' === $this->settings['counter_icon_type'] ) {
+		if ( ! empty( $icon['value'] ) && 'icon' === $this->settings['counter_icon_type'] ) {
 			$icon_img_html .= '<span class="icon">' . Fns::icons_manager( $icon ) . '</span>';
 		} else {
 			if ( ! empty( $this->settings['counter_image'] ) ) {

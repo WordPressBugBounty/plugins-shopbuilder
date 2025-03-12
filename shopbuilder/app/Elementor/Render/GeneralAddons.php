@@ -77,8 +77,6 @@ class GeneralAddons extends Render {
 	 */
 	public $is_post_pagination = false;
 
-
-
 	/**
 	 * Grid check.
 	 *
@@ -147,6 +145,10 @@ class GeneralAddons extends Render {
 		];
 		if ( $this->is_grid ) {
 			$container_attributes['style'] = apply_filters( 'rtsb/general_widget/container/attr', $style_attr, $this->settings );
+		}
+
+		if ( ! empty( $args['container_attr'] ) ) {
+			$container_attributes = array_merge( $container_attributes, $args['container_attr'] );
 		}
 
 		$row_args = wp_parse_args(
@@ -515,7 +517,7 @@ class GeneralAddons extends Render {
 		$args         = wp_parse_args( $args, $default_args );
 		?>
 		<a <?php Fns::print_html( $args['button_attributes'] ); ?>>
-			<span class="text-wrap <?php echo esc_attr('icon-'. $args['sb_button_icon_position'] ); ?>">
+			<span class="text-wrap <?php echo esc_attr( 'icon-' . $args['sb_button_icon_position'] ); ?>">
 				<?php
 				Fns::print_html( self::render_button_icon( 'left', $args['sb_button_icon'], $args['sb_button_icon_position'] ) );
 				Fns::print_html( '<span class="text">' );

@@ -293,17 +293,21 @@ class Controls {
 			'separator'       => 'before',
 			'label'           => esc_html__( 'Icon Position', 'shopbuilder' ),
 			'options'         => [
-				'left'  => [
+				'left'   => [
 					'title' => esc_html__( 'Left', 'shopbuilder' ),
 					'icon'  => 'eicon-h-align-left',
 				],
-				'top'   => [
+				'top'    => [
 					'title' => esc_html__( 'Top', 'shopbuilder' ),
 					'icon'  => 'eicon-v-align-top',
 				],
-				'right' => [
+				'right'  => [
 					'title' => esc_html__( 'Right', 'shopbuilder' ),
 					'icon'  => 'eicon-h-align-right',
+				],
+				'bottom' => [
+					'title' => esc_html__( 'Bottom', 'shopbuilder' ),
+					'icon'  => 'eicon-v-align-bottom',
 				],
 
 			],
@@ -333,7 +337,7 @@ class Controls {
 			'selectors' => [ $obj->selectors['layout']['vertical_alignment'] => 'align-items: {{VALUE}};' ],
 			'toggle'    => true,
 			'condition' => [
-				'counter_icon_position!' => 'top',
+				'counter_icon_position!' => [ 'top','bottom' ],
 			],
 		];
 		$fields['counter_content_sec_icon_end'] = $obj->end_section();

@@ -146,7 +146,7 @@ class CompareFns {
 				break;
 
 			case 'add_to_cart':
-				Fns::print_html( apply_filters( 'rtsb/module/compare/add_to_cart_btn', $product[ $field_id ] ) );
+				Fns::print_html( apply_filters( 'rtsb/module/compare/add_to_cart_btn', $product[ $field_id ] ), true );
 				break;
 
 			case 'weight':
@@ -159,7 +159,11 @@ class CompareFns {
 			case 'description':
 				Fns::print_html( apply_filters( 'woocommerce_short_description', $product[ $field_id ] ) );
 				break;
-
+			case 'attribute':
+				if ( isset( $product[ $field_id ] ) ) {
+					Fns::print_html( $product[ $field_id ] );
+				}
+				break;
 			default:
 				echo isset( $product[ $field_id ] ) ? wp_kses_post( $product[ $field_id ] ) : '';
 				break;
@@ -182,14 +186,12 @@ class CompareFns {
 
 		$products_data = [];
 
-		$field_ids = $this->get_list_field_ids();
-
+		$field_ids     = $this->get_list_field_ids();
 		$tax_field_ids = array_filter(
 			$field_ids,
 			function ( $field_id ) {
-				return 'pa_' === substr( $field_id, 0, 3 );
-			},
-			ARRAY_FILTER_USE_KEY
+				return str_starts_with( $field_id, 'pa_' );
+			}
 		);
 
 		$data_none = '-';
@@ -216,7 +218,6 @@ class CompareFns {
 				'sku'          => $product->get_sku() ? $product->get_sku() : $data_none,
 				'availability' => $this->availability_html( $product ),
 			];
-
 			if ( ! empty( $tax_field_ids ) ) {
 				foreach ( $tax_field_ids as $field_id ) {
 					if ( taxonomy_exists( $field_id ) ) {

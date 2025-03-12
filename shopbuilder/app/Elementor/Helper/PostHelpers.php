@@ -217,6 +217,27 @@ class PostHelpers {
 			'label_off'   => esc_html__( 'Off', 'shopbuilder' ),
 			'default'     => 'yes',
 		];
+		$fields['show_comment']       = [
+			'type'        => 'switch',
+			'label'       => esc_html__( 'Show Post Comment', 'shopbuilder' ),
+			'description' => esc_html__( 'Switch on to show post comment.', 'shopbuilder' ),
+			'label_on'    => esc_html__( 'On', 'shopbuilder' ),
+			'label_off'   => esc_html__( 'Off', 'shopbuilder' ),
+		];
+		$fields['show_reading_time']  = [
+			'type'        => 'switch',
+			'label'       => esc_html__( 'Show Reading Time', 'shopbuilder' ),
+			'description' => esc_html__( 'Switch on to show post reading time.', 'shopbuilder' ),
+			'label_on'    => esc_html__( 'On', 'shopbuilder' ),
+			'label_off'   => esc_html__( 'Off', 'shopbuilder' ),
+		];
+		$fields['show_post_views']    = [
+			'type'        => 'switch',
+			'label'       => esc_html__( 'Show Post Views', 'shopbuilder' ),
+			'description' => esc_html__( 'Switch on to show post post views.', 'shopbuilder' ),
+			'label_on'    => esc_html__( 'On', 'shopbuilder' ),
+			'label_off'   => esc_html__( 'Off', 'shopbuilder' ),
+		];
 		$fields['show_read_more_btn'] = [
 			'type'        => 'switch',
 			'label'       => esc_html__( 'Show Read More Button', 'shopbuilder' ),
@@ -578,7 +599,6 @@ class PostHelpers {
 
 		$title_limit_custom   = $settings['title_limit_custom'] ?? '';
 		$excerpt_limit_custom = $settings['excerpt_limit_custom'] ?? '200';
-
 		return [
 			'title'    => Fns::text_truncation( get_the_title( $post->ID ), $title_limit_custom ),
 			'excerpt'  => Fns::text_truncation( do_shortcode( get_post_field( 'post_content', $post->ID ) ), $excerpt_limit_custom ),
@@ -651,6 +671,13 @@ class PostHelpers {
 			'<span class="byline"><a href="' . esc_url( get_author_posts_url( get_the_author_meta( 'ID' ) ) ) . '" rel="author">' . esc_html( get_the_author() ) . '</a></span>'
 		);
 	}
+
+	public static function get_post_comments_number() {
+		$comments_number = get_comments_number();
+		// translators: %s is for comments number.
+		$comments = sprintf( _n( 'Comment: %s', 'Comments: %s', $comments_number, 'shopbuilder' ), number_format_i18n( $comments_number ) );
+		return $comments;
+	}
 	public static function rtsb_list_item_separator() {
 		$separator = sprintf(
 			/* translators: Used between list items, there is a space after the comma. */
@@ -660,6 +687,66 @@ class PostHelpers {
 		);
 
 		return apply_filters( 'rtsb_post_list_item_separator', $separator );
+	}
+	public static function rtsb_reading_time() {
+		$post_content = get_post()->post_content;
+		$post_content = strip_shortcodes( $post_content );
+		$post_content = wp_strip_all_tags( $post_content );
+		$word_count   = str_word_count( $post_content );
+		$reading_time = floor( $word_count / 200 );
+
+		if ( $reading_time < 1 ) {
+			$result = esc_html__( 'Less than a minute', 'shopbuilder' );
+		} elseif ( $reading_time > 60 ) {
+			/* translators: %s is reading time. */
+			$result = sprintf( esc_html__( '%s hours read', 'shopbuilder' ), floor( $reading_time / 60 ) );
+		} elseif ( $reading_time == 1 ) {
+			$result = esc_html__( '1 min read', 'shopbuilder' );
+		} else {
+			$result = sprintf(
+				/* translators: %s is reading time. */
+				esc_html__( '%s mins read', 'shopbuilder' ),
+				$reading_time
+			);
+		}
+
+		return '<span class="meta-reading-time meta-item">' . $result . '</span> ';
+	}
+	public static function rtsb_post_views( $text = '', $post_id = 0 ) {
+
+		if ( empty( $post_id ) ) {
+			$post_id = get_the_ID();
+		}
+
+		$views_class = '';
+		$formated    = 0;
+		$count_key   = 'rt_post_views';
+		$view_count  = get_post_meta( $post_id, $count_key, true );
+		if ( ! empty( $view_count ) ) {
+			$formated = number_format_i18n( $view_count );
+
+			if ( $view_count > 1000 ) {
+				$views_class = 'very-high';
+			} elseif ( $view_count > 100 ) {
+				$views_class = 'high';
+			} elseif ( $view_count > 5 ) {
+				$views_class = 'rising';
+			}
+		} elseif ( $view_count == '' ) {
+			$view_count = 0;
+		} else {
+			$view_count = 0;
+		}
+
+		if ( $view_count == 1 ) {
+			$shopbuilder_view_html = esc_html__( 'View', 'shopbuilder' );
+		} else {
+			$shopbuilder_view_html = esc_html__( 'Views', 'shopbuilder' );
+		}
+
+		$shopbuilder_views_html = '<span class="view-number" >' . $view_count . '</span> ' . $shopbuilder_view_html;
+
+		return '<span class="meta-views meta-item ' . $views_class . '">' . $shopbuilder_views_html . '</span> ';
 	}
 	/**
 	 * Content Box style section
@@ -1083,7 +1170,7 @@ class PostHelpers {
 	 * @return array
 	 */
 	public static function meta_style( $obj ) {
-		$conditions    = [
+		$conditions = [
 			'relation' => 'or',
 			'terms'    => [
 				[
@@ -1096,18 +1183,35 @@ class PostHelpers {
 					'operator' => '==',
 					'value'    => 'yes',
 				],
+				[
+					'name'     => 'show_comment',
+					'operator' => '==',
+					'value'    => 'yes',
+				],
+				[
+					'name'     => 'show_reading_time',
+					'operator' => '==',
+					'value'    => 'yes',
+				],
+				[
+					'name'     => 'show_post_views',
+					'operator' => '==',
+					'value'    => 'yes',
+				],
+
 			],
 		];
 		$css_selectors = $obj->selectors['post_meta_style'];
 		$title         = esc_html__( 'Meta', 'shopbuilder' );
 		$selectors     = [
-			'typography'      => $css_selectors['typography'],
-			'color'           => [ $css_selectors['color'] => 'color: {{VALUE}};' ],
-			'meta_link_color' => [ $css_selectors['meta_link_color'] => 'color: {{VALUE}};' ],
-			'meta_icon_color' => [ $css_selectors['meta_icon_color'] => 'fill: {{VALUE}};' ],
-			'hover_color'     => [ $css_selectors['hover_color'] => 'color: {{VALUE}};' ],
-			'meta_gap'        => [ $css_selectors['meta_gap'] => 'gap: {{SIZE}}{{UNIT}};' ],
-			'margin'          => [ $css_selectors['margin'] => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}!important;' ],
+			'typography'           => $css_selectors['typography'],
+			'color'                => [ $css_selectors['color'] => 'color: {{VALUE}};' ],
+			'meta_link_color'      => [ $css_selectors['meta_link_color'] => 'color: {{VALUE}};' ],
+			'meta_separator_color' => [ $css_selectors['meta_separator_color'] => 'color: {{VALUE}};' ],
+			'meta_icon_color'      => [ $css_selectors['meta_icon_color'] => 'color: {{VALUE}};' ],
+			'hover_color'          => [ $css_selectors['hover_color'] => 'color: {{VALUE}};' ],
+			'meta_gap'             => [ $css_selectors['meta_gap'] => 'gap: {{SIZE}}{{UNIT}};' ],
+			'margin'               => [ $css_selectors['margin'] => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}!important;' ],
 		];
 
 		$fields = ControlHelper::general_elementor_style( 'post_meta_style', $title, $obj, [], $selectors, $conditions );
@@ -1121,18 +1225,23 @@ class PostHelpers {
 			$fields['post_meta_style_border_hover_color'],
 			$fields['post_meta_style_padding'],
 		);
-		$extra_controls['post_meta_link_color'] = [
+		$extra_controls['post_meta_link_color']      = [
 			'type'      => 'color',
 			'label'     => esc_html__( 'Link Color', 'shopbuilder' ),
 			'selectors' => $selectors['meta_link_color'],
 		];
-		$extra_controls['post_meta_icon_color'] = [
+		$extra_controls['post_meta_icon_color']      = [
 			'type'      => 'color',
 			'label'     => esc_html__( 'Icon Color', 'shopbuilder' ),
 			'selectors' => $selectors['meta_icon_color'],
 		];
-		$fields                                 = Fns::insert_controls( 'post_meta_style_color', $fields, $extra_controls, true );
-		$extra_controls2['post_meta_gap']       = [
+		$extra_controls['post_meta_separator_color'] = [
+			'type'      => 'color',
+			'label'     => esc_html__( 'Separator Color', 'shopbuilder' ),
+			'selectors' => $selectors['meta_separator_color'],
+		];
+		$fields                                      = Fns::insert_controls( 'post_meta_style_color', $fields, $extra_controls, true );
+		$extra_controls2['post_meta_gap']            = [
 			'type'       => 'slider',
 			'mode'       => 'responsive',
 			'label'      => esc_html__( 'Meta Gap', 'shopbuilder' ),
@@ -1145,7 +1254,200 @@ class PostHelpers {
 			],
 			'selectors'  => $selectors['meta_gap'],
 		];
-		$fields                                 = Fns::insert_controls( 'post_meta_style_spacing_note', $fields, $extra_controls2, true );
+		$fields                                      = Fns::insert_controls( 'post_meta_style_spacing_note', $fields, $extra_controls2, true );
+		return $fields;
+	}
+	/**
+	 * Meta style section
+	 *
+	 * @param object $obj Reference object.
+	 *
+	 * @return array
+	 */
+	public static function meta_icon_settings( $obj ) {
+		$conditions = [
+			'relation' => 'or',
+			'terms'    => [
+				[
+					'name'     => 'show_dates',
+					'operator' => '==',
+					'value'    => 'yes',
+				],
+				[
+					'name'     => 'show_author',
+					'operator' => '==',
+					'value'    => 'yes',
+				],
+				[
+					'name'     => 'show_comment',
+					'operator' => '==',
+					'value'    => 'yes',
+				],
+				[
+					'name'     => 'show_reading_time',
+					'operator' => '==',
+					'value'    => 'yes',
+				],
+				[
+					'name'     => 'show_post_views',
+					'operator' => '==',
+					'value'    => 'yes',
+				],
+
+			],
+		];
+		$fields['meta_icon_settings']          = $obj->start_section(
+			esc_html__( 'Meta', 'shopbuilder' ),
+			'settings',
+			$conditions,
+		);
+		$fields['meta_separator']              = [
+			'type'  => 'text',
+			'label' => esc_html__( 'Meta Separator', 'shopbuilder' ),
+		];
+		$fields['author_icon_note']            = $obj->el_heading(
+			esc_html__( 'Author Icon', 'shopbuilder' ),
+			'default',
+			[],
+			[ 'show_author' => [ 'yes' ] ]
+		);
+		$fields['show_author_icon']            = [
+			'type'        => 'switch',
+			'label'       => esc_html__( 'Enable Icon?', 'shopbuilder' ),
+			'description' => esc_html__( 'Switch on to enable pagination.', 'shopbuilder' ),
+			'label_on'    => esc_html__( 'On', 'shopbuilder' ),
+			'label_off'   => esc_html__( 'Off', 'shopbuilder' ),
+			'condition'   => [
+				'show_author' => [ 'yes' ],
+			],
+		];
+		$fields['author_icon']                 = [
+			'label'     => esc_html__( 'Icon', 'shopbuilder' ),
+			'type'      => 'icons',
+			'default'   => [
+				'value'   => 'far fa-user',
+				'library' => 'fa-solid',
+			],
+			'condition' => [
+				'show_author'      => [ 'yes' ],
+				'show_author_icon' => [ 'yes' ],
+			],
+		];
+		$fields['post_date_icon_note']         = $obj->el_heading(
+			esc_html__( 'Date Icon', 'shopbuilder' ),
+			'default',
+			[],
+			[ 'show_dates' => [ 'yes' ] ]
+		);
+		$fields['show_date_icon']              = [
+			'type'        => 'switch',
+			'label'       => esc_html__( 'Enable Icon?', 'shopbuilder' ),
+			'description' => esc_html__( 'Switch on to enable pagination.', 'shopbuilder' ),
+			'label_on'    => esc_html__( 'On', 'shopbuilder' ),
+			'label_off'   => esc_html__( 'Off', 'shopbuilder' ),
+			'default'     => 'yes',
+			'condition'   => [
+				'show_dates' => [ 'yes' ] ,
+			],
+		];
+		$fields['date_icon']                   = [
+			'label'     => esc_html__( 'Icon', 'shopbuilder' ),
+			'type'      => 'icons',
+			'default'   => [
+				'value'   => 'fas fa-calendar-alt',
+				'library' => 'fa-solid',
+			],
+			'condition' => [
+				'show_dates'     => [ 'yes' ],
+				'show_date_icon' => [ 'yes' ],
+			],
+		];
+		$fields['post_comment_icon_note']      = $obj->el_heading(
+			esc_html__( 'Comment Icon', 'shopbuilder' ),
+			'default',
+			[],
+			[ 'show_comment' => [ 'yes' ] ]
+		);
+		$fields['show_comment_icon']           = [
+			'type'        => 'switch',
+			'label'       => esc_html__( 'Enable Icon?', 'shopbuilder' ),
+			'description' => esc_html__( 'Switch on to enable pagination.', 'shopbuilder' ),
+			'label_on'    => esc_html__( 'On', 'shopbuilder' ),
+			'label_off'   => esc_html__( 'Off', 'shopbuilder' ),
+			'condition'   => [
+				'show_comment' => [ 'yes' ] ,
+			],
+		];
+		$fields['comment_icon']                = [
+			'label'     => esc_html__( 'Icon', 'shopbuilder' ),
+			'type'      => 'icons',
+			'default'   => [
+				'value'   => 'far fa-comment',
+				'library' => 'fa-solid',
+			],
+			'condition' => [
+				'show_comment'      => [ 'yes' ],
+				'show_comment_icon' => [ 'yes' ],
+			],
+		];
+		$fields['post_reading_time_icon_note'] = $obj->el_heading(
+			esc_html__( 'Reading Time Icon', 'shopbuilder' ),
+			'default',
+			[],
+			[ 'show_reading_time' => [ 'yes' ] ]
+		);
+		$fields['show_reading_time_icon']      = [
+			'type'        => 'switch',
+			'label'       => esc_html__( 'Enable Icon?', 'shopbuilder' ),
+			'description' => esc_html__( 'Switch on to enable pagination.', 'shopbuilder' ),
+			'label_on'    => esc_html__( 'On', 'shopbuilder' ),
+			'label_off'   => esc_html__( 'Off', 'shopbuilder' ),
+			'condition'   => [
+				'show_reading_time' => [ 'yes' ] ,
+			],
+		];
+		$fields['reading_time_icon']           = [
+			'label'     => esc_html__( 'Icon', 'shopbuilder' ),
+			'type'      => 'icons',
+			'default'   => [
+				'value'   => 'far fa-clock',
+				'library' => 'fa-solid',
+			],
+			'condition' => [
+				'show_reading_time'      => [ 'yes' ],
+				'show_reading_time_icon' => [ 'yes' ],
+			],
+		];
+		$fields['post_views_icon_note']        = $obj->el_heading(
+			esc_html__( 'Post Views Icon', 'shopbuilder' ),
+			'default',
+			[],
+			[ 'show_post_views' => [ 'yes' ] ]
+		);
+		$fields['show_post_views_icon']        = [
+			'type'        => 'switch',
+			'label'       => esc_html__( 'Enable Icon?', 'shopbuilder' ),
+			'description' => esc_html__( 'Switch on to enable pagination.', 'shopbuilder' ),
+			'label_on'    => esc_html__( 'On', 'shopbuilder' ),
+			'label_off'   => esc_html__( 'Off', 'shopbuilder' ),
+			'condition'   => [
+				'show_post_views' => [ 'yes' ] ,
+			],
+		];
+		$fields['post_views_icon']             = [
+			'label'     => esc_html__( 'Icon', 'shopbuilder' ),
+			'type'      => 'icons',
+			'default'   => [
+				'value'   => 'far fa-eye',
+				'library' => 'fa-solid',
+			],
+			'condition' => [
+				'show_post_views'      => [ 'yes' ],
+				'show_post_views_icon' => [ 'yes' ],
+			],
+		];
+
+		$fields['meta_icon_settings_end'] = $obj->end_section();
 		return $fields;
 	}
 	/**

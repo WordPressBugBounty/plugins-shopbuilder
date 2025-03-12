@@ -326,6 +326,17 @@ class ElementList extends ListModel {
 					'fields'   => [],
 				]
 			),
+			'coupon_list'               => apply_filters(
+				'rtsb/elements/coupon_list/options',
+				[
+					'id'       => 'coupon_list',
+					'title'    => esc_html__( 'Coupon List', 'shopbuilder' ),
+					'category' => 'general',
+					'active'   => '',
+					'package'  => $this->pro_package(),
+					'fields'   => [],
+				]
+			),
 			'shopbuilder_counter'       => apply_filters(
 				'rtsb/elements/shopbuilder_counter/options',
 				[
@@ -1145,6 +1156,18 @@ class ElementList extends ListModel {
 					'active'   => 'on',
 					'package'  => $this->pro_package(),
 					'fields'   => [],
+				]
+			),
+			'product_filters'                 => apply_filters(
+				'rtsb/elements/product_filters/options',
+				[
+					'id'         => 'product_filters',
+					'title'      => esc_html__( 'Product Filters', 'shopbuilder' ),
+					'base_class' => Archive\ProductFilters::class,
+					'category'   => 'shop',
+					'active'     => 'on',
+					'package'    => 'free',
+					'fields'     => [],
 				]
 			),
 

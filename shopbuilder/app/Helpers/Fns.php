@@ -114,7 +114,15 @@ class Fns {
 
 		return false;
 	}
-
+	/**
+	 * Get all user roles.
+	 *
+	 * @return array|false|mixed
+	 */
+	public static function get_current_user_roles() {
+		$current_user = wp_get_current_user();
+		return $current_user->roles;
+	}
 	/**
 	 * Get all user roles.
 	 *
@@ -289,7 +297,7 @@ class Fns {
 
 		if ( ! empty( $args ) && is_array( $args ) ) {
 			$atts = $args;
-			extract( $args ); // @codingStandardsIgnoreLine
+            extract( $args ); // @codingStandardsIgnoreLine
 		}
 
 		// Allow 3rd party plugin filter template file from their plugin.
@@ -415,7 +423,7 @@ class Fns {
 		$cache_key = 'rtsb_prepared_product_id';
 		$_post_id  = wp_cache_get( $cache_key, 'shopbuilder' );
 		if ( false === $_post_id || 'publish' !== get_post_status( $_post_id ) ) {
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
 			$_post_id = $wpdb->get_var(
 				$wpdb->prepare( "SELECT MAX(ID) FROM {$wpdb->prefix}posts WHERE post_type =  %s AND post_status IN('publish', 'draft')", 'product' )
 			);
@@ -458,7 +466,7 @@ class Fns {
 	 * @return void
 	 */
 	public static function doing_it_wrong( $function, $message, $version ) {
-		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_wp_debug_backtrace_summary
+        // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_wp_debug_backtrace_summary
 		$message .= ' Backtrace: ' . wp_debug_backtrace_summary();
 		_doing_it_wrong( esc_html( $function ), wp_kses_post( $message ), esc_html( $version ) );
 	}
@@ -594,7 +602,7 @@ class Fns {
 		if ( strlen( $page_content ) > 0 ) {
 			// Search for an existing page with the specified page content (typically a shortcode).
 			$shortcode = str_replace( [ '<!-- wp:shortcode -->', '<!-- /wp:shortcode -->' ], '', $page_content );
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 			$valid_page_found = $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_type='page' AND post_status NOT IN ( 'pending', 'trash', 'future', 'auto-draft' ) AND post_content LIKE %s LIMIT 1;", "%{$shortcode}%" ) );
 		} else {
 			// Search for an existing page with the specified page slug.
@@ -1348,7 +1356,7 @@ class Fns {
 		if ( $args['show_rating_count'] ) {
 			$count .= '<div class="rtsb-count">';
 			$count .= sprintf(
-				/* translators: %s is the number of reviews */
+			/* translators: %s is the number of reviews */
 				_n( '%s Review', '%s Reviews', $rating_count, 'shopbuilder' ),
 				$rating_count
 			);
@@ -2548,6 +2556,62 @@ class Fns {
             FROM {$wpdb->terms} t
             JOIN {$wpdb->term_taxonomy} tt ON t.term_id = tt.term_id
             WHERE tt.taxonomy = 'product_cat'";
+
+			if ( $search_query ) {
+				$sql         .= ' AND t.name LIKE %s';
+				$prepared_sql = $wpdb->prepare( $sql, '%' . $wpdb->esc_like( $search_query ) . '%' ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+			} else {
+				$prepared_sql = $sql; // No need for placeholders.
+			}
+
+			$results = $wpdb->get_results( $prepared_sql ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.NotPrepared
+			// Cache the results in the object cache for future use.
+			wp_cache_set( $cache_key, $results, 'shopbuilder' ); // Adjust the expiration time as needed.
+			Cache::set_data_cache_key( $cache_key );
+		}
+
+		$cats = [];
+		if ( ! is_array( $results ) && ! count( $results ) ) {
+			return $cats;
+		}
+		foreach ( $results as $row ) {
+			$category_id    = $row->term_id;
+			$category_title = $row->name;
+
+			$cats[] = [
+				'value' => $category_id,
+				'label' => $category_title,
+			];
+		}
+
+		// Cache the results in a static variable for the next call.
+		self::$cache[ $cache_key ] = $cats;
+		return $cats;
+	}
+	/**
+	 * Get WooCommerce product categories.
+	 *
+	 * @param string|null $search_query The search string for category names.
+	 *
+	 * @return array An array of product categories with 'value' and 'label' keys.
+	 */
+	public static function products_tags_query( $search_query = null ) {
+		if ( ! is_admin() ) {
+			return [];
+		}
+
+		$cache_key = 'rtsb_product_tags_' . md5( serialize( $search_query ) );
+
+		if ( isset( self::$cache[ $cache_key ] ) ) {
+			return self::$cache[ $cache_key ];
+		}
+		$results = wp_cache_get( $cache_key, 'shopbuilder' );
+		if ( ! $results ) {
+			global $wpdb;
+			$sql = "SELECT t.term_id, t.name
+            FROM {$wpdb->terms} t
+            JOIN {$wpdb->term_taxonomy} tt ON t.term_id = tt.term_id
+            WHERE tt.taxonomy = 'product_tag'";
 
 			if ( $search_query ) {
 				$sql         .= ' AND t.name LIKE %s';

@@ -35,10 +35,13 @@ class Selectors {
 				'container_width' => '{{WRAPPER}} .rtsb-cta-wrapper.has-rtsb-parallax .cta-container',
 			],
 			'image_style'            => [
-				'border'        => '{{WRAPPER}} .rtsb-cta-wrapper .cta-img-wrapper img',
-				'margin'        => '{{WRAPPER}} .rtsb-cta-wrapper .cta-img-wrapper',
-				'border_radius' => '{{WRAPPER}} .rtsb-cta-wrapper .cta-img-wrapper img,{{WRAPPER}} .rtsb-cta-wrapper .cta-img-wrapper',
-				'box_shadow'    => '{{WRAPPER}} .rtsb-cta-wrapper .cta-img-wrapper img',
+				'border'          => '{{WRAPPER}} .rtsb-cta-wrapper .cta-img-wrapper img',
+				'margin'          => '{{WRAPPER}} .rtsb-cta-wrapper .cta-img-wrapper',
+				'border_radius'   => '{{WRAPPER}} .rtsb-cta-wrapper .cta-img-wrapper img,{{WRAPPER}} .rtsb-cta-wrapper .cta-img-wrapper',
+				'box_shadow'      => '{{WRAPPER}} .rtsb-cta-wrapper .cta-img-wrapper img',
+				'image_width'     => '{{WRAPPER}} .rtsb-call-to-action .rtsb-cta-layout3  .cta-content-left',
+				'image_max_width' => '{{WRAPPER}} .rtsb-call-to-action .rtsb-cta-layout3  .cta-content-left',
+				'column_gap'      => '{{WRAPPER}} .rtsb-call-to-action .rtsb-cta-layout3 .cta-content-wrap',
 			],
 			'layout'                 => [
 				'alignment' => '{{WRAPPER}} .rtsb-cta-wrapper',

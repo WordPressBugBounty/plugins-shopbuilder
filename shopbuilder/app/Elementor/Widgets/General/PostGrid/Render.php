@@ -91,25 +91,39 @@ class Render extends GeneralAddons {
 		$this->content_classes = is_array( $this->content_classes ) ? implode( ' ', $this->content_classes ) : $this->content_classes;
 
 		return [
-			'title_limit'          => $this->settings['title_limit'] ?? 'default',
-			'excerpt_limit'        => $this->settings['excerpt_limit'] ?? 'default',
-			'title_tag'            => $this->settings['title_tag'] ?? 'h2',
-			'title_limit_custom'   => $this->settings['title_limit_custom'] ?? '',
-			'excerpt_limit_custom' => $this->settings['excerpt_limit_custom'] ?? '200',
-			'show_title'           => ! empty( $this->settings['show_title'] ),
-			'show_short_desc'      => ! empty( $this->settings['show_short_desc'] ),
-			'show_post_thumbnail'  => ! empty( $this->settings['show_post_thumbnail'] ),
-			'show_categories'      => ! empty( $this->settings['show_categories'] ),
-			'show_tags'            => ! empty( $this->settings['show_tags'] ),
-			'show_dates'           => ! empty( $this->settings['show_dates'] ),
-			'show_author'          => ! empty( $this->settings['show_author'] ),
-			'show_read_more_btn'   => ! empty( $this->settings['show_read_more_btn'] ),
-			'title_link'           => ! empty( $this->settings['title_link'] ),
-			'image_link'           => ! empty( $this->settings['image_link'] ),
-			'button_text'          => $this->settings['button_text'] ?? '',
-			'button_icon'          => $this->settings['button_icon'] ?? '',
-			'button_icon_position' => $this->settings['button_icon_position'] ?? 'right',
-			'item_class'           => $this->generate_post_item_class(),
+			'title_limit'            => $this->settings['title_limit'] ?? 'default',
+			'excerpt_limit'          => $this->settings['excerpt_limit'] ?? 'default',
+			'title_tag'              => $this->settings['title_tag'] ?? 'h2',
+			'title_limit_custom'     => $this->settings['title_limit_custom'] ?? '',
+			'excerpt_limit_custom'   => $this->settings['excerpt_limit_custom'] ?? '200',
+			'show_title'             => ! empty( $this->settings['show_title'] ),
+			'show_short_desc'        => ! empty( $this->settings['show_short_desc'] ),
+			'show_post_thumbnail'    => ! empty( $this->settings['show_post_thumbnail'] ),
+			'show_categories'        => ! empty( $this->settings['show_categories'] ),
+			'show_tags'              => ! empty( $this->settings['show_tags'] ),
+			'show_dates'             => ! empty( $this->settings['show_dates'] ),
+			'show_comment'           => ! empty( $this->settings['show_comment'] ),
+			'show_reading_time'      => ! empty( $this->settings['show_reading_time'] ),
+			'show_post_views'        => ! empty( $this->settings['show_post_views'] ),
+			'show_author'            => ! empty( $this->settings['show_author'] ),
+			'show_read_more_btn'     => ! empty( $this->settings['show_read_more_btn'] ),
+			'title_link'             => ! empty( $this->settings['title_link'] ),
+			'image_link'             => ! empty( $this->settings['image_link'] ),
+			'show_author_icon'       => ! empty( $this->settings['show_author_icon'] ),
+			'show_date_icon'         => ! empty( $this->settings['show_date_icon'] ),
+			'show_comment_icon'      => ! empty( $this->settings['show_comment_icon'] ),
+			'show_reading_time_icon' => ! empty( $this->settings['show_reading_time_icon'] ),
+			'show_post_views_icon'   => ! empty( $this->settings['show_post_views_icon'] ),
+			'author_icon_html'       => $this->render_meta_icon( $this->settings['author_icon'] ?? '', 'author-icon' ),
+			'date_icon_html'         => $this->render_meta_icon( $this->settings['date_icon'] ?? '', 'date-icon' ),
+			'comment_icon_html'      => $this->render_meta_icon( $this->settings['comment_icon'] ?? '', 'comment-icon' ),
+			'reading_time_icon_html' => $this->render_meta_icon( $this->settings['reading_time_icon'] ?? '', 'reading-time-icon' ),
+			'post_views_icon_html'   => $this->render_meta_icon( $this->settings['post_views_icon'] ?? '', 'post-views-icon' ),
+			'button_text'            => $this->settings['button_text'] ?? '',
+			'button_icon'            => $this->settings['button_icon'] ?? '',
+			'button_icon_position'   => $this->settings['button_icon_position'] ?? 'right',
+			'meta_separator'         => $this->settings['meta_separator'] ?? '',
+			'item_class'             => $this->generate_post_item_class(),
 		];
 	}
 	/**
@@ -142,6 +156,22 @@ class Render extends GeneralAddons {
 		if ( $position === $icon_position ) {
 			$html .= '<span class="icon">' . Fns::icons_manager( $icon ) . '</span>';
 		}
+
+		return $html;
+	}
+	/**
+	 * Function to render meta icon.
+	 *
+	 * @param array  $icon Position of the separator in settings.
+	 * @param string $class icon class.
+	 *
+	 * @return string
+	 */
+	public static function render_meta_icon( $icon, $class ) {
+		$html = '';
+		// Render the left icon.
+
+		$html .= '<span class="icon ' . esc_attr( $class ) . '">' . Fns::icons_manager( $icon ) . '</span>';
 
 		return $html;
 	}

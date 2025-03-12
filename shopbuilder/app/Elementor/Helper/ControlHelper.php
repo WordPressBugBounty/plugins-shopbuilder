@@ -665,6 +665,10 @@ class ControlHelper {
 					'title' => esc_html__( 'Preset 4', 'shopbuilder' ),
 					'url'   => esc_url( rtsb()->get_assets_uri( 'images/layout/pricing-badge-layout-04.png' ) ),
 				],
+				'rtsb-pricing-table-badge-preset5' => [
+					'title' => esc_html__( 'Preset 5', 'shopbuilder' ),
+					'url'   => esc_url( rtsb()->get_assets_uri( 'images/layout/pricing-badge-layout-04.png' ) ),
+				],
 			]
 		);
 	}
@@ -696,14 +700,17 @@ class ControlHelper {
 	 * @return array
 	 */
 	public static function multi_step_checkout_layouts() {
-		$status = ! rtsb()->has_pro();
 
 		return apply_filters(
 			'rtsb/elements/elementor/single_product_tab_layouts',
 			[
 				'layout1' => [
 					'title' => esc_html__( 'Layout 1', 'shopbuilder' ),
-					'url'   => esc_url( rtsb()->get_assets_uri( 'images/layout/tab-01.png' ) ),
+					'url'   => esc_url( rtsb()->get_assets_uri( 'images/layout-preview/multistep-checkout-layout-1.jpg' ) ),
+				],
+				'layout2' => [
+					'title' => esc_html__( 'Layout 2', 'shopbuilder' ),
+					'url'   => esc_url( rtsb()->get_assets_uri( 'images/layout-preview/multistep-checkout-lauout-2.jpg' ) ),
 				],
 
 			]
@@ -1011,6 +1018,7 @@ class ControlHelper {
 			]
 		);
 	}
+
 
 	/**
 	 * Posts Order By.

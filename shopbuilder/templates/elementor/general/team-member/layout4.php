@@ -12,6 +12,7 @@
  * @var $instance                  object
  * @var $display_social_profile    boolean
  * @var $has_designation           boolean
+ * @var $has_description           boolean
  * @var $has_image_link            boolean
  * @var $has_member_name_link      boolean
  * @var $member_designation        string
@@ -73,13 +74,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 				<?php } ?>
 				<span class='rtsb-name-seperator'></span>
-				<?php if ( $has_designation ) { ?>
+				<?php if ( $has_designation && $member_designation ) { ?>
 					<span class="rtsb-team-member-designation">
 						<?php Fns::print_html( $member_designation ); ?>
 					</span>
 				<?php } ?>
 				<?php
-				if ( $member_bio ) {
+				if ( $has_description && $member_bio ) {
 					?>
 					<div class="rtsb-content">
 						<?php Fns::print_html( $member_bio ); ?>

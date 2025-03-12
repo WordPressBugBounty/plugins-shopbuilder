@@ -206,6 +206,14 @@ class Controls {
 			'default'     => 'yes',
 			'separator'   => 'before',
 		];
+		$fields['display_member_description']       = [
+			'label'       => esc_html__( 'Show Team Description?', 'shopbuilder' ),
+			'description' => esc_html__( 'Switch on to show member description.', 'shopbuilder' ),
+			'label_on'    => esc_html__( 'On', 'shopbuilder' ),
+			'label_off'   => esc_html__( 'Off', 'shopbuilder' ),
+			'type'        => 'switch',
+			'separator'   => 'before',
+		];
 		$fields['display_social_icon']              = [
 			'label'       => esc_html__( 'Show Social Icons?', 'shopbuilder' ),
 			'description' => esc_html__( 'Switch on to show member social icons.', 'shopbuilder' ),
@@ -322,6 +330,7 @@ class Controls {
 				'label'       => esc_html__( 'Member Bio', 'shopbuilder' ),
 				'type'        => 'wysiwyg',
 				'label_block' => true,
+				'default'     => esc_html__( 'Lorem Ipsum is simply dummy text of the printing and typesetting has been the industry standard dummy text ever since.', 'shopbuilder' ),
 				'separator'   => 'before-short',
 			],
 			'link_heading'       => $obj->el_heading( esc_html__( 'Team Member Link', 'shopbuilder' ), 'before-short' ),
@@ -356,18 +365,22 @@ class Controls {
 				[
 					'member_name'        => esc_html__( 'Kristin Watson', 'shopbuilder' ),
 					'member_designation' => __( 'Senior Artist', 'shopbuilder' ),
+					'member_bio'         => esc_html__( 'Lorem Ipsum is simply dummy text of the printing and typesetting has been the industry standard dummy text ever since.', 'shopbuilder' ),
 				],
 				[
 					'member_name'        => esc_html__( 'Leslie Alexander', 'shopbuilder' ),
 					'member_designation' => __( 'Software Developer', 'shopbuilder' ),
+					'member_bio'         => esc_html__( 'Lorem Ipsum is simply dummy text of the printing and typesetting has been the industry standard dummy text ever since.', 'shopbuilder' ),
 				],
 				[
 					'member_name'        => esc_html__( 'Darrell Steward', 'shopbuilder' ),
 					'member_designation' => __( 'UX Designer', 'shopbuilder' ),
+					'member_bio'         => esc_html__( 'Lorem Ipsum is simply dummy text of the printing and typesetting has been the industry standard dummy text ever since.', 'shopbuilder' ),
 				],
 				[
 					'member_name'        => esc_html__( 'John Doe', 'shopbuilder' ),
 					'member_designation' => __( 'Junior Executive', 'shopbuilder' ),
+					'member_bio'         => esc_html__( 'Lorem Ipsum is simply dummy text of the printing and typesetting has been the industry standard dummy text ever since.', 'shopbuilder' ),
 				],
 
 			],

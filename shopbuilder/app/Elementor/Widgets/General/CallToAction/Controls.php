@@ -121,7 +121,31 @@ class Controls {
 				'button_hover_effects' => [ 'rtsb-sb-button-hover-effect-preset2' ],
 			],
 		];
+		$fields['cta_column_gap'] = [
+			'type'       => 'slider',
+			'mode'       => 'responsive',
+			'label'      => esc_html__( 'Column Gap', 'shopbuilder' ),
+			'size_units' => [ '%', 'px' ],
+			'range'      => [
+				'%'  => [
+					'min'  => 0,
+					'max'  => 100,
+					'step' => 1,
+				],
+				'px' => [
+					'min'  => 0,
+					'max'  => 600,
+					'step' => 1,
+				],
+			],
+			'selectors'  => [
+				$obj->selectors['image_style']['column_gap'] => 'gap: {{SIZE}}{{UNIT}};',
+			],
+			'condition'  => [
+				'layout_style' => [ 'rtsb-cta-layout3' ],
+			],
 
+		];
 		$fields['cta_preset_end'] = $obj->end_section();
 		return $fields;
 	}
@@ -519,10 +543,12 @@ class Controls {
 		$css_selectors = $obj->selectors['image_style'];
 		$title         = esc_html__( 'Image Style', 'shopbuilder' );
 		$selectors     = [
-			'box_shadow'    => $css_selectors['box_shadow'],
-			'border'        => $css_selectors['border'],
-			'margin'        => [ $css_selectors['margin'] => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}} !important;' ],
-			'border_radius' => [ $css_selectors['border_radius'] => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}} !important;' ],
+			'box_shadow'      => $css_selectors['box_shadow'],
+			'border'          => $css_selectors['border'],
+			'margin'          => [ $css_selectors['margin'] => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}} !important;' ],
+			'border_radius'   => [ $css_selectors['border_radius'] => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}} !important;' ],
+			'image_width'     => [ $css_selectors['image_width'] => 'width: {{SIZE}}{{UNIT}};flex: 0 0 {{SIZE}}{{UNIT}};' ],
+			'image_max_width' => [ $css_selectors['image_max_width'] => 'max-width: {{SIZE}}{{UNIT}};' ],
 		];
 
 		$fields = ControlHelper::general_elementor_style( 'cta_image_style', $title, $obj, $condition, $selectors );
@@ -562,6 +588,48 @@ class Controls {
 		];
 		$fields                                        = Fns::insert_controls( 'cta_image_style_color_note', $fields, $extra_controls2, true );
 
+		$extra_controls3['image_width_heading'] = $obj->el_heading( esc_html__( 'Dimension', 'shopbuilder' ), 'default' );
+		$extra_controls3['image_styles_width']  = [
+			'type'       => 'slider',
+			'mode'       => 'responsive',
+			'label'      => esc_html__( 'Image Width', 'shopbuilder' ),
+			'size_units' => [ '%', 'px' ],
+			'range'      => [
+				'%'  => [
+					'min'  => 0,
+					'max'  => 100,
+					'step' => 1,
+				],
+				'px' => [
+					'min'  => 0,
+					'max'  => 600,
+					'step' => 1,
+				],
+			],
+			'selectors'  => $selectors['image_width'],
+
+		];
+		$extra_controls3['image_styles_max_width'] = [
+			'type'       => 'slider',
+			'mode'       => 'responsive',
+			'label'      => esc_html__( 'Image Max-Width', 'shopbuilder' ),
+			'size_units' => [ '%', 'px' ],
+			'range'      => [
+				'%'  => [
+					'min'  => 0,
+					'max'  => 100,
+					'step' => 1,
+				],
+				'px' => [
+					'min'  => 0,
+					'max'  => 600,
+					'step' => 1,
+				],
+
+			],
+			'selectors'  => $selectors['image_max_width'],
+		];
+		$fields = Fns::insert_controls( 'cta_image_style_color_note', $fields, $extra_controls3 );
 		return $fields;
 	}
 	/**

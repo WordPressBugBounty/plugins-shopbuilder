@@ -555,6 +555,15 @@ class BuilderController {
 			$where .= $wpdb->prepare( " AND {$wpdb->posts}.post_title LIKE %s", '%' . esc_sql( $search ) . '%' );
 		}
 
+		// Add a query for shop_coupon post-type to check 'show on frontend' meta.
+		if ( 'shop_coupon' === $post_type ) {
+			$where .= " AND {$wpdb->posts}.ID IN (
+                SELECT post_id FROM {$wpdb->postmeta} 
+                WHERE meta_key = 'rtsb_show_on_frontend' 
+                AND meta_value = 'on'
+            )";
+		}
+
 		$query   = "select post_title,ID  from $wpdb->posts where post_status = 'publish' {$where} {$limit}";
 		$results = $wpdb->get_results( $query ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.NoCaching
 

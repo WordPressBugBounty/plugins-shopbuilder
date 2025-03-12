@@ -21,14 +21,28 @@
  * @var $show_tags              boolean
  * @var $show_dates             boolean
  * @var $show_author            boolean
+ * @var $show_comment           boolean
+ * @var $show_reading_time      boolean
+ * @var $show_post_views        boolean
  * @var $show_post_thumbnail    boolean
  * @var $show_short_desc        boolean
  * @var $image_link             boolean
  * @var $show_read_more_btn     boolean
+ * @var $show_author_icon       boolean
+ * @var $show_comment_icon      boolean
+ * @var $show_date_icon         boolean
+ * @var $show_reading_time_icon boolean
+ * @var $show_post_views_icon   boolean
  * @var $img_html               string
  * @var $button_icon            array
  * @var $button_icon_position   string
  * @var $item_class             string
+ * @var $author_icon_html       string
+ * @var $date_icon_html         string
+ * @var $comment_icon_html      string
+ * @var $reading_time_icon_html string
+ * @var $post_views_icon_html   string
+ * @var $meta_separator         string
  * array
  */
 
@@ -42,7 +56,7 @@ use RadiusTheme\SB\Helpers\Fns;
 if ( ! defined( 'ABSPATH' ) ) {
 	exit( 'This script cannot be accessed directly.' );
 }
-$date_icon = '<svg xmlns="https://www.w3.org/2000/svg" viewBox="0 0 448 512" width="1em" height="1em" fill="currentColor"><path d="M0 464c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V192H0v272zm320-196c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12h-40c-6.6 0-12-5.4-12-12v-40zm0 128c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12h-40c-6.6 0-12-5.4-12-12v-40zM192 268c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12h-40c-6.6 0-12-5.4-12-12v-40zm0 128c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12h-40c-6.6 0-12-5.4-12-12v-40zM64 268c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12H76c-6.6 0-12-5.4-12-12v-40zm0 128c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12H76c-6.6 0-12-5.4-12-12v-40zM400 64h-48V16c0-8.8-7.2-16-16-16h-32c-8.8 0-16 7.2-16 16v48H160V16c0-8.8-7.2-16-16-16h-32c-8.8 0-16 7.2-16 16v48H48C21.5 64 0 85.5 0 112v48h448v-48c0-26.5-21.5-48-48-48z"></path></svg>';
+
 ?>
 <div class="<?php echo esc_attr( $grid_classes ); ?>">
 	<div class="<?php echo esc_attr( $item_class ); ?>">
@@ -110,7 +124,7 @@ $date_icon = '<svg xmlns="https://www.w3.org/2000/svg" viewBox="0 0 448 512" wid
 					</<?php Fns::print_validated_html_tag( $title_tag ); ?>>
 					<?php
 				}
-				if ( $show_dates || $show_author ) {
+				if ( $show_dates || $show_author || $show_comment || $show_reading_time || $show_post_views ) {
 					?>
 					<ul class="rtsb-post-meta">
 						<?php
@@ -118,13 +132,62 @@ $date_icon = '<svg xmlns="https://www.w3.org/2000/svg" viewBox="0 0 448 512" wid
 							$prefix = esc_html__( 'By ', 'shopbuilder' );
 							$prefix = apply_filters( 'rtsb/general_widgets/posts_author_prefix', $prefix );
 							Fns::print_html( '<li class="rtsb-meta-item author">' );
+							if ( $show_author_icon ) {
+								Fns::print_html( $author_icon_html );
+							}
 							Fns::print_html( PostHelpers::rtsb_posted_by( $prefix ) );
 							Fns::print_html( '</li>' );
 						}
 						if ( $show_dates ) {
+                            if ( $meta_separator ) {
+                                Fns::print_html( '<li class="rtsb-meta-separator">' );
+                                Fns::print_html( $meta_separator );
+                                Fns::print_html( '</li>' );
+                            }
 							Fns::print_html( '<li class="rtsb-meta-item date">' );
-							Fns::print_html( $date_icon );
+							if ( $show_date_icon ) {
+								Fns::print_html( $date_icon_html );
+							}
 							Fns::print_html( PostHelpers::rtsb_posted_date() );
+							Fns::print_html( '</li>' );
+						}
+						if ( $show_comment ) {
+                            if ( $meta_separator ) {
+                                Fns::print_html( '<li class="rtsb-meta-separator">' );
+                                Fns::print_html( $meta_separator );
+                                Fns::print_html( '</li>' );
+                            }
+							Fns::print_html( '<li class="rtsb-meta-item comments">' );
+							if ( $show_comment_icon ) {
+								Fns::print_html( $comment_icon_html );
+							}
+							Fns::print_html( PostHelpers::get_post_comments_number() );
+							Fns::print_html( '</li>' );
+						}
+						if ( $show_reading_time ) {
+                            if ( $meta_separator ) {
+                                Fns::print_html( '<li class="rtsb-meta-separator">' );
+                                Fns::print_html( $meta_separator );
+                                Fns::print_html( '</li>' );
+                            }
+							Fns::print_html( '<li class="rtsb-meta-item reading-time">' );
+							if ( $show_reading_time_icon ) {
+								Fns::print_html( $reading_time_icon_html );
+							}
+							Fns::print_html( PostHelpers::rtsb_reading_time() );
+							Fns::print_html( '</li>' );
+						}
+						if ( $show_post_views ) {
+                            if ( $meta_separator ) {
+                                Fns::print_html( '<li class="rtsb-meta-separator">' );
+                                Fns::print_html( $meta_separator );
+                                Fns::print_html( '</li>' );
+                            }
+							Fns::print_html( '<li class="rtsb-meta-item post-views">' );
+							if ( $show_post_views_icon ) {
+								Fns::print_html( $post_views_icon_html );
+							}
+							Fns::print_html( PostHelpers::rtsb_post_views() );
 							Fns::print_html( '</li>' );
 						}
 						?>
@@ -133,7 +196,7 @@ $date_icon = '<svg xmlns="https://www.w3.org/2000/svg" viewBox="0 0 448 512" wid
 				}
 				if ( $show_short_desc ) {
 					?>
-					<div class="rtsb-post-excerpt limit-<?php Fns::print_html($excerpt_limit); ?>">
+					<div class="rtsb-post-excerpt limit-<?php Fns::print_html( $excerpt_limit ); ?>">
 						<?php Fns::print_html( $excerpt ); ?>
 					</div>
 					<?php

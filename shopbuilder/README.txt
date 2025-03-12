@@ -4,7 +4,7 @@ Donate link:
 Tags: Elementor, Woocommerce Builder, Elementor Woocommerce Builder, Woocommerce, Woocommerce Product
 Requires at least: 5.5
 Tested up to: 6.7
-Stable tag: 2.6.0
+Stable tag: 2.6.1
 Requires PHP: 7.4
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -12,18 +12,18 @@ License URI: http://www.gnu.org/licenses/gpl-3.0.html
 WooCommerce builder for Elementor includes 80+ widgets, WooCommerce templates, quick view, compare, wishlist, shop & archive page builder and more.
 
 == Description ==
-ShopBuilder is a powerful WooCommerce Builder for Elementor that lets you easily create custom WooCommerce pages with a drag and drop interface. ShopBuilder also includes a powerful set of WooCommerce widgets that lets you easily add products to your pages.
+[ShopBuilder](https://shopbuilderwp.com/?utm_source=WPorg&utm_medium=click&utm_campaign=org) is a powerful WooCommerce Builder for Elementor that lets you easily create custom WooCommerce pages with a drag and drop interface. ShopBuilder also includes a powerful set of WooCommerce widgets that lets you easily add products to your pages.
 
 Elementor WooCommerce Builder Addons is an add-on plugin that integrates with both Elementor and WooCommerce, providing additional design options and functionality specifically for WooCommerce stores. By using this plugin, users can easily create custom-designed product pages, checkout pages, and other e-commerce-related pages.
 
-👉 [Plugin Demo]( https://shopbuilderwp.com/?utm_source=WPorg&utm_medium=click&utm_campaign=org ) | [Documentation](https://www.radiustheme.com/docs/shopbuilder/features/) | [Get Pro]( https://www.radiustheme.com/downloads/woocommerce-bundle/?utm_source=WPorg&utm_medium=click&utm_campaign=org ) 👈
+👉 [ShopBuilder Modules](https://shopbuilderwp.com/modules/?utm_source=WPorg&utm_medium=click&utm_campaign=org) | [ShopBuilder Templates](https://shopbuilderwp.com/templates/?utm_source=WPorg&utm_medium=click&utm_campaign=org) | [Documentation](https://shopbuilderwp.com/docs/) | [Get Pro]( https://www.radiustheme.com/downloads/woocommerce-bundle/?utm_source=WPorg&utm_medium=click&utm_campaign=org ) 👈
 
 With ShopBuilder, you can craft captivating and highly functional online shopping experiences.
 
 == 🏆 ShopBuilder Elementor WooCommerce Builder Features ==
 
-👉 100+ Widgets
-👉 12+ Modules - Quick View, Compare, Wishlist, [Variation Swatches](https://wordpress.org/plugins/woo-product-variation-swatches/), [Variation Gallery](https://wordpress.org/plugins/woo-product-variation-gallery/), Sales Notification, Mini Cart, Quick Checkout, Multi-Step Checkout and Back Order.
+👉 128+ Widgets
+👉 21+ Modules - Quick View, Compare, Wishlist, [Variation Swatches](https://wordpress.org/plugins/woo-product-variation-swatches/), [Variation Gallery](https://wordpress.org/plugins/woo-product-variation-gallery/), Mini Cart, Product Size Chart, Customize My Account, Pre-Order, Currency Switcher, Product Add-Ons, Checkout Fields Editor, Sales Notification, Flash Sale Countdown, Quick Checkout, Multi-Step Checkout, Shopify Checkout, Smart Coupons and more.
 👉 16+ Page Templates Build
 👉 40+ Pre-Built Templates
 👉 Build WooCommerce pages like **Shop**, **Single**, **Cart**, **Archive pages** etc.
@@ -72,6 +72,7 @@ With ShopBuilder, you can craft captivating and highly functional online shoppin
 👉 WooCommerce Coupon Form - Checkout Widget
 👉 WooCommerce Login Form - Checkout Widget
 👉 WooCommerce Shipping Method - Checkout Widget
+👉 And much more
 
 == 🏆 ShopBuilder Elementor WooCommerce Builder Widgets [PRO]==
 👉 WooCommerce AJAX Product Filter Widget [PRO]
@@ -93,13 +94,14 @@ With ShopBuilder, you can craft captivating and highly functional online shoppin
 👉 WooCommerce Edit Billing Address
 👉 WooCommerce Edit Shipping Address
 👉 WooCommerce Login Register Form
+👉 And much more
 
 
 == 🏆 Included Modules ==
 
 **Quick View Module**
 
-The WooCommerce Quick View module is a tool or feature that enhances the functionality of an online store built with WooCommerce, a popular e-commerce plugin for WordPress. The primary purpose of this module is to provide a quick and convenient way for customers to preview product details without leaving the main shop or product listing page.
+This module enhances the functionality of an online store built with WooCommerce. It provides a quick and convenient way for customers to preview product details without leaving the main shop or product details page.
 
 [youtube https://www.youtube.com/watch?v=69GuFIIysqY]
 
@@ -107,9 +109,7 @@ The WooCommerce Quick View module is a tool or feature that enhances the functio
 
 **Products Compare Module**
 
-Enabling your customers to easily compare products at their convenience is a straightforward process thanks to the Product Comparison Module.
-
-This module enhances the functionality of an online store by providing customers with the ability to compare multiple products side by side.The module typically creates a comparison table where customers can view and compare detailed information about multiple products simultaneously.
+This module elevates the functionality of an online store by providing customers with the ability to compare multiple products side by side. It Also creates a comparison table where customers can view and compare detailed information about multiple products simultaneously.
 
 [youtube https://www.youtube.com/watch?v=fa31x5NnUMo]
 
@@ -117,9 +117,7 @@ This module enhances the functionality of an online store by providing customers
 
 **Wishlist Module**
 
-The Wishlist Module allows customers to create personalized collections of products they want to buy and save them in their user account for future reference. Wishlists signify a customer’s interest in a product without an immediate intent to purchase. It will greatly improve the customer’s shopping experience.
-
-The WooCommerce Wishlist module enhances the customer experience by providing a convenient way to save and track desired products. It helps increase user engagement and can potentially lead to higher sales, as customers are more likely to return and make purchases when they have an organized and accessible list of their preferred items.
+The Wishlist Module lets you add a wishlist feature to your WooCommerce store. Therefore, customers can create personalized collections of products they want to buy and save those products for future purchases. Indeed, this module will help you enhance customer experience by providing a convenient way to save and track desired products. Additionally, it helps increase user engagement and sales.
 
 [youtube https://www.youtube.com/watch?v=69GuFIIysqY]
 
@@ -127,32 +125,26 @@ The WooCommerce Wishlist module enhances the customer experience by providing a 
 
 **Variation Swatches**
 
-The Variation Swatches plugin converts the product variation select fields into radio, images, colors, and labels. By using this Variation swatches for WooCommerce Plugin, you can display your product variation attributes in images, colors, and label.
-
-The Variation Swatches for Woocommerce plugin comes with a seperate plugin.
+The Variation Swatches is a separate plugin that we included in the ShopBuilder as a module. It enhances your online store by replacing WooCommerce’s default dropdowns for product variations with visually appealing labels, colors, and images. As a result, customers can select product options more comfortably and make quicker purchasing decisions.
 
 👉 [Demo](https://wordpress.org/plugins/woo-product-variation-swatches/)
 
 **Variation Gallery**
 
-Variation Gallery for WooCommerce plugin give you the opportunity to showcase additional images as gallery for each product variation. This plugin allows you to upload unlimited additional images for each variation.
-
-The Variation Swatches for Woocommerce plugin comes with a seperate plugin.
+Variation Images Gallery for WooCommerce is a separate plugin that we included in ShopBuilder as a module. It lets you showcase additional images as a gallery for each product variation. Thus, upload unlimited additional images for each variation, keep customers engaged, and boost sales.
 
 👉 [Demo](https://wordpress.org/plugins/woo-product-variation-gallery/)
 
 **Sales Notification Module [PRO]**
 
-This module is designed to display real-time notifications of recent sales activities on the website. The module displays pop-up or on-page notifications in real-time, notifying visitors of recent purchases made by other customers. These notifications often include details like product name, image, and the name or location of the customer who made the purchase.
-
-WooCommerce Sales Notification modules are used to create a dynamic and engaging shopping experience for customers. By showcasing recent sales, these modules can build trust, create a sense of urgency, and encourage visitors to make purchases. They are a valuable tool for boosting conversion rates and increasing sales in online stores.
+This module is designed to display real-time notifications of recent sales activities on the website. The module displays pop-up or on-page notifications in real-time, notifying visitors of recent purchases made by other customers. These notifications include details like product name, image, and the name or location of the customer who made the purchase.
 
 [youtube https://www.youtube.com/watch?v=5A3SrTg7YjM]
 
 
 **Flash Sale Countdown Module[PRO]**
 
-The Flash Sale Countdown module for WooCommerce is an effective tool for boosting sales and engaging customers by creating a sense of limited-time opportunity. It helps online store owners leverage flash sales as a marketing strategy to attract and convert customers, ultimately increasing revenue and promoting a dynamic shopping experience.
+The Flash Sale Countdown module for WooCommerce is ideal for boosting sales and engaging customers by creating a sense of a limited-time opportunity. It lets you display a flash sale countdown timer so that you can leverage flash sales as a marketing strategy to attract prospects and convert them into paying customers.
 
 [youtube https://www.youtube.com/watch?v=eN-V3rHfHgI]
 
@@ -160,7 +152,7 @@ The Flash Sale Countdown module for WooCommerce is an effective tool for boostin
 
 **Mini Cart Module [PRO]**
 
-The Mini Cart module improves the user experience by giving customers easy access to their shopping cart's contents and allowing them to quickly review, edit, and proceed to checkout. It provides a streamlined and convenient way to manage items in the cart and enhances the overall shopping experience on e-commerce websites.
+The Mini Cart module enhances the user experience by offering customers a sleek, intuitive, and convenient way to view and manage their shopping cart without leaving the current page. It simplifies cart management and improves the overall shopping experience on e-commerce websites.
 
 [youtube https://www.youtube.com/watch?v=FyV3OVZNwCA]
 
@@ -168,7 +160,7 @@ The Mini Cart module improves the user experience by giving customers easy acces
 
 **[Quick Checkout Module [PRO]**
 
-The Quick Checkout WooCommerce module is an effective tool for reducing cart abandonment rates and increasing conversion rates. By simplifying and speeding up the checkout process, it offers customers a more user-friendly and efficient shopping experience, ultimately boosting sales and customer satisfaction on e-commerce websites.
+The Quick Checkout module is an effective tool for reducing cart abandonment rates and increasing conversion rates. This module accelerates the checkout process. It saves customers time by swiftly redirecting them to the checkout page and reducing the steps required in traditional shopping. It’s a perfect tool to encourage impulse shoppers and need-based customers to complete purchases.
 
 [youtube https://www.youtube.com/watch?v=fTsqqtV65CM]
 
@@ -177,9 +169,7 @@ The Quick Checkout WooCommerce module is an effective tool for reducing cart aba
 
 **[Multi-Step Checkout Module [PRO]**
 
-The module divides the checkout process into a series of sequential steps or pages, each focusing on a specific aspect of the checkout, such as shipping, billing, payment, and order review.
-
-The Multi-Step Checkout module for WooCommerce offers a structured and user-friendly approach to the checkout process, providing customers with a clear path to completing their orders. It can help reduce cart abandonment rates, improve the customer experience, and ultimately lead to higher conversion rates and increased sales on e-commerce websites.
+This module divides the checkout process into a series of sequential steps or pages. Each step or page focuses on a specific aspect of the checkout, such as shipping, billing, payment, and order review. Hence, shoppers get a clear path to complete their orders. This module reduces cart abandonment rates and improves the customer experience and conversion rates.
 
 👉 [Demo](https://shopbuilderwp.com/multi-step-checkout/)
 
@@ -191,6 +181,90 @@ This module provides customers with access to detailed information about product
 
 👉 [Demo](https://shopbuilderwp.com/size-chart/)
 
+**Product Badges**
+
+This module enhances your WooCommerce store by allowing you to add creative and customizable text or image badges to products. These eye-catching badges highlight special deals, new arrivals, or unique product features, effectively drawing customer attention and boosting engagement.
+
+[youtube https://www.youtube.com/watch?v=wA-bvHPYJWk]
+
+👉 [Demo](https://shopbuilderwp.com/product-badges-module/)
+
+**Customize My Account Module [PRO]**
+
+This module lets you personalize the My Account page. It enables you to add unlimited custom endpoints, rearrange menus with drag-and-drop, use custom icons and images, and manage content dynamically. So, you can create a personalized and engaging user experience for shoppers.
+
+[youtube https://www.youtube.com/watch?v=RsIkQ9kEJqY]
+
+👉 [Demo](https://shopbuilderwp.com/customize-my-account/)
+
+**Pre-Order Module [PRO]**
+
+This module allows you to set the pre-order status on items you are about to launch. As a result, customers can reserve those products before they become available, helping you secure early sales and build anticipation.
+
+[youtube https://www.youtube.com/watch?v=V9UObbEFUjY]
+
+👉 [Demo](https://shopbuilderwp.com/pre-order-module/)
+
+**Back-Order Module [PRO]**
+
+This module lets you add customizable back-order text on diverse product types and display back-order availability messages. So, customers can purchase out-of-stock products, improving customer satisfaction and conversion rates.
+
+[youtube https://www.youtube.com/watch?v=xpJdKVFeMac]
+
+👉 [Demo](https://shopbuilderwp.com/back-order-module/)
+
+**Currency Switcher Module [PRO]**
+
+This module lets you display multiple currencies for your products based on the customers’ locations. It automatically detects customers’ locations and shows them product pricing in their local currencies. It updates product pricing by following the latest currency exchange rate.
+
+[youtube https://www.youtube.com/watch?v=MC34smJxl8A]
+
+👉 [Demo](https://shopbuilderwp.com/currency-switcher-module/)
+
+**Product Add-Ons Module [PRO]**
+
+This module allows you to create unlimited product add-ons, such as text fields, radio buttons, checkboxes, image uploads, and drop-downs, for individual products or product categories. In short, it lets you enhance product customization options for customers.
+
+[youtube https://www.youtube.com/watch?v=ShWMqxbXvt0]
+
+👉 [Demo](https://shopbuilderwp.com/product-add-ons-module/)
+
+**Checkout Fields Editor Module**
+
+Improve the checkout process and increase sales with this fantastic module. It lets you add, edit, and remove checkout form fields as you wish. It enhances the checkout experience, reduces the checkout abandonment rate, and increases your overall revenue.
+
+[youtube https://www.youtube.com/watch?v=BcZwSKs1NpE]
+
+👉 [Demo](https://shopbuilderwp.com/checkout-fields-editor-module/)
+
+**Sticky Add-To-Cart Module [PRO]**
+
+The module keeps the Add to Cart button fixed at the top or bottom of the screen so that it always remains accessible to users while scrolling a web page. It reduces the need for customers to scroll back to the top or down the page to add items to their cart, enhancing the shopping experience.
+
+[youtube https://www.youtube.com/watch?v=S5YeTREseZ0]
+
+👉 [Demo](https://shopbuilderwp.com/sticky-add-to-cart-module/)
+
+**Shopify Checkout Module**
+
+This module lets you include customizable checkout logos, multi-step navigation, and other personalized options on the checkout page; in essence, it enables you to transform the standard checkout page into a Shopify-style page. Therefore, customers in your store experience faster and more user-friendly transactions.
+
+[youtube https://www.youtube.com/watch?v=vkD-GpT3Ims]
+
+👉 [Demo](https://shopbuilderwp.com/shopify-checkout/)
+
+**Smart Coupons Module [PRO]**
+
+This module enhances the standard WooCommerce coupon functionality. It helps you utilize more advanced discount strategies, including BOGO (Buy One, Get One) offers, tiered discounts, and gift product capabilities to increase sales.
+
+👉 [Demo](https://shopbuilderwp.com/smart-coupons/)
+
+**Bulk Discounts Module [PRO]**
+
+This module enables you to incentivize customers who make bulk purchases. This module lets you offer discounts to encourage larger purchases, enhancing customer experience and boosting sales.
+
+👉 [Demo](https://shopbuilderwp.com/bulk-discounts/)
+
 
 == 🏆 Build Woocommerce Single product page using ShopBuilder addon ==
 
@@ -200,19 +274,19 @@ With ShopBuilder, you can create a professional and conversion-optimized WooComm
 
 [youtube https://www.youtube.com/watch?v=ynG5meAbS_M]
 
-👉 [Documentation](https://www.radiustheme.com/docs/shopbuilder/product-page/product-page-widgets/)
+👉 [Documentation](https://shopbuilderwp.com/docs/product-page-widgets/)
 
 
 == 🏆 Build Woocommerce Cart Page using ShopBuilder Cart widgets ==
 
-With the ShopBuilder WooCommerce addon cart page widgets, you can easily create your woocommerce cart page. This powerful addon allows you to design and customize your WooCommerce cart page using a simple drag-and-drop interface. Choose from a variety of pre-designed templates, add WooCommerce elements like cart table, cart total, coupon form and cross sell widgets.
+With the ShopBuilder WooCommerce addon cart page widgets, you can easily create your woocommerce cart page. This powerful addon allows you to design and customize your WooCommerce cart page using a simple drag-and-drop interface. Choose from a variety of pre-designed templates, add WooCommerce elements like cart table, cart total, coupon form and cross-sell widgets.
 
 With ShopBuilder Woocommerce builder addons, you can create a professional and conversion-optimized WooCommerce single page in easily, without any coding knowledge required.
 
 [youtube https://www.youtube.com/watch?v=GKyhPEOC9_M]
 
 
-👉 [Documentation](https://www.radiustheme.com/docs/shopbuilder/cat-page-widgets/)
+👉 [Documentation](https://shopbuilderwp.com/docs/cart-widgets/)
 
 
 == 🏆 Customize your Woocommerce Checkout Page ==
@@ -223,7 +297,7 @@ With ShopBuilder woocommerce elementor addon, you can create a professional WooC
 
 [youtube https://www.youtube.com/watch?v=j6gVmwWl_Ys]
 
-👉 [Documentation](https://www.radiustheme.com/docs/shopbuilder/checkout-page-widgets/billing-shipping-form/)
+👉 [Documentation](https://shopbuilderwp.com/docs/billing-shipping-form/)
 
 
 == 🏆 Build Woocommerce Order Receive page using ShopBuilder addon [PRO]==
@@ -232,7 +306,7 @@ With the ShopBuilder order receive page widgets, you can easily create your wooc
 
 [youtube https://www.youtube.com/watch?v=UfqfMGxpmUw]
 
-👉 [Documentation](https://www.radiustheme.com/docs/shopbuilder/order-received/order-received-widgets/)
+👉 [Documentation](https://shopbuilderwp.com/docs/order-received-widgets/)
 
 
 == 🏆 Build Woocommerce Myaccount page using ShopBuilder addon [PRO] ==
@@ -241,12 +315,16 @@ With myaccount page widgets, you can easily create your woocommerce myaccount pa
 
 [youtube https://www.youtube.com/watch?v=wI34d7uzqCc]
 
-👉 [Documentation](https://www.radiustheme.com/docs/shopbuilder/my-account/account-navigation/)
+👉 [Documentation](https://shopbuilderwp.com/docs/account-navigation/)
 
 
-== REVIEW FROM WORDPRESS COMMUNITY EXPERT ==
+== REVIEW FROM WORDPRESS COMMUNITY EXPERTS ==
+
+[youtube https://www.youtube.com/watch?v=xEoLfaUzUSM]
 
 [youtube https://www.youtube.com/watch?v=5jXcAoCfCJA]
+
+[youtube https://www.youtube.com/watch?v=u8yFZmMjoug]
 
 
 Whether you're a WooCommerce beginner or a seasoned pro, ShopBuilder is the perfect plugin to help you create custom WooCommerce layouts with ease.
@@ -339,6 +417,20 @@ If you like the ShopBuilder Plugin, then consider checking out our other WordPre
 == Screenshots ==
 
 == Changelog ==
+
+= 2.6.1 (March 12, 2025) =
+* Add: New Widget - Archive Product Filters.
+* Add: New badge preset in the Pricing Table widget.
+* Add: Blog Post widget now supports post-views, comments, and estimated reading time.
+* Add: Enhanced compatibility with new modules and features.
+* Fix: Resolved the title URL issue in the Team Member widget.
+* Fix: Addressed the background and box shadow control issues in the CTA widget.
+* Fix: Rectified the CSS selector issues in the Dropcap widget.
+* Fix: Resolved the settings repeater sorting issue.
+* Fix: Addressed Slider arrow color inconsistency.
+* Fix: Corrected the missing product attributes on the Compare Page.
+* Fix: Resolved the PHP warning related to woocommerce_catalog_ordering error.
+* Fix: Addressed the Shopify Checkout Height Fixed.
 
 = 2.6.0 (January 28, 2025) =
 * New: Introduced Seventeen (17) new Elementor general widgets:

@@ -44,8 +44,8 @@ class Render extends GeneralAddons {
 				$data['member_designation'] = $team['member_designation'] ?? '';
 				$data['member_name']        = $team['member_name'] ?? '';
 				$data['member_bio']         = $team['member_bio'] ?? '';
-				$data['image_link']         = $this->render_link_attributes( $team['_id'], $team['image_link'], 'member-image-link' );
-				$data['member_name_link']   = $this->render_link_attributes( $team['_id'], $team['member_name_link'], 'member-name-link' );
+				$data['image_link']         = $this->render_link_attributes( 'img_' . $team['_id'], $team['image_link'], 'member-image-link' );
+				$data['member_name_link']   = $this->render_link_attributes( 'name_' . $team['_id'], $team['member_name_link'], 'member-name-link' );
 				$data['grid_classes']       = $this->content_classes;
 				$data['content']           .= Fns::load_template( $data['template'], $data, true );
 			}
@@ -87,6 +87,7 @@ class Render extends GeneralAddons {
 			'has_image_link'         => ! empty( $this->settings['image_linkable'] ),
 			'has_member_name_link'   => ! empty( $this->settings['member_name_linkable'] ),
 			'has_designation'        => ! empty( $this->settings['display_member_designation'] ),
+			'has_description'        => ! empty( $this->settings['display_member_description'] ),
 			'display_social_profile' => ! empty( $this->settings['display_social_icon'] ),
 			'member_name_html_tag'   => $this->settings['member_name_html_tag'] ?? 'h2',
 			'member_item_classes'    => $this->generate_team_member_item_class(),

@@ -3,6 +3,8 @@
 namespace RadiusTheme\SB\Modules\CheckoutEditor;
 
 // Do not allow directly accessing this file.
+use RadiusTheme\SB\Helpers\Fns;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit( 'This script cannot be accessed directly.' );
 }
@@ -115,14 +117,13 @@ class CheckoutEditorBase {
 			$fields = json_decode( stripslashes( $customize_fields ), true );
 		}
 		$generated_fields = [];
-		$user             = wp_get_current_user();
 		foreach ( $fields as $field ) {
 			if ( empty( $field['name'] ) || 'on' !== ( $field['isEnable'] ?? '' ) ) {
 				continue;
 			}
 			if ( rtsb()->has_pro() && 'specific' === ( $field['fieldVisibility'] ?? '' ) && ! empty( $field['fieldVisibilityRoles'] ) ) {
 				$roles = $this->get_multiselect_fields_value( $field['fieldVisibilityRoles'] );
-				if ( ! array_intersect( $roles, $user->roles ) ) {
+				if ( ! array_intersect( $roles, Fns::get_current_user_roles() ) ) {
 					continue;
 				}
 			}

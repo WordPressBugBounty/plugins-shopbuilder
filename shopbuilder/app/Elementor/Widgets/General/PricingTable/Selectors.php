@@ -48,7 +48,7 @@ class Selectors {
 				'padding'                      => '{{WRAPPER}} .rtsb-pricing-table-box .rtsb-ribbon-span',
 				'border_radius'                => '{{WRAPPER}} .rtsb-pricing-table-box .rtsb-ribbon-span.rtsb-pricing-table-badge-preset1',
 				'box_shadow'                   => '{{WRAPPER}} .rtsb-pricing-table-box .rtsb-ribbon-span',
-				'vertical_horizontal_position' => '{{WRAPPER}} .rtsb-pricing-table .rtsb-pricing-table-box,{{WRAPPER}} .rtsb-pricing-table .rtsb-pricing-table-box .rtsb-ribbon-span.rtsb-pricing-table-badge-preset3,{{WRAPPER}} .rtsb-pricing-table .rtsb-pricing-table-box .rtsb-ribbon-span.rtsb-pricing-table-badge-preset4',
+				'vertical_horizontal_position' => '{{WRAPPER}} .rtsb-pricing-table .rtsb-pricing-table-box,{{WRAPPER}} .rtsb-pricing-table .rtsb-pricing-table-box .rtsb-ribbon-span.rtsb-pricing-table-badge-preset3,{{WRAPPER}} .rtsb-pricing-table .rtsb-pricing-table-box .rtsb-ribbon-span.rtsb-pricing-table-badge-preset4,{{WRAPPER}}  .rtsb-pricing-table-box .rtsb-ribbon-span.rtsb-pricing-table-badge-preset5',
 				'gradient_bg'                  => '{{WRAPPER}} .rtsb-pricing-table-box .rtsb-ribbon-span,{{WRAPPER}} .rtsb-pricing-table-box .rtsb-ribbon-span:before,{{WRAPPER}} .rtsb-pricing-table-box .rtsb-ribbon-span.rtsb-pricing-table-badge-preset3 .triangle-bar,{{WRAPPER}} .rtsb-pricing-table-box .rtsb-ribbon-span.rtsb-pricing-table-badge-preset3:before',
 			],
 			'layout'                    => [

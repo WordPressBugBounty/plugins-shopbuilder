@@ -7,6 +7,7 @@
 
 namespace RadiusTheme\SB\Controllers\Hooks;
 
+use RadiusTheme\SB\Elementor\Helper\RenderHelpers;
 use RadiusTheme\SB\Helpers\Fns;
 use RadiusTheme\SB\Models\GeneralList;
 use RadiusTheme\SB\Helpers\BuilderFns;
@@ -82,6 +83,15 @@ class ActionHooks {
 		// My Account Order Page.
 		add_action( 'woocommerce_before_account_orders', [ __CLASS__, 'before_account_orders' ], 10 );
 		add_action( 'woocommerce_after_account_orders', [ __CLASS__, 'after_account_orders' ], 10 );
+
+		// Product Filter Widget Hooks.
+		add_action( 'rtsb/before/archive/default/filter/items', [ __CLASS__,'default_filter_header' ], 10 );
+		add_action( 'rtsb/before/archive/default/filter/items', [ __CLASS__,'default_filter_search' ], 15 );
+
+		// WC Query modifier.
+		if ( ! rtsb()->has_pro() ) {
+			add_action( 'woocommerce_product_query', [ __CLASS__, 'query_modifier' ], 15 );
+		}
 	}
 
 
@@ -331,5 +341,93 @@ class ActionHooks {
 		if ( 'yes' === get_option( 'woocommerce_hide_out_of_stock_items' ) ) {
 			remove_filter( 'woocommerce_product_data_store_cpt_get_products_query', [ FilterHooks::class, 'extra_query_args_outofstock' ] );
 		}
+	}
+	/**
+	 * Display a filter header.
+	 *
+	 * @param array $settings The settings.
+	 *
+	 * @return void
+	 */
+	public static function default_filter_header( $settings ) {
+		if ( empty( $settings['show_filter_header'] ) && empty( $settings['filter_header_text'] ) ) {
+			return;
+		}
+
+		$wrapper_class = 'rtsb-default-filter-header ';
+
+		?>
+
+		<div class="<?php echo esc_attr( $wrapper_class ); ?>">
+			<h3><?php echo esc_html( $settings['filter_header_text'] ); ?></h3>
+		</div>
+
+		<?php
+	}
+	/**
+	 * Display a filter search form.
+	 *
+	 * @param array $settings The settings.
+	 *
+	 * @return void
+	 */
+	public static function default_filter_search( $settings ) {
+		if ( empty( $settings['search_form'] ) ) {
+			return;
+		}
+
+		$title         = [
+			'title'     => ! empty( $settings['search_title'] ) ? $settings['search_title'] : '',
+			'show_icon' => ! empty( $settings['show_search_title_icon'] ),
+			'icon'      => ! empty( $settings['filter_search_title_icon'] ) ? $settings['filter_search_title_icon'] : [],
+		];
+		$placeholder   = ! empty( $settings['search_placeholder'] ) ? $settings['search_placeholder'] : '';
+		$btn_icon      = ! empty( $settings['search_title_icon'] ) ? $settings['search_title_icon'] : [];
+		$wrapper_class = 'rtsb-default-filter-search rtsb-default-product-search';
+		$unique_id     = substr( uniqid(), -6 );
+		$search_term   = isset( $_REQUEST['s'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['s'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		?>
+
+		<div class="<?php echo esc_attr( $wrapper_class ); ?>">
+			<?php
+			Fns::print_html( RenderHelpers::get_default_filter_title( $title ) );
+			?>
+			<div class="default-search-content">
+				<div class="woocommerce-product-search<?php echo ! empty( $search_term ) ? ' active' : ''; ?>">
+					<div class="search-input">
+						<label class="screen-reader-text" for="rtsb-product-default-search-form-<?php echo esc_attr( $unique_id ); ?>"><?php echo esc_html( $placeholder ); ?></label>
+						<input type="search" id="rtsb-product-default-search-form-<?php echo esc_attr( $unique_id ); ?>" class="rtsb-default-search-field" placeholder="<?php echo esc_html( $placeholder ); ?>" value="<?php echo esc_attr( $search_term ); ?>" name="s" autocomplete="off">
+					</div>
+					<button class="rtsb-search-submit">
+						<?php
+
+							Fns::print_html( Fns::icons_manager( $btn_icon, 'search-icon' ) );
+
+						?>
+						<span></span>
+					</button>
+				</div>
+			</div>
+		</div>
+
+		<?php
+	}
+	/**
+	 * Query modifier.
+	 *
+	 * @param object $query Query.
+	 * @return object
+	 */
+	public static function query_modifier( $query ) {
+		$onsale_filter    = isset( $_GET['sale_filter'] ) ? sanitize_text_field( wp_unslash( $_GET['sale_filter'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$on_sale_products = wc_get_product_ids_on_sale();
+
+		if ( 'onsale' === $onsale_filter ) {
+			$query->set( 'post__in', ! empty( $on_sale_products ) ? $on_sale_products : [ 0 ] );
+		} elseif ( 'regular' === $onsale_filter ) {
+			$query->set( 'post__not_in', $on_sale_products );
+		}
+
+		return $query;
 	}
 }

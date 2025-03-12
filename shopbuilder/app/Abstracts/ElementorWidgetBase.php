@@ -187,7 +187,7 @@ abstract class ElementorWidgetBase extends Widget_Base {
 	 * @return array
 	 */
 	public function promo_content() {
-		if ( rtsb()->has_pro() ) {
+		if ( rtsb()->has_pro() || $this->widget_exceptions() ) {
 			return [];
 		}
 
@@ -755,7 +755,7 @@ abstract class ElementorWidgetBase extends Widget_Base {
 	/**
 	 * Elementor controls marge all settings
 	 *
-	 * @return array
+	 * @return void
 	 */
 	protected function apply_hooks_before_render() {
 		if ( $this->is_edit_mode() ) {
@@ -773,5 +773,20 @@ abstract class ElementorWidgetBase extends Widget_Base {
 		$checkout = WC()->checkout();
 
 		return ! $checkout->is_registration_enabled() && $checkout->is_registration_required() && ! is_user_logged_in();
+	}
+
+	/**
+	 * Widget Exceptions.
+	 *
+	 * @return bool
+	 */
+	private function widget_exceptions() {
+		$exceptions = [
+			'rtsb-product-filters',
+			'rtsb-wishlist',
+			'rtsb-product-breadcrumbs',
+		];
+
+		return in_array( $this->rtsb_base, $exceptions, true );
 	}
 }

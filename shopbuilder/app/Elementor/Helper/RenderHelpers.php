@@ -10,8 +10,11 @@
 namespace RadiusTheme\SB\Elementor\Helper;
 
 use Elementor\Plugin;
+use RadiusTheme\SB\Helpers\Cache;
 use RadiusTheme\SB\Helpers\Fns;
 use RadiusTheme\SB\Helpers\BuilderFns;
+use WC_Product_Query;
+use WP_Term;
 
 // Do not allow directly accessing this file.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -22,6 +25,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  * BuilderFns class
  */
 class RenderHelpers {
+	/**
+	 * @var array
+	 */
+	private static $cache = [];
 	/**
 	 * Get data.
 	 *
@@ -419,6 +426,9 @@ class RenderHelpers {
 			case 'rtsb-testimonial-layout2':
 			case 'grid-layout2':
 			case 'slider-layout2':
+			case 'rtsb-coupon-layout1':
+			case 'rtsb-coupon-layout2':
+			case 'rtsb-coupon-layout3':
 				$columns = 3;
 				break;
 			case 'rtsb-post-list-layout1':
@@ -1028,5 +1038,737 @@ class RenderHelpers {
 		$products_per_page = apply_filters( 'rtsb/elementor/archive/products_per_page', $products_row * $products_col );
 
 		return ! empty( $products_per_page ) ? $products_per_page : 12;
+	}
+	/**
+	 * Render Filters View.
+	 *
+	 * @param array $templates Template name.
+	 * @param array $settings Control settings.
+	 *
+	 * @return string
+	 */
+	public static function filters_view( $templates, $settings ) {
+		global $wp;
+		$filters       = [];
+		$html          = null;
+		$reset         = ! empty( $settings['reset_btn'] );
+		$reset_mode    = 'show' === $settings['reset_btn_behavior'] ? ' show-reset' : ' ondemand-reset';
+		$reset_text    = ! empty( $settings['reset_btn_text'] ) ? $settings['reset_btn_text'] : esc_html__( 'Reset Filter', 'shopbuilder' );
+		$scroll_mode   = ! empty( $settings['enable_scroll'] ) ? ' has-scroll' : ' no-scroll';
+		$scroll_height = ! empty( $settings['enable_scroll'] ) ? $settings['scroll_height']['size'] : 300;
+
+		$scroll_attr = '';
+
+		if ( ! empty( $settings['enable_scroll'] ) ) {
+			$scroll_attr = ' style="--rtsb-filter-scroll-height: ' . absint( $scroll_height ) . 'px;"';
+		}
+
+		foreach ( $settings['filter_types'] as $key => $item ) {
+			if ( ! defined( 'RTWPVS_PLUGIN_FILE' ) && in_array( $item['input_type_all'], [ 'color', 'button', 'image' ], true ) ) {
+				$item['input_type_all'] = 'checkbox';
+			}
+			$filters[] = [
+				'filter_title' => $item['filter_title'],
+				'filter_items' => $item['filter_items'],
+				'filter_attr'  => $item['filter_attr'],
+				'input_type'   => 'product_attr' === $item['filter_items'] ? $item['input_type_all'] : $item['input_type'],
+			];
+
+			if ( 'rating_filter' === $item['filter_items'] ) {
+				$filters[ $key ]['template'] = $templates['rating'];
+			} elseif ( 'price_filter' === $item['filter_items'] ) {
+
+				$filters[ $key ]['input_type'] = 'slider';
+				$filters[ $key ]['template']   = $templates['price'];
+			} else {
+				$filters[ $key ]['template'] = 'product_attr' === $item['filter_items'] ? $templates[ $item['input_type_all'] ] : $templates[ $item['input_type'] ];
+			}
+		}
+
+		if ( '' === get_option( 'permalink_structure' ) ) {
+			$form_action = remove_query_arg( [ 'page', 'paged', 'product-page' ], add_query_arg( $wp->query_string, '', home_url( $wp->request ) ) );
+		} else {
+			$form_action = preg_replace( '%\/page/[0-9]+%', '', home_url( trailingslashit( $wp->request ) ) );
+		}
+		$args = [
+			'filters'     => $filters,
+			'scroll_mode' => $scroll_mode,
+			'reset_mode'  => $reset_mode,
+			'reset'       => $reset,
+			'scroll_attr' => $scroll_attr,
+			'reset_text'  => $reset_text,
+			'settings'    => $settings,
+			'form_action' => $form_action,
+		];
+
+		$html .= '<div class="rtsb-default-archive-filters">';
+
+		$html .= Fns::load_template( $templates['layout'], $args, true );
+		$html .= '</div>';
+		return $html;
+	}
+	/**
+	 * Get taxonomy type.
+	 *
+	 * @param string $tax_type Taxonomy type.
+	 * @param string $attr_type Attribute type.
+	 *
+	 * @return string
+	 */
+	public static function get_product_filters_tax_type( $tax_type, $attr_type = '' ) {
+		if ( 'product_attr' !== $tax_type ) {
+			return $tax_type;
+		}
+
+		if ( empty( $attr_type ) ) {
+			return $tax_type;
+		}
+
+		return $attr_type;
+	}
+	/**
+	 * Get attribute terms.
+	 *
+	 * @param string $tax Taxonomy type.
+	 * @return int[]|string|string[]|\WP_Error|\WP_Term[]
+	 */
+	public static function get_product_filters_attribute_terms( $tax ) {
+		$cache_key = 'get_default_filter_attribute_terms_' . $tax;
+		if ( isset( self::$cache[ $cache_key ] ) ) {
+			return self::$cache[ $cache_key ];
+		}
+
+		$attributes = wc_get_attribute_taxonomies();
+		$att_name   = str_replace( 'pa_', '', $tax );
+		$exist      = array_search( $att_name, array_column( $attributes, 'attribute_name' ), true );
+		if ( false === $exist ) {
+			self::$cache[ $cache_key ] = [];
+			return self::$cache[ $cache_key ];
+		}
+		$attribute = $tax;
+
+		if ( ! is_shop() && is_product_taxonomy() ) {
+			$term = get_queried_object();
+
+			if ( ! $term instanceof WP_Term ) {
+				return [];
+			}
+
+			$args = [
+				'status' => 'publish',
+				'limit'  => -1,
+				'return' => 'ids',
+			];
+
+			if ( 'product_cat' === $term->taxonomy ) {
+				$args['category'] = [ $term->slug ];
+			}
+
+			if ( 'product_tag' === $term->taxonomy ) {
+				$args['tag'] = [ $term->slug ];
+			}
+
+			if ( strpos( $term->taxonomy, 'pa_' ) !== false ) {
+				$args['tax_query'] = [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
+					[
+						'taxonomy' => $term->taxonomy,
+						'field'    => 'term_id',
+						'terms'    => $term->term_id,
+						'operator' => 'IN',
+					],
+				];
+			}
+
+			$query      = new WC_Product_Query( $args );
+			$products   = $query->get_products();
+			$attr_terms = [];
+
+			foreach ( $products as $product_id ) {
+				$product_attr = wp_get_post_terms( $product_id, $attribute );
+
+				foreach ( $product_attr as $attr ) {
+					$attr_terms[] = $attr;
+				}
+			}
+			self::$cache[ $cache_key ] = self::filter_products_array_unique( $attr_terms );
+			return self::$cache[ $cache_key ];
+		} else {
+			self::$cache[ $cache_key ] = get_terms(
+				[
+					'taxonomy'   => $attribute,
+					'hide_empty' => false,
+				]
+			);
+			return self::$cache[ $cache_key ];
+		}
+	}
+	/**
+	 * Remove duplicate values from an array.
+	 *
+	 * @param array $array          The input array.
+	 * @param bool  $keep_key_assoc Whether to keep the key associations after removing duplicates.
+	 * @return array The array with duplicates removed.
+	 */
+	public static function filter_products_array_unique( $array, $keep_key_assoc = false ) {
+		$duplicate_keys = [];
+		$tmp            = [];
+
+		foreach ( $array as $key => $val ) {
+			// convert objects to arrays, in_array() does not support objects.
+			if ( is_object( $val ) ) {
+				$val = (array) $val;
+			}
+
+			if ( ! in_array( $val, $tmp, true ) ) {
+				$tmp[] = $val;
+			} else {
+				$duplicate_keys[] = $key;
+			}
+		}
+
+		foreach ( $duplicate_keys as $key ) {
+			unset( $array[ $key ] );
+		}
+
+		return $keep_key_assoc ? $array : array_values( $array );
+	}
+	/**
+	 * Retrieve product categories (including hierarchical support)
+	 *
+	 * @param string $taxonomy Taxonomy name.
+	 * @return int[]|string|string[]|\WP_Error|\WP_Term[]
+	 */
+	public static function get_products( $taxonomy ) {
+		$args = [
+			'taxonomy'     => esc_html( $taxonomy ),
+			'hide_empty'   => false,
+			'pad_counts'   => true,
+			'hierarchical' => true,
+		];
+
+		$cache_key      = 'rtsb_get_terms_filter_products' . $taxonomy;
+		$taxonomy_terms = wp_cache_get( $cache_key, 'shopbuilder' );
+
+		if ( false === $taxonomy_terms ) {
+			$queried_object = get_queried_object();
+
+			if ( 'archive' === apply_filters( 'rtsb/builder/set/current/page/type', '' ) && $queried_object instanceof WP_Term && $queried_object->taxonomy === $taxonomy ) {
+				$term_id           = $queried_object->term_id;
+				$taxonomy          = $queried_object->taxonomy;
+				$archive_cache_key = 'rtsb_get_terms_filter_products_' . $taxonomy . $term_id;
+				$taxonomy_terms    = wp_cache_get( $archive_cache_key, 'shopbuilder' );
+				if ( false === $taxonomy_terms ) {
+					$taxonomy_terms = [ $queried_object ];
+					$child_args     = [
+						'taxonomy'   => $taxonomy,
+						'child_of'   => $term_id,
+						'hide_empty' => false,
+					];
+
+					$child_terms = get_terms( $child_args );
+
+					if ( ! empty( $child_terms ) ) {
+						$taxonomy_terms = array_merge( $taxonomy_terms, $child_terms );
+					}
+
+					wp_cache_set( $archive_cache_key, $taxonomy_terms, 'shopbuilder' );
+					Cache::set_data_cache_key( $archive_cache_key );
+				}
+			} else {
+				$taxonomy_terms = get_terms( $args );
+			}
+
+			wp_cache_set( $cache_key, $taxonomy_terms, 'shopbuilder' );
+			Cache::set_data_cache_key( $cache_key );
+		}
+
+		return $taxonomy_terms;
+	}
+	/**
+	 * Generates an error message block.
+	 *
+	 * @param array  $title The title array of the error message block.
+	 * @param string $wrapper Additional CSS class for the wrapper div.
+	 *
+	 * @return string The HTML representation of the error message block.
+	 */
+	public static function filter_error_message( $title, $wrapper ) {
+		$html  = '<div class="rtsb-product-default-filters ' . esc_attr( $wrapper ) . '">';
+		$html .= self::get_default_filter_title( $title );
+		$html .= '<div class="default-filter-content">';
+		$html .= '<p class="no-filter">' . esc_html__( 'Nothing found.', 'shopbuilder' ) . '</p>';
+		$html .= '</div>';
+		$html .= '</div>';
+
+		return $html;
+	}
+	/**
+	 * Get filter title.
+	 *
+	 * @param array $title Filter title.
+	 * @return string
+	 */
+	public static function get_default_filter_title( $title ) {
+		$html = '';
+
+		if ( empty( $title['title'] ) ) {
+			return $html;
+		}
+
+		$html .= '<div class="default-filter-title-wrapper">';
+
+		$html .= '<h3 class="widget-title rtsb-d-flex rtsb-align-items-center"><span class="title">' . $title['title'] . '</span></h3>';
+
+		$html .= '</div>';
+
+		return apply_filters( 'rtsb/elementor/default/filter/title', $html, $title );
+	}
+	/**
+	 * Recursive function to generate the filter list with hierarchy.
+	 *
+	 * @param array  $data Array of required data.
+	 * @param string $input Type of input field for the filter (e.g., checkbox).
+	 * @param array  $additional_data Data for additional filtering.
+	 * @param int    $parent ID of the parent term (default: 0).
+	 *
+	 * @return string The generated HTML for the product filter list.
+	 */
+	public static function get_product_default_filter_list_html( $data, $input = 'checkbox', $additional_data = [], $parent = 0 ) {
+
+		$html          = '';
+		$default_tax   = [];
+		$is_attribute  = ! empty( $data['is_attribute'] );
+		$active_option = isset( $_GET[ $additional_data['taxonomy'] ] ) ? explode( ',', wc_clean( wp_unslash( $_GET[ $additional_data['taxonomy'] ] ) ) ) : []; // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		$counter       = 0;
+
+		if ( $is_attribute ) {
+			list(
+				'filter_name' => $filter_name,
+				'base_link' => $base_link
+				) = self::get_product_filters_attribute_term_info( $additional_data['taxonomy'] );
+		}
+
+		$html .= '<ul class="product-default-filters input-type-' . esc_attr( $input ) . '">';
+
+		foreach ( $data['taxonomy'] as $tax ) {
+			if ( $tax->parent !== $parent ) {
+				continue;
+			}
+
+			if ( $is_attribute ) {
+				$tax_link      = remove_query_arg( $filter_name, $base_link );
+				$tax_link      = add_query_arg( $filter_name, $tax->slug, $tax_link );
+				$active_option = isset( $_GET[ $filter_name ] ) ? explode( ',', sanitize_text_field( wp_unslash( $_GET[ $filter_name ] ) ) ) : []; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			} else {
+				$tax_link = get_term_link( $tax );
+			}
+
+			$unique_id = substr( uniqid(), -4 );
+
+			$active_tax        = in_array( $tax->slug, $active_option, true ) ? ' checked' : '';
+			$active_tax_parent = in_array( $tax->slug, $active_option, true ) ? ' active' : '';
+			$term_children     = 'product_cat' === $tax->taxonomy ? get_term_children( $tax->term_id, $tax->taxonomy ) : [];
+			$taxonomy          = $tax->taxonomy;
+			$product_count     = $tax->count;
+
+			// Show count.
+			if ( 'archive' === apply_filters( 'rtsb/builder/set/current/page/type', '' ) && ! empty( $data['count_display'] ) && 'block' === $data['count_display'] ) {
+				$product_count = self::count_tax_data( $tax, $tax->count );
+			}
+
+			// Show Empty Categories.
+			if ( empty( $data['show_empty_terms'] ) && 0 === $product_count ) {
+				continue;
+			}
+
+			$html .= '<li class="rtsb-default-filter-term-item term-item-' . absint( $tax->term_id ) . esc_attr( $term_children ? ' term-has-children' : '' ) . ( ! $data['show_child'] ? ' child-terms-hidden' : '' ) . '">
+                <div class="rtsb-default-filter-group' . esc_attr( $active_tax_parent ) . '">
+                     <input type="' . esc_attr( $input ) . '" class="rtsb-default-filter-trigger rtsb-' . esc_attr( $input . '-filter rtsb-term-' . $tax->slug . $active_tax ) . '"  name="rtsb-filter-' . esc_attr( $taxonomy ) . '[]" id="rtsb-default-term-filter-' . $unique_id . absint( $tax->term_id ) . '" value="' . esc_attr( $tax->slug ) . '" ' . esc_attr( $active_tax ) . '>
+                    <label class="rtsb-default-' . esc_attr( $input ) . '-filter-label" for="rtsb-default-term-filter-' . $unique_id . absint( $tax->term_id ) . '">
+                        <span class="name">' . esc_html( $tax->name ) . '</span>
+                    </label>
+                    <div class="rtsb-product-count">(' . esc_html( $product_count ) . ')</div>
+                    ' . ( ! empty( $term_children ) && $data['show_child'] ? '<i class="rtsb-plus-icon"></i>' : '' ) . '
+                </div>';
+
+			// Show Sub-categories.
+			if ( $data['show_child'] ) {
+				$children = self::get_product_default_filter_list_html( $data, $input, $additional_data, $tax->term_id );
+
+				if ( ! empty( $children ) ) {
+					$html .= '<div class="filter-child">' . $children . '</div>';
+				}
+			}
+
+			$counter++;
+
+			$html .= '</li>';
+		}
+
+		$html .= '</ul>';
+
+		// Check if the output contains any child elements.
+		$has_children = strpos( $html, '<li class="rtsb-default-filter-term-item' ) !== false;
+
+		if ( ! $has_children ) {
+			// Remove the outer <ul> if there are no child elements.
+			$html = '';
+		}
+		return $html;
+	}
+	/**
+	 * Get attribute term info.
+	 *
+	 * @param string $tax Taxonomy type.
+	 * @return array
+	 */
+	public static function get_product_filters_attribute_term_info( $tax ) {
+		$result     = [];
+		$attributes = wc_get_attribute_taxonomies();
+
+		foreach ( $attributes as $attr ) {
+			if ( str_replace( 'pa_', '', $tax ) === $attr->attribute_name ) {
+				$term_type      = $attr->attribute_type;
+				$attribute_slug = $attr->attribute_name;
+				$attribute      = wc_attribute_taxonomy_name( $attr->attribute_name );
+				break;
+			}
+		}
+
+		$filter_name = 'filter_' . wc_attribute_taxonomy_slug( $attribute_slug );
+
+		$result['attribute']      = $attribute ?? '';
+		$result['term_type']      = $term_type ?? '';
+		$result['attribute_slug'] = $attribute_slug ?? '';
+		$result['filter_name']    = $filter_name;
+		$result['base_link']      = self::get_base_url();
+
+		return $result;
+	}
+	/**
+	 * Get base URL.
+	 *
+	 * @return string|null
+	 */
+	public static function get_base_url() {
+		global $wp;
+		return home_url( add_query_arg( [], $wp->request ) );
+	}
+	/**
+	 * Count the number of occurrences for a specific term in a taxonomy for the current queried object.
+	 *
+	 * @param object|array $tax   The term object for the taxonomy.
+	 * @param int          $count The initial count value.
+	 *
+	 * @return int The updated count value.
+	 */
+	public static function count_tax_data( $tax, $count ) {
+		$page = get_queried_object();
+
+		if ( is_array( $tax ) && strpos( $tax['taxonomy'], 'attribute_' ) !== false ) {
+			$taxonomy = str_replace( 'attribute_', '', $tax['taxonomy'] );
+			$term_id  = $tax['term_id'];
+		} else {
+			$taxonomy = $tax->taxonomy;
+			$term_id  = $tax->term_id;
+		}
+
+		if ( strpos( $page->taxonomy, 'pa_' ) !== false ) {
+			$args['status']    = 'publish';
+			$args['limit']     = -1;
+			$args['return']    = 'ids';
+			$args['tax_query'] = [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
+				'relation' => 'AND',
+				[
+					'taxonomy' => $page->taxonomy,
+					'field'    => 'term_id',
+					'terms'    => $page->term_id,
+					'operator' => 'IN',
+				],
+				[
+					'taxonomy' => $tax->taxonomy,
+					'field'    => 'term_id',
+					'terms'    => $tax->term_id,
+					'operator' => 'IN',
+				],
+			];
+
+			$query    = new WC_Product_Query( $args );
+			$products = $query->get_products();
+
+			return count( $products );
+		}
+
+		if ( $taxonomy !== $page->taxonomy ) {
+			$args = [
+				'limit'     => -1,
+				'return'    => 'ids',
+				'status'    => 'publish',
+				'tax_query' => [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
+					[
+						'taxonomy' => $taxonomy,
+						'field'    => 'term_id',
+						'terms'    => $term_id,
+					],
+				],
+			];
+
+			if ( 'product_cat' === $page->taxonomy ) {
+				$args['category'] = [ $page->slug ];
+			}
+
+			if ( 'product_tag' === $page->taxonomy ) {
+				$args['tag'] = [ $page->slug ];
+			}
+
+			$query    = new WC_Product_Query( $args );
+			$products = $query->get_products();
+
+			$count = count( $products );
+		}
+
+		return $count;
+	}
+	/**
+	 * Get filter HTML.
+	 *
+	 * @param string $filter_type Filter type.
+	 * @param array  $options Options.
+	 * @param array  $additional_data Data for additional filtering.
+	 * @param string $input Input type.
+	 *
+	 * @return string The generated HTML for the attribute filter list.
+	 */
+	public static function get_default_filter_html( $filter_type, $options, $additional_data = [], $input = 'checkbox' ) {
+		$html          = '<ul class="product-filters input-type-' . esc_attr( $input ) . '" ';
+		$active_option = isset( $_GET[ $filter_type ] ) ? explode( ',', wc_clean( wp_unslash( $_GET[ $filter_type ] ) ) ) : []; // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		$option_link   = self::get_base_url() . '/' . $filter_type . '/';
+
+		foreach ( $options as $option => $option_name ) {
+			$unique_id    = substr( uniqid(), -6 );
+			$active_tax   = in_array( $option, $active_option, true ) ? ' checked' : '';
+			$active_group = in_array( $option, $active_option, true ) ? ' active' : '';
+
+			$html .= '
+					<li class="rtsb-term-item">
+						<div class="rtsb-default-filter-group' . esc_attr( $active_group ) . '">
+							<input type="' . esc_attr( $input ) . '" class="rtsb-default-filter-trigger rtsb-' . esc_attr( $input ) . '-filter rtsb-term-' . esc_attr( $option ) . esc_attr( $active_tax ) . '"  name="rtsb-filter-' . esc_attr( $filter_type ) . '[]" id="rtsb-term-default-filter-' . $unique_id . '" value="' . esc_attr( $option ) . '" ' . $active_tax . '>
+							<label class="rtsb-default-' . esc_attr( $input ) . '-filter-label" for="rtsb-term-default-filter-' . $unique_id . '">
+								<span class="name">' . esc_html( $option_name ) . '</span>
+							</label>
+						</div>
+					</li>';
+		}
+
+		$html .= '</ul>';
+
+		return $html;
+	}
+	/**
+	 * Get the count of products with a specific star rating.
+	 *
+	 * @param int $star_rating The star rating value.
+	 *
+	 * @return int
+	 */
+	public static function get_product_rating_count( $star_rating ) {
+		$args = [
+			'status'         => 'publish',
+			'limit'          => -1,
+			'product_rating' => sprintf( '%.1f', $star_rating ),
+		];
+
+		if ( is_product_taxonomy() ) {
+			$term      = get_queried_object();
+			$term_type = 'product_cat' === $term->taxonomy ? 'product_category_id' : 'product_tag_id';
+
+			if ( $term instanceof WP_Term ) {
+				$args[ $term_type ] = [ $term->term_id ];
+			}
+		}
+
+		$query    = new WC_Product_Query( $args );
+		$products = $query->get_products();
+
+		return count( $products );
+	}
+	/**
+	 * Get attribute filter HTML.
+	 *
+	 * @param array  $data Array of required data.
+	 * @param string $input Type of input field for the filter (e.g., color).
+	 * @param array  $additional_data Data for additional filtering.
+	 *
+	 * @return string The generated HTML for the attribute filter list.
+	 */
+	public static function get_attribute_filter_list_html( $data, $input = 'color', $additional_data = [] ) {
+		if ( ! function_exists( 'rtwpvs' ) ) {
+			return '';
+		}
+
+		$terms            = $data['terms'];
+		$term_info        = $data['term_info'];
+		$show_tooltips    = $data['show_tooltips'];
+		$show_empty_terms = $data['show_empty_terms'];
+		$counter          = 0;
+
+		$html = '<ul class="product-default-filters rtsb-terms-wrapper ' . esc_attr( $term_info['type'] ) . '-variable-wrapper' . esc_attr( $data['show_label'] ) . '">';
+
+		foreach ( $terms as $attr_term ) {
+			$count          = $attr_term->count;
+			$term_link      = remove_query_arg( $term_info['filter_name'], $term_info['base_link'] );
+			$term_link      = add_query_arg( $term_info['filter_name'], $attr_term->slug, $term_link );
+			$unique_id      = substr( uniqid(), -6 );
+			$name           = 'term-' . wc_variation_attribute_name( $term_info['attribute'] ) . '-' . $unique_id;
+			$selected_class = in_array( $attr_term->slug, $term_info['current_filter'], true ) ? ' selected' : '';
+			$selected_item  = in_array( $attr_term->slug, $term_info['current_filter'], true ) ? ' checked' : '';
+			$active_class   = in_array( $attr_term->slug, $term_info['current_filter'], true ) ? ' active' : '';
+
+			$args = [
+				'id'             => $name,
+				'name'           => $attr_term->name,
+				'link'           => $term_link,
+				'type'           => $term_info['type'],
+				'term_id'        => $attr_term->term_id,
+				'term_slug'      => $attr_term->slug,
+				'taxonomy'       => wc_variation_attribute_name( $term_info['attribute'] ),
+				'tooltips'       => $show_tooltips,
+				'attribute_name' => $term_info['attribute'],
+				'selected_item'  => $selected_item,
+			];
+
+			if ( 'archive' === apply_filters( 'rtsb/builder/set/current/page/type', '' ) && ! empty( $data['count_display'] ) && 'block' === $data['count_display'] ) {
+				$count = self::count_tax_data( $args, $attr_term->count );
+			}
+
+			$args['count'] = $count;
+
+			if ( ! $show_empty_terms && 0 === $count ) {
+				continue;
+			}
+
+			$html .= '<li class="rtsb-default-filter-term-item term-item-' . esc_attr( $attr_term->term_id ) . ' rtsb-term rtsb-default-' . esc_attr( $input ) . '-term ' . esc_attr( $term_info['type'] ) . '-variable-term-' . esc_attr( $attr_term->slug ) . esc_attr( $selected_class ) . '">';
+			$html .= '<div class="rtsb-default-filter-group' . esc_attr( $active_class ) . '">';
+			$html .= self::get_input_type_html( $input, $args );
+
+			$counter++;
+
+			$html .= '</div>';
+			$html .= '</li>';
+		}
+
+		$html .= '</ul>';
+
+		return $html;
+	}
+	/**
+	 * Get input type HTML.
+	 *
+	 * @param string $input Input type.
+	 * @param array  $args Args.
+	 * @return mixed|string|null
+	 */
+	public static function get_input_type_html( $input, $args ) {
+		$html  = '';
+		$count = $args['count'];
+
+		switch ( $input ) {
+			case 'color':
+				$color = sanitize_hex_color( get_term_meta( $args['term_id'], 'product_attribute_color', true ) );
+
+				$html .= sprintf(
+					'<input type="checkbox"  id="' . esc_attr( $args['id'] ) . '" value="' . esc_attr( $args['term_slug'] ) . '" class="rtsb-attr-hidden-field" name="rtsb-filter-' . esc_attr( $args['attribute_name'] ) . '[]' . '" ' . esc_attr( $args['selected_item'] ) . '/><label for="%s" title="' . esc_attr( $args['name'] ) . '" class="rtsb-default-filter-trigger rtsb-attr-filter rtsb-color-filter rtsb-term-span rtsb-term-span-%s%s"><span class="default-filter-attr-color" style="background-color:%s;"></span><span class="default-filter-attr-name">%s</span></label><div class="rtsb-count">(%s)</div>',
+					esc_attr( $args['id'] ),
+					esc_attr( $args['type'] ),
+					$args['tooltips'] ? esc_attr( ' tipsy' ) : '',
+					esc_attr( $color ),
+					esc_html( $args['name'] ),
+					absint( $count )
+				);
+				break;
+
+			case 'image':
+				if ( ! function_exists( 'rtwpvs' ) ) {
+					return $html;
+				}
+
+				$attachment_id = absint( get_term_meta( $args['term_id'], 'product_attribute_image', true ) );
+				$image_size    = rtwpvs()->get_option( 'attribute_image_size' );
+				$image_url     = wp_get_attachment_image_url( $attachment_id, apply_filters( 'rtwpvs_product_attribute_image_size', $image_size ) );
+
+				$html .= sprintf(
+					'<input type="checkbox" id="' . esc_attr( $args['id'] ) . '" value="' . esc_attr( $args['term_slug'] ) . '" class="rtsb-attr-hidden-field" name="rtsb-filter-' . esc_attr( $args['attribute_name'] ) . '[]' . '" ' . esc_attr( $args['selected_item'] ) . '/><label for="%s" title="' . esc_attr( $args['name'] ) . '" class="rtsb-default-filter-trigger rtsb-image-filter rtsb-term-span rtsb-term-span-%s%s"><img class="rtsb-default-attr-filter" alt="%s" src="%s" /></label>',
+					esc_attr( $args['id'] ),
+					esc_attr( $args['type'] ),
+					$args['tooltips'] ? esc_attr( ' tipsy' ) : '',
+					esc_attr( $args['name'] ),
+					esc_url( $image_url )
+				);
+				break;
+
+			case 'button':
+				$html .= sprintf(
+					'<input  id="' . esc_attr( $args['id'] ) . '" type="checkbox" value="' . esc_attr( $args['term_slug'] ) . '" class="rtsb-attr-hidden-field" name="rtsb-filter-' . esc_attr( $args['attribute_name'] ) . '[]' . '" ' . esc_attr( $args['selected_item'] ) . '/><label for="%s" title="' . esc_attr( $args['name'] ) . '" class="rtsb-default-filter-trigger rtsb-attr-filter rtsb-button-filter rtsb-term-span rtsb-term-span-%s%s"><span class="default-filter-attr-name">%s</span><div class="rtsb-count">(%s)</div></label>',
+					esc_attr( $args['id'] ),
+					esc_attr( $args['type'] ),
+					$args['tooltips'] ? esc_attr( ' tipsy' ) : '',
+					esc_html( $args['name'] ),
+					absint( $count )
+				);
+				break;
+
+			default:
+		}
+
+		return apply_filters( 'rtsb/elementor/default/filter/get_input_type_html', $html );
+	}
+	/**
+	 * Get reset button.
+	 *
+	 * @param string $btn_text Button text.
+	 * @param array  $settings Settings array.
+	 *
+	 * @return string
+	 */
+	public static function get_default_filter_reset_button( $btn_text, $settings ) {
+		$html = '';
+
+		ob_start();
+
+		$active     = ! empty( $_SERVER['QUERY_STRING'] ) ? ' active' : '';
+		$reset      = ! empty( $settings['reset_btn'] );
+		$apply_text = ! empty( $settings['apply_filters_btn_text'] ) ? $settings['apply_filters_btn_text'] : esc_html__( 'Apply Filters', 'shopbuilder' );
+		$apply_icon = ! empty( $settings['apply_filters_btn_icon'] ) ? $settings['apply_filters_btn_icon'] : [];
+		echo '<div class="default-filter-btn-wrapper">';
+		?>
+			<?php if ( $settings['show_filter_btn'] ) { ?>
+				<div class="rtsb-product-default-filters rtsb-apply-filters-btn">
+					<div class="reset-btn-item">
+						<button class="rtsb-apply-filters init">
+							<span class="icon"><?php Fns::print_html( Fns::icons_manager( $apply_icon, 'icon-default' ) ); ?></span>
+							<span class="text reset-text"><?php echo esc_html( $apply_text ); ?></span>
+							<span></span>
+						</button>
+					</div>
+				</div>
+			<?php } ?>
+			<?php
+			if ( $reset ) {
+				?>
+				<div class="rtsb-product-default-filters rtsb-reset<?php echo esc_attr( $active ); ?>">
+					<div class="reset-btn-item">
+						<button class="product-default-filter-reset">
+							<span class="text reset-text"><?php echo esc_html( $btn_text ); ?></span>
+							<span></span>
+						</button>
+					</div>
+				</div>
+				<?php
+			}
+			echo '</div>';
+
+			$html .= ob_get_clean();
+
+			return $html;
 	}
 }

@@ -39,6 +39,7 @@ class ButtonSettings {
 			'button_height'             => [
 				'label'     => esc_html__( 'Height', 'shopbuilder' ),
 				'type'      => 'slider',
+				'mode'      => 'responsive',
 				'range'     => [
 					'px' => [
 						'min' => 10,
@@ -46,7 +47,7 @@ class ButtonSettings {
 					],
 				],
 				'selectors' => [
-					$widget->selectors['button_height'] => 'height: {{SIZE}}{{UNIT}};',
+					$widget->selectors['button_height'] => 'height: {{SIZE}}{{UNIT}}!important;',
 				],
 			],
 
@@ -66,7 +67,7 @@ class ButtonSettings {
 					],
 				],
 				'selectors'  => [
-					$widget->selectors['button_width'] => 'width: {{SIZE}}{{UNIT}};',
+					$widget->selectors['button_width'] => 'width: {{SIZE}}{{UNIT}}!important;',
 				],
 			],
 
@@ -130,7 +131,7 @@ class ButtonSettings {
 				'type'      => 'color',
 
 				'selectors' => [
-					$widget->selectors['button_border_hover_color']  => 'border-color: {{VALUE}};',
+					$widget->selectors['button_border_hover_color']  => 'border-color: {{VALUE}}!important;',
 				],
 			],
 			'button_hover_end'          => [
@@ -153,7 +154,7 @@ class ButtonSettings {
 				'size_units' => [ 'px' ],
 				'separator'  => 'before',
 				'selectors'  => [
-					$widget->selectors['button_border_radius'] => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					$widget->selectors['button_border_radius'] => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}!important;',
 				],
 			],
 			'button_padding'            => [

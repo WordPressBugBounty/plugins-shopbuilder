@@ -21,14 +21,28 @@
  * @var $show_tags              boolean
  * @var $show_dates             boolean
  * @var $show_author            boolean
+ * @var $show_comment           boolean
+ * @var $show_reading_time      boolean
+ * @var $show_post_views        boolean
  * @var $show_post_thumbnail    boolean
  * @var $show_short_desc        boolean
  * @var $image_link             boolean
  * @var $show_read_more_btn     boolean
+ * @var $show_author_icon       boolean
+ * @var $show_comment_icon      boolean
+ * @var $show_date_icon         boolean
+ * @var $show_reading_time_icon boolean
+ * @var $show_post_views_icon   boolean
  * @var $img_html               string
  * @var $button_icon            array
  * @var $button_icon_position   string
  * @var $item_class             string
+ * @var $author_icon_html       string
+ * @var $date_icon_html         string
+ * @var $comment_icon_html      string
+ * @var $reading_time_icon_html string
+ * @var $post_views_icon_html   string
+ * @var $meta_separator         string
  * array
  */
 
@@ -95,7 +109,7 @@ $date_icon = '<svg xmlns="https://www.w3.org/2000/svg" viewBox="0 0 448 512" wid
 			<?php } ?>
 			<div class="rtsb-post-content">
 				<?php
-				if ( $show_dates || $show_author ) {
+				if ( $show_dates || $show_author || $show_comment || $show_reading_time || $show_post_views ) {
 					?>
 					<ul class="rtsb-post-meta">
 						<?php
@@ -103,13 +117,62 @@ $date_icon = '<svg xmlns="https://www.w3.org/2000/svg" viewBox="0 0 448 512" wid
 							$prefix = esc_html__( 'By ', 'shopbuilder' );
 							$prefix = apply_filters( 'rtsb/general_widgets/posts_author_prefix', $prefix );
 							Fns::print_html( '<li class="rtsb-meta-item author">' );
+							if ( $show_author_icon ) {
+								Fns::print_html( $author_icon_html );
+							}
 							Fns::print_html( PostHelpers::rtsb_posted_by( $prefix ) );
 							Fns::print_html( '</li>' );
 						}
 						if ( $show_dates ) {
+							if ( $meta_separator ) {
+								Fns::print_html( '<li class="rtsb-meta-separator">' );
+								Fns::print_html( $meta_separator );
+								Fns::print_html( '</li>' );
+							}
 							Fns::print_html( '<li class="rtsb-meta-item date">' );
-							Fns::print_html( $date_icon );
+							if ( $show_date_icon ) {
+								Fns::print_html( $date_icon_html );
+							}
 							Fns::print_html( PostHelpers::rtsb_posted_date() );
+							Fns::print_html( '</li>' );
+						}
+						if ( $show_comment ) {
+							if ( $meta_separator ) {
+								Fns::print_html( '<li class="rtsb-meta-separator">' );
+								Fns::print_html( $meta_separator );
+								Fns::print_html( '</li>' );
+							}
+							Fns::print_html( '<li class="rtsb-meta-item comments">' );
+							if ( $show_comment_icon ) {
+								Fns::print_html( $comment_icon_html );
+							}
+							Fns::print_html( PostHelpers::get_post_comments_number() );
+							Fns::print_html( '</li>' );
+						}
+						if ( $show_reading_time ) {
+							if ( $meta_separator ) {
+								Fns::print_html( '<li class="rtsb-meta-separator">' );
+								Fns::print_html( $meta_separator );
+								Fns::print_html( '</li>' );
+							}
+							Fns::print_html( '<li class="rtsb-meta-item reading-time">' );
+							if ( $show_reading_time_icon ) {
+								Fns::print_html( $reading_time_icon_html );
+							}
+							Fns::print_html( PostHelpers::rtsb_reading_time() );
+							Fns::print_html( '</li>' );
+						}
+						if ( $show_post_views ) {
+							if ( $meta_separator ) {
+								Fns::print_html( '<li class="rtsb-meta-separator">' );
+								Fns::print_html( $meta_separator );
+								Fns::print_html( '</li>' );
+							}
+							Fns::print_html( '<li class="rtsb-meta-item post-views">' );
+							if ( $show_post_views_icon ) {
+								Fns::print_html( $post_views_icon_html );
+							}
+							Fns::print_html( PostHelpers::rtsb_post_views() );
 							Fns::print_html( '</li>' );
 						}
 						?>
@@ -135,7 +198,7 @@ $date_icon = '<svg xmlns="https://www.w3.org/2000/svg" viewBox="0 0 448 512" wid
 				}
 				if ( $show_short_desc ) {
 					?>
-					<div class="rtsb-post-excerpt limit-<?php Fns::print_html($excerpt_limit); ?>">
+					<div class="rtsb-post-excerpt limit-<?php Fns::print_html( $excerpt_limit ); ?>">
 						<?php Fns::print_html( $excerpt ); ?>
 					</div>
 					<?php

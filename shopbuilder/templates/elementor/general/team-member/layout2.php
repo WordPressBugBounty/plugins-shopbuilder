@@ -14,6 +14,7 @@
  * @var $has_image_link            boolean
  * @var $has_member_name_link      boolean
  * @var $has_designation           boolean
+ * @var $has_description           boolean
  * @var $member_designation        string
  * @var $image_link                string
  * @var $member_name_link          string
@@ -75,13 +76,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 					}
 					?>
 				<?php } ?>
-				<?php if ( $has_designation ) { ?>
+				<?php if ( $has_designation && $member_designation ) { ?>
 					<span class="rtsb-team-member-designation">
 						<?php Fns::print_html( $member_designation ); ?>
 					</span>
 				<?php } ?>
 				<?php
-				if ( $member_bio ) {
+				if ( $has_description && $member_bio ) {
 					?>
 					<div class="rtsb-content">
 						<?php Fns::print_html( $member_bio ); ?>

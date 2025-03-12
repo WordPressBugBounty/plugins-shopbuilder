@@ -40,6 +40,7 @@ class Controls {
 			PostHelpers::post_title( $obj ),
 			PostHelpers::post_excerpt( $obj ),
 			PostHelpers::links( $obj ),
+			PostHelpers::meta_icon_settings( $obj ),
 			PostHelpers::readmore_button( $obj ),
 		);
 	}

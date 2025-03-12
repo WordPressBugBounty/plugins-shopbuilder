@@ -74,7 +74,7 @@ class ModalTemplate {
 		$user          = wp_get_current_user();
 		$allowed_roles = [ 'editor', 'administrator', 'author' ];
 
-		if ( ! array_intersect( $allowed_roles, $user->roles ) ) {
+		if ( ! array_intersect( $allowed_roles, Fns::get_current_user_roles() ) ) {
 			wp_die( esc_html__( 'You don\'t have permission to perform this action', 'shopbuilder' ) );
 		}
 
