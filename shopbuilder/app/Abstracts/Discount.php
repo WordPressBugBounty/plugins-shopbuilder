@@ -150,6 +150,16 @@ abstract class Discount {
 						color: var(--e-button-context-color);
 						background: #fff;
 					}
+
+					.rtsb-offer-notice .offer-footer {
+						padding-top: 10px;
+					}
+
+					.rtsb-offer-notice .notice-text b {
+						display: inline-block;
+						transform: skewX(-10deg);
+						line-height: 1;
+					}
 				</style>
 
 				<div class="rtsb-offer-notice notice notice-info is-dismissible"
@@ -163,7 +173,7 @@ abstract class Discount {
 					<p class="notice-text">
 						<?php echo wp_kses_post( $this->options['notice_message'] ); ?>
 					</p>
-					<p style="display: flex; align-items: center;">
+					<p class="offer-footer" style="display: flex; align-items: center;">
 						<a class="button button-primary"
 						   href="<?php echo esc_url( $this->options['download_link'] ); ?>" target="_blank">Buy Now</a>
 						<a class="button button-dismiss" href="#">Dismiss</a>
@@ -172,7 +182,7 @@ abstract class Discount {
 
 				<?php
 			},
-            9
+			9
 		);
 
 		add_action(

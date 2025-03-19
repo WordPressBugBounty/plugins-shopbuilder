@@ -48,7 +48,6 @@ class PluginRow {
 		$new_links[] = '<a target="_blank" href="' . esc_url( 'https://shopbuilderwp.com/docs/requirements/' ) . '">' . esc_html__( 'Documentation', 'shopbuilder' ) . '</a>';
 
 		$links = array_merge( $new_links, $links );
-		$links = array_merge( $new_links, $links );
 
 		if ( ! rtsb()->has_pro() ) {
 			$links['shopbuilder_pro'] = '<a href="' . esc_url( rtsb()->pro_version_link() ) . '" target="_blank" style="color: #39b54a; font-weight: bold;">' . esc_html__( 'Go Pro', 'shopbuilder' ) . '</a>';

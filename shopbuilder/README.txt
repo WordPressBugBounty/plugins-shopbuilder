@@ -4,7 +4,7 @@ Donate link:
 Tags: Elementor, Woocommerce Builder, Elementor Woocommerce Builder, Woocommerce, Woocommerce Product
 Requires at least: 5.5
 Tested up to: 6.7
-Stable tag: 2.6.1
+Stable tag: 2.6.2
 Requires PHP: 7.4
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -417,6 +417,10 @@ If you like the ShopBuilder Plugin, then consider checking out our other WordPre
 == Screenshots ==
 
 == Changelog ==
+
+= 2.6.2 (March 19, 2025) =
+* Fix: Resolved Woocommerce Catalog Ordering visibility issue.
+* Fix: Addressed multiple plugin row link display issue.
 
 = 2.6.1 (March 12, 2025) =
 * Add: New Widget - Archive Product Filters.
