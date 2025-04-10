@@ -3,8 +3,8 @@ Contributors: techlabpro1, mamunur105, srafiz
 Donate link:
 Tags: Elementor, Woocommerce Builder, Elementor Woocommerce Builder, Woocommerce, Woocommerce Product
 Requires at least: 5.5
-Tested up to: 6.7
-Stable tag: 2.6.2
+Tested up to: 6.8
+Stable tag: 2.6.3
 Requires PHP: 7.4
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -417,6 +417,11 @@ If you like the ShopBuilder Plugin, then consider checking out our other WordPre
 == Screenshots ==
 
 == Changelog ==
+
+= 2.6.3 (April 10, 2025) =
+* Add: Enhanced compatibility with new modules and features.
+* Fix: Addressed missing WooCommerce hooks in the order review template.
+* Fix: Adjusted mini-cart CSS for better compatibility.
 
 = 2.6.2 (March 19, 2025) =
 * Fix: Resolved Woocommerce Catalog Ordering visibility issue.

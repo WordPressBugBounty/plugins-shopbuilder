@@ -2729,7 +2729,7 @@ class Fns {
 			foreach ( $query_results as $post ) {
 				$posts[] = [
 					'value' => $post->ID,
-					'label' => $post->post_title . ' ( ID ' . $post->ID . ')',
+					'label' => $post->post_title . ' (ID#' . $post->ID . ')',
 				];
 			}
 

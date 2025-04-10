@@ -6,7 +6,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-03-19 09:23+0000\n"
+"POT-Creation-Date: 2025-04-10 10:51+0000\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-KeywordsList: __;_e;_ex:1,2c;_n:1,2;_n_noop:1,2;_nx:1,2,4c;_nx_noop:1,2,3c;_x:1,2c;esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c\n"
 "X-Poedit-SearchPath-0: .\n"
@@ -131,7 +131,7 @@ msgstr ""
 msgid "Product Page"
 msgstr ""
 
-#: ../app/Helpers/BuilderFns.php:205, ../app/Models/ElementList.php:59, ../app/Models/ModuleList.php:1584
+#: ../app/Helpers/BuilderFns.php:205, ../app/Models/ElementList.php:59, ../app/Models/ModuleList.php:1582
 msgid "Cart"
 msgstr ""
 
@@ -392,7 +392,7 @@ msgstr ""
 msgid "Single Category"
 msgstr ""
 
-#: ../app/Models/ElementList.php:167, ../app/Models/ElementList.php:573, ../app/Models/ElementList.php:948, ../app/Models/ModuleList.php:3344, ../app/Controllers/Admin/Ajax/ModalTemplate.php:188, ../app/Elementor/Widgets/Controls/StyleFields.php:820, ../app/Elementor/Widgets/General/ProductCategories.php:38, ../app/Elementor/Widgets/Single/ProductCats.php:30
+#: ../app/Models/ElementList.php:167, ../app/Models/ElementList.php:573, ../app/Models/ElementList.php:948, ../app/Models/ModuleList.php:3342, ../app/Controllers/Admin/Ajax/ModalTemplate.php:188, ../app/Elementor/Widgets/Controls/StyleFields.php:820, ../app/Elementor/Widgets/General/ProductCategories.php:38, ../app/Elementor/Widgets/Single/ProductCats.php:30
 msgid "Product Categories"
 msgstr ""
 
@@ -832,19 +832,19 @@ msgstr ""
 msgid "Center Center"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:78, ../app/Models/ModuleList.php:2959, ../app/Models/ModuleList.php:3081
+#: ../app/Models/GeneralList.php:78, ../app/Models/ModuleList.php:2957, ../app/Models/ModuleList.php:3079
 msgid "Top Right"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:79, ../app/Models/ModuleList.php:2961, ../app/Models/ModuleList.php:3083
+#: ../app/Models/GeneralList.php:79, ../app/Models/ModuleList.php:2959, ../app/Models/ModuleList.php:3081
 msgid "Bottom Right"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:80, ../app/Models/ModuleList.php:2960, ../app/Models/ModuleList.php:3082
+#: ../app/Models/GeneralList.php:80, ../app/Models/ModuleList.php:2958, ../app/Models/ModuleList.php:3080
 msgid "Bottom Left"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:81, ../app/Models/ModuleList.php:2958, ../app/Models/ModuleList.php:3080
+#: ../app/Models/GeneralList.php:81, ../app/Models/ModuleList.php:2956, ../app/Models/ModuleList.php:3078
 msgid "Top Left"
 msgstr ""
 
@@ -856,7 +856,7 @@ msgstr ""
 msgid "Bottom center"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:88, ../app/Models/ModuleList.php:3408, ../app/Elementor/Widgets/Controls/ArchiveCountSettings.php:51, ../app/Elementor/Widgets/Controls/ArchiveDescSettings.php:50, ../app/Elementor/Widgets/Controls/ArchiveViewModeSettings.php:134, ../app/Elementor/Widgets/Controls/ArchiveViewModeSettings.php:163, ../app/Elementor/Widgets/Controls/CartTableSettings.php:1263, ../app/Elementor/Widgets/Controls/CheckoutFromSettings.php:199, ../app/Elementor/Widgets/Controls/CheckoutFromSettings.php:237, ../app/Elementor/Widgets/Controls/CheckoutInfoBoxSettings.php:185, ../app/Elementor/Widgets/Controls/CheckoutInfoBoxSettings.php:222, ../app/Elementor/Widgets/Controls/NoticeSettings.php:107, ../app/Elementor/Widgets/Controls/NoticeSettings.php:150, ../app/Elementor/Widgets/Controls/NoticeSettings.php:194, ../app/Elementor/Widgets/Controls/NoticeSettings.php:238, ../app/Elementor/Widgets/Controls/ProductsOrderingSettings.php:107, ../app/Elementor/Widgets/Controls/ProductsOrderingSettings.php:136, ../app/Elementor/Widgets/Controls/TextStyleSettings.php:48
+#: ../app/Models/GeneralList.php:88, ../app/Models/ModuleList.php:3406, ../app/Elementor/Widgets/Controls/ArchiveCountSettings.php:51, ../app/Elementor/Widgets/Controls/ArchiveDescSettings.php:50, ../app/Elementor/Widgets/Controls/ArchiveViewModeSettings.php:134, ../app/Elementor/Widgets/Controls/ArchiveViewModeSettings.php:163, ../app/Elementor/Widgets/Controls/CartTableSettings.php:1263, ../app/Elementor/Widgets/Controls/CheckoutFromSettings.php:199, ../app/Elementor/Widgets/Controls/CheckoutFromSettings.php:237, ../app/Elementor/Widgets/Controls/CheckoutInfoBoxSettings.php:185, ../app/Elementor/Widgets/Controls/CheckoutInfoBoxSettings.php:222, ../app/Elementor/Widgets/Controls/NoticeSettings.php:107, ../app/Elementor/Widgets/Controls/NoticeSettings.php:150, ../app/Elementor/Widgets/Controls/NoticeSettings.php:194, ../app/Elementor/Widgets/Controls/NoticeSettings.php:238, ../app/Elementor/Widgets/Controls/ProductsOrderingSettings.php:107, ../app/Elementor/Widgets/Controls/ProductsOrderingSettings.php:136, ../app/Elementor/Widgets/Controls/TextStyleSettings.php:48
 msgid "Text Color"
 msgstr ""
 
@@ -864,7 +864,7 @@ msgstr ""
 msgid "Button Color"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:100, ../app/Models/ModuleList.php:1972, ../app/Models/ModuleList.php:2045, ../app/Models/ModuleList.php:2177, ../app/Models/ModuleList.php:2397, ../app/Models/ModuleList.php:2548, ../app/Models/ModuleList.php:3422, ../app/Elementor/Helper/ControlHelper.php:1179, ../app/Elementor/Widgets/Controls/ArchiveViewModeSettings.php:126, ../app/Elementor/Widgets/Controls/ArchiveViewModeSettings.php:155, ../app/Elementor/Widgets/Controls/ButtonSettings.php:91, ../app/Elementor/Widgets/Controls/ButtonSettings.php:122, ../app/Elementor/Widgets/Controls/CartTableSettings.php:86, ../app/Elementor/Widgets/Controls/CartTableSettings.php:118, ../app/Elementor/Widgets/Controls/CartTableSettings.php:1118, ../app/Elementor/Widgets/Controls/CartTableSettings.php:1271, ../app/Elementor/Widgets/Controls/CartTableSettings.php:1347, ../app/Elementor/Widgets/Controls/CartTableSettings.php:1377, ../app/Elementor/Widgets/Controls/CheckoutFromSettings.php:207, ../app/Elementor/Widgets/Controls/CheckoutFromSettings.php:244, ../app/Elementor/Widgets/Controls/CheckoutInfoBoxSettings.php:193, ../app/Elementor/Widgets/Controls/CheckoutInfoBoxSettings.php:229, ../app/Elementor/Widgets/Controls/InfoboxSettings.php:48, ../app/Elementor/Widgets/Controls/ModuleBtnControls.php:136, ../app/Elementor/Widgets/Controls/ModuleBtnControls.php:167, ../app/Elementor/Widgets/Controls/NoticeSettings.php:100, ../app/Elementor/Widgets/Controls/NoticeSettings.php:143, ../app/Elementor/Widgets/Controls/NoticeSettings.php:186, ../app/Elementor/Widgets/Controls/NoticeSettings.php:231, ../app/Elementor/Widgets/Controls/OrderReviewSettings.php:207, ../app/Elementor/Widgets/Controls/OrderReviewTableSettings.php:179, ../app/Elementor/Widgets/Controls/OrderReviewTableSettings.php:217, ../app/Elementor/Widgets/Controls/ProductFlashSale.php:53, ../app/Elementor/Widgets/Controls/ProductImagesSettings.php:427, ../app/Elementor/Widgets/Controls/ProductsOrderingSettings.php:99, ../app/Elementor/Widgets/Controls/ProductsOrderingSettings.php:128, ../app/Elementor/Widgets/Controls/ProductsSettings.php:257, ../app/Elementor/Widgets/Controls/ProductsSettings.php:447, ../app/Elementor/Widgets/Controls/ProductsSettings.php:547, ../app/Elementor/Widgets/Controls/ProductsSettings.php:577, ../app/Elementor/Widgets/Controls/ProductsSettings.php:762, ../app/Elementor/Widgets/Controls/ProductsSettings.php:811, ../app/Elementor/Widgets/Controls/ProductTabsSettings.php:207, ../app/Elementor/Widgets/Controls/ProductTabsSettings.php:266, ../app/Elementor/Widgets/Controls/ReviewsSettings.php:117, ../app/Elementor/Widgets/Controls/ReviewsSettings.php:147, ../app/Elementor/Widgets/Controls/SliderSettings.php:118, ../app/Elementor/Widgets/Controls/SliderSettings.php:150, ../app/Elementor/Widgets/General/ProgressBar/Controls.php:245
+#: ../app/Models/GeneralList.php:100, ../app/Models/ModuleList.php:1970, ../app/Models/ModuleList.php:2043, ../app/Models/ModuleList.php:2175, ../app/Models/ModuleList.php:2395, ../app/Models/ModuleList.php:2546, ../app/Models/ModuleList.php:3420, ../app/Elementor/Helper/ControlHelper.php:1179, ../app/Elementor/Widgets/Controls/ArchiveViewModeSettings.php:126, ../app/Elementor/Widgets/Controls/ArchiveViewModeSettings.php:155, ../app/Elementor/Widgets/Controls/ButtonSettings.php:91, ../app/Elementor/Widgets/Controls/ButtonSettings.php:122, ../app/Elementor/Widgets/Controls/CartTableSettings.php:86, ../app/Elementor/Widgets/Controls/CartTableSettings.php:118, ../app/Elementor/Widgets/Controls/CartTableSettings.php:1118, ../app/Elementor/Widgets/Controls/CartTableSettings.php:1271, ../app/Elementor/Widgets/Controls/CartTableSettings.php:1347, ../app/Elementor/Widgets/Controls/CartTableSettings.php:1377, ../app/Elementor/Widgets/Controls/CheckoutFromSettings.php:207, ../app/Elementor/Widgets/Controls/CheckoutFromSettings.php:244, ../app/Elementor/Widgets/Controls/CheckoutInfoBoxSettings.php:193, ../app/Elementor/Widgets/Controls/CheckoutInfoBoxSettings.php:229, ../app/Elementor/Widgets/Controls/InfoboxSettings.php:48, ../app/Elementor/Widgets/Controls/ModuleBtnControls.php:136, ../app/Elementor/Widgets/Controls/ModuleBtnControls.php:167, ../app/Elementor/Widgets/Controls/NoticeSettings.php:100, ../app/Elementor/Widgets/Controls/NoticeSettings.php:143, ../app/Elementor/Widgets/Controls/NoticeSettings.php:186, ../app/Elementor/Widgets/Controls/NoticeSettings.php:231, ../app/Elementor/Widgets/Controls/OrderReviewSettings.php:207, ../app/Elementor/Widgets/Controls/OrderReviewTableSettings.php:179, ../app/Elementor/Widgets/Controls/OrderReviewTableSettings.php:217, ../app/Elementor/Widgets/Controls/ProductFlashSale.php:53, ../app/Elementor/Widgets/Controls/ProductImagesSettings.php:427, ../app/Elementor/Widgets/Controls/ProductsOrderingSettings.php:99, ../app/Elementor/Widgets/Controls/ProductsOrderingSettings.php:128, ../app/Elementor/Widgets/Controls/ProductsSettings.php:257, ../app/Elementor/Widgets/Controls/ProductsSettings.php:447, ../app/Elementor/Widgets/Controls/ProductsSettings.php:547, ../app/Elementor/Widgets/Controls/ProductsSettings.php:577, ../app/Elementor/Widgets/Controls/ProductsSettings.php:762, ../app/Elementor/Widgets/Controls/ProductsSettings.php:811, ../app/Elementor/Widgets/Controls/ProductTabsSettings.php:207, ../app/Elementor/Widgets/Controls/ProductTabsSettings.php:266, ../app/Elementor/Widgets/Controls/ReviewsSettings.php:117, ../app/Elementor/Widgets/Controls/ReviewsSettings.php:147, ../app/Elementor/Widgets/Controls/SliderSettings.php:118, ../app/Elementor/Widgets/Controls/SliderSettings.php:150, ../app/Elementor/Widgets/General/ProgressBar/Controls.php:245
 msgid "Background Color"
 msgstr ""
 
@@ -1128,19 +1128,19 @@ msgstr ""
 msgid "You can manage quick view button position in shop page."
 msgstr ""
 
-#: ../app/Models/ModuleList.php:88, ../app/Models/ModuleList.php:279, ../app/Models/ModuleList.php:389, ../app/Models/ModuleList.php:610, ../app/Models/ModuleList.php:720, ../app/Models/ModuleList.php:2890, ../app/Models/ModuleList.php:2989
+#: ../app/Models/ModuleList.php:88, ../app/Models/ModuleList.php:279, ../app/Models/ModuleList.php:389, ../app/Models/ModuleList.php:610, ../app/Models/ModuleList.php:720, ../app/Models/ModuleList.php:2888, ../app/Models/ModuleList.php:2987
 msgid "Before Add To Cart"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:89, ../app/Models/ModuleList.php:280, ../app/Models/ModuleList.php:390, ../app/Models/ModuleList.php:611, ../app/Models/ModuleList.php:721, ../app/Models/ModuleList.php:2891, ../app/Models/ModuleList.php:2990
+#: ../app/Models/ModuleList.php:89, ../app/Models/ModuleList.php:280, ../app/Models/ModuleList.php:390, ../app/Models/ModuleList.php:611, ../app/Models/ModuleList.php:721, ../app/Models/ModuleList.php:2889, ../app/Models/ModuleList.php:2988
 msgid "After Add To Cart"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:90, ../app/Models/ModuleList.php:281, ../app/Models/ModuleList.php:393, ../app/Models/ModuleList.php:612, ../app/Models/ModuleList.php:724, ../app/Models/ModuleList.php:2993
+#: ../app/Models/ModuleList.php:90, ../app/Models/ModuleList.php:281, ../app/Models/ModuleList.php:393, ../app/Models/ModuleList.php:612, ../app/Models/ModuleList.php:724, ../app/Models/ModuleList.php:2991
 msgid "Use Shortcode"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:91, ../app/Models/ModuleList.php:282, ../app/Models/ModuleList.php:394, ../app/Models/ModuleList.php:613, ../app/Models/ModuleList.php:725, ../app/Models/ModuleList.php:2892, ../app/Models/ModuleList.php:2994
+#: ../app/Models/ModuleList.php:91, ../app/Models/ModuleList.php:282, ../app/Models/ModuleList.php:394, ../app/Models/ModuleList.php:613, ../app/Models/ModuleList.php:725, ../app/Models/ModuleList.php:2890, ../app/Models/ModuleList.php:2992
 msgid "Custom Position"
 msgstr ""
 
@@ -1149,7 +1149,7 @@ msgstr ""
 msgid "Choose where to show button in WooCommerce product's loop. Copy this shortcode %1$s and paste it where you want to show the button."
 msgstr ""
 
-#: ../app/Models/ModuleList.php:117, ../app/Models/ModuleList.php:322, ../app/Models/ModuleList.php:653, ../app/Models/ModuleList.php:2899, ../app/Models/ModuleList.php:3020
+#: ../app/Models/ModuleList.php:117, ../app/Models/ModuleList.php:322, ../app/Models/ModuleList.php:653, ../app/Models/ModuleList.php:2897, ../app/Models/ModuleList.php:3018
 msgid "Enter Hook Name"
 msgstr ""
 
@@ -1246,7 +1246,7 @@ msgstr ""
 msgid "Hide Wishlist Button For non logged-in users (guest users)."
 msgstr ""
 
-#: ../app/Models/ModuleList.php:262, ../app/Models/ModuleList.php:593, ../app/Models/ModuleList.php:2876
+#: ../app/Models/ModuleList.php:262, ../app/Models/ModuleList.php:593, ../app/Models/ModuleList.php:2874
 msgid "Shop Page Settings"
 msgstr ""
 
@@ -1258,7 +1258,7 @@ msgstr ""
 msgid "You can manage wishlist button position in shop page."
 msgstr ""
 
-#: ../app/Models/ModuleList.php:372, ../app/Models/ModuleList.php:703, ../app/Models/ModuleList.php:2977
+#: ../app/Models/ModuleList.php:372, ../app/Models/ModuleList.php:703, ../app/Models/ModuleList.php:2975
 msgid "Product Page Settings"
 msgstr ""
 
@@ -1278,12 +1278,12 @@ msgstr ""
 msgid "After Image"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:392, ../app/Models/ModuleList.php:723, ../app/Models/ModuleList.php:2991
+#: ../app/Models/ModuleList.php:392, ../app/Models/ModuleList.php:723, ../app/Models/ModuleList.php:2989
 msgid "After Summary"
 msgstr ""
 
 #. translators: 1: The shortcode.
-#: ../app/Models/ModuleList.php:412, ../app/Models/ModuleList.php:743, ../app/Models/ModuleList.php:3003
+#: ../app/Models/ModuleList.php:412, ../app/Models/ModuleList.php:743, ../app/Models/ModuleList.php:3001
 msgid "Choose where to show button on the product page. Copy this shortcode %1$s and paste it where you want to show the button."
 msgstr ""
 
@@ -1473,7 +1473,7 @@ msgstr ""
 msgid "Switch on to enable product badges module."
 msgstr ""
 
-#: ../app/Models/ModuleList.php:997, ../app/Models/ModuleList.php:1413, ../app/Controllers/Admin/AdminInit.php:83, ../app/Controllers/Admin/AdminInit.php:84, ../app/Controllers/Admin/PluginRow.php:46, ../app/Elementor/Widgets/Controls/MetaSettings.php:32, ../app/Elementor/Widgets/Controls/StockSettings.php:33, ../app/Elementor/Widgets/General/TeamMember/Controls.php:353
+#: ../app/Models/ModuleList.php:997, ../app/Models/ModuleList.php:1411, ../app/Controllers/Admin/AdminInit.php:83, ../app/Controllers/Admin/AdminInit.php:84, ../app/Controllers/Admin/PluginRow.php:46, ../app/Elementor/Widgets/Controls/MetaSettings.php:32, ../app/Elementor/Widgets/Controls/StockSettings.php:33, ../app/Elementor/Widgets/General/TeamMember/Controls.php:353
 msgid "Settings"
 msgstr ""
 
@@ -1617,7 +1617,7 @@ msgstr ""
 msgid "Switch on to enable quick checkout module. Note: Currently, this is not suitable for variable products."
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1270, ../app/Models/ModuleList.php:1518
+#: ../app/Models/ModuleList.php:1270, ../app/Models/ModuleList.php:1516
 msgid "Multi-Step Checkout"
 msgstr ""
 
@@ -1701,704 +1701,716 @@ msgstr ""
 msgid "Switch on to enable Discount Rules module."
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1388, ../app/Models/ModuleList.php:1453, ../app/Elementor/Helper/PostHelpers.php:1526, ../app/Elementor/Widgets/Controls/SettingsFields.php:569, ../app/Elementor/Widgets/Controls/SettingsFields.php:735, ../app/Elementor/Widgets/General/TeamMember/Controls.php:835
+#: ../app/Models/ModuleList.php:1368
+msgid "Buy X Get Y | BOGO"
+msgstr ""
+
+#: ../app/Models/ModuleList.php:1370
+msgid "Enable Buy X Get Y | BOGO?"
+msgstr ""
+
+#: ../app/Models/ModuleList.php:1371
+msgid "Switch on to enable Buy X Get Y | BOGO module."
+msgstr ""
+
+#: ../app/Models/ModuleList.php:1386, ../app/Models/ModuleList.php:1451, ../app/Elementor/Helper/PostHelpers.php:1526, ../app/Elementor/Widgets/Controls/SettingsFields.php:569, ../app/Elementor/Widgets/Controls/SettingsFields.php:735, ../app/Elementor/Widgets/General/TeamMember/Controls.php:835
 msgid "None"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1419
+#: ../app/Models/ModuleList.php:1417
 msgid "Upload Checkout Page Logo"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1420
+#: ../app/Models/ModuleList.php:1418
 msgid "Please upload your custom logo to display on the checkout page."
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1425
+#: ../app/Models/ModuleList.php:1423
 msgid "Logo Height (px)"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1426
+#: ../app/Models/ModuleList.php:1424
 msgid "Specify the height of the checkout page logo in px."
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1436, ../app/Elementor/Widgets/Controls/AddToCartSettings.php:64, ../app/Elementor/Widgets/Controls/ProductsSettings.php:160
+#: ../app/Models/ModuleList.php:1434, ../app/Elementor/Widgets/Controls/AddToCartSettings.php:64, ../app/Elementor/Widgets/Controls/ProductsSettings.php:160
 msgid "Cart Icon"
 msgstr ""
 
 #. translators: %s for pro message.
-#: ../app/Models/ModuleList.php:1439
+#: ../app/Models/ModuleList.php:1437
 msgid "Choose a cart icon to display in your checkout's header. <br />%s"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1444, ../app/Models/ModuleList.php:2854, ../app/Models/ModuleList.php:3131, ../app/Models/ModuleList.php:3226
+#: ../app/Models/ModuleList.php:1442, ../app/Models/ModuleList.php:2852, ../app/Models/ModuleList.php:3129, ../app/Models/ModuleList.php:3224
 msgid "Upgrade to PRO"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1445
+#: ../app/Models/ModuleList.php:1443
 msgid "to unlock custom image icon."
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1454
+#: ../app/Models/ModuleList.php:1452
 msgid "Select Icon"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1455
+#: ../app/Models/ModuleList.php:1453
 msgid "Upload Icon"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1461
+#: ../app/Models/ModuleList.php:1459
 msgid "Select Cart Icon"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1462
+#: ../app/Models/ModuleList.php:1460
 msgid "Please choose the icon."
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1482
+#: ../app/Models/ModuleList.php:1480
 msgid "Upload Custom Icon"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1483
+#: ../app/Models/ModuleList.php:1481
 msgid "Please upload your custom image icon."
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1499
+#: ../app/Models/ModuleList.php:1497
 msgid "Email Field Section Title"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1500
+#: ../app/Models/ModuleList.php:1498
 msgid "Enter the custom title to be displayed above the email field section."
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1501, ../templates/shopify-checkout/checkout.php:94
+#: ../app/Models/ModuleList.php:1499, ../templates/shopify-checkout/checkout.php:94
 msgid "Contact"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1508
+#: ../app/Models/ModuleList.php:1506
 msgid "Billing Fields Section Title"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1509
+#: ../app/Models/ModuleList.php:1507
 msgid "Enter the custom title to be displayed above the billing fields section"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1510
+#: ../app/Models/ModuleList.php:1508
 msgid "Billing address"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1519
+#: ../app/Models/ModuleList.php:1517
 msgid "Enable multi-step checkout to simplify the purchasing process."
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1525
+#: ../app/Models/ModuleList.php:1523
 msgid "Step Settings "
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1542
+#: ../app/Models/ModuleList.php:1540
 msgid "Show Step Menu"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1543
+#: ../app/Models/ModuleList.php:1541
 msgid "Enable to display the step navigation menu during checkout."
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1560
+#: ../app/Models/ModuleList.php:1558
 msgid "Show Cart Menu"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1561
+#: ../app/Models/ModuleList.php:1559
 msgid "Enable this option to display the cart item in the step menu."
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1582
+#: ../app/Models/ModuleList.php:1580
 msgid "Cart Step Title"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1583
+#: ../app/Models/ModuleList.php:1581
 msgid "Enter the cart step menu title."
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1606
+#: ../app/Models/ModuleList.php:1604
 msgid "Billing Step Title"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1607
+#: ../app/Models/ModuleList.php:1605
 msgid "Enter the billing step menu title."
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1608
+#: ../app/Models/ModuleList.php:1606
 msgid "Billing"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1630
+#: ../app/Models/ModuleList.php:1628
 msgid "Shipping Step Title"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1631
+#: ../app/Models/ModuleList.php:1629
 msgid "Enter the shipping step menu title."
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1632, ../app/Elementor/Widgets/Controls/ShippingMethodSettings.php:73, ../templates/elementor/checkout/shipping-method.php:38
+#: ../app/Models/ModuleList.php:1630, ../app/Elementor/Widgets/Controls/ShippingMethodSettings.php:73, ../templates/elementor/checkout/shipping-method.php:38
 msgid "Shipping"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1654
+#: ../app/Models/ModuleList.php:1652
 msgid "Shipping Method Step Title"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1655
+#: ../app/Models/ModuleList.php:1653
 msgid "Enter the shipping method step menu title."
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1656
+#: ../app/Models/ModuleList.php:1654
 msgid "Shipping Method "
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1678
+#: ../app/Models/ModuleList.php:1676
 msgid "Payment Method Step Title"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1679
+#: ../app/Models/ModuleList.php:1677
 msgid "Enter the payment method step menu title."
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1680, ../templates/shopify-checkout/checkout.php:135
+#: ../app/Models/ModuleList.php:1678, ../templates/shopify-checkout/checkout.php:135
 msgid "Payment"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1701
+#: ../app/Models/ModuleList.php:1699
 msgid "Button Settings"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1718
+#: ../app/Models/ModuleList.php:1716
 msgid "Show Next Button"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1719
+#: ../app/Models/ModuleList.php:1717
 msgid "Enable this option to display the 'Next' button."
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1736
+#: ../app/Models/ModuleList.php:1734
 msgid "Next Button Label for Shipping"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1737, ../app/Models/ModuleList.php:1759, ../app/Models/ModuleList.php:1780
+#: ../app/Models/ModuleList.php:1735, ../app/Models/ModuleList.php:1757, ../app/Models/ModuleList.php:1778
 msgid "Next"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1758
+#: ../app/Models/ModuleList.php:1756
 msgid "Next Button Label for Shipping Method"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1779
+#: ../app/Models/ModuleList.php:1777
 msgid "Next Button Label for Payment"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1801
+#: ../app/Models/ModuleList.php:1799
 msgid "Show Back Button"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1802
+#: ../app/Models/ModuleList.php:1800
 msgid "Enable this option to display the 'Back' button."
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1819
+#: ../app/Models/ModuleList.php:1817
 msgid "Back Button Label for Billing"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1820, ../app/Models/ModuleList.php:1843, ../app/Models/ModuleList.php:1866
+#: ../app/Models/ModuleList.php:1818, ../app/Models/ModuleList.php:1841, ../app/Models/ModuleList.php:1864
 msgid "Prev"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1842
+#: ../app/Models/ModuleList.php:1840
 msgid "Back Button Label for Shipping"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1865
+#: ../app/Models/ModuleList.php:1863
 msgid "Back Button Label for Shipping Method"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1887
+#: ../app/Models/ModuleList.php:1885
 msgid "Order Reviews"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1893
+#: ../app/Models/ModuleList.php:1891
 msgid "Link Product Titles"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1894
+#: ../app/Models/ModuleList.php:1892
 msgid "Enable to make product titles clickable, linking to their product pages."
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1900
+#: ../app/Models/ModuleList.php:1898
 msgid "Display Additional Data"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1901
+#: ../app/Models/ModuleList.php:1899
 msgid "Enter custom text to display below the Order Review section. You can include custom HTML content. Shortcodes are also supported here."
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1911
+#: ../app/Models/ModuleList.php:1909
 msgid "Footer"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1917
+#: ../app/Models/ModuleList.php:1915
 msgid "Footer Menu"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1918
+#: ../app/Models/ModuleList.php:1916
 msgid "Select a menu to display in the footer section of your checkout page."
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1928
+#: ../app/Models/ModuleList.php:1926
 msgid "Footer Text"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1929
+#: ../app/Models/ModuleList.php:1927
 msgid "Enter custom text to display in the footer section of your checkout page. You can use {year} placeholder to display the current year."
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1930
+#: ../app/Models/ModuleList.php:1928
 msgid "Copyright @{year} | All rights reserved"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1939
+#: ../app/Models/ModuleList.php:1937
 msgid "Login Button Style"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1943, ../app/Models/ModuleList.php:2016, ../app/Models/ModuleList.php:2104, ../app/Models/ModuleList.php:2324, ../app/Elementor/Widgets/Controls/ArchiveViewModeSettings.php:69, ../app/Elementor/Widgets/Controls/ProductsOrderingSettings.php:52, ../app/Elementor/Widgets/Controls/ProductsSettings.php:266
+#: ../app/Models/ModuleList.php:1941, ../app/Models/ModuleList.php:2014, ../app/Models/ModuleList.php:2102, ../app/Models/ModuleList.php:2322, ../app/Elementor/Widgets/Controls/ArchiveViewModeSettings.php:69, ../app/Elementor/Widgets/Controls/ProductsOrderingSettings.php:52, ../app/Elementor/Widgets/Controls/ProductsSettings.php:266
 msgid "Height (px)"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1953, ../app/Models/ModuleList.php:2026, ../app/Models/ModuleList.php:2128, ../app/Models/ModuleList.php:2348
+#: ../app/Models/ModuleList.php:1951, ../app/Models/ModuleList.php:2024, ../app/Models/ModuleList.php:2126, ../app/Models/ModuleList.php:2346
 msgid "Width (px)"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1962, ../app/Models/ModuleList.php:2035, ../app/Models/ModuleList.php:2152, ../app/Models/ModuleList.php:2372, ../app/Models/ModuleList.php:2538, ../app/Models/ModuleList.php:2651, ../app/Models/ModuleList.php:2776, ../app/Elementor/Widgets/Controls/ProductsSettings.php:324
+#: ../app/Models/ModuleList.php:1960, ../app/Models/ModuleList.php:2033, ../app/Models/ModuleList.php:2150, ../app/Models/ModuleList.php:2370, ../app/Models/ModuleList.php:2536, ../app/Models/ModuleList.php:2649, ../app/Models/ModuleList.php:2774, ../app/Elementor/Widgets/Controls/ProductsSettings.php:324
 msgid "Font Size (px)"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1978, ../app/Models/ModuleList.php:2051, ../app/Models/ModuleList.php:2198, ../app/Models/ModuleList.php:2417, ../app/Models/ModuleList.php:2554, ../app/Elementor/Helper/ControlHelper.php:1196
+#: ../app/Models/ModuleList.php:1976, ../app/Models/ModuleList.php:2049, ../app/Models/ModuleList.php:2196, ../app/Models/ModuleList.php:2415, ../app/Models/ModuleList.php:2552, ../app/Elementor/Helper/ControlHelper.php:1196
 msgid "Hover Background Color"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1984, ../app/Models/ModuleList.php:2057, ../app/Models/ModuleList.php:2219, ../app/Models/ModuleList.php:2438, ../app/Models/ModuleList.php:2560, ../app/Models/ModuleList.php:2621, ../app/Models/ModuleList.php:2734, ../app/Elementor/Helper/ControlHelper.php:1172, ../app/Elementor/Widgets/Controls/ActionsBtnSettings.php:183, ../app/Elementor/Widgets/Controls/AddInfoSettings.php:61, ../app/Elementor/Widgets/Controls/AddInfoSettings.php:91, ../app/Elementor/Widgets/Controls/AddToCartSettings.php:481, ../app/Elementor/Widgets/Controls/ArchiveViewModeSettings.php:111, ../app/Elementor/Widgets/Controls/ButtonSettings.php:82, ../app/Elementor/Widgets/Controls/ButtonSettings.php:113, ../app/Elementor/Widgets/Controls/CartTableSettings.php:95, ../app/Elementor/Widgets/Controls/CartTableSettings.php:127, ../app/Elementor/Widgets/Controls/CartTableSettings.php:1126, ../app/Elementor/Widgets/Controls/CartTableSettings.php:1338, ../app/Elementor/Widgets/Controls/CartTableSettings.php:1368, ../app/Elementor/Widgets/Controls/InfoboxSettings.php:56, ../app/Elementor/Widgets/Controls/ModuleBtnControls.php:128, ../app/Elementor/Widgets/Controls/ModuleBtnControls.php:158, ../app/Elementor/Widgets/Controls/OrderReviewTableSettings.php:172, ../app/Elementor/Widgets/Controls/OrderReviewTableSettings.php:210, ../app/Elementor/Widgets/Controls/PriceSettings.php:89, ../app/Elementor/Widgets/Controls/ProductFilterSettings.php:70, ../app/Elementor/Widgets/Controls/ProductFlashSale.php:46, ../app/Elementor/Widgets/Controls/ProductImagesSettings.php:418, ../app/Elementor/Widgets/Controls/ProductsSettings.php:214, ../app/Elementor/Widgets/Controls/ProductsSettings.php:335, ../app/Elementor/Widgets/Controls/ProductsSettings.php:386, ../app/Elementor/Widgets/Controls/ProductsSettings.php:439, ../app/Elementor/Widgets/Controls/ProductsSettings.php:538, ../app/Elementor/Widgets/Controls/ProductsSettings.php:568, ../app/Elementor/Widgets/Controls/ProductsSettings.php:753, ../app/Elementor/Widgets/Controls/ProductsSettings.php:802, ../app/Elementor/Widgets/Controls/ProductTaxSettings.php:101, ../app/Elementor/Widgets/Controls/ReviewsSettings.php:108, ../app/Elementor/Widgets/Controls/ReviewsSettings.php:138, ../app/Elementor/Widgets/Controls/ReviewsSettings.php:222, ../app/Elementor/Widgets/Controls/ReviewsSettings.php:277, ../app/Elementor/Widgets/Controls/ReviewsSettings.php:307, ../app/Elementor/Widgets/Controls/ReviewsSettings.php:438, ../app/Elementor/Widgets/Controls/SliderSettings.php:110, ../app/Elementor/Widgets/Controls/SliderSettings.php:143, ../app/Elementor/Widgets/Controls/TableSettings.php:83, ../app/Elementor/Widgets/Controls/TableSettings.php:121, ../app/Elementor/Widgets/General/AdvancedHeading/Controls.php:508, ../app/Elementor/Widgets/General/FlipBox/Controls.php:570, ../app/Elementor/Widgets/General/FlipBox/Controls.php:573, ../app/Elementor/Widgets/General/FlipBox/Controls.php:615, ../app/Elementor/Widgets/General/FlipBox/Controls.php:618, ../app/Elementor/Widgets/General/FlipBox/Controls.php:697, ../app/Elementor/Widgets/General/FlipBox/Controls.php:700, ../app/Elementor/Widgets/General/FlipBox/Controls.php:762, ../app/Elementor/Widgets/General/FlipBox/Controls.php:765, ../app/Elementor/Widgets/General/FlipBox/Controls.php:867, ../app/Elementor/Widgets/General/FlipBox/Controls.php:870, ../app/Elementor/Widgets/General/FlipBox/Controls.php:964, ../app/Elementor/Widgets/General/FlipBox/Controls.php:967, ../app/Elementor/Widgets/General/FlipBox/Controls.php:1094, ../app/Elementor/Widgets/General/FlipBox/Controls.php:1152
+#: ../app/Models/ModuleList.php:1982, ../app/Models/ModuleList.php:2055, ../app/Models/ModuleList.php:2217, ../app/Models/ModuleList.php:2436, ../app/Models/ModuleList.php:2558, ../app/Models/ModuleList.php:2619, ../app/Models/ModuleList.php:2732, ../app/Elementor/Helper/ControlHelper.php:1172, ../app/Elementor/Widgets/Controls/ActionsBtnSettings.php:183, ../app/Elementor/Widgets/Controls/AddInfoSettings.php:61, ../app/Elementor/Widgets/Controls/AddInfoSettings.php:91, ../app/Elementor/Widgets/Controls/AddToCartSettings.php:481, ../app/Elementor/Widgets/Controls/ArchiveViewModeSettings.php:111, ../app/Elementor/Widgets/Controls/ButtonSettings.php:82, ../app/Elementor/Widgets/Controls/ButtonSettings.php:113, ../app/Elementor/Widgets/Controls/CartTableSettings.php:95, ../app/Elementor/Widgets/Controls/CartTableSettings.php:127, ../app/Elementor/Widgets/Controls/CartTableSettings.php:1126, ../app/Elementor/Widgets/Controls/CartTableSettings.php:1338, ../app/Elementor/Widgets/Controls/CartTableSettings.php:1368, ../app/Elementor/Widgets/Controls/InfoboxSettings.php:56, ../app/Elementor/Widgets/Controls/ModuleBtnControls.php:128, ../app/Elementor/Widgets/Controls/ModuleBtnControls.php:158, ../app/Elementor/Widgets/Controls/OrderReviewTableSettings.php:172, ../app/Elementor/Widgets/Controls/OrderReviewTableSettings.php:210, ../app/Elementor/Widgets/Controls/PriceSettings.php:89, ../app/Elementor/Widgets/Controls/ProductFilterSettings.php:70, ../app/Elementor/Widgets/Controls/ProductFlashSale.php:46, ../app/Elementor/Widgets/Controls/ProductImagesSettings.php:418, ../app/Elementor/Widgets/Controls/ProductsSettings.php:214, ../app/Elementor/Widgets/Controls/ProductsSettings.php:335, ../app/Elementor/Widgets/Controls/ProductsSettings.php:386, ../app/Elementor/Widgets/Controls/ProductsSettings.php:439, ../app/Elementor/Widgets/Controls/ProductsSettings.php:538, ../app/Elementor/Widgets/Controls/ProductsSettings.php:568, ../app/Elementor/Widgets/Controls/ProductsSettings.php:753, ../app/Elementor/Widgets/Controls/ProductsSettings.php:802, ../app/Elementor/Widgets/Controls/ProductTaxSettings.php:101, ../app/Elementor/Widgets/Controls/ReviewsSettings.php:108, ../app/Elementor/Widgets/Controls/ReviewsSettings.php:138, ../app/Elementor/Widgets/Controls/ReviewsSettings.php:222, ../app/Elementor/Widgets/Controls/ReviewsSettings.php:277, ../app/Elementor/Widgets/Controls/ReviewsSettings.php:307, ../app/Elementor/Widgets/Controls/ReviewsSettings.php:438, ../app/Elementor/Widgets/Controls/SliderSettings.php:110, ../app/Elementor/Widgets/Controls/SliderSettings.php:143, ../app/Elementor/Widgets/Controls/TableSettings.php:83, ../app/Elementor/Widgets/Controls/TableSettings.php:121, ../app/Elementor/Widgets/General/AdvancedHeading/Controls.php:508, ../app/Elementor/Widgets/General/FlipBox/Controls.php:570, ../app/Elementor/Widgets/General/FlipBox/Controls.php:573, ../app/Elementor/Widgets/General/FlipBox/Controls.php:615, ../app/Elementor/Widgets/General/FlipBox/Controls.php:618, ../app/Elementor/Widgets/General/FlipBox/Controls.php:697, ../app/Elementor/Widgets/General/FlipBox/Controls.php:700, ../app/Elementor/Widgets/General/FlipBox/Controls.php:762, ../app/Elementor/Widgets/General/FlipBox/Controls.php:765, ../app/Elementor/Widgets/General/FlipBox/Controls.php:867, ../app/Elementor/Widgets/General/FlipBox/Controls.php:870, ../app/Elementor/Widgets/General/FlipBox/Controls.php:964, ../app/Elementor/Widgets/General/FlipBox/Controls.php:967, ../app/Elementor/Widgets/General/FlipBox/Controls.php:1094, ../app/Elementor/Widgets/General/FlipBox/Controls.php:1152
 msgid "Color"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1990, ../app/Models/ModuleList.php:2063, ../app/Models/ModuleList.php:2240, ../app/Models/ModuleList.php:2459, ../app/Models/ModuleList.php:2566, ../app/Models/ModuleList.php:2636, ../app/Models/ModuleList.php:2755, ../app/Elementor/Helper/ControlHelper.php:1189, ../app/Elementor/Widgets/Controls/ProductsSettings.php:344, ../app/Elementor/Widgets/Controls/ProductTaxSettings.php:108
+#: ../app/Models/ModuleList.php:1988, ../app/Models/ModuleList.php:2061, ../app/Models/ModuleList.php:2238, ../app/Models/ModuleList.php:2457, ../app/Models/ModuleList.php:2564, ../app/Models/ModuleList.php:2634, ../app/Models/ModuleList.php:2753, ../app/Elementor/Helper/ControlHelper.php:1189, ../app/Elementor/Widgets/Controls/ProductsSettings.php:344, ../app/Elementor/Widgets/Controls/ProductTaxSettings.php:108
 msgid "Hover Color"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1996, ../app/Models/ModuleList.php:2069, ../app/Models/ModuleList.php:2261, ../app/Models/ModuleList.php:2480, ../app/Models/ModuleList.php:2572, ../app/Models/ModuleList.php:3446, ../app/Elementor/Helper/ControlHelper.php:1213, ../app/Elementor/Helper/PostHelpers.php:1020, ../app/Elementor/Widgets/Controls/AddToCartSettings.php:180, ../app/Elementor/Widgets/Controls/ArchiveViewModeSettings.php:171, ../app/Elementor/Widgets/Controls/ButtonSettings.php:130, ../app/Elementor/Widgets/Controls/CartTableSettings.php:103, ../app/Elementor/Widgets/Controls/CartTableSettings.php:135, ../app/Elementor/Widgets/Controls/CartTableSettings.php:238, ../app/Elementor/Widgets/Controls/CartTableSettings.php:1134, ../app/Elementor/Widgets/Controls/CartTableSettings.php:1384, ../app/Elementor/Widgets/Controls/CartTotalsSettings.php:58, ../app/Elementor/Widgets/Controls/CheckoutInfoBoxSettings.php:170, ../app/Elementor/Widgets/Controls/CheckoutInfoBoxSettings.php:284, ../app/Elementor/Widgets/Controls/InfoboxSettings.php:80, ../app/Elementor/Widgets/Controls/InfoboxSettings.php:114, ../app/Elementor/Widgets/Controls/ModuleBtnControls.php:175, ../app/Elementor/Widgets/Controls/NoticeSettings.php:114, ../app/Elementor/Widgets/Controls/NoticeSettings.php:157, ../app/Elementor/Widgets/Controls/NoticeSettings.php:202, ../app/Elementor/Widgets/Controls/NoticeSettings.php:245, ../app/Elementor/Widgets/Controls/OrderReviewSettings.php:125, ../app/Elementor/Widgets/Controls/OrderReviewSettings.php:142, ../app/Elementor/Widgets/Controls/OrderReviewTableSettings.php:101, ../app/Elementor/Widgets/Controls/ProductsOrderingSettings.php:144, ../app/Elementor/Widgets/Controls/ProductsSettings.php:584, ../app/Elementor/Widgets/Controls/ProductsSettings.php:819, ../app/Elementor/Widgets/Controls/QuantityFields.php:170, ../app/Elementor/Widgets/Controls/QuantityFields.php:246, ../app/Elementor/Widgets/Controls/ReviewsSettings.php:155, ../app/Elementor/Widgets/Controls/ReviewsSettings.php:315, ../app/Elementor/Widgets/Controls/SliderSettings.php:125, ../app/Elementor/Widgets/Controls/SliderSettings.php:157, ../app/Elementor/Widgets/Controls/StyleFields.php:203, ../app/Elementor/Widgets/Controls/StyleFields.php:227, ../app/Elementor/Widgets/Controls/StyleFields.php:259, ../app/Elementor/Widgets/Controls/StyleFields.php:794, ../app/Elementor/Widgets/Single/ProductBadges.php:67, ../app/Elementor/Widgets/General/FlipBox/Controls.php:585, ../app/Elementor/Widgets/General/FlipBox/Controls.php:630, ../app/Elementor/Widgets/General/FlipBox/Controls.php:724, ../app/Elementor/Widgets/General/FlipBox/Controls.php:789, ../app/Elementor/Widgets/General/FlipBox/Controls.php:894, ../app/Elementor/Widgets/General/FlipBox/Controls.php:991, ../app/Elementor/Widgets/General/FlipBox/Controls.php:1127, ../app/Elementor/Widgets/General/FlipBox/Controls.php:1185, ../app/Elementor/Widgets/General/LogoSliderAndGrid/Controls.php:491, ../app/Elementor/Widgets/General/TeamMember/Controls.php:699, ../app/Elementor/Widgets/General/Testimonial/Controls.php:733
+#: ../app/Models/ModuleList.php:1994, ../app/Models/ModuleList.php:2067, ../app/Models/ModuleList.php:2259, ../app/Models/ModuleList.php:2478, ../app/Models/ModuleList.php:2570, ../app/Models/ModuleList.php:3444, ../app/Elementor/Helper/ControlHelper.php:1213, ../app/Elementor/Helper/PostHelpers.php:1020, ../app/Elementor/Widgets/Controls/AddToCartSettings.php:180, ../app/Elementor/Widgets/Controls/ArchiveViewModeSettings.php:171, ../app/Elementor/Widgets/Controls/ButtonSettings.php:130, ../app/Elementor/Widgets/Controls/CartTableSettings.php:103, ../app/Elementor/Widgets/Controls/CartTableSettings.php:135, ../app/Elementor/Widgets/Controls/CartTableSettings.php:238, ../app/Elementor/Widgets/Controls/CartTableSettings.php:1134, ../app/Elementor/Widgets/Controls/CartTableSettings.php:1384, ../app/Elementor/Widgets/Controls/CartTotalsSettings.php:58, ../app/Elementor/Widgets/Controls/CheckoutInfoBoxSettings.php:170, ../app/Elementor/Widgets/Controls/CheckoutInfoBoxSettings.php:284, ../app/Elementor/Widgets/Controls/InfoboxSettings.php:80, ../app/Elementor/Widgets/Controls/InfoboxSettings.php:114, ../app/Elementor/Widgets/Controls/ModuleBtnControls.php:175, ../app/Elementor/Widgets/Controls/NoticeSettings.php:114, ../app/Elementor/Widgets/Controls/NoticeSettings.php:157, ../app/Elementor/Widgets/Controls/NoticeSettings.php:202, ../app/Elementor/Widgets/Controls/NoticeSettings.php:245, ../app/Elementor/Widgets/Controls/OrderReviewSettings.php:125, ../app/Elementor/Widgets/Controls/OrderReviewSettings.php:142, ../app/Elementor/Widgets/Controls/OrderReviewTableSettings.php:101, ../app/Elementor/Widgets/Controls/ProductsOrderingSettings.php:144, ../app/Elementor/Widgets/Controls/ProductsSettings.php:584, ../app/Elementor/Widgets/Controls/ProductsSettings.php:819, ../app/Elementor/Widgets/Controls/QuantityFields.php:170, ../app/Elementor/Widgets/Controls/QuantityFields.php:246, ../app/Elementor/Widgets/Controls/ReviewsSettings.php:155, ../app/Elementor/Widgets/Controls/ReviewsSettings.php:315, ../app/Elementor/Widgets/Controls/SliderSettings.php:125, ../app/Elementor/Widgets/Controls/SliderSettings.php:157, ../app/Elementor/Widgets/Controls/StyleFields.php:203, ../app/Elementor/Widgets/Controls/StyleFields.php:227, ../app/Elementor/Widgets/Controls/StyleFields.php:259, ../app/Elementor/Widgets/Controls/StyleFields.php:794, ../app/Elementor/Widgets/Single/ProductBadges.php:67, ../app/Elementor/Widgets/General/FlipBox/Controls.php:585, ../app/Elementor/Widgets/General/FlipBox/Controls.php:630, ../app/Elementor/Widgets/General/FlipBox/Controls.php:724, ../app/Elementor/Widgets/General/FlipBox/Controls.php:789, ../app/Elementor/Widgets/General/FlipBox/Controls.php:894, ../app/Elementor/Widgets/General/FlipBox/Controls.php:991, ../app/Elementor/Widgets/General/FlipBox/Controls.php:1127, ../app/Elementor/Widgets/General/FlipBox/Controls.php:1185, ../app/Elementor/Widgets/General/LogoSliderAndGrid/Controls.php:491, ../app/Elementor/Widgets/General/TeamMember/Controls.php:699, ../app/Elementor/Widgets/General/Testimonial/Controls.php:733
 msgid "Border Color"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:2002, ../app/Models/ModuleList.php:2075, ../app/Models/ModuleList.php:2282, ../app/Models/ModuleList.php:2501, ../app/Models/ModuleList.php:2578, ../app/Elementor/Helper/ControlHelper.php:1221, ../app/Elementor/Widgets/Controls/StyleFields.php:236, ../app/Elementor/Widgets/Controls/StyleFields.php:268
+#: ../app/Models/ModuleList.php:2000, ../app/Models/ModuleList.php:2073, ../app/Models/ModuleList.php:2280, ../app/Models/ModuleList.php:2499, ../app/Models/ModuleList.php:2576, ../app/Elementor/Helper/ControlHelper.php:1221, ../app/Elementor/Widgets/Controls/StyleFields.php:236, ../app/Elementor/Widgets/Controls/StyleFields.php:268
 msgid "Hover Border Color"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:2012
+#: ../app/Models/ModuleList.php:2010
 msgid "Place Order Button Style"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:2085
+#: ../app/Models/ModuleList.php:2083
 msgid "Next Button Style"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:2304
+#: ../app/Models/ModuleList.php:2302
 msgid "Prev Button Style"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:2524
+#: ../app/Models/ModuleList.php:2522
 msgid "Apply Coupon Button Style"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:2528
+#: ../app/Models/ModuleList.php:2526
 msgid "Coupon Field And Button Height (px)"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:2587
+#: ../app/Models/ModuleList.php:2585
 msgid "Header Cart Icon Style"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:2601
+#: ../app/Models/ModuleList.php:2599
 msgid "Cart Icon Height (px)"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:2672
+#: ../app/Models/ModuleList.php:2670
 msgid "Footer Style"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:2676
+#: ../app/Models/ModuleList.php:2674
 msgid "Menu Color"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:2682
+#: ../app/Models/ModuleList.php:2680
 msgid "Menu Hover Color"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:2688
+#: ../app/Models/ModuleList.php:2686
 msgid "Menu Font Size (px)"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:2698
+#: ../app/Models/ModuleList.php:2696
 msgid "Footer Text Font Size (px)"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:2708
+#: ../app/Models/ModuleList.php:2706
 msgid "Footer Text Color"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:2716
+#: ../app/Models/ModuleList.php:2714
 msgid "Step Menu Style"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:2813
+#: ../app/Models/ModuleList.php:2811
 msgid "Hide Theme Badges"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:2814
+#: ../app/Models/ModuleList.php:2812
 msgid "Switch on to hide theme default badges."
 msgstr ""
 
-#: ../app/Models/ModuleList.php:2823, ../app/Models/ModuleList.php:3351
+#: ../app/Models/ModuleList.php:2821, ../app/Models/ModuleList.php:3349
 msgid "Applicable Products"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:2825
+#: ../app/Models/ModuleList.php:2823
 msgid "All products"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:2826
+#: ../app/Models/ModuleList.php:2824
 msgid "Only for products which have custom badge enabled"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:2828
+#: ../app/Models/ModuleList.php:2826
 msgid "Choose where to hide the default badges."
 msgstr ""
 
-#: ../app/Models/ModuleList.php:2846
+#: ../app/Models/ModuleList.php:2844
 msgid "Group Badge Display Type"
 msgstr ""
 
 #. translators: %s for pro message.
-#: ../app/Models/ModuleList.php:2849
+#: ../app/Models/ModuleList.php:2847
 msgid "Please choose the group display type. %s"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:2855
+#: ../app/Models/ModuleList.php:2853
 msgid "for vertical layout."
 msgstr ""
 
-#: ../app/Models/ModuleList.php:2860, ../app/Elementor/Widgets/Controls/ContentFields.php:59, ../app/Elementor/Widgets/Controls/ProductImagesSettings.php:352, ../app/Elementor/Widgets/Controls/ProductImagesSettings.php:534, ../app/Elementor/Widgets/Controls/SettingsFields.php:1472, ../app/Elementor/Widgets/General/ImageAccordion/Controls.php:96
+#: ../app/Models/ModuleList.php:2858, ../app/Elementor/Widgets/Controls/ContentFields.php:59, ../app/Elementor/Widgets/Controls/ProductImagesSettings.php:352, ../app/Elementor/Widgets/Controls/ProductImagesSettings.php:534, ../app/Elementor/Widgets/Controls/SettingsFields.php:1472, ../app/Elementor/Widgets/General/ImageAccordion/Controls.php:96
 msgid "Horizontal"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:2861, ../app/Elementor/Widgets/Controls/ContentFields.php:63, ../app/Elementor/Widgets/Controls/ProductImagesSettings.php:375, ../app/Elementor/Widgets/Controls/ProductImagesSettings.php:556, ../app/Elementor/Widgets/Controls/SettingsFields.php:1473, ../app/Elementor/Widgets/General/ImageAccordion/Controls.php:97
+#: ../app/Models/ModuleList.php:2859, ../app/Elementor/Widgets/Controls/ContentFields.php:63, ../app/Elementor/Widgets/Controls/ProductImagesSettings.php:375, ../app/Elementor/Widgets/Controls/ProductImagesSettings.php:556, ../app/Elementor/Widgets/Controls/SettingsFields.php:1473, ../app/Elementor/Widgets/General/ImageAccordion/Controls.php:97
 msgid "Vertical"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:2869
+#: ../app/Models/ModuleList.php:2867
 msgid "Group Badge Gap/Spacing"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:2870
+#: ../app/Models/ModuleList.php:2868
 msgid "Example: 10px"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:2884
+#: ../app/Models/ModuleList.php:2882
 msgid "Shop Page Group Position"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:2885
+#: ../app/Models/ModuleList.php:2883
 msgid "Choose the group badges position in Shop page."
 msgstr ""
 
-#: ../app/Models/ModuleList.php:2887, ../app/Models/ModuleList.php:2988, ../app/Elementor/Widgets/Controls/LayoutFields.php:270
+#: ../app/Models/ModuleList.php:2885, ../app/Models/ModuleList.php:2986, ../app/Elementor/Widgets/Controls/LayoutFields.php:270
 msgid "Floating Above Image"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:2888
+#: ../app/Models/ModuleList.php:2886
 msgid "Before Product Title"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:2889
+#: ../app/Models/ModuleList.php:2887
 msgid "After Product Title"
 msgstr ""
 
 #. translators: 1: The shortcode.
-#: ../app/Models/ModuleList.php:2903, ../app/Models/ModuleList.php:3024
+#: ../app/Models/ModuleList.php:2901, ../app/Models/ModuleList.php:3022
 msgid "Or Copy the php code <br />%1$s<br /> and paste it in your product query where you want to show the button."
 msgstr ""
 
-#: ../app/Models/ModuleList.php:2939, ../app/Models/ModuleList.php:3060
+#: ../app/Models/ModuleList.php:2937, ../app/Models/ModuleList.php:3058
 msgid "Badge Position Priority"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:2940, ../app/Models/ModuleList.php:3061
+#: ../app/Models/ModuleList.php:2938, ../app/Models/ModuleList.php:3059
 msgid "It's depend on your theme functionality. Example: 20"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:2954, ../app/Models/ModuleList.php:3076
+#: ../app/Models/ModuleList.php:2952, ../app/Models/ModuleList.php:3074
 msgid "Position Above Image"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:2985
+#: ../app/Models/ModuleList.php:2983
 msgid "Product Page Group Position"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:2986
+#: ../app/Models/ModuleList.php:2984
 msgid "Choose the group badges position in product page."
 msgstr ""
 
-#: ../app/Models/ModuleList.php:2992
+#: ../app/Models/ModuleList.php:2990
 msgid "After Short Description"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:3100
+#: ../app/Models/ModuleList.php:3098
 msgid "To add new product badges, simply click on the 'Add New' button below."
 msgstr ""
 
-#: ../app/Models/ModuleList.php:3112, ../app/Models/ModuleList.php:3115, ../app/Models/ModuleList.php:3116
+#: ../app/Models/ModuleList.php:3110, ../app/Models/ModuleList.php:3113, ../app/Models/ModuleList.php:3114
 msgid "Badge Name"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:3113
+#: ../app/Models/ModuleList.php:3111
 msgid "Enter badge name."
 msgstr ""
 
-#: ../app/Models/ModuleList.php:3123
+#: ../app/Models/ModuleList.php:3121
 msgid "Badge Type"
 msgstr ""
 
 #. translators: %s for pro message.
-#: ../app/Models/ModuleList.php:3126
+#: ../app/Models/ModuleList.php:3124
 msgid "Select badge type. %s"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:3132
+#: ../app/Models/ModuleList.php:3130
 msgid "unlock custom badge creation."
 msgstr ""
 
-#: ../app/Models/ModuleList.php:3137
+#: ../app/Models/ModuleList.php:3135
 msgid "Dynamic"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:3138, ../app/Elementor/Helper/PostHelpers.php:422, ../app/Elementor/Helper/PostHelpers.php:469, ../app/Elementor/Widgets/Controls/SettingsFields.php:1085, ../app/Elementor/Widgets/Controls/SettingsFields.php:1206, ../app/Elementor/Widgets/Controls/SettingsFields.php:1255, ../app/Elementor/Widgets/Controls/SettingsFields.php:1345
+#: ../app/Models/ModuleList.php:3136, ../app/Elementor/Helper/PostHelpers.php:422, ../app/Elementor/Helper/PostHelpers.php:469, ../app/Elementor/Widgets/Controls/SettingsFields.php:1085, ../app/Elementor/Widgets/Controls/SettingsFields.php:1206, ../app/Elementor/Widgets/Controls/SettingsFields.php:1255, ../app/Elementor/Widgets/Controls/SettingsFields.php:1345
 msgid "Custom"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:3145
+#: ../app/Models/ModuleList.php:3143
 msgid "Dynamic Badge Condition"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:3146
+#: ../app/Models/ModuleList.php:3144
 msgid "Specify dynamic badge condition"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:3161
+#: ../app/Models/ModuleList.php:3159
 msgid "Please ensure that Pre-Order module is activated and properly configured."
 msgstr ""
 
-#: ../app/Models/ModuleList.php:3181
+#: ../app/Models/ModuleList.php:3179
 msgid "Minimum Sale Count"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:3182
+#: ../app/Models/ModuleList.php:3180
 msgid "Enter the number of Sale you want to designate for products to be labeled as 'Best Selling.'"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:3201
+#: ../app/Models/ModuleList.php:3199
 msgid "Specify Number of Days"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:3202
+#: ../app/Models/ModuleList.php:3200
 msgid "Enter the number of days you want to designate for products to be labeled as 'New Arrivals.'"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:3218
+#: ../app/Models/ModuleList.php:3216
 msgid "Show Badge As:"
 msgstr ""
 
 #. translators: %s for pro message.
-#: ../app/Models/ModuleList.php:3221
+#: ../app/Models/ModuleList.php:3219
 msgid "Specify the badge display as Image Or Text. %s"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:3227
+#: ../app/Models/ModuleList.php:3225
 msgid "unlock Image badge creation."
 msgstr ""
 
-#: ../app/Models/ModuleList.php:3232, ../app/Elementor/Helper/PostHelpers.php:963, ../app/Modules/WishList/WishlistFns.php:194, ../app/Elementor/Widgets/Controls/ProductFilterSettings.php:72, ../app/Elementor/Widgets/Controls/ProductsSettings.php:253, ../app/Elementor/Widgets/Controls/SettingsFields.php:679, ../app/Elementor/Widgets/General/CallToAction/Controls.php:395, ../app/Elementor/Widgets/General/Counter/Controls.php:202, ../app/Elementor/Widgets/General/FlipBox/Controls.php:290, ../app/Elementor/Widgets/General/InfoBox/Controls.php:315, ../app/Elementor/Widgets/General/LogoSliderAndGrid/Controls.php:436, ../app/Elementor/Widgets/General/PricingTable/Controls.php:306, ../app/Elementor/Widgets/General/TeamMember/Controls.php:605, ../app/Elementor/Widgets/General/Testimonial/Controls.php:678
+#: ../app/Models/ModuleList.php:3230, ../app/Elementor/Helper/PostHelpers.php:963, ../app/Modules/WishList/WishlistFns.php:194, ../app/Elementor/Widgets/Controls/ProductFilterSettings.php:72, ../app/Elementor/Widgets/Controls/ProductsSettings.php:253, ../app/Elementor/Widgets/Controls/SettingsFields.php:679, ../app/Elementor/Widgets/General/CallToAction/Controls.php:395, ../app/Elementor/Widgets/General/Counter/Controls.php:202, ../app/Elementor/Widgets/General/FlipBox/Controls.php:290, ../app/Elementor/Widgets/General/InfoBox/Controls.php:315, ../app/Elementor/Widgets/General/LogoSliderAndGrid/Controls.php:436, ../app/Elementor/Widgets/General/PricingTable/Controls.php:306, ../app/Elementor/Widgets/General/TeamMember/Controls.php:605, ../app/Elementor/Widgets/General/Testimonial/Controls.php:678
 msgid "Image"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:3233, ../app/Elementor/Widgets/General/CallToAction/Controls.php:277, ../app/Elementor/Widgets/General/CallToAction/Controls.php:302, ../app/Elementor/Widgets/General/FlipBox/Controls.php:455, ../app/Elementor/Widgets/General/FlipBox/Controls.php:509, ../app/Elementor/Widgets/General/InfoBox/Controls.php:272, ../app/Elementor/Widgets/General/PricingTable/Controls.php:553, ../app/Elementor/Widgets/General/ShopBuilderButton/Controls.php:124, ../app/Elementor/Widgets/General/ShopBuilderButton/Controls.php:165, ../app/Elementor/Widgets/General/ShopBuilderButton/Controls.php:242, ../app/Elementor/Widgets/General/ShopBuilderButton/Controls.php:256
+#: ../app/Models/ModuleList.php:3231, ../app/Elementor/Widgets/General/CallToAction/Controls.php:277, ../app/Elementor/Widgets/General/CallToAction/Controls.php:302, ../app/Elementor/Widgets/General/FlipBox/Controls.php:455, ../app/Elementor/Widgets/General/FlipBox/Controls.php:509, ../app/Elementor/Widgets/General/InfoBox/Controls.php:272, ../app/Elementor/Widgets/General/PricingTable/Controls.php:553, ../app/Elementor/Widgets/General/ShopBuilderButton/Controls.php:124, ../app/Elementor/Widgets/General/ShopBuilderButton/Controls.php:165, ../app/Elementor/Widgets/General/ShopBuilderButton/Controls.php:242, ../app/Elementor/Widgets/General/ShopBuilderButton/Controls.php:256
 msgid "Text"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:3239
+#: ../app/Models/ModuleList.php:3237
 msgid "Text Badge Preset"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:3240
+#: ../app/Models/ModuleList.php:3238
 msgid "Choose the badge appearance"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:3245, ../app/Elementor/Helper/ControlHelper.php:653, ../app/Elementor/Helper/ControlHelper.php:932, ../app/Elementor/Helper/ControlHelper.php:975
+#: ../app/Models/ModuleList.php:3243, ../app/Elementor/Helper/ControlHelper.php:653, ../app/Elementor/Helper/ControlHelper.php:932, ../app/Elementor/Helper/ControlHelper.php:975
 msgid "Preset 1"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:3250, ../app/Elementor/Helper/ControlHelper.php:657, ../app/Elementor/Helper/ControlHelper.php:937, ../app/Elementor/Helper/ControlHelper.php:980
+#: ../app/Models/ModuleList.php:3248, ../app/Elementor/Helper/ControlHelper.php:657, ../app/Elementor/Helper/ControlHelper.php:937, ../app/Elementor/Helper/ControlHelper.php:980
 msgid "Preset 2"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:3255, ../app/Elementor/Helper/ControlHelper.php:661, ../app/Elementor/Helper/ControlHelper.php:942, ../app/Elementor/Helper/ControlHelper.php:985
+#: ../app/Models/ModuleList.php:3253, ../app/Elementor/Helper/ControlHelper.php:661, ../app/Elementor/Helper/ControlHelper.php:942, ../app/Elementor/Helper/ControlHelper.php:985
 msgid "Preset 3"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:3260, ../app/Elementor/Helper/ControlHelper.php:665, ../app/Elementor/Helper/ControlHelper.php:946, ../app/Elementor/Helper/ControlHelper.php:990
+#: ../app/Models/ModuleList.php:3258, ../app/Elementor/Helper/ControlHelper.php:665, ../app/Elementor/Helper/ControlHelper.php:946, ../app/Elementor/Helper/ControlHelper.php:990
 msgid "Preset 4"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:3276
+#: ../app/Models/ModuleList.php:3274
 msgid "Enter Badge Text"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:3277
+#: ../app/Models/ModuleList.php:3275
 msgid "The badge text will be displayed when the dynamic percentage switch is turned off."
 msgstr ""
 
-#: ../app/Models/ModuleList.php:3280
+#: ../app/Models/ModuleList.php:3278
 msgid "New"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:3295
+#: ../app/Models/ModuleList.php:3293
 msgid "Show Badges Percentage (%)"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:3296
+#: ../app/Models/ModuleList.php:3294
 msgid "Switch on to show badge as dynamic percentage instead of text."
 msgstr ""
 
-#: ../app/Models/ModuleList.php:3322, ../app/Elementor/Widgets/General/CallToAction/Controls.php:402, ../app/Elementor/Widgets/General/Counter/Controls.php:218, ../app/Elementor/Widgets/General/FlipBox/Controls.php:311, ../app/Elementor/Widgets/General/ImageAccordion/Controls.php:144, ../app/Elementor/Widgets/General/InfoBox/Controls.php:331, ../app/Elementor/Widgets/General/PricingTable/Controls.php:326
+#: ../app/Models/ModuleList.php:3320, ../app/Elementor/Widgets/General/CallToAction/Controls.php:402, ../app/Elementor/Widgets/General/Counter/Controls.php:218, ../app/Elementor/Widgets/General/FlipBox/Controls.php:311, ../app/Elementor/Widgets/General/ImageAccordion/Controls.php:144, ../app/Elementor/Widgets/General/InfoBox/Controls.php:331, ../app/Elementor/Widgets/General/PricingTable/Controls.php:326
 msgid "Upload Image"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:3323
+#: ../app/Models/ModuleList.php:3321
 msgid "Upload badge image."
 msgstr ""
 
-#: ../app/Models/ModuleList.php:3341
+#: ../app/Models/ModuleList.php:3339
 msgid "Applicable For"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:3343, ../app/Modules/WishList/WishlistFns.php:193
+#: ../app/Models/ModuleList.php:3341, ../app/Modules/WishList/WishlistFns.php:193
 msgid "Products"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:3346
+#: ../app/Models/ModuleList.php:3344
 msgid "Badges will apply for selected products, or categories."
 msgstr ""
 
-#: ../app/Models/ModuleList.php:3352
+#: ../app/Models/ModuleList.php:3350
 msgid "Choose products to include. Leave blank to apply in all product."
 msgstr ""
 
-#: ../app/Models/ModuleList.php:3353, ../app/Models/ModuleList.php:3393
+#: ../app/Models/ModuleList.php:3351, ../app/Models/ModuleList.php:3391
 msgid "Search Products"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:3369
+#: ../app/Models/ModuleList.php:3367
 msgid "Applicable Categories"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:3370
+#: ../app/Models/ModuleList.php:3368
 msgid "Choose categories to include. Leave blank to apply in all categories."
 msgstr ""
 
-#: ../app/Models/ModuleList.php:3371
+#: ../app/Models/ModuleList.php:3369
 msgid "Search Category"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:3391, ../app/Elementor/Widgets/Controls/LayoutFields.php:610
+#: ../app/Models/ModuleList.php:3389, ../app/Elementor/Widgets/Controls/LayoutFields.php:610
 msgid "Exclude Products"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:3392
+#: ../app/Models/ModuleList.php:3390
 msgid "Choose products to exclude. Leave blank to exclude none."
 msgstr ""
 
-#: ../app/Models/ModuleList.php:3404
+#: ../app/Models/ModuleList.php:3402
 msgid "Style Settings"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:3471
+#: ../app/Models/ModuleList.php:3469
 msgid "Font Size"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:3472
+#: ../app/Models/ModuleList.php:3470
 msgid "Example: 14px"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:3487
+#: ../app/Models/ModuleList.php:3485
 msgid "Font Weight"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:3518, ../app/Elementor/Widgets/Controls/ArchiveViewModeSettings.php:81, ../app/Elementor/Widgets/Controls/ButtonSettings.php:55, ../app/Elementor/Widgets/Controls/ModuleBtnControls.php:48, ../app/Elementor/Widgets/Controls/ProductsOrderingSettings.php:64, ../app/Elementor/Widgets/Controls/ProductsSettings.php:859, ../app/Elementor/Widgets/Controls/StyleFields.php:1166, ../app/Elementor/Widgets/Controls/StyleFields.php:1368, ../app/Elementor/Widgets/Controls/StyleFields.php:1465, ../app/Elementor/Widgets/Controls/StyleFields.php:1546, ../app/Elementor/Widgets/Controls/StyleFields.php:1627, ../app/Elementor/Widgets/General/AdvancedHeading/Controls.php:373, ../app/Elementor/Widgets/General/AdvancedHeading/Controls.php:470, ../app/Elementor/Widgets/General/CountDown/Controls.php:350, ../app/Elementor/Widgets/General/CountDown/Controls.php:469, ../app/Elementor/Widgets/General/ShopBuilderButton/Controls.php:539, ../app/Elementor/Widgets/General/TeamMember/Controls.php:790
+#: ../app/Models/ModuleList.php:3516, ../app/Elementor/Widgets/Controls/ArchiveViewModeSettings.php:81, ../app/Elementor/Widgets/Controls/ButtonSettings.php:55, ../app/Elementor/Widgets/Controls/ModuleBtnControls.php:48, ../app/Elementor/Widgets/Controls/ProductsOrderingSettings.php:64, ../app/Elementor/Widgets/Controls/ProductsSettings.php:859, ../app/Elementor/Widgets/Controls/StyleFields.php:1166, ../app/Elementor/Widgets/Controls/StyleFields.php:1368, ../app/Elementor/Widgets/Controls/StyleFields.php:1465, ../app/Elementor/Widgets/Controls/StyleFields.php:1546, ../app/Elementor/Widgets/Controls/StyleFields.php:1627, ../app/Elementor/Widgets/General/AdvancedHeading/Controls.php:373, ../app/Elementor/Widgets/General/AdvancedHeading/Controls.php:470, ../app/Elementor/Widgets/General/CountDown/Controls.php:350, ../app/Elementor/Widgets/General/CountDown/Controls.php:469, ../app/Elementor/Widgets/General/ShopBuilderButton/Controls.php:539, ../app/Elementor/Widgets/General/TeamMember/Controls.php:790
 msgid "Width"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:3519
+#: ../app/Models/ModuleList.php:3517
 msgid "Example: 150px"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:3533, ../app/Elementor/Widgets/Controls/AddToCartSettings.php:367, ../app/Elementor/Widgets/Controls/ButtonSettings.php:40, ../app/Elementor/Widgets/Controls/ModuleBtnControls.php:65, ../app/Elementor/Widgets/Controls/ProductsSettings.php:622, ../app/Elementor/Widgets/Controls/ProductsSettings.php:875, ../app/Elementor/Widgets/Controls/StyleFields.php:1180, ../app/Elementor/Widgets/General/AdvancedHeading/Controls.php:387, ../app/Elementor/Widgets/General/AdvancedHeading/Controls.php:485, ../app/Elementor/Widgets/General/CountDown/Controls.php:363, ../app/Elementor/Widgets/General/CountDown/Controls.php:485, ../app/Elementor/Widgets/General/ShopBuilderButton/Controls.php:552, ../app/Elementor/Widgets/General/TeamMember/Controls.php:803
+#: ../app/Models/ModuleList.php:3531, ../app/Elementor/Widgets/Controls/AddToCartSettings.php:367, ../app/Elementor/Widgets/Controls/ButtonSettings.php:40, ../app/Elementor/Widgets/Controls/ModuleBtnControls.php:65, ../app/Elementor/Widgets/Controls/ProductsSettings.php:622, ../app/Elementor/Widgets/Controls/ProductsSettings.php:875, ../app/Elementor/Widgets/Controls/StyleFields.php:1180, ../app/Elementor/Widgets/General/AdvancedHeading/Controls.php:387, ../app/Elementor/Widgets/General/AdvancedHeading/Controls.php:485, ../app/Elementor/Widgets/General/CountDown/Controls.php:363, ../app/Elementor/Widgets/General/CountDown/Controls.php:485, ../app/Elementor/Widgets/General/ShopBuilderButton/Controls.php:552, ../app/Elementor/Widgets/General/TeamMember/Controls.php:803
 msgid "Height"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:3534
+#: ../app/Models/ModuleList.php:3532
 msgid "Example: 50px"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:3549, ../app/Elementor/Helper/PostHelpers.php:794, ../app/Elementor/Helper/PostHelpers.php:1028, ../app/Elementor/Helper/PostHelpers.php:1087, ../app/Elementor/Helper/PostHelpers.php:1499, ../app/Elementor/Widgets/Controls/AddToCartSettings.php:253, ../app/Elementor/Widgets/Controls/AddToCartSettings.php:291, ../app/Elementor/Widgets/Controls/AddToCartSettings.php:412, ../app/Elementor/Widgets/Controls/ArchiveViewModeSettings.php:185, ../app/Elementor/Widgets/Controls/ProductFilterSettings.php:1043, ../app/Elementor/Widgets/Controls/ProductFilterSettings.php:1104, ../app/Elementor/Widgets/Controls/ProductImagesSettings.php:168, ../app/Elementor/Widgets/Controls/ProductImagesSettings.php:291, ../app/Elementor/Widgets/Controls/ProductsOrderingSettings.php:158, ../app/Elementor/Widgets/Controls/QuantityFields.php:252, ../app/Elementor/Widgets/Controls/QuantityFields.php:301, ../app/Elementor/Widgets/Controls/StyleFields.php:470, ../app/Elementor/Widgets/Controls/StyleFields.php:801, ../app/Elementor/Widgets/Controls/StyleFields.php:861, ../app/Elementor/Widgets/Controls/StyleFields.php:1042, ../app/Elementor/Widgets/Controls/StyleFields.php:1223, ../app/Elementor/Widgets/Controls/StyleFields.php:1414, ../app/Elementor/Widgets/Controls/StyleFields.php:1495, ../app/Elementor/Widgets/Controls/StyleFields.php:1576, ../app/Elementor/Widgets/Controls/StyleFields.php:1657, ../app/Elementor/Widgets/Controls/StyleFields.php:1770, ../app/Elementor/Widgets/Controls/StyleFields.php:1943, ../app/Elementor/Widgets/Controls/StyleFields.php:2350, ../app/Elementor/Widgets/General/CallToAction/Controls.php:576, ../app/Elementor/Widgets/General/CallToAction/Controls.php:676, ../app/Elementor/Widgets/General/CallToAction/Controls.php:802, ../app/Elementor/Widgets/General/CountDown/Controls.php:302, ../app/Elementor/Widgets/General/CountDown/Controls.php:426, ../app/Elementor/Widgets/General/CountDown/Controls.php:543, ../app/Elementor/Widgets/General/Counter/Controls.php:423, ../app/Elementor/Widgets/General/Counter/Controls.php:526, ../app/Elementor/Widgets/General/DropCaps/Controls.php:175, ../app/Elementor/Widgets/General/DropCaps/Controls.php:258, ../app/Elementor/Widgets/General/FlipBox/Controls.php:732, ../app/Elementor/Widgets/General/FlipBox/Controls.php:797, ../app/Elementor/Widgets/General/FlipBox/Controls.php:900, ../app/Elementor/Widgets/General/FlipBox/Controls.php:997, ../app/Elementor/Widgets/General/FlipBox/Controls.php:1133, ../app/Elementor/Widgets/General/FlipBox/Controls.php:1191, ../app/Elementor/Widgets/General/FlipBox/Controls.php:1258, ../app/Elementor/Widgets/General/ImageAccordion/Controls.php:279, ../app/Elementor/Widgets/General/ImageAccordion/Controls.php:505, ../app/Elementor/Widgets/General/InfoBox/Controls.php:537, ../app/Elementor/Widgets/General/InfoBox/Controls.php:667, ../app/Elementor/Widgets/General/InfoBox/Controls.php:844, ../app/Elementor/Widgets/General/LogoSliderAndGrid/Controls.php:373, ../app/Elementor/Widgets/General/LogoSliderAndGrid/Controls.php:499, ../app/Elementor/Widgets/General/PricingTable/Controls.php:757, ../app/Elementor/Widgets/General/PricingTable/Controls.php:900, ../app/Elementor/Widgets/General/PricingTable/Controls.php:1052, ../app/Elementor/Widgets/General/PricingTable/Controls.php:1355, ../app/Elementor/Widgets/General/ProgressBar/Controls.php:302, ../app/Elementor/Widgets/General/ShopBuilderButton/Controls.php:375, ../app/Elementor/Widgets/General/ShopBuilderButton/Controls.php:519, ../app/Elementor/Widgets/General/ShopBuilderFaq/Controls.php:306, ../app/Elementor/Widgets/General/ShopBuilderFaq/Controls.php:380, ../app/Elementor/Widgets/General/ShopBuilderFaq/Controls.php:601, ../app/Elementor/Widgets/General/TeamMember/Controls.php:448, ../app/Elementor/Widgets/General/TeamMember/Controls.php:707, ../app/Elementor/Widgets/General/TeamMember/Controls.php:776, ../app/Elementor/Widgets/General/Testimonial/Controls.php:439, ../app/Elementor/Widgets/General/Testimonial/Controls.php:741
+#: ../app/Models/ModuleList.php:3547, ../app/Elementor/Helper/PostHelpers.php:794, ../app/Elementor/Helper/PostHelpers.php:1028, ../app/Elementor/Helper/PostHelpers.php:1087, ../app/Elementor/Helper/PostHelpers.php:1499, ../app/Elementor/Widgets/Controls/AddToCartSettings.php:253, ../app/Elementor/Widgets/Controls/AddToCartSettings.php:291, ../app/Elementor/Widgets/Controls/AddToCartSettings.php:412, ../app/Elementor/Widgets/Controls/ArchiveViewModeSettings.php:185, ../app/Elementor/Widgets/Controls/ProductFilterSettings.php:1043, ../app/Elementor/Widgets/Controls/ProductFilterSettings.php:1104, ../app/Elementor/Widgets/Controls/ProductImagesSettings.php:168, ../app/Elementor/Widgets/Controls/ProductImagesSettings.php:291, ../app/Elementor/Widgets/Controls/ProductsOrderingSettings.php:158, ../app/Elementor/Widgets/Controls/QuantityFields.php:252, ../app/Elementor/Widgets/Controls/QuantityFields.php:301, ../app/Elementor/Widgets/Controls/StyleFields.php:470, ../app/Elementor/Widgets/Controls/StyleFields.php:801, ../app/Elementor/Widgets/Controls/StyleFields.php:861, ../app/Elementor/Widgets/Controls/StyleFields.php:1042, ../app/Elementor/Widgets/Controls/StyleFields.php:1223, ../app/Elementor/Widgets/Controls/StyleFields.php:1414, ../app/Elementor/Widgets/Controls/StyleFields.php:1495, ../app/Elementor/Widgets/Controls/StyleFields.php:1576, ../app/Elementor/Widgets/Controls/StyleFields.php:1657, ../app/Elementor/Widgets/Controls/StyleFields.php:1770, ../app/Elementor/Widgets/Controls/StyleFields.php:1943, ../app/Elementor/Widgets/Controls/StyleFields.php:2350, ../app/Elementor/Widgets/General/CallToAction/Controls.php:576, ../app/Elementor/Widgets/General/CallToAction/Controls.php:676, ../app/Elementor/Widgets/General/CallToAction/Controls.php:802, ../app/Elementor/Widgets/General/CountDown/Controls.php:302, ../app/Elementor/Widgets/General/CountDown/Controls.php:426, ../app/Elementor/Widgets/General/CountDown/Controls.php:543, ../app/Elementor/Widgets/General/Counter/Controls.php:423, ../app/Elementor/Widgets/General/Counter/Controls.php:526, ../app/Elementor/Widgets/General/DropCaps/Controls.php:175, ../app/Elementor/Widgets/General/DropCaps/Controls.php:258, ../app/Elementor/Widgets/General/FlipBox/Controls.php:732, ../app/Elementor/Widgets/General/FlipBox/Controls.php:797, ../app/Elementor/Widgets/General/FlipBox/Controls.php:900, ../app/Elementor/Widgets/General/FlipBox/Controls.php:997, ../app/Elementor/Widgets/General/FlipBox/Controls.php:1133, ../app/Elementor/Widgets/General/FlipBox/Controls.php:1191, ../app/Elementor/Widgets/General/FlipBox/Controls.php:1258, ../app/Elementor/Widgets/General/ImageAccordion/Controls.php:279, ../app/Elementor/Widgets/General/ImageAccordion/Controls.php:505, ../app/Elementor/Widgets/General/InfoBox/Controls.php:537, ../app/Elementor/Widgets/General/InfoBox/Controls.php:667, ../app/Elementor/Widgets/General/InfoBox/Controls.php:844, ../app/Elementor/Widgets/General/LogoSliderAndGrid/Controls.php:373, ../app/Elementor/Widgets/General/LogoSliderAndGrid/Controls.php:499, ../app/Elementor/Widgets/General/PricingTable/Controls.php:757, ../app/Elementor/Widgets/General/PricingTable/Controls.php:900, ../app/Elementor/Widgets/General/PricingTable/Controls.php:1052, ../app/Elementor/Widgets/General/PricingTable/Controls.php:1355, ../app/Elementor/Widgets/General/ProgressBar/Controls.php:302, ../app/Elementor/Widgets/General/ShopBuilderButton/Controls.php:375, ../app/Elementor/Widgets/General/ShopBuilderButton/Controls.php:519, ../app/Elementor/Widgets/General/ShopBuilderFaq/Controls.php:306, ../app/Elementor/Widgets/General/ShopBuilderFaq/Controls.php:380, ../app/Elementor/Widgets/General/ShopBuilderFaq/Controls.php:601, ../app/Elementor/Widgets/General/TeamMember/Controls.php:448, ../app/Elementor/Widgets/General/TeamMember/Controls.php:707, ../app/Elementor/Widgets/General/TeamMember/Controls.php:776, ../app/Elementor/Widgets/General/Testimonial/Controls.php:439, ../app/Elementor/Widgets/General/Testimonial/Controls.php:741
 msgid "Border Radius"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:3550
+#: ../app/Models/ModuleList.php:3548
 msgid "Example: 20px 20px 20px 20px Or 20px"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:3565, ../app/Elementor/Helper/ControlHelper.php:1232, ../app/Elementor/Widgets/Controls/AddInfoSettings.php:105, ../app/Elementor/Widgets/Controls/AddToCartSettings.php:261, ../app/Elementor/Widgets/Controls/AddToCartSettings.php:302, ../app/Elementor/Widgets/Controls/OrderReviewTableSettings.php:107, ../app/Elementor/Widgets/Controls/ProductFilterSettings.php:907, ../app/Elementor/Widgets/Controls/ProductsOrderingSettings.php:82, ../app/Elementor/Widgets/Controls/ProductTabsSettings.php:304, ../app/Elementor/Widgets/Controls/ProductTabsSettings.php:334, ../app/Elementor/Widgets/Controls/QuantityFields.php:309, ../app/Elementor/Widgets/Controls/StockSettings.php:142, ../app/Elementor/Widgets/Controls/StyleFields.php:1250, ../app/Elementor/Widgets/Controls/TableSettings.php:50, ../app/Elementor/Widgets/General/FlipBox/Controls.php:594, ../app/Elementor/Widgets/General/FlipBox/Controls.php:639, ../app/Elementor/Widgets/General/FlipBox/Controls.php:741, ../app/Elementor/Widgets/General/FlipBox/Controls.php:806, ../app/Elementor/Widgets/General/FlipBox/Controls.php:1144, ../app/Elementor/Widgets/General/FlipBox/Controls.php:1201, ../app/Elementor/Widgets/General/ProgressBar/Controls.php:314
+#: ../app/Models/ModuleList.php:3563, ../app/Elementor/Helper/ControlHelper.php:1232, ../app/Elementor/Widgets/Controls/AddInfoSettings.php:105, ../app/Elementor/Widgets/Controls/AddToCartSettings.php:261, ../app/Elementor/Widgets/Controls/AddToCartSettings.php:302, ../app/Elementor/Widgets/Controls/OrderReviewTableSettings.php:107, ../app/Elementor/Widgets/Controls/ProductFilterSettings.php:907, ../app/Elementor/Widgets/Controls/ProductsOrderingSettings.php:82, ../app/Elementor/Widgets/Controls/ProductTabsSettings.php:304, ../app/Elementor/Widgets/Controls/ProductTabsSettings.php:334, ../app/Elementor/Widgets/Controls/QuantityFields.php:309, ../app/Elementor/Widgets/Controls/StockSettings.php:142, ../app/Elementor/Widgets/Controls/StyleFields.php:1250, ../app/Elementor/Widgets/Controls/TableSettings.php:50, ../app/Elementor/Widgets/General/FlipBox/Controls.php:594, ../app/Elementor/Widgets/General/FlipBox/Controls.php:639, ../app/Elementor/Widgets/General/FlipBox/Controls.php:741, ../app/Elementor/Widgets/General/FlipBox/Controls.php:806, ../app/Elementor/Widgets/General/FlipBox/Controls.php:1144, ../app/Elementor/Widgets/General/FlipBox/Controls.php:1201, ../app/Elementor/Widgets/General/ProgressBar/Controls.php:314
 msgid "Padding"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:3566
+#: ../app/Models/ModuleList.php:3564
 msgid "Example: 10px 15px 10px 15px"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:3591
+#: ../app/Models/ModuleList.php:3589
 msgid "Products On Sale"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:3592, ../app/Elementor/Helper/ControlHelper.php:1073
+#: ../app/Models/ModuleList.php:3590, ../app/Elementor/Helper/ControlHelper.php:1073
 msgid "Featured Products"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:3593
+#: ../app/Models/ModuleList.php:3591
 msgid "Out Of Stock Products"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:3594, ../app/Elementor/Helper/ControlHelper.php:1074
+#: ../app/Models/ModuleList.php:3592, ../app/Elementor/Helper/ControlHelper.php:1074
 msgid "Best Selling Products"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:3595
+#: ../app/Models/ModuleList.php:3593
 msgid "New Arrival Products"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:3599
+#: ../app/Models/ModuleList.php:3597
 msgid "Pre-Order Products"
 msgstr ""
 
@@ -9312,6 +9324,34 @@ msgstr ""
 msgid "Apply"
 msgstr ""
 
+#: ../templates/elementor/archive/catalog-ordering.php:26
+msgid "Default sorting"
+msgstr ""
+
+#: ../templates/elementor/archive/catalog-ordering.php:27
+msgid "Sort by popularity"
+msgstr ""
+
+#: ../templates/elementor/archive/catalog-ordering.php:28
+msgid "Sort by average rating"
+msgstr ""
+
+#: ../templates/elementor/archive/catalog-ordering.php:29
+msgid "Sort by latest"
+msgstr ""
+
+#: ../templates/elementor/archive/catalog-ordering.php:30
+msgid "Sort by price: low to high"
+msgstr ""
+
+#: ../templates/elementor/archive/catalog-ordering.php:31
+msgid "Sort by price: high to low"
+msgstr ""
+
+#: ../templates/elementor/archive/catalog-ordering.php:39
+msgid "Relevance"
+msgstr ""
+
 #: ../templates/elementor/cart/cart-table.php:70
 msgid "Remove this item"
 msgstr ""
@@ -9372,7 +9412,7 @@ msgstr ""
 msgid "Lost your password?"
 msgstr ""
 
-#: ../templates/elementor/checkout/order-review.php:22
+#: ../templates/elementor/checkout/order-review.php:23
 msgid "Your order"
 msgstr ""
 

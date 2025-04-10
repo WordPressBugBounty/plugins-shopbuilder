@@ -53,7 +53,7 @@ class ModuleList extends ListModel {
 	 */
 	protected function raw_list() {
 		$list = [
-			'quick_view'             => apply_filters(
+			'quick_view'                    => apply_filters(
 				'rtsb/module/quick_view/options',
 				[
 					'id'           => 'quick_view',
@@ -217,7 +217,7 @@ class ModuleList extends ListModel {
 					),
 				]
 			),
-			'wishlist'               => apply_filters(
+			'wishlist'                      => apply_filters(
 				'rtsb/module/wishlist/options',
 				[
 					'id'           => 'wishlist',
@@ -571,7 +571,7 @@ class ModuleList extends ListModel {
 					],
 				]
 			),
-			'compare'                => apply_filters(
+			'compare'                       => apply_filters(
 				'rtsb/module/compare/options',
 				[
 					'id'           => 'compare',
@@ -895,7 +895,7 @@ class ModuleList extends ListModel {
 					],
 				]
 			),
-			'variation_swatches'     => apply_filters(
+			'variation_swatches'            => apply_filters(
 				'rtsb/module/variation_swatches/options',
 				[
 					'id'                => 'variation_swatches',
@@ -921,7 +921,7 @@ class ModuleList extends ListModel {
 					'fields'            => [],
 				]
 			),
-			'variation_gallery'      => apply_filters(
+			'variation_gallery'             => apply_filters(
 				'rtsb/module/variation_gallery/options',
 				[
 					'id'                => 'variation_gallery',
@@ -947,7 +947,7 @@ class ModuleList extends ListModel {
 					'fields'            => [],
 				]
 			),
-			'mini_cart'              => apply_filters(
+			'mini_cart'                     => apply_filters(
 				'rtsb/module/mini_cart/options',
 				[
 					'id'           => 'mini_cart',
@@ -962,7 +962,7 @@ class ModuleList extends ListModel {
 					'fields'       => Fns::pro_version_notice( '1.0.0' ),
 				]
 			),
-			'product_size_chart'     => apply_filters(
+			'product_size_chart'            => apply_filters(
 				'rtsb/module/product_size_chart/options',
 				[
 					'id'           => 'product_size_chart',
@@ -976,7 +976,7 @@ class ModuleList extends ListModel {
 					'fields'       => Fns::pro_version_notice( '1.0.0' ),
 				]
 			),
-			'product_badges'         => apply_filters(
+			'product_badges'                => apply_filters(
 				'rtsb/module/product_badges/options',
 				[
 					'id'           => 'product_badges',
@@ -1002,7 +1002,7 @@ class ModuleList extends ListModel {
 					],
 				]
 			),
-			'customize_my_account'   => apply_filters(
+			'customize_my_account'          => apply_filters(
 				'rtsb/module/customize_my_account/options',
 				[
 					'id'           => 'customize_my_account',
@@ -1016,7 +1016,7 @@ class ModuleList extends ListModel {
 					'fields'       => Fns::pro_version_notice( '1.4.0' ),
 				]
 			),
-			'pre_order'              => apply_filters(
+			'pre_order'                     => apply_filters(
 				'rtsb/module/pre_order/options',
 				[
 					'id'           => 'pre_order',
@@ -1030,7 +1030,7 @@ class ModuleList extends ListModel {
 					'fields'       => Fns::pro_version_notice( '1.5.0' ),
 				]
 			),
-			'currency_switcher'      => apply_filters(
+			'currency_switcher'             => apply_filters(
 				'rtsb/module/currency_switcher/options',
 				[
 					'id'           => 'currency_switcher',
@@ -1045,7 +1045,7 @@ class ModuleList extends ListModel {
 					'fields'       => Fns::pro_version_notice( '1.5.0' ),
 				]
 			),
-			'product_add_ons'        => apply_filters(
+			'product_add_ons'               => apply_filters(
 				'rtsb/module/product_add_ons/options',
 				[
 					'id'           => 'product_add_ons',
@@ -1061,7 +1061,7 @@ class ModuleList extends ListModel {
 				]
 			),
 			// Checkout Fields Manager.
-			'checkout_fields_editor' => apply_filters(
+			'checkout_fields_editor'        => apply_filters(
 				'rtsb/module/checkout_fields_editor/options',
 				[
 					'id'           => 'checkout_fields_editor',
@@ -1220,7 +1220,7 @@ class ModuleList extends ListModel {
 					],
 				]
 			),
-			'sales_notification'     => apply_filters(
+			'sales_notification'            => apply_filters(
 				'rtsb/module/sales_notification/options',
 				[
 					'id'           => 'sales_notification',
@@ -1234,7 +1234,7 @@ class ModuleList extends ListModel {
 					'fields'       => Fns::pro_version_notice( '1.0.0' ),
 				]
 			),
-			'flash_sale_countdown'   => apply_filters(
+			'flash_sale_countdown'          => apply_filters(
 				'rtsb/module/flash_sale_countdown/options',
 				[
 					'id'           => 'flash_sale_countdown',
@@ -1248,7 +1248,7 @@ class ModuleList extends ListModel {
 					'fields'       => Fns::pro_version_notice( '1.0.0' ),
 				]
 			),
-			'quick_checkout'         => apply_filters(
+			'quick_checkout'                => apply_filters(
 				'rtsb/module/quick_checkout/options',
 				[
 					'id'           => 'quick_checkout',
@@ -1262,7 +1262,7 @@ class ModuleList extends ListModel {
 					'fields'       => Fns::pro_version_notice( '1.1.0' ),
 				]
 			),
-			'multi_step_checkout'    => apply_filters(
+			'multi_step_checkout'           => apply_filters(
 				'rtsb/module/multi_step_checkout/options',
 				[
 					'id'           => 'multi_step_checkout',
@@ -1276,7 +1276,7 @@ class ModuleList extends ListModel {
 					'fields'       => Fns::pro_version_notice( '1.0.0' ),
 				]
 			),
-			'back_order'             => apply_filters(
+			'back_order'                    => apply_filters(
 				'rtsb/module/back_order/options',
 				[
 					'id'           => 'back_order',
@@ -1290,7 +1290,7 @@ class ModuleList extends ListModel {
 					'fields'       => Fns::pro_version_notice( '1.3.0' ),
 				]
 			),
-			'sticky_add_to_cart'     => apply_filters(
+			'sticky_add_to_cart'            => apply_filters(
 				'rtsb/module/sticky_add_to_cart/options',
 				[
 					'id'           => 'sticky_add_to_cart',
@@ -1304,7 +1304,7 @@ class ModuleList extends ListModel {
 					'fields'       => Fns::pro_version_notice( '1.7.0' ),
 				]
 			),
-			'shopify_checkout'       => apply_filters(
+			'shopify_checkout'              => apply_filters(
 				'rtsb/module/shopify_checkout/options',
 				[
 					'id'           => 'shopify_checkout',
@@ -1360,22 +1360,20 @@ class ModuleList extends ListModel {
 					'fields'       => Fns::pro_version_notice( '1.10.0' ),
 				]
 			),
-			/*
-			'bogo_bxgy_discounts'    => apply_filters(
-				'rtsb/module/bogo_bxgy_discounts/options',
+			'bogo_bxgy_free_gift_discounts' => apply_filters(
+				'rtsb/module/bogo_bxgy_free_gift_discounts/options',
 				[
-					'id'           => 'bogo_bxgy_discounts',
+					'id'           => 'bogo_bxgy_free_gift_discounts',
 					'active'       => '',
-					'title'        => esc_html__( 'BOGO And Buy X Get Y', 'shopbuilder' ),
+					'title'        => esc_html__( 'Buy X Get Y | BOGO', 'shopbuilder' ),
 					'active_field' => [
-						'label' => esc_html__( 'Enable Discount Rules?', 'shopbuilder' ),
-						'help'  => esc_html__( 'Switch on to enable Discount Rules module.', 'shopbuilder' ),
+						'label' => esc_html__( 'Enable Buy X Get Y | BOGO?', 'shopbuilder' ),
+						'help'  => esc_html__( 'Switch on to enable Buy X Get Y | BOGO module.', 'shopbuilder' ),
 					],
 					'package'      => $this->pro_package(),
 					'fields'       => Fns::pro_version_notice( '1.11.0' ),
 				]
 			),
-			*/
 		];
 		return apply_filters( 'rtsb/core/modules/raw_list', $list );
 	}

@@ -860,7 +860,7 @@ class ProductFilterSettings {
 			'mode'     => 'group',
 			'label'    => esc_html__( 'Icon Typography', 'shopbuilder' ),
 			'type'     => 'typography',
-			'exclude'  => [ 'font_family', 'font_weight', 'text_transform', 'text_decoration', 'font_style', 'word_spacing', 'line_height' ], // phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_exclude`
+			'exclude'  => [ 'font_family', 'font_weight', 'text_transform', 'text_decoration', 'font_style', 'word_spacing', 'line_height' ], // phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_exclude
 			'selector' => $selectors['typography'],
 		];
 		$fields['rating_count_position']     = [
