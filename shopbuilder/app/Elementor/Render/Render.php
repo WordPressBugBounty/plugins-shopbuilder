@@ -303,9 +303,9 @@ class Render {
 		while ( $query->have_posts() ) {
 			$query->the_post();
 			$i++;
-
+			global $product;
 			// Loop arg.
-			$arg = $this->arg_dataset( $settings, wc_get_product( get_the_ID() ), $settings['lazy_load'], $i );
+			$arg = $this->arg_dataset( $settings, $product, $settings['lazy_load'], $i );
 
 			// Get template.
 			$html .= Fns::load_template( $template . $settings['layout'], $arg, true );
@@ -610,6 +610,9 @@ class Render {
 
 		if ( rtsb()->has_pro() && ( ! empty( $metas['tag_term'] ) ) ) {
 			$term = $metas['tag_term'];
+		}
+		if ( rtsb()->has_pro() && ( ! empty( $metas['brand_term'] ) ) ) {
+			$term = $metas['brand_term'];
 		}
 
 		// Query.
@@ -1105,10 +1108,11 @@ class Render {
 
 		if ( empty( $text ) ) {
 			$tooltip_mapping = [
-				'simple'   => esc_attr__( 'Add to Cart', 'shopbuilder' ),
-				'variable' => esc_attr__( 'Select Options', 'shopbuilder' ),
-				'grouped'  => esc_attr__( 'View Products', 'shopbuilder' ),
-				'external' => ! empty( $btn_txt ) ? esc_html( $btn_txt ) : esc_html__( 'Buy Product', 'shopbuilder' ),
+				'simple'         => esc_attr__( 'Add to Cart', 'shopbuilder' ),
+				'variable'       => esc_attr__( 'Select Options', 'shopbuilder' ),
+				'grouped'        => esc_attr__( 'View Products', 'shopbuilder' ),
+				'external'       => ! empty( $btn_txt ) ? esc_html( $btn_txt ) : esc_html__( 'Buy Product', 'shopbuilder' ),
+				'rtsb-gift-card' => esc_attr__( 'Select Gift Card', 'shopbuilder' ),
 			];
 
 			$cart_attr['title'] = $tooltip_mapping[ $type ];

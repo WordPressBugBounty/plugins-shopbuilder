@@ -54,6 +54,7 @@ class ProductFilterSettings {
 
 		$filter_options = [
 			'product_cat'   => esc_html__( 'Categories', 'shopbuilder' ),
+			'product_brand' => esc_html__( 'Brands', 'shopbuilder' ),
 			'product_tag'   => esc_html__( 'Tags', 'shopbuilder' ),
 			'product_attr'  => esc_html__( 'Attributes', 'shopbuilder' ),
 			'rating_filter' => esc_html__( 'Rating', 'shopbuilder' ),
@@ -181,16 +182,16 @@ class ProductFilterSettings {
 					'label_on'    => esc_html__( 'On', 'shopbuilder' ),
 					'label_off'   => esc_html__( 'Off', 'shopbuilder' ),
 					'separator'   => 'before-short',
-					'condition'   => [ 'filter_items' => [ 'product_cat', 'product_tag', 'product_attr' ] ],
+					'condition'   => [ 'filter_items' => [ 'product_cat', 'product_brand', 'product_tag', 'product_attr' ] ],
 				],
 				'include_child_cats' => [
-					'label'       => esc_html__( 'Show Sub-Categories?', 'shopbuilder' ),
+					'label'       => esc_html__( 'Show Child?', 'shopbuilder' ),
 					'type'        => 'switch',
-					'description' => esc_html__( 'Switch on to include child categories.', 'shopbuilder' ),
+					'description' => esc_html__( 'Switch on to include child.', 'shopbuilder' ),
 					'label_on'    => esc_html__( 'On', 'shopbuilder' ),
 					'label_off'   => esc_html__( 'Off', 'shopbuilder' ),
 					'default'     => 'yes',
-					'condition'   => [ 'filter_items' => [ 'product_cat' ] ],
+					'condition'   => [ 'filter_items' => [ 'product_cat','product_brand' ] ],
 				],
 				'show_tooltips'      => [
 					'label'       => esc_html__( 'Show Tooltips?', 'shopbuilder' ),
@@ -283,12 +284,28 @@ class ProductFilterSettings {
 			'description' => esc_html__( 'Switch on to filter header text at the beginning.', 'shopbuilder' ),
 		];
 
-		$fields['filter_header_text'] = [
+		$fields['filter_header_text']   = [
 			'type'        => 'text',
 			'label'       => esc_html__( 'Filter Header Text', 'shopbuilder' ),
 			'description' => esc_html__( 'Enter the filter header text.', 'shopbuilder' ),
 			'label_block' => true,
 			'condition'   => [ 'show_filter_header' => 'yes' ],
+		];
+		$fields['filter_mobile_toggle'] = [
+			'type'        => 'switch',
+			'label'       => esc_html__( 'Toggle Button in Mobile?', 'shopbuilder' ),
+			'label_on'    => esc_html__( 'On', 'shopbuilder' ),
+			'label_off'   => esc_html__( 'Off', 'shopbuilder' ),
+			'description' => esc_html__( 'Switch on to enable filter toggle button in mobile.', 'shopbuilder' ),
+		];
+
+		$fields['filter_mobile_toggle_text'] = [
+			'type'        => 'text',
+			'label'       => esc_html__( 'Mobile Filter Button Text', 'shopbuilder' ),
+			'description' => esc_html__( 'Enter the mobile toggle filter button text.', 'shopbuilder' ),
+			'label_block' => true,
+			'default'     => esc_html__( 'Click to Filter', 'shopbuilder' ),
+			'condition'   => [ 'filter_mobile_toggle' => 'yes' ],
 		];
 
 		$fields['filter_settings_section_end'] = $obj->end_section();
@@ -512,7 +529,8 @@ class ProductFilterSettings {
 			+ self::filter_items( $obj )
 			+ self::rating( $obj )
 			+ self::apply_btn( $obj )
-			+ self::reset_btn( $obj );
+			+ self::reset_btn( $obj )
+			+ self::mobile_toggle_btn( $obj );
 	}
 	/**
 	 * Filter Title Section
@@ -997,7 +1015,7 @@ class ProductFilterSettings {
 					'icon'  => 'eicon-close',
 				],
 			],
-            'default' => 'none',
+			'default'   => 'none',
 			'selectors' => $selectors['icon_display'],
 			'separator' => 'default',
 		];
@@ -1108,6 +1126,69 @@ class ProductFilterSettings {
 
 		return Fns::insert_controls( 'reset_btn_border_hover_color', $fields, $extra_controls, true );
 	}
+
+	/**
+	 * Reset Button Style Section
+	 *
+	 * @param object $obj Reference object.
+	 *
+	 * @return array
+	 */
+	public static function mobile_toggle_btn( $obj ) {
+		$css_selectors = $obj->selectors['mobile_toggle_btn'];
+		$title         = esc_html__( 'Mobile Toggle Button', 'shopbuilder' );
+		$selectors     = [
+			'typography'         => $css_selectors['typography'],
+			'btn_width'          => [ $css_selectors['btn_width'] => 'width: {{SIZE}}{{UNIT}};' ],
+			'color'              => [ $css_selectors['color'] => 'color: {{VALUE}} !important;' ],
+			'bg_color'           => [ $css_selectors['bg_color'] => 'background-color: {{VALUE}};' ],
+			'hover_color'        => [ $css_selectors['hover_color'] => 'color: {{VALUE}} !important;' ],
+			'hover_bg_color'     => [ $css_selectors['hover_bg_color'] => 'background-color: {{VALUE}};' ],
+			'border'             => $css_selectors['border'],
+			'border_hover_color' => [ $css_selectors['border_hover_color'] => 'border-color: {{VALUE}};' ],
+			'border_radius'      => [ $css_selectors['border_radius'] => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};' ],
+			'padding'            => [ $css_selectors['padding'] => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};' ],
+			'margin'             => [ $css_selectors['margin'] => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};' ],
+		];
+
+		$fields = ControlHelper::general_elementor_style( 'mobile_toggle_btn', $title, $obj, [ 'filter_mobile_toggle' => 'yes' ], $selectors );
+		unset( $fields['mobile_toggle_btn_alignment'] );
+		$extra_controls = [];
+
+		$extra_controls['btn_width'] = [
+			'type'       => 'slider',
+			'mode'       => 'responsive',
+			'label'      => esc_html__( 'Button Width', 'shopbuilder' ),
+			'size_units' => [ 'px', '%' ],
+			'range'      => [
+				'px' => [
+					'min'  => 0,
+					'max'  => 1500,
+					'step' => 1,
+				],
+				'%'  => [
+					'min'  => 0,
+					'max'  => 100,
+					'step' => 1,
+				],
+			],
+			'separator'  => 'default',
+			'selectors'  => $selectors['btn_width'],
+		];
+
+		$fields = Fns::insert_controls( 'mobile_toggle_btn_color_note', $fields, $extra_controls );
+
+		$extra_controls['mobile_toggle_btn_radius'] = [
+			'mode'       => 'responsive',
+			'type'       => 'dimensions',
+			'label'      => esc_html__( 'Border Radius', 'shopbuilder' ),
+			'size_units' => [ 'px', '%', 'em' ],
+			'selectors'  => $selectors['border_radius'],
+		];
+
+		return Fns::insert_controls( 'mobile_toggle_btn_border_hover_color', $fields, $extra_controls, true );
+	}
+
 	/**
 	 * Filter Items Style Section
 	 *

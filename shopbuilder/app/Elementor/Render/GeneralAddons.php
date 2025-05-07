@@ -300,13 +300,17 @@ class GeneralAddons extends Render {
 	 * @return void
 	 */
 	private function slider_wrapper_start() {
-		$slider_data    = $this->get_slider_data();
-		$slider_options = $slider_data['data'] ?? '';
-		$slider_classes = $slider_data['class'] ?? '';
-		$slider_data    = [
-			'class' => 'rtsb-carousel-slider swiper ' . $slider_classes,
-			'data'  => $slider_options,
-		];
+		if ( 'rtsb-hero-slider' === $this->unique_name ) {
+			$slider_data = self::get_hero_slider_data( $this->settings );
+		} else {
+			$slider_data    = $this->get_slider_data();
+			$slider_options = $slider_data['data'] ?? '';
+			$slider_classes = $slider_data['class'] ?? '';
+			$slider_data    = [
+				'class' => 'rtsb-carousel-slider swiper ' . $slider_classes,
+				'data'  => $slider_options,
+			];
+		}
 
 		// Adding slider attributes.
 		$this->add_attribute(
@@ -351,6 +355,7 @@ class GeneralAddons extends Render {
 	protected function get_slider_meta_dataset( array $meta, $template = '', $raw_settings = [] ) {
 		$data = [
 			'widget'             => 'custom',
+			'widget_name'        => $this->unique_name,
 			'template'           => RenderHelpers::get_data( $template, '', '' ),
 			'raw_settings'       => $raw_settings,
 			'd_cols'             => RenderHelpers::get_data( $meta, 'cols', 0 ),
@@ -390,7 +395,80 @@ class GeneralAddons extends Render {
 		if ( ! empty( $meta['cols_mobile_extra'] ) ) {
 			$data['me_cols'] = $meta['cols_mobile_extra'];
 		}
+
 		return apply_filters( 'rtsb/elementor/render/slider_dataset_final', $data, $meta, $raw_settings );
+	}
+
+	/**
+	 * Gets hero slider data for the carousel.
+	 *
+	 * @return array
+	 */
+	protected function get_hero_slider_data( array $meta ) {
+		$has_dots         = $meta['slider_pagi'] ? ' has-dot' : ' no-dot';
+		$has_dots        .= $meta['slider_nav'] ? ' has-nav' : ' no-nav';
+		$has_dynamic_dots = $meta['slider_dynamic_pagi'] ? true : false;
+		$breakpoints      = [
+			0    => [
+				'slidesPerView'  => 1,
+				'slidesPerGroup' => 1,
+				'pagination'     => [
+					'dynamicBullets' => $has_dynamic_dots,
+					'type'           => RenderHelpers::get_data( $meta, 'slider_pagi_type', 'bullet' ),
+				],
+			],
+			768  => [
+				'slidesPerView'  => 1,
+				'slidesPerGroup' => 1,
+				'pagination'     => [
+					'dynamicBullets' => $has_dynamic_dots,
+					'type'           => RenderHelpers::get_data( $meta, 'slider_pagi_type', 'bullet' ),
+				],
+			],
+			1025 => [
+				'slidesPerView'  => 1,
+				'slidesPerGroup' => 1,
+				'pagination'     => [
+					'dynamicBullets' => $has_dynamic_dots,
+					'type'           => RenderHelpers::get_data( $meta, 'slider_pagi_type', 'bullet' ),
+				],
+			],
+		];
+		$slider_options   = [
+			'slidesPerView'  => 1,
+			'slidesPerGroup' => 1,
+			'speed'          => absint( RenderHelpers::get_data( $meta, 'slide_speed', 2000 ) ),
+			'loop'           => ! empty( $meta['slider_loop'] ),
+			'autoHeight'     => ! empty( $meta['slider_auto_height'] ),
+			'preloadImages'  => ! empty( $meta['slider_lazy_load'] ),
+			'lazy'           => ! empty( $meta['slider_lazy_load'] ),
+			'breakpoints'    => $breakpoints,
+		];
+		if ( $meta['slide_autoplay'] ) {
+			$slider_options['autoplay'] = [
+				'delay'                => absint( RenderHelpers::get_data( $meta, 'autoplay_timeout', 5000 ) ),
+				'pauseOnMouseEnter'    => ! empty( $meta['pause_hover'] ),
+				'disableOnInteraction' => false,
+			];
+		}
+		if ( 'fraction' === $meta['slider_pagi_type'] ) {
+			unset( $slider_options['pagination']['dynamicBullets'] );
+		}
+		if ( 'parallax' === $meta['slider_effect'] ) {
+			$slider_options['parallax'] = true;
+		} else {
+			$slider_options['effect'] = $meta['slider_effect'];
+		}
+		if ( 'fade' === $meta['slider_effect'] ) {
+			$slider_options['crossFade'] = true;
+		}
+
+		$slider_options = apply_filters( 'rtsb/elementor/render/hero_slider_dataset', $slider_options, $this->settings );
+		$carouselClass  = 'rtsb-hero-carousel-slider slider-loading rtsb-pos-s ' . $has_dots;
+		return [
+			'data'  => esc_js( wp_json_encode( $slider_options ) ),
+			'class' => $carouselClass,
+		];
 	}
 
 
@@ -400,10 +478,14 @@ class GeneralAddons extends Render {
 	 * @return string
 	 */
 	protected function slider_buttons( $settings ) {
-		$html       = '';
-		$left_icon  = $settings['slider_left_arrow_icon'];
-		$right_icon = $settings['slider_right_arrow_icon'];
-
+		$html             = '';
+		$pagination_type  = '';
+		$left_icon        = $settings['slider_left_arrow_icon'] ?? '';
+		$right_icon       = $settings['slider_right_arrow_icon'] ?? '';
+		$is_hero_carousel = 'rtsb-hero-slider' === $this->unique_name;
+		if ( $is_hero_carousel && ! empty( $settings['slider_pagi_type'] ) ) {
+			$pagination_type = $settings['slider_pagi_type'];
+		}
 		if ( ! empty( $settings['slider_nav'] ) ) {
 			$html .=
 				'<div class="swiper-nav">
@@ -416,7 +498,7 @@ class GeneralAddons extends Render {
 				</div>';
 		}
 
-		$html .= ! empty( $settings['slider_pagi'] ) ? '<div class="swiper-pagination rtsb-pos-s"></div>' : '';
+		$html .= ! empty( $settings['slider_pagi'] ) ? '<div class="swiper-pagination rtsb-pos-s ' . esc_attr( $pagination_type ) . '"></div>' : '';
 
 		return $html;
 	}

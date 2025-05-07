@@ -275,11 +275,16 @@ class QueryArgs {
 	 */
 	private function tax_params(): void {
 		$categories = isset( $this->meta['categories'] ) ? array_filter( $this->meta['categories'] ) : [];
+		$brands     = isset( $this->meta['brands'] ) ? array_filter( $this->meta['brands'] ) : [];
 		$tags       = isset( $this->meta['tags'] ) ? array_filter( $this->meta['tags'] ) : [];
 		$attributes = isset( $this->meta['attributes'] ) ? array_filter( $this->meta['attributes'] ) : [];
 
 		if ( ! empty( $categories ) ) {
 			$this->args['product_category_id'] = $categories;
+		}
+
+		if ( ! empty( $brands ) ) {
+			$this->args['product_brand_id'] = $brands;
 		}
 
 		if ( ! empty( $tags ) ) {

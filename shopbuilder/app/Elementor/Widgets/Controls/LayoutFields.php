@@ -641,12 +641,22 @@ class LayoutFields {
 			'minimum_input_length' => 1,
 		];
 
-		$fields['filter_tags'] = [
+		$fields['filter_tags']   = [
 			'type'                 => 'rt-select2',
 			'label'                => esc_html__( 'Filter By Tags', 'shopbuilder' ),
 			'description'          => esc_html__( 'Select the tags you want to filter, Leave it blank for all tags.', 'shopbuilder' ),
 			'source_name'          => 'taxonomy',
 			'source_type'          => 'product_tag',
+			'multiple'             => true,
+			'label_block'          => true,
+			'minimum_input_length' => 1,
+		];
+		$fields['filter_brands'] = [
+			'type'                 => 'rt-select2',
+			'label'                => esc_html__( 'Filter By Brand', 'shopbuilder' ),
+			'description'          => esc_html__( 'Select the tags you want to filter, Leave it blank for all brands.', 'shopbuilder' ),
+			'source_name'          => 'taxonomy',
+			'source_type'          => 'product_brand',
 			'multiple'             => true,
 			'label_block'          => true,
 			'minimum_input_length' => 1,
@@ -659,7 +669,6 @@ class LayoutFields {
 			'options'     => Fns::get_all_attributes(),
 			'multiple'    => true,
 			'label_block' => true,
-			'condition'   => [ 'tax_filter!' => [ 'yes' ] ],
 		];
 
 		$fields['tax_relation'] = [
@@ -779,6 +788,8 @@ class LayoutFields {
 	 * @return array
 	 */
 	public static function cat_single_query( $obj ) {
+		$all_tag_list = Fns::get_tax_list();
+		unset( $all_tag_list['product_attr'] );
 		$fields['query_section'] = $obj->start_section(
 			esc_html__( 'Query', 'shopbuilder' ),
 			self::$tab
@@ -787,7 +798,7 @@ class LayoutFields {
 		$fields['select_source'] = [
 			'type'        => 'select2',
 			'label'       => esc_html__( 'Select Taxonomy', 'shopbuilder' ),
-			'options'     => Fns::get_tax_list(),
+			'options'     => $all_tag_list,
 			'description' => esc_html__( 'Please select the taxonomy.', 'shopbuilder' ),
 			'label_block' => true,
 			'default'     => 'product_cat',
@@ -806,7 +817,7 @@ class LayoutFields {
 			],
 		];
 
-		$fields['select_tag'] = [
+		$fields['select_tag']   = [
 			'type'                 => 'rt-select2',
 			'label'                => esc_html__( 'Choose Tag', 'shopbuilder' ),
 			'source_name'          => 'taxonomy',
@@ -816,6 +827,18 @@ class LayoutFields {
 			'minimum_input_length' => 1,
 			'condition'            => [
 				'select_source' => [ 'product_tag' ],
+			],
+		];
+		$fields['select_brand'] = [
+			'type'                 => 'rt-select2',
+			'label'                => esc_html__( 'Choose Brand', 'shopbuilder' ),
+			'source_name'          => 'taxonomy',
+			'source_type'          => 'product_brand',
+			'description'          => esc_html__( 'Please select the brand to show.', 'shopbuilder' ),
+			'label_block'          => true,
+			'minimum_input_length' => 1,
+			'condition'            => [
+				'select_source' => [ 'product_brand' ],
 			],
 		];
 

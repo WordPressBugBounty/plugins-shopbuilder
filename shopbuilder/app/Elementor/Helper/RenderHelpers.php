@@ -92,6 +92,7 @@ class RenderHelpers {
 				'author_in'                => self::get_data( $meta, 'filter_author', [] ),
 				'display_by'               => self::get_data( $meta, 'products_filter', 'date' ),
 				'categories'               => self::get_data( $meta, 'filter_categories', [] ),
+				'brands'                   => self::get_data( $meta, 'filter_brands', [] ),
 				'tags'                     => self::get_data( $meta, 'filter_tags', [] ),
 				'attributes'               => self::get_data( $meta, 'filter_attributes', [] ),
 				'relation'                 => self::get_data( $meta, 'tax_relation', 'OR' ),
@@ -350,6 +351,13 @@ class RenderHelpers {
 		if ( ! empty( $settings['single_category'] ) ) {
 			$visibility[] = 'single-cat';
 		}
+		if ( ! empty( $settings['show_brands'] ) ) {
+			$visibility[] = 'brands';
+		}
+
+		if ( ! empty( $settings['single_brand'] ) ) {
+			$visibility[] = 'single-brand';
+		}
 
 		if ( ! empty( $settings['show_swatches'] ) ) {
 			$visibility[] = 'swatches';
@@ -527,6 +535,9 @@ class RenderHelpers {
 
 		if ( in_array( 'single-cat', $metas['visibility'], true ) ) {
 			$classes .= ' show-single-cat';
+		}
+		if ( in_array( 'single-brand', $metas['visibility'], true ) ) {
+			$classes .= ' show-single-brand';
 		}
 
 		if ( ! $is_cat ) {
@@ -1049,15 +1060,17 @@ class RenderHelpers {
 	 */
 	public static function filters_view( $templates, $settings ) {
 		global $wp;
-		$filters       = [];
-		$html          = null;
-		$reset         = ! empty( $settings['reset_btn'] );
-		$reset_mode    = 'show' === $settings['reset_btn_behavior'] ? ' show-reset' : ' ondemand-reset';
-		$reset_text    = ! empty( $settings['reset_btn_text'] ) ? $settings['reset_btn_text'] : esc_html__( 'Reset Filter', 'shopbuilder' );
-		$scroll_mode   = ! empty( $settings['enable_scroll'] ) ? ' has-scroll' : ' no-scroll';
-		$scroll_height = ! empty( $settings['enable_scroll'] ) ? $settings['scroll_height']['size'] : 300;
-
-		$scroll_attr = '';
+		$filters            = [];
+		$html               = null;
+		$reset              = ! empty( $settings['reset_btn'] );
+		$reset_mode         = 'show' === $settings['reset_btn_behavior'] ? ' show-reset' : ' ondemand-reset';
+		$reset_text         = ! empty( $settings['reset_btn_text'] ) ? $settings['reset_btn_text'] : esc_html__( 'Reset Filter', 'shopbuilder' );
+		$scroll_mode        = ! empty( $settings['enable_scroll'] ) ? ' has-scroll' : ' no-scroll';
+		$scroll_height      = ! empty( $settings['enable_scroll'] ) ? $settings['scroll_height']['size'] : 300;
+		$has_mobile_toggle  = ! empty( $settings['filter_mobile_toggle'] );
+		$toggle_class       = $has_mobile_toggle ? ' default-filter-has-toggle' : ' default-filter-no-toggle';
+		$mobile_toggle_text = ! empty( $settings['filter_mobile_toggle_text'] ) ? $settings['filter_mobile_toggle_text'] : esc_html__( 'Click to Filter', 'shopbuilder' );
+		$scroll_attr        = '';
 
 		if ( ! empty( $settings['enable_scroll'] ) ) {
 			$scroll_attr = ' style="--rtsb-filter-scroll-height: ' . absint( $scroll_height ) . 'px;"';
@@ -1091,17 +1104,28 @@ class RenderHelpers {
 			$form_action = preg_replace( '%\/page/[0-9]+%', '', home_url( trailingslashit( $wp->request ) ) );
 		}
 		$args = [
-			'filters'     => $filters,
-			'scroll_mode' => $scroll_mode,
-			'reset_mode'  => $reset_mode,
-			'reset'       => $reset,
-			'scroll_attr' => $scroll_attr,
-			'reset_text'  => $reset_text,
-			'settings'    => $settings,
-			'form_action' => $form_action,
+			'filters'      => $filters,
+			'scroll_mode'  => $scroll_mode,
+			'reset_mode'   => $reset_mode,
+			'reset'        => $reset,
+			'scroll_attr'  => $scroll_attr,
+			'toggle_class' => $toggle_class,
+			'reset_text'   => $reset_text,
+			'settings'     => $settings,
+			'form_action'  => $form_action,
 		];
 
-		$html .= '<div class="rtsb-default-archive-filters">';
+		$html .= '<div class="rtsb-default-archive-filters' . esc_attr( $toggle_class ) . '">';
+
+		if ( $has_mobile_toggle ) {
+			$html .= '<div class="rtsb-filter-mobile-toggle">
+                            <button class="product-filter-toggle">
+                                <span class="icon"><i aria-hidden="true" class="toggle-icon rtsb-icon rtsb-icon-filter"></i></span>
+                                <span class="text reset-text">' . esc_html( $mobile_toggle_text ) . '</span>
+                                <span></span>
+                            </button>
+                        </div>';
+		}
 
 		$html .= Fns::load_template( $templates['layout'], $args, true );
 		$html .= '</div>';
@@ -1367,7 +1391,7 @@ class RenderHelpers {
 
 			$active_tax        = in_array( $tax->slug, $active_option, true ) ? ' checked' : '';
 			$active_tax_parent = in_array( $tax->slug, $active_option, true ) ? ' active' : '';
-			$term_children     = 'product_cat' === $tax->taxonomy ? get_term_children( $tax->term_id, $tax->taxonomy ) : [];
+			$term_children     = in_array( $tax->taxonomy, [ 'product_cat', 'product_brand' ], true ) ? get_term_children( $tax->term_id, $tax->taxonomy ) : [];
 			$taxonomy          = $tax->taxonomy;
 			$product_count     = $tax->count;
 

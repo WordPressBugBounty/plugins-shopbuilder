@@ -4,7 +4,7 @@ Donate link:
 Tags: Elementor, Woocommerce Builder, Elementor Woocommerce Builder, Woocommerce, Woocommerce Product
 Requires at least: 5.5
 Tested up to: 6.8
-Stable tag: 2.6.3
+Stable tag: 2.6.4
 Requires PHP: 7.4
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -23,7 +23,7 @@ With ShopBuilder, you can craft captivating and highly functional online shoppin
 == 🏆 ShopBuilder Elementor WooCommerce Builder Features ==
 
 👉 128+ Widgets
-👉 21+ Modules - Quick View, Compare, Wishlist, [Variation Swatches](https://wordpress.org/plugins/woo-product-variation-swatches/), [Variation Gallery](https://wordpress.org/plugins/woo-product-variation-gallery/), Mini Cart, Product Size Chart, Customize My Account, Pre-Order, Currency Switcher, Product Add-Ons, Checkout Fields Editor, Sales Notification, Flash Sale Countdown, Quick Checkout, Multi-Step Checkout, Shopify Checkout, Smart Coupons and more.
+👉 24+ Modules - Quick View, Compare, Wishlist, [Variation Swatches](https://wordpress.org/plugins/woo-product-variation-swatches/), [Variation Gallery](https://wordpress.org/plugins/woo-product-variation-gallery/), Mini Cart, Product Size Chart, Customize My Account, Pre-Order, Currency Switcher, Product Add-Ons, Checkout Fields Editor, Sales Notification, Flash Sale Countdown, Quick Checkout, Multi-Step Checkout, Shopify Checkout, Smart Coupons and more.
 👉 16+ Page Templates Build
 👉 40+ Pre-Built Templates
 👉 Build WooCommerce pages like **Shop**, **Single**, **Cart**, **Archive pages** etc.
@@ -417,6 +417,16 @@ If you like the ShopBuilder Plugin, then consider checking out our other WordPre
 == Screenshots ==
 
 == Changelog ==
+
+= 2.6.4 (May 07, 2025) =
+* New: Introduced support for Product Brands across the General Elementor Widgets.
+* New: Product Filters widget (Shop Page) now supports filtering by Product Brands.
+* New: Product Brand control is included on Single Product page Product Meta widget.
+* New: Introduced a new control for mobile filter toggle in Product Filters widget.
+* Add: Enhanced compatibility with new modules and features.
+* Fix: Resolved a data-saving issue affecting the Settings Repeater field and tabs.
+* Fix: Addressed an admin UI bug where the menu icon size appeared too small.
+* Enhancement: Optimized Template Builder import system to exclude unnecessary post-content.
 
 = 2.6.3 (April 10, 2025) =
 * Add: Enhanced compatibility with new modules and features.

@@ -628,6 +628,7 @@ class ControlSelectors {
 
 			'rtsb-product-image'           => [
 				'image_width'                    => '{{WRAPPER}} .rtsb-product-images .woocommerce-product-gallery__image a > img',
+				'image_border'                   => '{{WRAPPER}} .rtwpvg-wrapper .rtwpvg-slider-wrapper,{{WRAPPER}} .rtsb-product-images .woocommerce-product-gallery__image',
 				'image_border_radius'            => '{{WRAPPER}} .rtsb-product-images .woocommerce-product-gallery__image',
 				'gallery_thumbs_column'          => '{{WRAPPER}} div.images .flex-control-thumbs li',
 				// 'gallery_thumbs_column_gap'      => '{{WRAPPER}} div.images .flex-control-thumbs',
@@ -880,10 +881,10 @@ class ControlSelectors {
 				'orderby_radius'             => '{{WRAPPER}} .rtsb-archive-catalog-ordering .woocommerce-ordering .orderby',
 			],
 			'rtsb-product-filters'         => [
-				'filter_types'  => [
+				'filter_types'      => [
 					'column_gap' => '{{WRAPPER}} .rtsb-archive-catalog-ordering',
 				],
-				'filter_header' => [
+				'filter_header'     => [
 					'typography' => '{{WRAPPER}} .rtsb-default-archive-filters .rtsb-default-filter-header h3',
 					'color'      => '{{WRAPPER}} .rtsb-default-archive-filters .rtsb-default-filter-header h3',
 					'bg_color'   => '{{WRAPPER}} .rtsb-default-archive-filters .rtsb-default-filter-header h3',
@@ -891,7 +892,7 @@ class ControlSelectors {
 					'border'     => '{{WRAPPER}} .rtsb-default-archive-filters .rtsb-default-filter-header h3',
 					'margin'     => '{{WRAPPER}} .rtsb-default-archive-filters .rtsb-default-filter-header h3',
 				],
-				'filter_title'  => [
+				'filter_title'      => [
 					'typography' => '{{WRAPPER}} .rtsb-default-archive-filters .default-filter-title-wrapper h3',
 					'color'      => '{{WRAPPER}} .rtsb-default-archive-filters .default-filter-title-wrapper h3',
 					'bg_color'   => '{{WRAPPER}} .rtsb-default-archive-filters .default-filter-title-wrapper h3',
@@ -899,7 +900,7 @@ class ControlSelectors {
 					'border'     => '{{WRAPPER}} .rtsb-default-archive-filters .default-filter-title-wrapper h3',
 					'margin'     => '{{WRAPPER}} .rtsb-default-archive-filters .default-filter-title-wrapper h3',
 				],
-				'search_styles' => [
+				'search_styles'     => [
 					'typography'                => '{{WRAPPER}} .rtsb-default-archive-filters .rtsb-default-product-search .rtsb-default-search-field',
 					'button_typography'         => '{{WRAPPER}} .rtsb-default-archive-filters .rtsb-default-product-search .rtsb-search-submit',
 					'icon_typography'           => '{{WRAPPER}} .rtsb-default-archive-filters .rtsb-default-product-search .rtsb-search-submit',
@@ -929,7 +930,7 @@ class ControlSelectors {
 					'button_margin'             => '{{WRAPPER}} .rtsb-default-archive-filters .rtsb-default-product-search .rtsb-search-submit',
 					'wrapper_margin'            => '{{WRAPPER}} .rtsb-default-archive-filters .rtsb-default-product-search',
 				],
-				'rating'        => [
+				'rating'            => [
 					'typography'            => '{{WRAPPER}} .rtsb-product-default-filters.rtsb-ratings .rtsb-default-rating-star-wrapper .rtsb-default-rating-star',
 					'rating_color'          => '{{WRAPPER}} .rtsb-product-default-filters.rtsb-ratings .rtsb-default-rating-star-wrapper .rtsb-default-rating-star.inactive',
 					'count_position'        => '{{WRAPPER}} .rtsb-product-default-filters.rtsb-ratings .rtsb-default-rating-star-wrapper + .rtsb-count',
@@ -938,7 +939,7 @@ class ControlSelectors {
 					'rating_padding'        => '{{WRAPPER}} .rtsb-product-default-filters.rtsb-ratings .product-default-filters .rtsb-default-filter-group',
 					'rating_margin'         => '{{WRAPPER}} .rtsb-product-default-filters.rtsb-ratings .product-default-filters .rtsb-default-filter-group',
 				],
-				'apply_btn'     => [
+				'apply_btn'         => [
 					'typography'         => '{{WRAPPER}} .rtsb-default-archive-filters .rtsb-apply-filters-btn .rtsb-apply-filters',
 					'apply_btn_width'    => '{{WRAPPER}} .rtsb-default-archive-filters .rtsb-apply-filters-btn .rtsb-apply-filters',
 					'icon_display'       => '{{WRAPPER}} .rtsb-default-archive-filters .rtsb-apply-filters-btn .rtsb-apply-filters .icon',
@@ -955,7 +956,7 @@ class ControlSelectors {
 					'padding'            => '{{WRAPPER}} .rtsb-default-archive-filters .rtsb-apply-filters-btn .rtsb-apply-filters',
 					'margin'             => '{{WRAPPER}} .rtsb-default-archive-filters .rtsb-apply-filters-btn .rtsb-apply-filters',
 				],
-				'reset_btn'     => [
+				'reset_btn'         => [
 					'typography'         => '{{WRAPPER}} .rtsb-product-default-filters.rtsb-reset .product-default-filter-reset',
 					'btn_width'          => '{{WRAPPER}} .rtsb-product-default-filters.rtsb-reset .product-default-filter-reset',
 					'color'              => '{{WRAPPER}} .rtsb-product-default-filters.rtsb-reset .product-default-filter-reset',
@@ -968,7 +969,20 @@ class ControlSelectors {
 					'padding'            => '{{WRAPPER}} .rtsb-product-default-filters.rtsb-reset .product-default-filter-reset',
 					'margin'             => '{{WRAPPER}} .rtsb-product-default-filters.rtsb-reset .product-default-filter-reset',
 				],
-				'filter_items'  => [
+				'mobile_toggle_btn' => [
+					'typography'         => '{{WRAPPER}} .rtsb-default-archive-filters  .product-filter-toggle',
+					'btn_width'          => '{{WRAPPER}} .rtsb-default-archive-filters  .product-filter-toggle',
+					'color'              => '{{WRAPPER}} .rtsb-default-archive-filters  .product-filter-toggle',
+					'bg_color'           => '{{WRAPPER}} .rtsb-default-archive-filters  .product-filter-toggle',
+					'hover_color'        => '{{WRAPPER}} .rtsb-default-archive-filters  .product-filter-toggle:hover',
+					'hover_bg_color'     => '{{WRAPPER}} .rtsb-default-archive-filters  .product-filter-toggle:hover',
+					'border'             => '{{WRAPPER}} .rtsb-default-archive-filters  .product-filter-toggle',
+					'border_hover_color' => '{{WRAPPER}} .rtsb-default-archive-filters  .product-filter-toggle:hover',
+					'border_radius'      => '{{WRAPPER}} .rtsb-default-archive-filters  .product-filter-toggle',
+					'padding'            => '{{WRAPPER}} .rtsb-default-archive-filters  .product-filter-toggle',
+					'margin'             => '{{WRAPPER}} .rtsb-default-archive-filters  .product-filter-toggle',
+				],
+				'filter_items'      => [
 					'typography'                => '{{WRAPPER}} .rtsb-product-default-filters input.rtsb-checkbox-filter + label, {{WRAPPER}} .rtsb-product-default-filters input.rtsb-radio-filter + label, {{WRAPPER}} .rtsb-product-default-filters .input-type-checkbox .rtsb-default-filter-group .rtsb-count, {{WRAPPER}} .rtsb-product-default-filters .input-type-radio .rtsb-default-filter-group .rtsb-count, {{WRAPPER}} .rtsb-product-default-filters.rtsb-color .rtsb-color-filter .default-filter-attr-name, {{WRAPPER}} .rtsb-product-default-filters.rtsb-color .rtsb-default-filter-group .rtsb-count, {{WRAPPER}} .rtsb-product-default-filters.rtsb-button .rtsb-button-filter .default-filter-attr-name, {{WRAPPER}} .rtsb-product-default-filters.rtsb-button .rtsb-default-filter-group .rtsb-count, {{WRAPPER}} .rtsb-product-default-filters.rtsb-ratings .rtsb-default-rating-star-wrapper + .rtsb-count,{{WRAPPER}} .rtsb-product-default-filters  .rtsb-product-count,{{WRAPPER}} .rtsb-archive-default-filters-wrapper .price-inputs label',
 					'count_display'             => '{{WRAPPER}} .rtsb-product-default-filters .input-type-checkbox .rtsb-default-filter-group .rtsb-count, {{WRAPPER}} .rtsb-product-default-filters .input-type-radio .rtsb-default-filter-group .rtsb-count, {{WRAPPER}} .rtsb-product-default-filters.rtsb-color .rtsb-default-filter-group .rtsb-count,{{WRAPPER}} .rtsb-product-default-filters.rtsb-button .rtsb-default-filter-group .rtsb-count,{{WRAPPER}} .rtsb-product-default-filters .rtsb-default-filter-group .rtsb-product-count',
 					'color'                     => '{{WRAPPER}} .rtsb-product-default-filters .input-type-checkbox .rtsb-default-filter-group label, {{WRAPPER}} .rtsb-product-default-filters .input-type-radio .rtsb-default-filter-group label, {{WRAPPER}} .rtsb-product-default-filters.rtsb-color .rtsb-color-filter label, {{WRAPPER}} .rtsb-product-default-filters.rtsb-button .rtsb-button-filter label',
@@ -1750,6 +1764,20 @@ class ControlSelectors {
 					'padding'            => '{{WRAPPER}} .rtsb-elementor-container .rtsb-category-list li > a',
 					'margin'             => '{{WRAPPER}} .rtsb-elementor-container .rtsb-category-list li > a',
 					'wrapper_margin'     => '{{WRAPPER}} .rtsb-elementor-container .rtsb-product-category',
+				],
+				'product_brands'      => [
+					'typography'         => '{{WRAPPER}} .rtsb-elementor-container .rtsb-brand-list li > a',
+					'alignment'          => '{{WRAPPER}} .rtsb-elementor-container .rtsb-product-content .rtsb-brand-category',
+					'color'              => '{{WRAPPER}} .rtsb-elementor-container .rtsb-brand-list li > a',
+					'bg_color'           => '{{WRAPPER}} .rtsb-elementor-container .rtsb-brand-list li > a',
+					'hover_color'        => '{{WRAPPER}} .rtsb-elementor-container .rtsb-brand-list li > a:hover',
+					'hover_bg_color'     => '{{WRAPPER}} .rtsb-elementor-container .rtsb-brand-list li > a:hover',
+					'border'             => '{{WRAPPER}} .rtsb-elementor-container .rtsb-brand-list li > a',
+					'border_hover_color' => '{{WRAPPER}} .rtsb-elementor-container .rtsb-brand-list li > a:hover',
+					'border_radius'      => '{{WRAPPER}} .rtsb-elementor-container .rtsb-brand-list li > a',
+					'padding'            => '{{WRAPPER}} .rtsb-elementor-container .rtsb-brand-list li > a',
+					'margin'             => '{{WRAPPER}} .rtsb-elementor-container .rtsb-brand-list li > a',
+					'wrapper_margin'     => '{{WRAPPER}} .rtsb-elementor-container .rtsb-brand-category',
 				],
 				'pagination'          => [
 					'typography'          => '{{WRAPPER}} .rtsb-elementor-container .rtsb-pagination ul.pagination-list li a, {{WRAPPER}} .rtsb-elementor-container .rtsb-pagination ul.pagination-list li span, {{WRAPPER}} .rtsb-elementor-container .rtsb-pagination-wrap .rtsb-load-more button,  {{WRAPPER}} .rtsb-elementor-container .rtsb-archive-pagination-wrap .rtsb-load-more button',

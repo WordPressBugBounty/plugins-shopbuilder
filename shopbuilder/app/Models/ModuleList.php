@@ -1287,7 +1287,7 @@ class ModuleList extends ListModel {
 						'label' => esc_html__( 'Enable Back-Order?', 'shopbuilder' ),
 						'help'  => esc_html__( 'Switch on to enable back-order module.', 'shopbuilder' ),
 					],
-					'fields'       => Fns::pro_version_notice( '1.3.0' ),
+					'fields'       => Fns::pro_version_notice( '1.3.0', 'general', 'Back-Order', false ),
 				]
 			),
 			'sticky_add_to_cart'            => apply_filters(
@@ -1301,7 +1301,7 @@ class ModuleList extends ListModel {
 						'label' => esc_html__( 'Enable Sticky Add-To-Cart?', 'shopbuilder' ),
 						'help'  => esc_html__( 'Switch on to enable sticky add-to-cart module.', 'shopbuilder' ),
 					],
-					'fields'       => Fns::pro_version_notice( '1.7.0' ),
+					'fields'       => Fns::pro_version_notice( '1.7.0', 'general', 'Sticky Add-To-Cart', false ),
 				]
 			),
 			'shopify_checkout'              => apply_filters(
@@ -1332,7 +1332,7 @@ class ModuleList extends ListModel {
 					],
 				]
 			),
-			'smart_coupons'          => apply_filters(
+			'smart_coupons'                 => apply_filters(
 				'rtsb/module/smart_coupons/options',
 				[
 					'id'           => 'smart_coupons',
@@ -1343,21 +1343,21 @@ class ModuleList extends ListModel {
 						'label' => esc_html__( 'Enable Smart Coupons?', 'shopbuilder' ),
 						'help'  => esc_html__( 'Switch on to enable smart coupons module.', 'shopbuilder' ),
 					],
-					'fields'       => Fns::pro_version_notice( '1.10.0' ),
+					'fields'       => Fns::pro_version_notice( '1.10.0', 'general', 'ShopBuilder Pro', false ),
 				]
 			),
-			'bulk_discounts'         => apply_filters(
+			'bulk_discounts'                => apply_filters(
 				'rtsb/module/bulk_discounts/options',
 				[
 					'id'           => 'bulk_discounts',
 					'active'       => '',
 					'title'        => esc_html__( 'Bulk Discounts', 'shopbuilder' ),
 					'active_field' => [
-						'label' => esc_html__( 'Enable Bulk Discount?', 'shopbuilder' ),
-						'help'  => esc_html__( 'Switch on to enable Discount Rules module.', 'shopbuilder' ),
+						'label' => esc_html__( 'Enable Bulk Discounts?', 'shopbuilder' ),
+						'help'  => esc_html__( 'Switch on to enable bulk discounts module.', 'shopbuilder' ),
 					],
 					'package'      => $this->pro_package(),
-					'fields'       => Fns::pro_version_notice( '1.10.0' ),
+					'fields'       => Fns::pro_version_notice( '1.10.0', 'general', 'ShopBuilder Pro', false ),
 				]
 			),
 			'bogo_bxgy_free_gift_discounts' => apply_filters(
@@ -1371,7 +1371,35 @@ class ModuleList extends ListModel {
 						'help'  => esc_html__( 'Switch on to enable Buy X Get Y | BOGO module.', 'shopbuilder' ),
 					],
 					'package'      => $this->pro_package(),
-					'fields'       => Fns::pro_version_notice( '1.11.0' ),
+					'fields'       => Fns::pro_version_notice( '1.11.0', 'general', 'ShopBuilder Pro', false ),
+				]
+			),
+			'partial_pay'                   => apply_filters(
+				'rtsb/module/partial_pay/options',
+				[
+					'id'           => 'partial_pay',
+					'active'       => '',
+					'title'        => esc_html__( 'Partial Pay', 'shopbuilder' ),
+					'active_field' => [
+						'label' => esc_html__( 'Enable Partial Pay?', 'shopbuilder' ),
+						'help'  => esc_html__( 'Switch on to enable partial pay module.', 'shopbuilder' ),
+					],
+					'package'      => $this->pro_package(),
+					'fields'       => Fns::pro_version_notice( '1.12.0', 'general', 'ShopBuilder Pro', false ),
+				]
+			),
+			'gift_card'                     => apply_filters(
+				'rtsb/module/gift_card/options',
+				[
+					'id'           => 'gift_card',
+					'active'       => '',
+					'title'        => esc_html__( 'Gift Card', 'shopbuilder' ),
+					'active_field' => [
+						'label' => esc_html__( 'Enable Gift Card?', 'shopbuilder' ),
+						'help'  => esc_html__( 'Switch on to enable Gift Card module.', 'shopbuilder' ),
+					],
+					'package'      => $this->pro_package(),
+					'fields'       => Fns::pro_version_notice( '1.10.0' ),
 				]
 			),
 		];

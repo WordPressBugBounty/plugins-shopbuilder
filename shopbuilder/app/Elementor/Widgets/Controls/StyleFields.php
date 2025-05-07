@@ -879,6 +879,76 @@ class StyleFields {
 	}
 
 	/**
+	 * Product Categories Section
+	 *
+	 * @param object $obj Reference object.
+	 *
+	 * @return array
+	 */
+	public static function product_brands( $obj ): array {
+		$css_selectors = $obj->selectors['product_brands'];
+		$title         = esc_html__( 'Product Brands', 'shopbuilder' );
+		$condition     = [
+			'show_brands' => [ 'yes' ],
+		];
+		$selectors     = [
+			'typography'         => $css_selectors['typography'],
+			'alignment'          => [ $css_selectors['alignment'] => 'justify-content: {{VALUE}};' ],
+			'color'              => [ $css_selectors['color'] => 'color: {{VALUE}};' ],
+			'bg_color'           => [ $css_selectors['bg_color'] => 'background-color: {{VALUE}};' ],
+			'hover_color'        => [ $css_selectors['hover_color'] => 'color: {{VALUE}};' ],
+			'hover_bg_color'     => [ $css_selectors['hover_bg_color'] => 'background-color: {{VALUE}};' ],
+			'border'             => $css_selectors['typography'],
+			'border_hover_color' => [ $css_selectors['border_hover_color'] => 'border-color: {{VALUE}};' ],
+			'border_radius'      => [ $css_selectors['border_radius'] => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};' ],
+			'padding'            => [ $css_selectors['padding'] => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};' ],
+			'margin'             => [ $css_selectors['margin'] => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};' ],
+			'wrapper_margin'     => [ $css_selectors['wrapper_margin'] => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};' ],
+		];
+
+		$fields = ControlHelper::general_elementor_style( 'product_brands', $title, $obj, $condition, $selectors );
+
+		$fields['product_brands_alignment']['options'] = [
+			'flex-start' => [
+				'title' => esc_html__( 'Left', 'shopbuilder' ),
+				'icon'  => 'eicon-text-align-left',
+			],
+			'center'     => [
+				'title' => esc_html__( 'Center', 'shopbuilder' ),
+				'icon'  => 'eicon-text-align-center',
+			],
+			'flex-end'   => [
+				'title' => esc_html__( 'Right', 'shopbuilder' ),
+				'icon'  => 'eicon-text-align-right',
+			],
+		];
+
+		$extra_controls = [];
+
+		$extra_controls['product_brands_radius'] = [
+			'mode'       => 'responsive',
+			'type'       => 'dimensions',
+			'label'      => esc_html__( 'Border Radius', 'shopbuilder' ),
+			'size_units' => [ 'px', '%', 'em' ],
+			'selectors'  => $selectors['border_radius'],
+		];
+
+		$fields = Fns::insert_controls( 'product_brands_border_hover_color', $fields, $extra_controls, true );
+
+		$extra_controls['product_brands_wrapper_margin'] = [
+			'mode'       => 'responsive',
+			'type'       => 'dimensions',
+			'label'      => esc_html__( 'Wrapper Margin', 'shopbuilder' ),
+			'size_units' => [ 'px', '%', 'em' ],
+			'selectors'  => $selectors['wrapper_margin'],
+		];
+
+		$fields = Fns::insert_controls( 'product_brands_margin', $fields, $extra_controls, true );
+
+		return apply_filters( 'rtsb/elements/elementor/brands_style_control', $fields, $obj );
+	}
+
+	/**
 	 * Image Section
 	 *
 	 * @param object $obj Reference object.

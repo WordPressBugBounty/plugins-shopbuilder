@@ -73,7 +73,7 @@ class RtwpvgSupport {
 	 */
 	public function rtsb_product_image_selectors( $selectors ) {
 		$selectors['image_width']         = $selectors['image_width'] . ',{{WRAPPER}} .rtsb-product-images .rtwpvg-single-image-container img';
-		$selectors['image_border_radius'] = $selectors['image_width'] . ',{{WRAPPER}} .rtsb-product-images .rtwpvg-single-image-container img';
+		$selectors['image_border_radius'] = $selectors['image_width'] . ',{{WRAPPER}} .rtsb-product-images .rtwpvg-single-image-container img,{{WRAPPER}} .rtwpvg-wrapper .rtwpvg-slider-wrapper';
 		return $selectors;
 	}
 

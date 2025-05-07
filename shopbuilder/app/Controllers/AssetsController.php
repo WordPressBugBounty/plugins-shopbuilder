@@ -425,6 +425,7 @@ class AssetsController {
 				width: auto;
 				height: 22px;
 				padding: 4px 0;
+				box-sizing: content-box;
 			}
 			.post-type-rtsb_builder li#wp-admin-bar-WPML_ALS_all,
 			.post-type-rtsb_builder li.language_all{

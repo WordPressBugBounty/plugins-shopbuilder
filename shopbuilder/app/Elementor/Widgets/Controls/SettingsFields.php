@@ -99,7 +99,26 @@ class SettingsFields {
 			'label_off'   => esc_html__( 'Off', 'shopbuilder' ),
 			'condition'   => [ 'layout!' => [ 'grid-layout2', 'slider-layout2' ] ],
 		];
-
+		$fields['show_brands']     = [
+			'type'        => 'switch',
+			'label'       => esc_html__( 'Show Product Brand?', 'shopbuilder' ),
+			'description' => esc_html__( 'Switch on to show product brand.', 'shopbuilder' ),
+			'label_on'    => esc_html__( 'On', 'shopbuilder' ),
+			'label_off'   => esc_html__( 'Off', 'shopbuilder' ),
+			'condition'   => [ 'layout!' => [ 'grid-layout2', 'slider-layout2' ] ],
+		];
+		$fields['single_brand']    = [
+			'type'        => 'switch',
+			'label'       => esc_html__( 'Show Only First Brand?', 'shopbuilder' ),
+			'description' => esc_html__( 'Switch on to show only the first brand.', 'shopbuilder' ),
+			'label_on'    => esc_html__( 'On', 'shopbuilder' ),
+			'label_off'   => esc_html__( 'Off', 'shopbuilder' ),
+			'default'     => 'yes',
+			'condition'   => [
+				'show_brands' => [ 'yes' ],
+				'layout!'     => [ 'grid-layout2', 'slider-layout2' ],
+			],
+		];
 		$fields['single_category'] = [
 			'type'        => 'switch',
 			'label'       => esc_html__( 'Show Only First Category?', 'shopbuilder' ),

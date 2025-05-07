@@ -110,6 +110,18 @@ $has_featured_img   = $raw_settings['show_featured_image'] ? 'show-feature-img' 
 				</div>
 				<?php
 			}
+			/**
+			 * Product Brands.
+			 */
+			if ( in_array( 'brands', $items, true ) ) {
+				?>
+				<div class="rtsb-brand-category">
+					<?php
+					Fns::get_brands_list( $p_id );
+					?>
+				</div>
+				<?php
+			}
 
 			/**
 			 * Product Swatches.

@@ -42,8 +42,35 @@ class ProductImages extends ElementorWidgetBase {
 	 * @return array
 	 */
 	public function widget_fields() {
-		return ProductImagesSettings::widget_fields( $this );
+		return $this->modify_widget_fields();
 	}
+
+	/**
+	 * Widget Field
+	 *
+	 * @return array
+	 */
+	public function modify_widget_fields() {
+		$fields                         = ProductImagesSettings::widget_fields( $this );
+		$extra_controls['image_border'] = [
+			'mode'           => 'group',
+			'type'           => 'border',
+			'selector'       => $this->selectors['image_border'],
+			'size_units'     => [ 'px' ],
+			'fields_options' => [
+				'border' => [
+					'label'       => esc_html__( 'Border', 'shopbuilder' ),
+					'label_block' => true,
+				],
+				'color'  => [
+					'label' => esc_html__( 'Border Color', 'shopbuilder' ),
+				],
+			],
+		];
+		$fields                         = Fns::insert_controls( 'image_width', $fields, $extra_controls, true );
+		return $fields;
+	}
+
 
 	/**
 	 * Widget Field.

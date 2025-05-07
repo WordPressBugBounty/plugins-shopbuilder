@@ -88,6 +88,7 @@ class ElementList extends ListModel {
 				+ $this->cart_page_widget_list()
 				+ $this->checkout_page_widget_list()
 				+ $this->thankyou_page_widget_list()
+				+ $this->orderpay_page_widget_list()
 				+ $this->my_account_page_widget_list()
 				+ $this->myaccount_auth_page_widget_list();
 
@@ -331,6 +332,17 @@ class ElementList extends ListModel {
 				[
 					'id'       => 'coupon_list',
 					'title'    => esc_html__( 'Coupon List', 'shopbuilder' ),
+					'category' => 'general',
+					'active'   => '',
+					'package'  => $this->pro_package(),
+					'fields'   => [],
+				]
+			),
+			'hero_slider'               => apply_filters(
+				'rtsb/elements/hero_slider/options',
+				[
+					'id'       => 'hero_slider',
+					'title'    => esc_html__( 'Hero Slider', 'shopbuilder' ),
 					'category' => 'general',
 					'active'   => '',
 					'package'  => $this->pro_package(),
@@ -734,6 +746,17 @@ class ElementList extends ListModel {
 				[
 					'id'       => 'advance_product_tabs',
 					'title'    => esc_html__( 'Advanced Product Tabs', 'shopbuilder' ),
+					'category' => 'product',
+					'active'   => '',
+					'package'  => $this->pro_package(),
+					'fields'   => [],
+				]
+			),
+			'product_qr_code'                => apply_filters(
+				'rtsb/elements/product_qr_code/options',
+				[
+					'id'       => 'product_qr_code',
+					'title'    => esc_html__( 'QR Code', 'shopbuilder' ),
 					'category' => 'product',
 					'active'   => '',
 					'package'  => $this->pro_package(),
@@ -1507,6 +1530,28 @@ class ElementList extends ListModel {
 					'fields'        => [],
 				]
 			),
+		];
+	}
+	/**
+	 * Checkout Page Order Pay Widget List.
+	 *
+	 * @return array
+	 */
+	protected function orderpay_page_widget_list() {
+		return [
+			'order_pay_form' => apply_filters(
+				'rtsb/elements/order_pay_form/options',
+				[
+					'id'            => 'order_pay_form',
+					'title'         => esc_html__( 'Order Pay Form', 'shopbuilder' ),
+					'category'      => 'myaccount_dashboard',
+					'is_front_page' => 'all_myaccount_dashboard_inner',
+					'active'        => 'on',
+					'package'       => $this->pro_package(),
+					'fields'        => [],
+				]
+			),
+
 		];
 	}
 

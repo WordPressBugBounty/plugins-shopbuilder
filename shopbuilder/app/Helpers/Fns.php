@@ -158,11 +158,22 @@ class Fns {
 	 * @return mixed|string
 	 */
 	public static function stripslashes_value( $data ) {
-		if ( is_string( $data ) && strpos( $data, '\\' ) !== false ) {
-			return stripslashes( $data );
-		} elseif ( is_array( $data ) ) {
+		if ( is_array( $data ) ) {
 			foreach ( $data as $key => $value ) {
 				$data[ $key ] = self::stripslashes_value( $value );
+			}
+		} elseif ( is_string( $data ) ) {
+			$trimmed = trim( $data );
+			// Try to decode JSON.
+			$json = json_decode( $trimmed, true );
+			if ( json_last_error() === JSON_ERROR_NONE && is_array( $json ) ) {
+				// Recursively stripslashes on decoded array.
+				$json = self::stripslashes_value( $json );
+				return wp_json_encode( $json, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
+			}
+			// Not valid JSON, just stripslashes if needed.
+			if ( strpos( $data, '\\' ) !== false ) {
+				return stripslashes( $data );
 			}
 		}
 
@@ -1171,6 +1182,23 @@ class Fns {
 		self::$cache[ $cache_key ] = $terms;
 		return $terms;
 	}
+	/**
+	 * Get all product attribute  taxonomy by id
+	 *
+	 * @param array $term_ids Term id.
+	 *
+	 * @return array
+	 */
+	public static function tax_filter_attr_taxonomy( $term_ids ) {
+		$taxonomies = [];
+		foreach ( $term_ids as $id ) {
+			$term = get_term( $id );
+			if ( ! is_wp_error( $term ) && $term ) {
+				$taxonomies[] = $term->taxonomy;
+			}
+		}
+		return array_unique( $taxonomies );
+	}
 
 	/**
 	 * Get all terms by attributes
@@ -1490,6 +1518,39 @@ class Fns {
 					'</li>'
 				)
 			);
+			?>
+		</ul>
+
+		<?php
+		self::print_html( ob_get_clean() );
+	}
+	/**
+	 * Brands HTML
+	 *
+	 * @param int    $id Product ID.
+	 * @param string $class Custom class.
+	 *
+	 * @return void|string
+	 */
+	public static function get_brands_list( $id, $class = 'rtsb-brand-outline' ) {
+		$terms = get_the_terms( $id, 'product_brand' );
+		if ( empty( $id ) || empty( $terms ) || is_wp_error( $terms ) ) {
+			return '';
+		}
+		ob_start();
+		?>
+
+		<ul class="rtsb-brand-list <?php echo esc_attr( $class ); ?>">
+			<?php
+			$brand_list = get_the_term_list(
+				$id,
+				'product_brand',
+				'<li class="rtsb-brand-list-item">',
+				'</li><li class="rtsb-brand-list-item">',
+				'</li>'
+			);
+
+			self::print_html( $brand_list );
 			?>
 		</ul>
 
@@ -2463,12 +2524,58 @@ class Fns {
 
 		if ( 'product_cat' === $taxonomy ) {
 			$args['product_category_id'] = $terms;
+		} elseif ( 'product_brand' === $taxonomy ) {
+			$args['product_brand_id'] = $terms;
 		} else {
 			$args['product_tag_id'] = $terms;
 		}
 
 		$query = new WC_Product_Query( $args );
 		return ! empty( $query->get_products() ) ? count( $query->get_products() ) : 0;
+	}
+	public static function count_products_by_attribute_terms( $term_ids, $relation = 'AND' ) {
+		if ( empty( $term_ids ) || ! is_array( $term_ids ) ) {
+			return 0;
+		}
+
+		$terms_by_taxonomy = [];
+
+		foreach ( $term_ids as $term_id ) {
+			$term = get_term( $term_id );
+			if ( ! is_wp_error( $term ) && $term ) {
+				if ( ! isset( $terms_by_taxonomy[ $term->taxonomy ] ) ) {
+					$terms_by_taxonomy[ $term->taxonomy ] = [];
+				}
+				$terms_by_taxonomy[ $term->taxonomy ][] = $term_id;
+			}
+		}
+
+		if ( empty( $terms_by_taxonomy ) ) {
+			return 0;
+		}
+
+		$args = [
+			'status'    => 'publish',
+			'limit'     => -1,
+			'return'    => 'ids',
+			'tax_query' => [  // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
+				'relation' => strtoupper( $relation ),
+			],
+		];
+
+		foreach ( $terms_by_taxonomy as $taxonomy => $terms ) {
+			$args['tax_query'][] = [
+				'taxonomy' => $taxonomy,
+				'field'    => 'term_id',
+				'terms'    => $terms,
+				'operator' => 'IN',
+			];
+		}
+
+		$query    = new WC_Product_Query( $args );
+		$products = $query->get_products();
+
+		return count( $products );
 	}
 
 	/**

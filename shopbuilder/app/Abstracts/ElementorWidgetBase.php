@@ -7,6 +7,7 @@
 
 namespace RadiusTheme\SB\Abstracts;
 
+use Elementor\Group_Control_Css_Filter;
 use Elementor\Plugin;
 use Elementor\Repeater;
 use Elementor\Widget_Base;
@@ -297,7 +298,13 @@ abstract class ElementorWidgetBase extends Widget_Base {
 					if ( isset( $value['mode'] ) && 'responsive' === $value['mode'] ) {
 						unset( $value['mode'] );
 						$repeater->add_responsive_control( $rf_id, $value );
-					} else {
+					} elseif ( isset( $value['mode'] ) && 'group' === $value['mode'] ) {
+                        $type          = $value['type'];
+                        $value['name'] = $rf_id;
+                        unset( $value['mode'] );
+                        unset( $value['type'] );
+                        $repeater->add_group_control( $type, $value );
+                    } else {
 						$repeater->add_control( $rf_id, $value );
 					}
 				}
@@ -667,11 +674,14 @@ abstract class ElementorWidgetBase extends Widget_Base {
 			case 'text-stroke':
 				$type = Group_Control_Text_Stroke::get_type();
 				break;
+
+			case 'css-filter':
+				$type = Group_Control_Css_Filter::get_type();
+				break;
 			default:
 				$type = constant( 'Elementor\Controls_Manager::' . strtoupper( $type ) );
 
 		}
-
 		return $type;
 	}
 

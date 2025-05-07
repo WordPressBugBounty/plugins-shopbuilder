@@ -5,6 +5,7 @@
  * @var $filters            array      Filters.
  * @var $scroll_mode        string     Scroll mode.
  * @var $reset_mode         string     Reset mode.
+ * @var $toggle_class         string   Toggle class.
  * @var $scroll_attr        string     Scroll attributes.
  * @var $reset              boolean    Reset.
  * @var $reset_text         string     Reset text.

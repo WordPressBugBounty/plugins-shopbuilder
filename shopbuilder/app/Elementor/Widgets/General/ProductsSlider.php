@@ -148,6 +148,7 @@ class ProductsSlider extends ElementorWidgetBase {
 				Controls\StyleFields::short_description( $this ),
 				Controls\StyleFields::product_price( $this ),
 				Controls\StyleFields::product_categories( $this ),
+				Controls\StyleFields::product_brands( $this ),
 				Controls\StyleFields::product_rating( $this ),
 				Controls\StyleFields::product_add_to_cart( $this ),
 				Controls\StyleFields::product_wishlist( $this ),

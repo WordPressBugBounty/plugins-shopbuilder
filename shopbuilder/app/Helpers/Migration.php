@@ -35,7 +35,6 @@ class Migration {
 
 		$v_2_1_16 = ExtraSettings::instance()->get_option( 'template_settings_migration_v_2_1_16', false );
 		if ( ! $v_2_1_16 ) {
-			// error_log( print_r( $v_2_1_16 , true) . "\n\n", 3, __DIR__ . '/log.txt' );
 			self::template_settings_migration_plugin_v_2_1_16();
 			ExtraSettings::instance()->set_option( 'template_settings_migration_v_2_1_16', RTSB_VERSION );
 			return;

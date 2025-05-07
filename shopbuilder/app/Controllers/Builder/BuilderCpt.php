@@ -39,10 +39,45 @@ class BuilderCpt {
 		add_filter( 'template_redirect', [ $this, 'restrict_preview_access' ], 99 );
 
 		add_filter( 'parse_query', [ $this, 'query_filter' ] );
-		// add filter for search.
+		// Add filter for search.
 		add_action( 'restrict_manage_posts', [ $this, 'add_filter' ] );
+		// Post Content Remove For Elementor Builder.
+		add_action( 'save_post_' . BuilderFns::$post_type_tb, [ $this, 'on_save_post' ], 10, 2 );
 	}
 
+	/**
+	 * Hook into post save to clear post content for specific post type and editor.
+	 *
+	 * This method checks if the post is being updated (not newly created),
+	 * and if the post type matches the target type defined in BuilderFns::$post_type_tb.
+	 * If the post is edited with Elementor, it clears the post_content directly
+	 * from the database and clears the post cache.
+	 *
+	 * @param int     $post_ID ID of the post being saved.
+	 * @param WP_Post $post    Post object.
+	 * @param bool    $update  Whether this is an existing post being updated.
+	 *
+	 * @return void
+	 */
+	public function on_save_post( $post_ID, $post ) {
+		// Only proceed on update and specific post type.
+		if ( BuilderFns::$post_type_tb !== $post->post_type ) {
+			return;
+		}
+		if ( 'elementor' !== Fns::page_edit_with( $post_ID ) ) {
+			return;
+		}
+		global $wpdb;
+		// Directly update the post_content to empty.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
+		$wpdb->update(
+			$wpdb->posts,
+			[ 'post_content' => '' ],
+			[ 'ID' => $post_ID ]
+		);
+		// Clear cache so changes reflect properly.
+		clean_post_cache( $post_ID );
+	}
 
 	/**
 	 * Public function add_filter.
@@ -388,5 +423,4 @@ class BuilderCpt {
 
 		return $actions;
 	}
-
 }

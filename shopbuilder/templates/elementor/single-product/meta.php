@@ -16,6 +16,6 @@ if ( empty( $product ) ) {
 }
 
 ?>
-<div class="rtsb-product-meta rtsb-is-sku rtsb-is-cat rtsb-is-tag <?php echo esc_attr( $classes ); ?>">
+<div class="rtsb-product-meta rtsb-is-sku rtsb-is-cat rtsb-is-brand rtsb-is-tag <?php echo esc_attr( $classes ); ?>">
 	<?php woocommerce_template_single_meta(); ?>
 </div>

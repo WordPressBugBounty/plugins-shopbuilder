@@ -45,7 +45,7 @@ class PluginRow {
 		$demo_url    = 'https://shopbuilderwp.com/';
 		$new_links[] = '<a href="' . admin_url( 'admin.php?page=rtsb-settings' ) . '">' . esc_html__( 'Settings', 'shopbuilder' ) . '</a>';
 		$new_links[] = '<a target="_blank" href="' . esc_url( $demo_url ) . '">' . esc_html__( 'Demo', 'shopbuilder' ) . '</a>';
-		$new_links[] = '<a target="_blank" href="' . esc_url( 'https://shopbuilderwp.com/docs/requirements/' ) . '">' . esc_html__( 'Documentation', 'shopbuilder' ) . '</a>';
+		$new_links[] = '<a target="_blank" href="' . esc_url( 'https://shopbuilderwp.com/docs/' ) . '">' . esc_html__( 'Documentation', 'shopbuilder' ) . '</a>';
 
 		$links = array_merge( $new_links, $links );
 

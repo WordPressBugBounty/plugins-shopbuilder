@@ -192,6 +192,10 @@ class ProductAddToCart extends ElementorWidgetBase {
 		$this->the_hooks();
 		$this->theme_support();
 
+		if ( rtsb()->has_pro() && ! empty( $controllers['enable_single_ajax_add_to_cart'] ) ) {
+			wp_enqueue_script( 'wc-add-to-cart' );
+		}
+
 		$data = [
 			'template'     => 'elementor/single-product/add-to-cart',
 			'controllers'  => $controllers,

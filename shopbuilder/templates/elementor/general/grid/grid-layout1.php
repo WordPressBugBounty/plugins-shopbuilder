@@ -120,6 +120,18 @@ $swatch_price_class = $has_attributes && in_array( 'swatches', $items, true ) &&
 				</div>
 				<?php
 			}
+			/**
+			 * Product Brands.
+			 */
+			if ( in_array( 'brands', $items, true ) ) {
+				?>
+				<div class="rtsb-brand-category">
+					<?php
+					Fns::get_brands_list( $p_id );
+					?>
+				</div>
+				<?php
+			}
 
 			/**
 			 * Before product title hook.

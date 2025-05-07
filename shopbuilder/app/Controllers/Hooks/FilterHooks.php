@@ -351,19 +351,49 @@ class FilterHooks {
 	 */
 	public static function custom_query_keys( $wp_query_args, $query_vars ) {
 		$tax_key    = 'product_attribute_id';
+		$brand_key  = 'product_brand_id';
 		$rating_key = 'product_rating';
-
 		if ( ! empty( $query_vars[ $tax_key ] ) ) {
-			foreach ( $query_vars[ $tax_key ] as $atts ) {
-				$attribute_tax = get_term( $atts )->taxonomy;
+			// foreach ( $query_vars[ $tax_key ] as $atts ) {
+			// $attribute_tax = get_term( $atts )->taxonomy;
+			//
+			// $wp_query_args['tax_query'][] = [
+			// 'taxonomy' => $attribute_tax,
+			// 'field'    => 'term_id',
+			// 'terms'    => [ $atts ],
+			// 'operator' => 'IN',
+			// ];
+			// }
+			// added new code.
+			$tax_groups = [];
 
+			foreach ( $query_vars[ $tax_key ] as $term_id ) {
+				$term = get_term( $term_id );
+				if ( ! is_wp_error( $term ) && $term ) {
+					$tax                  = $term->taxonomy;
+					$tax_groups[ $tax ][] = $term_id;
+				}
+			}
+
+			foreach ( $tax_groups as $taxonomy => $term_ids ) {
 				$wp_query_args['tax_query'][] = [
-					'taxonomy' => $attribute_tax,
+					'taxonomy' => $taxonomy,
 					'field'    => 'term_id',
-					'terms'    => [ $atts ],
+					'terms'    => $term_ids,
 					'operator' => 'IN',
 				];
 			}
+		}
+
+		if ( ! empty( $query_vars[ $brand_key ] ) ) {
+			$brand_ids = is_array( $query_vars[ $brand_key ] ) ? $query_vars[ $brand_key ] : [ $query_vars[ $brand_key ] ];
+
+			$wp_query_args['tax_query'][] = [
+				'taxonomy' => 'product_brand',
+				'field'    => 'term_id',
+				'terms'    => $brand_ids,
+				'operator' => 'IN',
+			];
 		}
 
 		if ( ! empty( $query_vars[ $rating_key ] ) ) {
@@ -374,7 +404,6 @@ class FilterHooks {
 				'compare' => 'IN',
 			];
 		}
-
 		return $wp_query_args;
 	}
 
