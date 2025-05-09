@@ -4,7 +4,7 @@ Donate link:
 Tags: Elementor, Woocommerce Builder, Elementor Woocommerce Builder, Woocommerce, Woocommerce Product
 Requires at least: 5.5
 Tested up to: 6.8
-Stable tag: 2.6.4
+Stable tag: 2.6.5
 Requires PHP: 7.4
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -16,7 +16,7 @@ WooCommerce builder for Elementor includes 80+ widgets, WooCommerce templates, q
 
 Elementor WooCommerce Builder Addons is an add-on plugin that integrates with both Elementor and WooCommerce, providing additional design options and functionality specifically for WooCommerce stores. By using this plugin, users can easily create custom-designed product pages, checkout pages, and other e-commerce-related pages.
 
-👉 [ShopBuilder Modules](https://shopbuilderwp.com/modules/?utm_source=WPorg&utm_medium=click&utm_campaign=org) | [ShopBuilder Templates](https://shopbuilderwp.com/templates/?utm_source=WPorg&utm_medium=click&utm_campaign=org) | [Documentation](https://shopbuilderwp.com/docs/) | [Get Pro]( https://www.radiustheme.com/downloads/woocommerce-bundle/?utm_source=WPorg&utm_medium=click&utm_campaign=org ) 👈
+👉 [ShopBuilder Modules](https://shopbuilderwp.com/modules/?utm_source=WPorg&utm_medium=click&utm_campaign=org) | [ShopBuilder Templates](https://shopbuilderwp.com/templates/?utm_source=WPorg&utm_medium=click&utm_campaign=org) | [Documentation](https://shopbuilderwp.com/docs/) | [Get Pro]( https://www.radiustheme.com/downloads/woocommerce-bundle/?utm_source=WPorg&utm_medium=click&utm_campaign=org ) | [Try Admin Demo]( https://radiustheme.net/sandbox/shopbuilder/ ) 👈
 
 With ShopBuilder, you can craft captivating and highly functional online shopping experiences.
 
@@ -418,11 +418,14 @@ If you like the ShopBuilder Plugin, then consider checking out our other WordPre
 
 == Changelog ==
 
+= 2.6.5 (May 09, 2025) =
+* Fix: Resolved a PHP warning caused by early loading of the text domain.
+
 = 2.6.4 (May 07, 2025) =
 * New: Introduced support for Product Brands across the General Elementor Widgets.
 * New: Product Filters widget (Shop Page) now supports filtering by Product Brands.
-* New: Product Brand control is included on Single Product page Product Meta widget.
-* New: Introduced a new control for mobile filter toggle in Product Filters widget.
+* New: Product Brand control is included on the Single Product page Product Meta widget.
+* New: Introduced a new control for mobile filter toggle in the Product Filters widget.
 * Add: Enhanced compatibility with new modules and features.
 * Fix: Resolved a data-saving issue affecting the Settings Repeater field and tabs.
 * Fix: Addressed an admin UI bug where the menu icon size appeared too small.
@@ -435,7 +438,7 @@ If you like the ShopBuilder Plugin, then consider checking out our other WordPre
 
 = 2.6.2 (March 19, 2025) =
 * Fix: Resolved Woocommerce Catalog Ordering visibility issue.
-* Fix: Addressed multiple plugin row link display issue.
+* Fix: Addressed multiple plugin row link display issues.
 
 = 2.6.1 (March 12, 2025) =
 * Add: New Widget - Archive Product Filters.

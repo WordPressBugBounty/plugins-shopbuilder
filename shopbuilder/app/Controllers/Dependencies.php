@@ -19,6 +19,9 @@ class Dependencies {
 
 	use SingletonTrait;
 
+	/**
+	 * @var array
+	 */
 	private $missing = [];
 	/**
 	 * @var bool
@@ -48,23 +51,17 @@ class Dependencies {
 			if ( $this->is_plugins_installed( $woocommerce ) ) {
 				$activation_url = wp_nonce_url( 'plugins.php?action=activate&amp;plugin=' . $woocommerce . '&amp;plugin_status=all&amp;paged=1&amp;s', 'activate-plugin_' . $woocommerce );
 				$message        = sprintf(
-					'<strong>%s</strong> %s <strong>%s</strong> %s',
+					'<strong>%s</strong> requires <strong>WooCommerce</strong> plugin to be active. Please activate WooCommerce to continue.',
 					esc_html( self::PLUGIN_NAME ),
-					esc_html__( 'requires', 'shopbuilder' ),
-					esc_html__( 'WooCommerce', 'shopbuilder' ),
-					esc_html__( 'plugin to be active. Please activate WooCommerce to continue.', 'shopbuilder' )
 				);
-				$button_text    = esc_html__( 'Activate WooCommerce', 'shopbuilder' );
+				$button_text    = 'Activate WooCommerce';
 			} else {
 				$activation_url = wp_nonce_url( self_admin_url( 'update.php?action=install-plugin&plugin=woocommerce' ), 'install-plugin_woocommerce' );
 				$message        = sprintf(
-					'<strong>%s</strong> %s <strong>%s</strong> %s',
+					'<strong>%s</strong> requires <strong>WooCommerce</strong> plugin to be active. Please activate WooCommerce to continue.',
 					esc_html( self::PLUGIN_NAME ),
-					esc_html__( 'requires', 'shopbuilder' ),
-					esc_html__( 'WooCommerce', 'shopbuilder' ),
-					esc_html__( 'plugin to be installed and activated. Please install WooCommerce to continue.', 'shopbuilder' )
 				);
-				$button_text    = esc_html__( 'Install WooCommerce', 'shopbuilder' );
+				$button_text    = 'Install WooCommerce';
 			}
 			$this->missing['woocommerce'] = [
 				'name'       => 'WooCommerce',
@@ -76,36 +73,6 @@ class Dependencies {
 			];
 			$this->allOk                  = false;
 		}
-
-		$elementor = 'elementor/elementor.php';
-
-		/*
-		if ( ! is_plugin_active( $elementor ) ) {
-            $message = sprintf(
-                '<strong>%s</strong> %s',
-                esc_html__( 'ShopBuilder - WooCommerce Builder for Elementor:', 'shopbuilder' ),
-                esc_html__( 'Elementor plugin is optional. Please install Elementor if you want to build WooCommerce pages using Elementor.', 'shopbuilder' )
-            );
-			if ( $this->is_plugins_installed( $elementor ) ) {
-				$activation_url = wp_nonce_url( 'plugins.php?action=activate&amp;plugin=' . $elementor . '&amp;plugin_status=all&amp;paged=1&amp;s', 'activate-plugin_' . $elementor );
-				$button_text    = esc_html__( 'Activate Elementor', 'shopbuilder' );
-			} else {
-				$activation_url = wp_nonce_url(
-					self_admin_url( 'update.php?action=install-plugin&plugin=elementor' ),
-					'install-plugin_elementor'
-				);
-				$button_text    = esc_html__( 'Install Elementor', 'shopbuilder' );
-			}
-			$this->missing['elementor'] = [
-				'name'       => 'Elementor',
-				'slug'       => 'elementor',
-				'file_name'  => $elementor,
-				'url'        => '',
-				'message'    => $message . ' <a href="' . esc_url( $activation_url ) . '" > ' . esc_html( $button_text ) . '</a>',
-				'button_txt' => '',
-			];
-		}
-		*/
 
 		if ( ! empty( $this->missing ) ) {
 			add_action( 'admin_notices', [ $this, '_missing_plugins_warning' ] );
@@ -124,9 +91,9 @@ class Dependencies {
 		}
 		$message = sprintf(
 		/* translators: 1: Plugin name 2: PHP 3: Required PHP version */
-			esc_html__( '"%1$s" requires "%2$s" version %3$s or greater.', 'shopbuilder' ),
-			'<strong>' . esc_html__( 'ShopBuilder', 'shopbuilder' ) . '</strong>',
-			'<strong>' . esc_html__( 'PHP', 'shopbuilder' ) . '</strong>',
+			esc_html( '"%1$s" requires "%2$s" version %3$s or greater.' ),
+			'<strong>ShopBuilder</strong>',
+			'<strong>PHP</strong>',
 			self::MINIMUM_PHP_VERSION
 		);
 		printf( '<div class="notice notice-warning is-dismissible"><p>%1$s</p></div>', wp_kses_post( $message ) );
@@ -143,13 +110,12 @@ class Dependencies {
 			if ( $counter == count( $this->missing ) ) {
 				$sep = '';
 			} elseif ( $counter == count( $this->missing ) - 1 ) {
-				$sep = ' ' . esc_html__( 'and', 'shopbuilder' ) . ' ';
+				$sep = ' and ';
 			} else {
 				$sep = ', ';
 			}
 			if ( current_user_can( 'activate_plugins' ) ) {
-				$button = ! empty($plugin['url'] ) ? '<p><a href="' . esc_url( $plugin['url'] ) . '" class="button-primary">'. esc_html( $plugin['button_txt'] ) . '</a></p>' : '';
-				// $plugin['message'] Already used escaping function
+				$button = ! empty( $plugin['url'] ) ? '<p><a href="' . esc_url( $plugin['url'] ) . '" class="button-primary">' . esc_html( $plugin['button_txt'] ) . '</a></p>' : '';
 				printf( '<div class="error"><p>%1$s</p>%2$s</div>', $plugin['message'], $button ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			} else {
 				$missingPlugins .= '<strong>' . esc_html( $plugin['name'] ) . '</strong>' . $sep;

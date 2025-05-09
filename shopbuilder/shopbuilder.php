@@ -4,7 +4,7 @@
  * Plugin Name:                ShopBuilder - Elementor WooCommerce Builder Addons
  * Plugin URI:                 https://shopbuilderwp.com/
  * Description:                ShopBuilder is the ultimate WooCommerce design solution for Elementor, letting you build and customize shop, product, cart, checkout, and account pages with ease while offering a wide range of features like Quick View, Wishlist, Compare, Variation Swatches, Mini Cart, Product Add-Ons, and more to create stunning online stores.
- * Version:                    2.6.4
+ * Version:                    2.6.5
  * Author:                     RadiusTheme
  * Author URI:                 https://radiustheme.com
  * Text Domain:                shopbuilder
@@ -29,7 +29,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Define Constants.
  */
-define( 'RTSB_VERSION', '2.6.4' );
+define( 'RTSB_VERSION', '2.6.5' );
 define( 'RTSB_FILE', __FILE__ );
 define( 'RTSB_PATH', plugin_dir_path( __FILE__ ) );
 define( 'RTSB_ACTIVE_FILE_NAME', plugin_basename( __FILE__ ) );
