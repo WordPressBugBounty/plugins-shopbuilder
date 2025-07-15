@@ -9,12 +9,13 @@ namespace RadiusTheme\SB\Controllers;
 
 use RadiusTheme\SB\Helpers\Fns;
 use RadiusTheme\SB\Helpers\BuilderFns;
+use RadiusTheme\SB\Models\GeneralList;
+use RadiusTheme\SB\Models\ElementList;
 use RadiusTheme\SB\Traits\SingletonTrait;
 use RadiusTheme\SB\Controllers\Builder\BuilderCpt;
 use RadiusTheme\SB\Controllers\Hooks\BuilderHooks;
 use RadiusTheme\SB\Elementor\Controls\ImageSelectorControl;
 use RadiusTheme\SB\Elementor\Controls\Select2AjaxControl;
-use RadiusTheme\SB\Models\ElementList;
 
 // Do not allow directly accessing this file.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -90,11 +91,18 @@ class BuilderController {
 	 * @return void
 	 */
 	public function elementor_init() {
-		add_action( 'elementor/elements/categories_registered', [ $this, 'add_elementor_widget_categories' ] );
-		add_action( 'elementor/widgets/register', [ $this, 'init_widgets' ] );
-		add_action( 'elementor/controls/register', [ $this, 'init_controls' ] );
-		add_filter( 'elementor/editor/localize_settings', [ $this, 'promotePremiumWidgets' ] );
-		add_action( 'elementor/icons_manager/additional_tabs', [ $this, 'rtsb_icons' ] );
+		add_action(
+			'init',
+			function () {
+				if ( Fns::should_load_elementor_scripts() ) {
+					add_action( 'elementor/elements/categories_registered', [ $this, 'add_elementor_widget_categories' ] );
+					add_action( 'elementor/widgets/register', [ $this, 'init_widgets' ] );
+					add_action( 'elementor/controls/register', [ $this, 'init_controls' ] );
+					add_filter( 'elementor/editor/localize_settings', [ $this, 'promotePremiumWidgets' ] );
+					add_action( 'elementor/icons_manager/additional_tabs', [ $this, 'rtsb_icons' ] );
+				}
+			}
+		);
 	}
 
 	/**
@@ -157,7 +165,11 @@ class BuilderController {
 	/**
 	 * Init Widgets
 	 *
-	 * Include widgets files and register them
+	 * Include widget files and register them
+	 *
+	 * @param object $widgets_manager Widgets Manager.
+	 *
+	 * @return void
 	 *
 	 * @since  1.0.0
 	 */
@@ -287,7 +299,7 @@ class BuilderController {
 		 * @since 2.0.0
 		 */
 		if ( did_action( 'elementor/loaded' ) && 'elementor' === $this->page_edit_with ) {
-			do_action( 'elementor/page_templates/header-footer/before_content' );
+			do_action( 'elementor/page_templates/header-footer/before_content' ); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
 		}
 
 		$parent_class = apply_filters( 'rtsb/builder/content/parent_class', [] );
@@ -347,7 +359,7 @@ class BuilderController {
 		 * @since 2.0.0
 		 */
 		if ( did_action( 'elementor/loaded' ) && 'elementor' === $this->page_edit_with ) {
-			do_action( 'elementor/page_templates/header-footer/after_content' );
+			do_action( 'elementor/page_templates/header-footer/after_content' ); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
 		}
 
 		if ( BuilderFns::is_checkout() ) {
@@ -389,7 +401,7 @@ class BuilderController {
 
 		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 		$search  = ! empty( $_POST['search'] ) ? sanitize_text_field( $_POST['search'] ) : '';
-		$results = $post_list = [];
+		$results = $post_list = []; // phpcs:ignore Squiz.PHP.DisallowMultipleAssignments.Found
 		switch ( $source_name ) {
 			case 'taxonomy':
 				$args = [
@@ -400,7 +412,7 @@ class BuilderController {
 					'number'     => '5',
 				];
 
-				if ( $post_type !== 'all' ) {
+				if ( 'all' !== $post_type ) {
 					$args['taxonomy'] = $post_type;
 				}
 
@@ -474,8 +486,8 @@ class BuilderController {
 				];
 
 				// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated
-				if ( $_POST['post_type'] !== 'all' ) {
-                    // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+				if ( 'all' !== $_POST['post_type'] ) {
+					// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 					$args['taxonomy'] = sanitize_text_field( $_POST['post_type'] );
 				}
 
@@ -513,10 +525,10 @@ class BuilderController {
 	/**
 	 * Ajax callback for rt-select2
 	 *
-	 * @param $post_type
-	 * @param $limit
-	 * @param $search
-	 * @param $paged
+	 * @param string $post_type Post type.
+	 * @param int    $limit     Limit.
+	 * @param string $search    Search.
+	 * @param int    $paged     Paged.
 	 *
 	 * @return array
 	 */

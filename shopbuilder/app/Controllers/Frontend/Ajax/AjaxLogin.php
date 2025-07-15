@@ -83,7 +83,7 @@ class AjaxLogin {
 					'loggedin'     => false,
 					'redirectto'   => $checkout_url,
 					'message_type' => 'error',
-					'message'      => esc_html__( 'Login Faild.', 'shopbuilder' ),
+					'message'      => esc_html__( 'Login Failed.', 'shopbuilder' ),
 				];
 			} else {
 				$response = [

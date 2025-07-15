@@ -33,34 +33,44 @@ class GeneralCheckout extends CheckoutEditorBase {
 	 */
 	public function default_address_fields( $fields ) {
 		// address_1.
-		if ( ! empty( $this->billing_settings['billing_address_1'] ) ) {
-			$fields['address_1'] = wp_parse_args( $this->billing_settings['billing_address_1'], $fields['address_1'] );
-		} elseif ( ! empty( $this->shipping_settings['shipping_address_1'] ) ) {
-			$fields['address_1'] = wp_parse_args( $this->shipping_settings['shipping_address_1'], $fields['address_1'] );
+		if ( ! empty( $fields['address_1'] ) ) {
+			if ( ! empty( $this->billing_settings['billing_address_1'] ) ) {
+				$fields['address_1'] = wp_parse_args( $this->billing_settings['billing_address_1'], $fields['address_1'] );
+			} elseif ( ! empty( $this->shipping_settings['shipping_address_1'] ) ) {
+				$fields['address_1'] = wp_parse_args( $this->shipping_settings['shipping_address_1'], $fields['address_1'] );
+			}
 		}
-		// address_2.
-		if ( ! empty( $this->billing_settings['billing_address_2'] ) ) {
-			$fields['address_2'] = wp_parse_args( $this->billing_settings['billing_address_2'], $fields['address_2'] );
-		} elseif ( ! empty( $this->shipping_settings['shipping_address_2'] ) ) {
-			$fields['address_2'] = wp_parse_args( $this->shipping_settings['shipping_address_2'], $fields['address_2'] );
+		if ( ! empty( $fields['address_2'] ) ) {
+			// address_2.
+			if ( ! empty( $this->billing_settings['billing_address_2'] ) ) {
+				$fields['address_2'] = wp_parse_args( $this->billing_settings['billing_address_2'], $fields['address_2'] );
+			} elseif ( ! empty( $this->shipping_settings['shipping_address_2'] ) ) {
+				$fields['address_2'] = wp_parse_args( $this->shipping_settings['shipping_address_2'], $fields['address_2'] );
+			}
 		}
-		// city.
-		if ( ! empty( $this->billing_settings['billing_city'] ) ) {
-			$fields['city'] = wp_parse_args( $this->billing_settings['billing_city'], $fields['city'] );
-		} elseif ( ! empty( $this->shipping_settings['shipping_city'] ) ) {
-			$fields['city'] = wp_parse_args( $this->shipping_settings['shipping_city'], $fields['city'] );
+		if ( ! empty( $fields['city'] ) ) {
+			// city.
+			if ( ! empty( $this->billing_settings['billing_city'] ) ) {
+				$fields['city'] = wp_parse_args( $this->billing_settings['billing_city'], $fields['city'] );
+			} elseif ( ! empty( $this->shipping_settings['shipping_city'] ) ) {
+				$fields['city'] = wp_parse_args( $this->shipping_settings['shipping_city'], $fields['city'] );
+			}
 		}
-		// state.
-		if ( ! empty( $this->billing_settings['billing_state'] ) ) {
-			$fields['state'] = wp_parse_args( $this->billing_settings['billing_state'], $fields['state'] );
-		} elseif ( ! empty( $this->shipping_settings['shipping_state'] ) ) {
-			$fields['state'] = wp_parse_args( $this->shipping_settings['shipping_state'], $fields['state'] );
+		if ( ! empty( $fields['state'] ) ) {
+			// state.
+			if ( ! empty( $this->billing_settings['billing_state'] ) ) {
+				$fields['state'] = wp_parse_args( $this->billing_settings['billing_state'], $fields['state'] );
+			} elseif ( ! empty( $this->shipping_settings['shipping_state'] ) ) {
+				$fields['state'] = wp_parse_args( $this->shipping_settings['shipping_state'], $fields['state'] );
+			}
 		}
-		// State.
-		if ( ! empty( $this->billing_settings['billing_postcode'] ) ) {
-			$fields['postcode'] = wp_parse_args( $this->billing_settings['billing_postcode'], $fields['postcode'] );
-		} elseif ( ! empty( $this->shipping_settings['shipping_postcode'] ) ) {
-			$fields['postcode'] = wp_parse_args( $this->shipping_settings['shipping_postcode'], $fields['postcode'] );
+		if ( ! empty( $fields['postcode'] ) ) {
+			// State.
+			if ( ! empty( $this->billing_settings['billing_postcode'] ) ) {
+				$fields['postcode'] = wp_parse_args( $this->billing_settings['billing_postcode'], $fields['postcode'] );
+			} elseif ( ! empty( $this->shipping_settings['shipping_postcode'] ) ) {
+				$fields['postcode'] = wp_parse_args( $this->shipping_settings['shipping_postcode'], $fields['postcode'] );
+			}
 		}
 		return $fields;
 	}

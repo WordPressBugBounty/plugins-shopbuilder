@@ -588,28 +588,13 @@ class RenderHelpers {
 		}
 
 		if ( in_array( $layout_part[0], $allowed_patterns, true ) ) {
+			if ( ! rtsb()->has_pro() && ! in_array( $layout, array_keys( Fns::free_layouts( $layout ) ), true ) ) {
+				$layout = self::set_default_layout( $layout );
+			}
+
 			return $layout;
 		} else {
-			if ( ! empty( $template ) ) {
-				$grid     = preg_match( '/grid/', $template );
-				$list     = preg_match( '/list/', $template );
-				$slider   = preg_match( '/slider/', $template );
-				$category = preg_match( '/category/', $template );
-
-				if ( $grid ) {
-					return $default;
-				} elseif ( $list ) {
-					return 'list-layout1';
-				} elseif ( $slider ) {
-					return 'slider-layout1';
-				} elseif ( $category ) {
-					return 'category-layout1';
-				} else {
-					return $default;
-				}
-			} else {
-				return $default;
-			}
+			return ! empty( $template ) ? self::set_default_layout( $layout ) : $default;
 		}
 	}
 
@@ -1003,8 +988,8 @@ class RenderHelpers {
 				$script[] = 'masonry';
 			}
 
-			$script[] = 'rtsb-imagesloaded';
-			$script[] = 'rtsb-public';
+			$script[] = 'imagesloaded';
+			$script[] = Fns::optimized_handle( 'rtsb-public' );
 
 			foreach ( $script as $sc ) {
 				wp_enqueue_script( $sc );
@@ -1621,11 +1606,10 @@ class RenderHelpers {
 	 *
 	 * @param array  $data Array of required data.
 	 * @param string $input Type of input field for the filter (e.g., color).
-	 * @param array  $additional_data Data for additional filtering.
 	 *
 	 * @return string The generated HTML for the attribute filter list.
 	 */
-	public static function get_attribute_filter_list_html( $data, $input = 'color', $additional_data = [] ) {
+	public static function get_attribute_filter_list_html( $data, $input = 'color' ) {
 		if ( ! function_exists( 'rtwpvs' ) ) {
 			return '';
 		}
@@ -1701,6 +1685,7 @@ class RenderHelpers {
 				$color = sanitize_hex_color( get_term_meta( $args['term_id'], 'product_attribute_color', true ) );
 
 				$html .= sprintf(
+					// phpcs:ignore Generic.Strings.UnnecessaryStringConcat.Found
 					'<input type="checkbox"  id="' . esc_attr( $args['id'] ) . '" value="' . esc_attr( $args['term_slug'] ) . '" class="rtsb-attr-hidden-field" name="rtsb-filter-' . esc_attr( $args['attribute_name'] ) . '[]' . '" ' . esc_attr( $args['selected_item'] ) . '/><label for="%s" title="' . esc_attr( $args['name'] ) . '" class="rtsb-default-filter-trigger rtsb-attr-filter rtsb-color-filter rtsb-term-span rtsb-term-span-%s%s"><span class="default-filter-attr-color" style="background-color:%s;"></span><span class="default-filter-attr-name">%s</span></label><div class="rtsb-count">(%s)</div>',
 					esc_attr( $args['id'] ),
 					esc_attr( $args['type'] ),
@@ -1721,6 +1706,7 @@ class RenderHelpers {
 				$image_url     = wp_get_attachment_image_url( $attachment_id, apply_filters( 'rtwpvs_product_attribute_image_size', $image_size ) );
 
 				$html .= sprintf(
+					// phpcs:ignore Generic.Strings.UnnecessaryStringConcat.Found
 					'<input type="checkbox" id="' . esc_attr( $args['id'] ) . '" value="' . esc_attr( $args['term_slug'] ) . '" class="rtsb-attr-hidden-field" name="rtsb-filter-' . esc_attr( $args['attribute_name'] ) . '[]' . '" ' . esc_attr( $args['selected_item'] ) . '/><label for="%s" title="' . esc_attr( $args['name'] ) . '" class="rtsb-default-filter-trigger rtsb-image-filter rtsb-term-span rtsb-term-span-%s%s"><img class="rtsb-default-attr-filter" alt="%s" src="%s" /></label>',
 					esc_attr( $args['id'] ),
 					esc_attr( $args['type'] ),
@@ -1732,6 +1718,7 @@ class RenderHelpers {
 
 			case 'button':
 				$html .= sprintf(
+					// phpcs:ignore Generic.Strings.UnnecessaryStringConcat.Found
 					'<input  id="' . esc_attr( $args['id'] ) . '" type="checkbox" value="' . esc_attr( $args['term_slug'] ) . '" class="rtsb-attr-hidden-field" name="rtsb-filter-' . esc_attr( $args['attribute_name'] ) . '[]' . '" ' . esc_attr( $args['selected_item'] ) . '/><label for="%s" title="' . esc_attr( $args['name'] ) . '" class="rtsb-default-filter-trigger rtsb-attr-filter rtsb-button-filter rtsb-term-span rtsb-term-span-%s%s"><span class="default-filter-attr-name">%s</span><div class="rtsb-count">(%s)</div></label>',
 					esc_attr( $args['id'] ),
 					esc_attr( $args['type'] ),

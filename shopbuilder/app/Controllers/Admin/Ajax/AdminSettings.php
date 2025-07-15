@@ -3,8 +3,9 @@
 namespace RadiusTheme\SB\Controllers\Admin\Ajax;
 
 use RadiusTheme\SB\Helpers\Fns;
-use RadiusTheme\SB\Models\DataModel;
+use RadiusTheme\SB\Helpers\Cache;
 use RadiusTheme\SB\Models\Settings;
+use RadiusTheme\SB\Models\DataModel;
 use RadiusTheme\SB\Traits\SingletonTrait;
 
 // Do not allow directly accessing this file.
@@ -25,11 +26,8 @@ class AdminSettings {
 	 * Construct function
 	 */
 	private function __construct() {
-		// add_action( 'wp_ajax_rtsb_settings_fields', [ $this, 'get_settings_fields' ] );
-		// add_action( 'wp_ajax_rtsb_settings_data', [ $this, 'get_settings_data' ] );
 		add_action( 'wp_ajax_rtsb_save_settings_data', [ $this, 'save_settings_data' ] );
 		add_action( 'wp_ajax_rtsb_toggle_modules_activation', [ $this, 'toggle_modules' ] );
-
 		add_action( 'wp_ajax_rtsb_get_multiselect_data', [ $this, 'get_multiselect_data' ] );
 	}
 
@@ -53,22 +51,12 @@ class AdminSettings {
 		$result          = [];
 		$params          = [];
 		if ( class_exists( $className ) && method_exists( $className, $methodName ) ) {
-			$params[] = $s; // Modify this array with your parameters
+			$params[] = $s;
 			$params[] = $argument;
 			$result   = call_user_func_array( [ $className, $methodName ], $params );
 		}
 		wp_send_json_success( $result );
 	}
-
-	/**
-	 * Get settings fields
-	 *
-	 * @return void
-	 */
-	// public function get_settings_fields() {
-	// $data = Settings::instance()->get_fields();
-	// wp_send_json_success( $data );
-	// }
 
 	/**
 	 * Get settings Data
@@ -115,6 +103,9 @@ class AdminSettings {
 		if ( boolval( $status['status'] ) ) {
 			do_action( 'rtsb/after/saved/settings/success/' . $section_id . '/' . $block_id, $rawOptions );
 			do_action( 'rtsb/after/saved/settings/success', $section_id, $block_id, $rawOptions );
+
+			Cache::clear_asset_cache();
+
 			wp_send_json_success( $status );
 		} else {
 			wp_send_json_error( $status );
@@ -162,7 +153,7 @@ class AdminSettings {
 				if ( isset( $sections[ $section_id ]['list'][ $module_id ]['package'] ) && 'pro-disabled' === $sections[ $section_id ]['list'][ $module_id ]['package'] ) {
 					continue;
 				}
-				if ( $type === 'active' ) {
+				if ( 'active' === $type ) {
 					$options[ $module_id ]['active']                         = 'on';
 					$sections[ $section_id ]['list'][ $module_id ]['active'] = 'on';
 				} else {
@@ -173,6 +164,7 @@ class AdminSettings {
 		}
 
 		DataModel::source()->set_option( $section_id, $options );
+		Cache::clear_asset_cache();
 
 		wp_send_json_success(
 			[

@@ -71,7 +71,6 @@ class ProductImages extends ElementorWidgetBase {
 		return $fields;
 	}
 
-
 	/**
 	 * Widget Field.
 	 *
@@ -98,19 +97,33 @@ class ProductImages extends ElementorWidgetBase {
 			}, 1000);
 			<?php } ?>
 
-			jQuery(document).ready(function ($) {
-				setTimeout(function () {
-					const zoomIcon = $('.rtsb-product-images').attr('data-zoom-icon');
-					if (!zoomIcon) {
+
+			if (!'<?php echo esc_attr( Fns::is_optimization_enabled() ); ?>') {
+				jQuery(document).ready(function ($) {
+					setTimeout(function () {
+						const zoomIcon = $('.rtsb-product-images').attr('data-zoom-icon');
+						if (!zoomIcon) {
+							$('.rtsb-product-images')
+								.find('.woocommerce-product-gallery__trigger,.rtwpvg-trigger')
+								.remove();
+						}
 						$('.rtsb-product-images')
 							.find('.woocommerce-product-gallery__trigger,.rtwpvg-trigger')
-							.remove();
-					}
-					$('.rtsb-product-images')
-						.find('.woocommerce-product-gallery__trigger,.rtwpvg-trigger')
-						.html(zoomIcon);
-				}, 50);
-			});
+							.html(zoomIcon);
+					}, 50);
+				});
+			} else {
+				if (typeof elementorFrontend !== 'undefined') {
+					elementorFrontend.hooks.addAction(
+						'frontend/element_ready/rtsb-product-image.default',
+						($scope) => {
+							window.waitForRTSB((RTSB) => {
+								RTSB.modules.get('productImage')?.refresh?.($, $scope);
+							});
+						}
+					);
+				}
+			}
 		</script>
 		<?php
 	}
@@ -146,29 +159,15 @@ class ProductImages extends ElementorWidgetBase {
 		add_filter( 'rtwpvg_thumbnails_columns', [ $this, 'thumbnails_columns' ] );
 		add_filter( 'rtwpvg_sm_thumbnails_columns', [ $this, 'thumbnails_columns_sm' ] );
 		add_filter( 'rtwpvg_xs_thumbnails_columns', [ $this, 'thumbnails_columns_xs' ] );
-		// add_filter( 'rtwpvg_image_classes', [ $this, 'rtwpvg_image_classes' ], 15 );.
 	}
 
 	/**
-	 * @param $position
+	 * Thumbnail slider js options.
 	 *
-	 * @return mixed
+	 * @param array $options Options.
+	 *
+	 * @return array
 	 */
-	public function rtwpvg_image_classes( $classes ) {
-		$controllers     = $this->get_settings_for_display();
-		$show_thumbnails = ! empty( $controllers['show_thumbnails'] ) ? $controllers['show_thumbnails'] : false;
-
-		if ( ! $show_thumbnails ) {
-			$key = array_search( 'rtwpvg-has-product-thumbnail', $classes );
-			if ( $key ) {
-				unset( $classes[ $key ] );
-				add_filter( 'rtwpvg_show_product_thumbnail_slider', '__return_false', 20 );
-			}
-		}
-
-		return $classes;
-	}
-
 	public function thumbnail_slider_js_options( $options ) {
 		if ( isset( $options['spaceBetween'] ) ) {
 			$controllers             = $this->get_settings_for_display();
@@ -177,6 +176,13 @@ class ProductImages extends ElementorWidgetBase {
 		return $options;
 	}
 
+	/**
+	 * Thumbnails columns.
+	 *
+	 * @param int $column Column.
+	 *
+	 * @return mixed
+	 */
 	public function thumbnails_columns( $column ) {
 		$controllers = $this->get_settings_for_display();
 		$column      = ! empty( $controllers['gallery_thumbs_column']['size'] ) ? $controllers['gallery_thumbs_column']['size'] : $column;
@@ -184,6 +190,13 @@ class ProductImages extends ElementorWidgetBase {
 		return $column;
 	}
 
+	/**
+	 * Thumbnails columns.
+	 *
+	 * @param int $column Column.
+	 *
+	 * @return mixed
+	 */
 	public function thumbnails_columns_sm( $column ) {
 		$controllers = $this->get_settings_for_display();
 		$column      = ! empty( $controllers['gallery_thumbs_column_tablet']['size'] ) ? $controllers['gallery_thumbs_column_tablet']['size'] : $column;
@@ -191,6 +204,13 @@ class ProductImages extends ElementorWidgetBase {
 		return $column;
 	}
 
+	/**
+	 * Thumbnails columns.
+	 *
+	 * @param int $column Column.
+	 *
+	 * @return mixed
+	 */
 	public function thumbnails_columns_xs( $column ) {
 		$controllers = $this->get_settings_for_display();
 		$column      = ! empty( $controllers['gallery_thumbs_column_mobile']['size'] ) ? $controllers['gallery_thumbs_column_mobile']['size'] : $column;
@@ -199,9 +219,11 @@ class ProductImages extends ElementorWidgetBase {
 	}
 
 	/**
-	 * @param $position
+	 * Thumbnail position.
 	 *
-	 * @return mixed
+	 * @param string $position Position.
+	 *
+	 * @return string
 	 */
 	public function thumbnail_position( $position ) {
 

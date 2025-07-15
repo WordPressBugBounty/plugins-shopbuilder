@@ -13,6 +13,9 @@ use RadiusTheme\SB\Modules\Badges\Badges;
 use RadiusTheme\SB\Modules\CheckoutEditor\CheckoutEditorInit;
 use RadiusTheme\SB\Modules\CheckoutEditor\CheckoutFns;
 use RadiusTheme\SB\Modules\ShopifyCheckout\ShopifyCheckout;
+use RadiusTheme\SB\Modules\VariationGallery\VariationGalleryInit;
+use RadiusTheme\SB\Modules\VariationSwatches\SwatchesFns;
+use RadiusTheme\SB\Modules\VariationSwatches\VariationSwatches;
 use RadiusTheme\SB\Traits\SingletonTrait;
 use RadiusTheme\SB\Modules\Compare\Compare;
 use RadiusTheme\SB\Modules\WishList\Wishlist;
@@ -514,24 +517,6 @@ class ModuleList extends ListModel {
 								'placeholder' => esc_html__( 'Browse Wishlist', 'shopbuilder' ),
 								'tab'         => 'general',
 							],
-							/*
-							 * TODO:: Will Implement Later.
-							'redirect_cart'                => array(
-								'id'    => 'redirect_cart',
-								'type'  => 'switch',
-								'help'  => esc_html__( 'Redirect users to the cart page when they add a product to the cart from the wishlist page', 'shopbuilder' ),
-								'label' => esc_html__( 'Redirect to Cart', 'shopbuilder' ),
-								'tab'   => 'page',
-							),
-							'remove_after_add_to_cart'     => array(
-								'value' => 'on',
-								'id'    => 'remove_after_add_to_cart',
-								'type'  => 'switch',
-								'help'  => esc_html__( 'Remove the product from the wishlist after it has been added to the cart', 'shopbuilder' ),
-								'label' => esc_html__( 'Remove if Added to Cart', 'shopbuilder' ),
-								'tab'   => 'page',
-							),
-							*/
 							'page'                         => [
 								'id'      => 'page',
 								'type'    => 'select',
@@ -895,6 +880,59 @@ class ModuleList extends ListModel {
 					],
 				]
 			),
+			/**
+			'variation_swatches'            => apply_filters(
+				'rtsb/module/variation_swatches/options',
+				[
+					'id'           => 'variation_swatches',
+					'title'        => esc_html__( 'Variation Swatches', 'shopbuilder' ),
+					'package'      => 'free',
+					'active'       => 'on',
+					'base_class'   => VariationSwatches::class,
+					'category'     => 'general',
+					'active_field' => [
+						'label' => esc_html__( 'Enable Variation Swatches Module?', 'shopbuilder' ),
+						'help'  => esc_html__( 'Switch on to enable variation swatches module.', 'shopbuilder' ),
+					],
+					'tabs'         => [
+						'general'       => [
+							'title' => esc_html__( 'General', 'shopbuilder' ),
+						],
+						'showcase_shop' => [
+							'title' => esc_html__( 'Showcase / Shop', 'shopbuilder' ),
+						],
+						'style'         => [
+							'title' => esc_html__( 'Style', 'shopbuilder' ),
+						],
+					],
+					'fields'       => $this->get_variation_swatches_fields(),
+				]
+			),
+			'variation_gallery'             => apply_filters(
+				'rtsb/module/variation_gallery/options',
+				[
+					'id'           => 'variation_gallery',
+					'title'        => esc_html__( 'Variation Gallery', 'shopbuilder' ),
+					'package'      => 'free',
+					'active'       => 'on',
+					'base_class'   => VariationGalleryInit::class,
+					'category'     => 'general',
+					'active_field' => [
+						'label' => esc_html__( 'Enable Variation Gallery Module?', 'shopbuilder' ),
+						'help'  => esc_html__( 'Switch on to enable variation gallery module.', 'shopbuilder' ),
+					],
+					'tabs'         => [
+						'general' => [
+							'title' => esc_html__( 'General', 'shopbuilder' ),
+						],
+						'style'   => [
+							'title' => esc_html__( 'Style', 'shopbuilder' ),
+						],
+					],
+					'fields'       => $this->get_variation_gallery_fields(),
+				]
+			),
+			*/
 			'variation_swatches'            => apply_filters(
 				'rtsb/module/variation_swatches/options',
 				[
@@ -947,35 +985,6 @@ class ModuleList extends ListModel {
 					'fields'            => [],
 				]
 			),
-			'mini_cart'                     => apply_filters(
-				'rtsb/module/mini_cart/options',
-				[
-					'id'           => 'mini_cart',
-					'active'       => '',
-					'title'        => esc_html__( 'Mini Cart', 'shopbuilder' ),
-					'package'      => $this->pro_package(),
-					'active_field' => [
-						'label' => esc_html__( 'Enable Mini Cart?', 'shopbuilder' ),
-						'help'  => esc_html__( 'Switch on to enable mini cart module.', 'shopbuilder' ),
-					],
-					'is_active'    => true,
-					'fields'       => Fns::pro_version_notice( '1.0.0' ),
-				]
-			),
-			'product_size_chart'            => apply_filters(
-				'rtsb/module/product_size_chart/options',
-				[
-					'id'           => 'product_size_chart',
-					'active'       => '',
-					'title'        => esc_html__( 'Product Size Chart', 'shopbuilder' ),
-					'package'      => $this->pro_package(),
-					'active_field' => [
-						'label' => esc_html__( 'Enable Product Size Chart?', 'shopbuilder' ),
-						'help'  => esc_html__( 'Switch on to enable Product Size Chart module.', 'shopbuilder' ),
-					],
-					'fields'       => Fns::pro_version_notice( '1.0.0' ),
-				]
-			),
 			'product_badges'                => apply_filters(
 				'rtsb/module/product_badges/options',
 				[
@@ -1002,65 +1011,6 @@ class ModuleList extends ListModel {
 					],
 				]
 			),
-			'customize_my_account'          => apply_filters(
-				'rtsb/module/customize_my_account/options',
-				[
-					'id'           => 'customize_my_account',
-					'active'       => '',
-					'title'        => esc_html__( 'Customize My Account', 'shopbuilder' ),
-					'package'      => $this->pro_package(),
-					'active_field' => [
-						'label' => esc_html__( 'Enable Customize My Account?', 'shopbuilder' ),
-						'help'  => esc_html__( 'Switch on to enable customize my account module.', 'shopbuilder' ),
-					],
-					'fields'       => Fns::pro_version_notice( '1.4.0' ),
-				]
-			),
-			'pre_order'                     => apply_filters(
-				'rtsb/module/pre_order/options',
-				[
-					'id'           => 'pre_order',
-					'active'       => '',
-					'title'        => esc_html__( 'Pre-Order', 'shopbuilder' ),
-					'package'      => $this->pro_package(),
-					'active_field' => [
-						'label' => esc_html__( 'Enable Pre-Order?', 'shopbuilder' ),
-						'help'  => esc_html__( 'Switch on to enable pre-order module.', 'shopbuilder' ),
-					],
-					'fields'       => Fns::pro_version_notice( '1.5.0' ),
-				]
-			),
-			'currency_switcher'             => apply_filters(
-				'rtsb/module/currency_switcher/options',
-				[
-					'id'           => 'currency_switcher',
-					'active'       => '',
-					'title'        => esc_html__( 'Currency Switcher', 'shopbuilder' ),
-					'package'      => $this->pro_package(),
-					'active_field' => [
-						'label' => esc_html__( 'Enable Currency Switcher?', 'shopbuilder' ),
-						'help'  => esc_html__( 'Switch on to enable currency switcher module.', 'shopbuilder' ),
-					],
-					'is_active'    => true,
-					'fields'       => Fns::pro_version_notice( '1.5.0' ),
-				]
-			),
-			'product_add_ons'               => apply_filters(
-				'rtsb/module/product_add_ons/options',
-				[
-					'id'           => 'product_add_ons',
-					'active'       => '',
-					'title'        => esc_html__( 'Product Add-Ons', 'shopbuilder' ),
-					'package'      => $this->pro_package(),
-					'active_field' => [
-						'label' => esc_html__( 'Enable Product Add-Ons?', 'shopbuilder' ),
-						'help'  => esc_html__( 'Switch on to enable product add-ons module.', 'shopbuilder' ),
-					],
-					'is_active'    => true,
-					'fields'       => Fns::pro_version_notice( '1.6.0' ),
-				]
-			),
-			// Checkout Fields Manager.
 			'checkout_fields_editor'        => apply_filters(
 				'rtsb/module/checkout_fields_editor/options',
 				[
@@ -1220,6 +1170,121 @@ class ModuleList extends ListModel {
 					],
 				]
 			),
+			'shopify_checkout'              => apply_filters(
+				'rtsb/module/shopify_checkout/options',
+				[
+					'id'           => 'shopify_checkout',
+					'active'       => '',
+					'title'        => esc_html__( 'Shopify Checkout', 'shopbuilder' ),
+					'base_class'   => ShopifyCheckout::class,
+					'active_field' => [
+						'label' => esc_html__( 'Enable Shopify Checkout?', 'shopbuilder' ),
+						'help'  => esc_html__( 'Switch on to enable Shopify Checkout module.', 'shopbuilder' ),
+					],
+					'fields'       => $this->shopify_checkout_options(),
+					'tabs'         => [
+						'general'    => [
+							'title' => esc_html__( 'General', 'shopbuilder' ),
+						],
+						'multi-step' => [
+							'title' => esc_html__( 'Multi-Step', 'shopbuilder' ),
+						],
+						'styles'     => [
+							'title' => esc_html__( 'General Styles', 'shopbuilder' ),
+						],
+						'btn-styles' => [
+							'title' => esc_html__( 'Button Styles', 'shopbuilder' ),
+						],
+					],
+				]
+			),
+			'mini_cart'                     => apply_filters(
+				'rtsb/module/mini_cart/options',
+				[
+					'id'           => 'mini_cart',
+					'active'       => '',
+					'title'        => esc_html__( 'Mini Cart', 'shopbuilder' ),
+					'package'      => $this->pro_package(),
+					'active_field' => [
+						'label' => esc_html__( 'Enable Mini Cart?', 'shopbuilder' ),
+						'help'  => esc_html__( 'Switch on to enable mini cart module.', 'shopbuilder' ),
+					],
+					'is_active'    => true,
+					'fields'       => Fns::pro_version_notice( '1.0.0' ),
+				]
+			),
+			'product_size_chart'            => apply_filters(
+				'rtsb/module/product_size_chart/options',
+				[
+					'id'           => 'product_size_chart',
+					'active'       => '',
+					'title'        => esc_html__( 'Product Size Chart', 'shopbuilder' ),
+					'package'      => $this->pro_package(),
+					'active_field' => [
+						'label' => esc_html__( 'Enable Product Size Chart?', 'shopbuilder' ),
+						'help'  => esc_html__( 'Switch on to enable Product Size Chart module.', 'shopbuilder' ),
+					],
+					'fields'       => Fns::pro_version_notice( '1.0.0' ),
+				]
+			),
+			'customize_my_account'          => apply_filters(
+				'rtsb/module/customize_my_account/options',
+				[
+					'id'           => 'customize_my_account',
+					'active'       => '',
+					'title'        => esc_html__( 'Customize My Account', 'shopbuilder' ),
+					'package'      => $this->pro_package(),
+					'active_field' => [
+						'label' => esc_html__( 'Enable Customize My Account?', 'shopbuilder' ),
+						'help'  => esc_html__( 'Switch on to enable customize my account module.', 'shopbuilder' ),
+					],
+					'fields'       => Fns::pro_version_notice( '1.4.0' ),
+				]
+			),
+			'pre_order'                     => apply_filters(
+				'rtsb/module/pre_order/options',
+				[
+					'id'           => 'pre_order',
+					'active'       => '',
+					'title'        => esc_html__( 'Pre-Order', 'shopbuilder' ),
+					'package'      => $this->pro_package(),
+					'active_field' => [
+						'label' => esc_html__( 'Enable Pre-Order?', 'shopbuilder' ),
+						'help'  => esc_html__( 'Switch on to enable pre-order module.', 'shopbuilder' ),
+					],
+					'fields'       => Fns::pro_version_notice( '1.5.0' ),
+				]
+			),
+			'currency_switcher'             => apply_filters(
+				'rtsb/module/currency_switcher/options',
+				[
+					'id'           => 'currency_switcher',
+					'active'       => '',
+					'title'        => esc_html__( 'Currency Switcher', 'shopbuilder' ),
+					'package'      => $this->pro_package(),
+					'active_field' => [
+						'label' => esc_html__( 'Enable Currency Switcher?', 'shopbuilder' ),
+						'help'  => esc_html__( 'Switch on to enable currency switcher module.', 'shopbuilder' ),
+					],
+					'is_active'    => true,
+					'fields'       => Fns::pro_version_notice( '1.5.0' ),
+				]
+			),
+			'product_add_ons'               => apply_filters(
+				'rtsb/module/product_add_ons/options',
+				[
+					'id'           => 'product_add_ons',
+					'active'       => '',
+					'title'        => esc_html__( 'Product Add-Ons', 'shopbuilder' ),
+					'package'      => $this->pro_package(),
+					'active_field' => [
+						'label' => esc_html__( 'Enable Product Add-Ons?', 'shopbuilder' ),
+						'help'  => esc_html__( 'Switch on to enable product add-ons module.', 'shopbuilder' ),
+					],
+					'is_active'    => true,
+					'fields'       => Fns::pro_version_notice( '1.6.0' ),
+				]
+			),
 			'sales_notification'            => apply_filters(
 				'rtsb/module/sales_notification/options',
 				[
@@ -1302,34 +1367,6 @@ class ModuleList extends ListModel {
 						'help'  => esc_html__( 'Switch on to enable sticky add-to-cart module.', 'shopbuilder' ),
 					],
 					'fields'       => Fns::pro_version_notice( '1.7.0', 'general', 'Sticky Add-To-Cart', false ),
-				]
-			),
-			'shopify_checkout'              => apply_filters(
-				'rtsb/module/shopify_checkout/options',
-				[
-					'id'           => 'shopify_checkout',
-					'active'       => '',
-					'title'        => esc_html__( 'Shopify Checkout', 'shopbuilder' ),
-					'base_class'   => ShopifyCheckout::class,
-					'active_field' => [
-						'label' => esc_html__( 'Enable Shopify Checkout?', 'shopbuilder' ),
-						'help'  => esc_html__( 'Switch on to enable Shopify Checkout module.', 'shopbuilder' ),
-					],
-					'fields'       => $this->shopify_checkout_options(),
-					'tabs'         => [
-						'general'    => [
-							'title' => esc_html__( 'General', 'shopbuilder' ),
-						],
-						'multi-step' => [
-							'title' => esc_html__( 'Multi-Step', 'shopbuilder' ),
-						],
-						'styles'     => [
-							'title' => esc_html__( 'General Styles', 'shopbuilder' ),
-						],
-						'btn-styles' => [
-							'title' => esc_html__( 'Button Styles', 'shopbuilder' ),
-						],
-					],
 				]
 			),
 			'smart_coupons'                 => apply_filters(
@@ -1465,8 +1502,7 @@ class ModuleList extends ListModel {
 					__( 'Choose a cart icon to display in your checkout\'s header. <br />%s', 'shopbuilder' ),
 					! rtsb()->has_pro()
 						? sprintf(
-							'<a target="_blank" href="%s">%s </a> %s ',
-							esc_url( rtsb()->pro_version_link() ),
+							'<a target="_blank" href="' . esc_url( rtsb()->pro_version_link() ) . '">%s </a> %s ',
 							esc_html__( 'Upgrade to PRO', 'shopbuilder' ),
 							esc_html__( 'to unlock custom image icon.', 'shopbuilder' )
 						)
@@ -2875,8 +2911,7 @@ class ModuleList extends ListModel {
 						esc_html__( 'Please choose the group display type. %s', 'shopbuilder' ),
 						! rtsb()->has_pro()
 							? sprintf(
-								'<a target="_blank" href="%s">%s </a> %s ',
-								esc_url( rtsb()->pro_version_link() ),
+								'<a target="_blank" href="' . esc_url( rtsb()->pro_version_link() ) . '">%s </a> %s ',
 								esc_html__( 'Upgrade to PRO', 'shopbuilder' ),
 								esc_html__( 'for vertical layout.', 'shopbuilder' )
 							)
@@ -2939,23 +2974,6 @@ class ModuleList extends ListModel {
 						],
 					],
 				],
-				/*
-				'loop_priority_note'                => [
-					'type'       => 'raw',
-					'label'      => ' ',
-					'html'       => '<span style="color:red">' . esc_html__( 'If the badge position is incorrect or not displayed, please adjust the priority of hooks accordingly by increasing or decreasing them as necessary.', 'shopbuilder' ) . '</span>',
-					'dependency' => [
-						'rules' => [
-							[
-								'item'     => 'modules.product_badges.loop_group_position',
-								'value'    => 'above_image',
-								'operator' => '!=',
-							],
-						],
-					],
-					'tab'        => 'group',
-				],
-				*/
 				'group_position_hook_priority'      => [
 					'id'         => 'group_position_hook_priority',
 					'type'       => 'number',
@@ -3060,23 +3078,6 @@ class ModuleList extends ListModel {
 						],
 					],
 				],
-				/*
-				'product_page_priority_note'        => [
-					'type'       => 'raw',
-					'label'      => ' ',
-					'html'       => '<span style="color:red">' . esc_html__( 'If the badge position is incorrect or not displayed, please adjust the priority of hooks accordingly by increasing or decreasing them as necessary.', 'shopbuilder' ) . '</span>',
-					'dependency' => [
-						'rules' => [
-							[
-								'item'     => 'modules.product_badges.product_page_group_position',
-								'value'    => [ 'above_image', 'shortcode' ],
-								'operator' => '!in',
-							],
-						],
-					],
-					'tab'        => 'group',
-				],
-				*/
 				'product_page_group_hook_priority'  => [
 					'id'         => 'product_page_group_hook_priority',
 					'type'       => 'number',
@@ -3152,8 +3153,7 @@ class ModuleList extends ListModel {
 								esc_html__( 'Select badge type. %s', 'shopbuilder' ),
 								! rtsb()->has_pro()
 									? sprintf(
-										'<a target="_blank" href="%s">%s</a> %s',
-										esc_url( rtsb()->pro_version_link() ),
+										'<a target="_blank" href="' . esc_url( rtsb()->pro_version_link() ) . '">%s</a> %s',
 										esc_html__( 'Upgrade to PRO', 'shopbuilder' ),
 										esc_html__( 'unlock custom badge creation.', 'shopbuilder' )
 									)
@@ -3247,8 +3247,7 @@ class ModuleList extends ListModel {
 								esc_html__( 'Specify the badge display as Image Or Text. %s', 'shopbuilder' ),
 								! rtsb()->has_pro()
 									? sprintf(
-										'<a target="_blank" href="%s">%s</a> %s',
-										esc_url( rtsb()->pro_version_link() ),
+										'<a target="_blank" href="' . esc_url( rtsb()->pro_version_link() ) . '">%s</a> %s',
 										esc_html__( 'Upgrade to PRO', 'shopbuilder' ),
 										esc_html__( 'unlock Image badge creation.', 'shopbuilder' )
 									)
@@ -3317,7 +3316,6 @@ class ModuleList extends ListModel {
 						'show_badges_percent_text' => [
 							'id'         => 'show_badges_percent_text',
 							'type'       => 'switch',
-							// 'isPro'   => ! rtsb()->has_pro(),
 							'label'      => esc_html__( 'Show Badges Percentage (%)', 'shopbuilder' ),
 							'help'       => esc_html__( 'Switch on to show badge as dynamic percentage instead of text.', 'shopbuilder' ),
 							'dependency' => [
@@ -3626,5 +3624,625 @@ class ModuleList extends ListModel {
 		}
 
 		return $items;
+	}
+	/**
+	 * @return array
+	 */
+	public function get_variation_swatches_fields() {
+		return apply_filters(
+			'rtsb/module/variation_swatches/fields',
+			[
+				'show_tooltip'                      => [
+					'id'    => 'show_tooltip',
+					'value' => 'on',
+					'type'  => 'switch',
+					'label' => esc_html__( 'Enable Tooltip', 'shopbuilder' ),
+					'help'  => esc_html__( 'Enable / Disable plugin default tooltip on each product attribute.', 'shopbuilder' ),
+					'tab'   => 'general',
+				],
+				'shape_style'                       => [
+					'id'      => 'shape_style',
+					'label'   => esc_html__( 'Default Shape Style', 'shopbuilder' ),
+					'help'    => esc_html__( 'Attribute Shape Style. Note: This option will not be applied to radio and button attributes.', 'shopbuilder' ),
+					'type'    => 'image_select',
+					'value'   => 'rounded',
+					'options' => [
+						'rounded' => [
+							'label' => esc_html__( 'Rounded Shape', 'shopbuilder' ),
+							'url'   => esc_url( rtsb()->get_assets_uri( 'images/variation-swatch/rounded-shape.svg' ) ),
+						],
+						'squared' => [
+							'label' => esc_html__( 'Squared Shape', 'shopbuilder' ),
+							'url'   => esc_url( rtsb()->get_assets_uri( 'images/variation-swatch/squared-shape.svg' ) ),
+						],
+					],
+					'tab'     => 'general',
+				],
+				'shape_style_checkmark'             => [
+					'id'      => 'shape_style_checkmark',
+					'type'    => 'switch',
+					'isPro'   => ! rtsb()->has_pro(),
+					'default' => false,
+					'label'   => esc_html__( 'Checkmark Selected Term ', 'shopbuilder' ),
+					'help'    => esc_html__( 'Shape style will add checkmark icon. Note: This option will not be applied to radio attributes.', 'shopbuilder' ),
+					'tab'     => 'general',
+				],
+				'default_dropdown_convert'          => [
+					'id'      => 'default_dropdown_convert',
+					'label'   => esc_html__( 'Default Dropdown Convert', 'shopbuilder' ),
+					'help'    => esc_html__( 'Dropdown Convert To Button Or Image', 'shopbuilder' ),
+					/**
+					*   'isPro'   => ! rtsb()->has_pro(),
+					*/
+					'type'    => 'select',
+					'value'   => '',
+					'options' => [
+						'select' => esc_html__( 'Select ( Default )', 'shopbuilder' ),
+						'button' => esc_html__( 'Button', 'shopbuilder' ),
+						'image'  => esc_html__( 'Image', 'shopbuilder' ),
+					],
+					'tab'     => 'general',
+				],
+				'show_term_name_beside_label'       => [
+					'id'      => 'show_term_name_beside_label',
+					'type'    => 'switch',
+					'isPro'   => ! rtsb()->has_pro(),
+					'default' => false,
+					'label'   => esc_html__( 'Show Term Name', 'shopbuilder' ),
+					'help'    => esc_html__( 'Selected term name will show beside attribute label.', 'shopbuilder' ),
+					'tab'     => 'general',
+				],
+				'disabled_attribute_behavior'       => [
+					'id'      => 'disabled_attribute_behavior',
+					'label'   => esc_html__( 'Disabled Attribute behavior', 'shopbuilder' ),
+					'help'    => esc_html__( 'Disabled attribute will be hide / blur.', 'shopbuilder' ) . ' <span>' . __( ' Note: This feature will be operational for variation quantities below the "Ajax variation threshold.', 'shopbuilder' ) . '</span>',
+					'type'    => 'select',
+					'value'   => 'blur',
+					'options' => [
+						'blur-cross'    => esc_html__( 'Blur And Cross', 'shopbuilder' ),
+						'blur-no-cross' => esc_html__( 'Only Blur', 'shopbuilder' ),
+						'hide'          => esc_html__( 'Hide', 'shopbuilder' ),
+					],
+					'tab'     => 'general',
+				],
+				'attr_display_limit'                => [
+					'id'    => 'attr_display_limit',
+					'type'  => 'number',
+					'isPro' => ! rtsb()->has_pro(),
+					'value' => 0,
+					'size'  => 'small',
+					'min'   => 0,
+					'max'   => 999,
+					'label' => esc_html__( 'Product Page Attribute display limit', 'shopbuilder' ),
+					'help'  => esc_html__( 'Catalog mode attribute display limit. Default is 0. Means no limit.', 'shopbuilder' ),
+					'tab'   => 'general',
+				],
+				'attribute_image_size'              => [
+					'id'      => 'attribute_image_size',
+					'label'   => esc_html__( 'Attribute image size', 'shopbuilder' ),
+					'help'    => __( 'Choose attribute image size.', 'shopbuilder' ) . '<a target="_blank" href="' . esc_url( admin_url( 'options-media.php' ) ) . '"> ' . __( 'Media Settings', 'shopbuilder' ) . '</a>',
+					'type'    => 'select',
+					'value'   => 'thumbnail',
+					'options' => Fns::get_image_sizes(),
+					'tab'     => 'general',
+				],
+
+				'tooltip_title'                     => [
+					'id'         => 'tooltip_title',
+					'type'       => 'title',
+					'label'      => esc_html__( 'Tooltip Options', 'shopbuilder' ),
+					'help'       => esc_html__( 'Tooltip settings for single page and catalog mode on shop / archive pages', 'shopbuilder' ),
+					'tab'        => 'general',
+					'dependency' => [
+						'rules' => [
+							[
+								'item'     => 'modules.variation_swatches.show_tooltip',
+								'value'    => 'on',
+								'operator' => '==',
+							],
+						],
+					],
+				],
+				'tooltip_image_size'                => [
+					'id'         => 'tooltip_image_size',
+					'label'      => esc_html__( 'Tooltip image size', 'shopbuilder' ),
+					'help'       => __( 'Choose Tooltip image size.', 'shopbuilder' ) . '<a target="_blank" href="' . esc_url( admin_url( 'options-media.php' ) ) . '"> ' . __( 'Media Settings', 'shopbuilder' ) . '</a>',
+					'type'       => 'select',
+					'isPro'      => ! rtsb()->has_pro(),
+					'value'      => 'thumbnail',
+					'options'    => Fns::get_image_sizes(),
+					'tab'        => 'general',
+					'dependency' => [
+						'rules' => [
+							[
+								'item'     => 'modules.variation_swatches.show_tooltip',
+								'value'    => 'on',
+								'operator' => '==',
+							],
+						],
+					],
+				],
+				'advanced_title'                    => [
+					'id'    => 'advanced_title',
+					'type'  => 'title',
+					'label' => esc_html__( 'Advanced', 'shopbuilder' ),
+					'tab'   => 'general',
+				],
+				'disable_out_of_stock'              => [
+					'id'      => 'disable_out_of_stock',
+					'type'    => 'switch',
+					'default' => true,
+					'label'   => esc_html__( 'Disable Out of Stock', 'shopbuilder' ),
+					'help'    => __( 'Disable out of stock variation attribute items.', 'shopbuilder' ),
+					'tab'     => 'general',
+				],
+
+				'enable_variation_url'              => [
+					'id'      => 'enable_variation_url',
+					'type'    => 'switch',
+					'default' => false,
+					'isPro'   => ! rtsb()->has_pro(),
+					'label'   => esc_html__( 'Variation URL', 'shopbuilder' ),
+					'help'    => esc_html__( 'Generate a URL based on the selected variation attributes.', 'shopbuilder' ),
+					'tab'     => 'general',
+				],
+				'enable_showcase_swatches'          => [
+					'id'      => 'enable_showcase_swatches',
+					'type'    => 'switch',
+					'default' => false,
+					'isPro'   => ! rtsb()->has_pro(),
+					'label'   => esc_html__( 'Enable Swatches', 'shopbuilder' ),
+					'help'    => esc_html__( 'Show swatches on archive / shop page.', 'shopbuilder' ),
+					'tab'     => 'showcase_shop',
+				],
+				'showcase_product_wrapper_selector' => [
+					'id'         => 'showcase_product_wrapper_selector',
+					'type'       => 'text',
+					'isPro'      => ! rtsb()->has_pro(),
+					'label'      => esc_html__( 'Product Wrapper Selector', 'shopbuilder' ),
+					'help'       => esc_html__( 'Archive product Wrapper Selector (.rtwpvs-product,.tmb-woocommerce)', 'shopbuilder' ),
+					'value'      => '.rtsb-vs-product,.product-item',
+					'dependency' => [
+						'rules' => [
+							[
+								'item'     => 'modules.variation_swatches.enable_showcase_swatches',
+								'value'    => 'on',
+								'operator' => '==',
+							],
+						],
+					],
+					'tab'        => 'showcase_shop',
+				],
+				'showcase_swatches_image_selector'  => [
+					'id'         => 'showcase_swatches_image_selector',
+					'type'       => 'text',
+					'isPro'      => ! rtsb()->has_pro(),
+					'label'      => esc_html__( 'Image Selector', 'shopbuilder' ),
+					'help'       => esc_html__( 'Archive product image selector to show variation image. You can also use multiple selectors separated by comma (.attachment-woocommerce_thumbnail, .wp-post-image) ', 'shopbuilder' ),
+					'value'      => '.wp-post-image, .attachment-woocommerce_thumbnail',
+					'dependency' => [
+						'rules' => [
+							[
+								'item'     => 'modules.variation_swatches.enable_showcase_swatches',
+								'value'    => 'on',
+								'operator' => '==',
+							],
+						],
+					],
+					'tab'        => 'showcase_shop',
+				],
+				'showcase_swatches_position'        => [
+					'id'         => 'showcase_swatches_position',
+					'label'      => esc_html__( 'Swatches Position', 'shopbuilder' ),
+					'help'       => esc_html__( 'Display showcase swatches in a specific position.', 'shopbuilder' ) . '<br/>' . __( 'Note: Some themes remove or override default WooCommerce hooks. If the swatches do not appear as expected, you may need to manually set a custom position.', 'shopbuilder' ),
+					'isPro'      => ! rtsb()->has_pro(),
+					'type'       => 'select',
+					'value'      => 'after_title_and_price',
+					'options'    => apply_filters(
+						'rtsb_showcase_swatches_positions',
+						[
+							'custom_hook'        => esc_html__( 'Custom Hook', 'shopbuilder' ),
+							'before_add_to_cart' => esc_html__( 'Before Add To Cart', 'shopbuilder' ),
+							'after_add_to_cart'  => esc_html__( 'After Add To Cart', 'shopbuilder' ),
+						]
+					),
+					'dependency' => [
+						'rules' => [
+							[
+								'item'     => 'modules.variation_swatches.enable_showcase_swatches',
+								'value'    => 'on',
+								'operator' => '==',
+							],
+						],
+					],
+					'tab'        => 'showcase_shop',
+				],
+				'custom_hook_name'                  => [
+					'type'       => 'description',
+					'text'       => sprintf(
+					/* translators: 1: The shortcode.*/
+						esc_html__( 'Copy the php code %1$s and paste it in your product query where you want to show the button.', 'shopbuilder' ),
+						"<code style='padding: 5px' >&lt;?php do_action( 'rtsb/vs/showcase/variation' ); ?&gt;</code>"
+					),
+					'id'         => 'custom_hook_name',
+					'tab'        => 'showcase_shop',
+					'dependency' => [
+						'rules' => [
+							[
+								'item'     => 'modules.variation_swatches.enable_showcase_swatches',
+								'value'    => 'on',
+								'operator' => '==',
+							],
+							[
+								'item'     => 'modules.variation_swatches.showcase_swatches_position',
+								'value'    => 'custom_hook',
+								'operator' => '==',
+							],
+						],
+					],
+				],
+				'showcase_swatches_align'           => [
+					'id'         => 'showcase_swatches_align',
+					'label'      => esc_html__( 'Swatches Align', 'shopbuilder' ),
+					'help'       => esc_html__( 'Swatches align on archive page.', 'shopbuilder' ),
+					'isPro'      => ! rtsb()->has_pro(),
+					'type'       => 'select',
+					'value'      => 'left',
+					'options'    => apply_filters(
+						'rtsb_get_showcase_swatches_aligns',
+						[
+							'left'   => esc_html__( 'Left', 'shopbuilder' ),
+							'right'  => esc_html__( 'Right', 'shopbuilder' ),
+							'center' => esc_html__( 'Center', 'shopbuilder' ),
+						]
+					),
+					'dependency' => [
+						'rules' => [
+							[
+								'item'     => 'modules.variation_swatches.enable_showcase_swatches',
+								'value'    => 'on',
+								'operator' => '==',
+							],
+						],
+					],
+					'tab'        => 'showcase_shop',
+				],
+
+				'show_clear_on_showcase'            => [
+					'id'         => 'show_clear_on_showcase',
+					'isPro'      => ! rtsb()->has_pro(),
+					'type'       => 'switch',
+					'label'      => esc_html__( 'Show clear link', 'shopbuilder' ),
+					'help'       => esc_html__( 'Show clear link on archive, shop page, any other showcase.', 'shopbuilder' ),
+					'dependency' => [
+						'rules' => [
+							[
+								'item'     => 'modules.variation_swatches.enable_showcase_swatches',
+								'value'    => 'on',
+								'operator' => '==',
+							],
+						],
+					],
+					'tab'        => 'showcase_shop',
+				],
+				'showcase_special_attribute_title'  => [
+					'id'    => 'showcase_special_attribute_title',
+					'type'  => 'title',
+					'label' => esc_html__( 'Special Attribute', 'shopbuilder' ),
+					'tab'   => 'showcase_shop',
+				],
+				'showcase_single_attribute'         => [
+					'id'    => 'showcase_single_attribute',
+					'isPro' => ! rtsb()->has_pro(),
+					'type'  => 'switch',
+					'label' => esc_html__( 'Show Single Attribute', 'shopbuilder' ),
+					'help'  => esc_html__( 'Show single attribute taxonomies on archive page.', 'shopbuilder' ),
+					'tab'   => 'showcase_shop',
+				],
+				'chose_showcase_single_attribute'   => [
+					'id'         => 'chose_showcase_single_attribute',
+					'label'      => esc_html__( 'Chose Attribute', 'shopbuilder' ),
+					'help'       => esc_html__( 'Choose an attribute to show on catalog mode', 'shopbuilder' ),
+					'isPro'      => ! rtsb()->has_pro(),
+					'type'       => 'select',
+					'options'    => SwatchesFns::get_wc_attributes( esc_html__( ' - Choose Attribute - ', 'shopbuilder' ) ),
+					'dependency' => [
+						'rules' => [
+							[
+								'item'     => 'modules.variation_swatches.showcase_single_attribute',
+								'value'    => 'on',
+								'operator' => '==',
+							],
+						],
+					],
+					'tab'        => 'showcase_shop',
+				],
+
+				'showcase_swatches_display_event'   => [
+					'id'         => 'showcase_swatches_display_event',
+					'label'      => esc_html__( 'Catalog Mode Display Event', 'shopbuilder' ),
+					'help'       => esc_html__( 'Show catalog mode image display event.', 'shopbuilder' ),
+					'isPro'      => ! rtsb()->has_pro(),
+					'type'       => 'select',
+					'value'      => 'click',
+					'options'    => [
+						'click' => esc_html__( 'on Click', 'shopbuilder' ),
+						'hover' => esc_html__( 'on Hover', 'shopbuilder' ),
+					],
+					'dependency' => [
+						'rules' => [
+							[
+								'item'     => 'modules.variation_swatches.enable_showcase_swatches',
+								'value'    => 'on',
+								'operator' => '==',
+							],
+						],
+					],
+					'tab'        => 'showcase_shop',
+				],
+
+				'showcase_swatches_display_limit'   => [
+					'id'         => 'showcase_swatches_display_limit',
+					'type'       => 'number',
+					'isPro'      => ! rtsb()->has_pro(),
+					'value'      => 0,
+					'size'       => 'small',
+					'min'        => 0,
+					'max'        => 999,
+					'label'      => esc_html__( 'Attribute display limit', 'shopbuilder' ),
+					'help'       => esc_html__( 'Catalog mode attribute display limit. Default is 0. Means no limit.', 'shopbuilder' ),
+					'dependency' => [
+						'rules' => [
+							[
+								'item'     => 'modules.variation_swatches.enable_showcase_swatches',
+								'value'    => 'on',
+								'operator' => '==',
+							],
+						],
+					],
+					'tab'        => 'showcase_shop',
+				],
+				'checkmark_size'                    => [
+					'id'    => 'checkmark_size',
+					'type'  => 'title',
+					'label' => esc_html__( 'Checkmark', 'shopbuilder' ),
+					'tab'   => 'style',
+				],
+				'checkmark_bg_color'                => [
+					'id'    => 'checkmark_bg_color',
+					'label' => esc_html__( 'Checkmark Background Color', 'shopbuilder' ),
+					'isPro' => ! rtsb()->has_pro(),
+					'type'  => 'color',
+					'value' => '#333333',
+					'tab'   => 'style',
+				],
+				'checkmark_icon_color'              => [
+					'id'    => 'checkmark_icon_color',
+					'label' => esc_html__( 'Checkmark Icon Color', 'shopbuilder' ),
+					'isPro' => ! rtsb()->has_pro(),
+					'type'  => 'color',
+					'value' => '#ffffff',
+					'tab'   => 'style',
+				],
+				'attribute_checkmark_width'         => [
+					'id'    => 'attribute_checkmark_width',
+					'label' => esc_html__( 'Checkmark Width', 'shopbuilder' ),
+					'isPro' => ! rtsb()->has_pro(),
+					'help'  => esc_html__( 'Set the width (in px) for selected attribute checkmark,', 'shopbuilder' ),
+					'type'  => 'slider',
+					'min'   => 10,
+					'max'   => 200,
+					'unit'  => 'px',
+					'value' => 15,
+					'tab'   => 'style',
+				],
+				'attribute_checkmark_height'        => [
+					'id'    => 'attribute_checkmark_height',
+					'label' => esc_html__( 'Checkmark Height', 'shopbuilder' ),
+					'isPro' => ! rtsb()->has_pro(),
+					'help'  => esc_html__( 'Set the height (in px) for selected attribute checkmark,', 'shopbuilder' ),
+					'type'  => 'slider',
+					'min'   => 10,
+					'max'   => 200,
+					'unit'  => 'px',
+					'value' => 15,
+					'tab'   => 'style',
+				],
+				'attribute_checkmark_icon_size'     => [
+					'id'    => 'attribute_checkmark_icon_size',
+					'isPro' => ! rtsb()->has_pro(),
+					'label' => esc_html__( 'Checkmark Icon Size', 'shopbuilder' ),
+					'help'  => esc_html__( 'Checkmark Icon Size.', 'shopbuilder' ),
+					'type'  => 'slider',
+					'min'   => 8,
+					'max'   => 30,
+					'unit'  => 'px',
+					'value' => 11,
+					'tab'   => 'style',
+				],
+				'attribute_style'                   => [
+					'id'    => 'attribute_style',
+					'type'  => 'title',
+					'label' => esc_html__( 'Attribute Style', 'shopbuilder' ),
+					'tab'   => 'style',
+				],
+				'attribute_border_color'            => [
+					'id'    => 'attribute_border_color',
+					'label' => esc_html__( 'Attribute Border Color', 'shopbuilder' ),
+					'type'  => 'color',
+					'value' => '#333333',
+					'tab'   => 'style',
+				],
+				'attribute_border_color_hover'      => [
+					'id'    => 'attribute_border_color_hover',
+					'label' => esc_html__( 'Attribute Border Color Hover/Active', 'shopbuilder' ),
+					'type'  => 'color',
+					'value' => '#333333',
+					'tab'   => 'style',
+				],
+				'details_page_attribute_size'       => [
+					'id'    => 'details_page_attribute_size',
+					'type'  => 'title',
+					'label' => esc_html__( 'Details Page Attributes Size', 'shopbuilder' ),
+					'tab'   => 'style',
+				],
+				'details_page_attribute_width'      => [
+					'id'    => 'details_page_attribute_width',
+					'label' => esc_html__( 'Variation Item Width', 'shopbuilder' ),
+					'help'  => esc_html__( 'Set the width (in px) for each variation attribute option, Note: This option will not be applied to radio and button attributes.', 'shopbuilder' ),
+					'type'  => 'slider',
+					'min'   => 10,
+					'max'   => 150,
+					'unit'  => 'px',
+					'value' => 30,
+					'tab'   => 'style',
+				],
+				'details_page_attribute_height'     => [
+					'id'    => 'details_page_attribute_height',
+					'label' => esc_html__( 'Variation Item Height', 'shopbuilder' ),
+					'help'  => esc_html__( 'Set the height (in px) for each variation attribute option, Note: This option will not be applied to radio attributes.', 'shopbuilder' ),
+					'type'  => 'slider',
+					'min'   => 10,
+					'max'   => 150,
+					'unit'  => 'px',
+					'value' => 30,
+					'tab'   => 'style',
+				],
+				'details_page_attribute_font_size'  => [
+					'id'    => 'details_page_attribute_font_size',
+					'label' => esc_html__( 'Variation Item Font Size', 'shopbuilder' ),
+					'help'  => esc_html__( 'Set the font size (in px) for text within variation attribute options, such as labels on buttons.', 'shopbuilder' ),
+					'type'  => 'slider',
+					'min'   => 8,
+					'max'   => 30,
+					'unit'  => 'px',
+					'value' => 16,
+					'tab'   => 'style',
+				],
+				'showcase_attribute_size'           => [
+					'id'    => 'showcase_attribute_size',
+					'type'  => 'title',
+					'label' => esc_html__( 'Product Showcase Attributes Size', 'shopbuilder' ),
+					'tab'   => 'style',
+				],
+				'showcase_attribute_width'          => [
+					'id'    => 'showcase_attribute_width',
+					'label' => esc_html__( 'Variation Item Width', 'shopbuilder' ),
+					'help'  => esc_html__( 'Set the width (in px) for each variation attribute option,  Note: This option will not be applied to radio and button attributes.', 'shopbuilder' ),
+					'type'  => 'slider',
+					'min'   => 10,
+					'max'   => 200,
+					'unit'  => 'px',
+					'value' => 30,
+					'tab'   => 'style',
+				],
+				'showcase_attribute_height'         => [
+					'id'    => 'showcase_attribute_height',
+					'label' => esc_html__( 'Variation Item Height', 'shopbuilder' ),
+					'help'  => esc_html__( 'Set the height (in px) for each variation attribute option,  Note: This option will not be applied to radio and button attributes.', 'shopbuilder' ),
+					'type'  => 'slider',
+					'min'   => 10,
+					'max'   => 200,
+					'unit'  => 'px',
+					'value' => 30,
+					'tab'   => 'style',
+				],
+				'showcase_attribute_font_size'      => [
+					'id'    => 'showcase_attribute_font_size',
+					'label' => esc_html__( 'Variation Item Font Size', 'shopbuilder' ),
+					'help'  => esc_html__( 'Set the font size (in px) for text within variation attribute options, such as labels on buttons.', 'shopbuilder' ),
+					'type'  => 'slider',
+					'min'   => 8,
+					'max'   => 30,
+					'unit'  => 'px',
+					'value' => 16,
+					'tab'   => 'style',
+				],
+				'tooltip_style'                     => [
+					'id'    => 'tooltip_style',
+					'type'  => 'title',
+					'label' => esc_html__( 'Tooltip Style', 'shopbuilder' ),
+					'tab'   => 'style',
+				],
+				'tooltip_images_padding'            => [
+					'id'    => 'tooltip_images_padding',
+					'label' => esc_html__( 'Tooltip Images Padding', 'shopbuilder' ),
+					'type'  => 'slider',
+					'min'   => 0,
+					'max'   => 30,
+					'unit'  => 'px',
+					'value' => 3,
+					'tab'   => 'style',
+				],
+				'tooltip_bg_color'                  => [
+					'id'    => 'tooltip_bg_color',
+					'label' => esc_html__( 'Tooltip Background Color', 'shopbuilder' ),
+					'type'  => 'color',
+					'value' => '#333333',
+					'tab'   => 'style',
+				],
+				'tooltip_text_color'                => [
+					'id'    => 'tooltip_text_color',
+					'label' => esc_html__( 'Tooltip Text Color', 'shopbuilder' ),
+					'type'  => 'color',
+					'value' => '#ffffff',
+					'tab'   => 'style',
+				],
+			]
+		); // @phpstan-ignore-line
+	}
+	/**
+	 * @return array
+	 */
+	public function get_variation_gallery_fields() {
+		return apply_filters(
+			'rtsb/module/variation_gallery/fields',
+			[
+				'thumbnails_columns'    => [
+					'id'    => 'thumbnails_columns',
+					'type'  => 'slider',
+					'label' => esc_html__( 'Thumbnails Items per row / slider view', 'shopbuilder' ),
+					'help'  => esc_html__( 'Product Thumbnails Item Image. Default value is: 4. Limit: 2-8. The field required for slider.', 'shopbuilder' ),
+					'min'   => 2,
+					'max'   => 8,
+					'unit'  => '',
+					'value' => 4,
+					'tab'   => 'general',
+				],
+				'thumbnails_columns_sm' => [
+					'id'    => 'thumbnails_columns_sm',
+					'type'  => 'slider',
+					'label' => esc_html__( 'Thumbnails Items per row / slider view (Medium Device)', 'shopbuilder' ),
+					'help'  => esc_html__( 'Product Thumbnails Item Image. Default value is: 4. Limit: 2-8. The field required for slider.', 'shopbuilder' ),
+					'min'   => 2,
+					'max'   => 8,
+					'unit'  => '',
+					'value' => 4,
+					'tab'   => 'general',
+				],
+				'thumbnails_columns_xs' => [
+					'id'    => 'thumbnails_columns_xs',
+					'type'  => 'slider',
+					'label' => esc_html__( 'Product Thumbnails Item Image For (Small Device)', 'shopbuilder' ),
+					'help'  => esc_html__( 'Product Thumbnails Item Image. Default value is: 3. Limit: 2-8. The field required for slider.', 'shopbuilder' ),
+					'min'   => 2,
+					'max'   => 8,
+					'unit'  => '',
+					'value' => 3,
+					'tab'   => 'general',
+				],
+				'thumbnails_gap'        => [
+					'id'    => 'thumbnails_gap',
+					'type'  => 'slider',
+					'label' => esc_html__( 'Thumbnails Gap', 'shopbuilder' ),
+					'help'  => esc_html__( 'Product Thumbnails Gap In Pixel. Default value is: 0. Limit: 0-50.', 'shopbuilder' ),
+					'min'   => 0,
+					'max'   => 50,
+					'unit'  => 'px',
+					'value' => 0,
+					'tab'   => 'general',
+				],
+			]
+		);
 	}
 }

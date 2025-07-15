@@ -7,12 +7,13 @@
 
 namespace RadiusTheme\SB\Controllers\Hooks;
 
-use RadiusTheme\SB\Elementor\Helper\RenderHelpers;
 use RadiusTheme\SB\Helpers\Fns;
+use RadiusTheme\SB\Helpers\Cache;
 use RadiusTheme\SB\Models\GeneralList;
 use RadiusTheme\SB\Helpers\BuilderFns;
 use RadiusTheme\SB\Models\TemplateSettings;
 use RadiusTheme\SB\Elementor\Render\Render;
+use RadiusTheme\SB\Elementor\Helper\RenderHelpers;
 
 defined( 'ABSPATH' ) || exit();
 
@@ -62,7 +63,6 @@ class ActionHooks {
 		/**
 		 * Notices.
 		 */
-		// add_action( 'woocommerce_cart_is_empty', [ Fns::class, 'woocommerce_output_all_notices' ], 5 );
 		add_action( 'woocommerce_shortcode_before_product_cat_loop', [ Fns::class, 'woocommerce_output_all_notices' ], 10 );
 		add_action( 'woocommerce_before_shop_loop', [ Fns::class, 'woocommerce_output_all_notices' ], 10 );
 		add_action( 'woocommerce_before_single_product', [ Fns::class, 'woocommerce_output_all_notices' ], 10 );
@@ -92,6 +92,8 @@ class ActionHooks {
 		if ( ! rtsb()->has_pro() ) {
 			add_action( 'woocommerce_product_query', [ __CLASS__, 'query_modifier' ], 15 );
 		}
+
+		add_action( 'switch_theme', [ __CLASS__, 'clear_cache' ] );
 	}
 
 
@@ -242,7 +244,9 @@ class ActionHooks {
 		$settings['layout']          = ! empty( $generalList['social_share']['share_icon_layout'] ) ? $generalList['social_share']['share_icon_layout'] : 1;
 		$settings['show_share_icon'] = 1;
 
-		// TODO:: Implement Later ! empty( $generalList['social_share']['share_icon_show_to_product_page'] ) && 'on' === $generalList['social_share']['share_icon_show_to_product_page'];
+		/**
+		 * Implement Later ! empty( $generalList['social_share']['share_icon_show_to_product_page'] ) && 'on' === $generalList['social_share']['share_icon_show_to_product_page'];
+		 */
 		Fns::print_html( Render::instance()->social_share_view( 'elementor/general/social-share', $settings ), true );
 	}
 
@@ -281,11 +285,10 @@ class ActionHooks {
 	 * Render image.
 	 *
 	 * @param array $args Image args.
-	 * @param array $settings Settings array.
 	 *
 	 * @return void
 	 */
-	public static function render_image( $args, $settings ) {
+	public static function render_image( $args ) {
 		if ( $args['image_link'] ) {
 			$aria_label = esc_attr(
 			/* translators: Product Name */
@@ -429,5 +432,14 @@ class ActionHooks {
 		}
 
 		return $query;
+	}
+
+	/**
+	 * Delete cache when switching to another theme.
+	 *
+	 * @return void
+	 */
+	public static function clear_cache() {
+		Cache::clear_all_cache();
 	}
 }

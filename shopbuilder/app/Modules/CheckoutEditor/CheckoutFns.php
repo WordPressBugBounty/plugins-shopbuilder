@@ -75,7 +75,6 @@ class CheckoutFns {
 				'options'      => [],
 				'name'         => 'address_1',
 				'custom_class' => 'form-row-wide,address-field',
-				'validation'   => 'state',
 				'isEnable'     => 'on',
 			],
 			[

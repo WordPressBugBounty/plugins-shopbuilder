@@ -347,10 +347,22 @@ class GeneralAddons extends Render {
 
 		return RenderHelpers::slider_data( (array) $metas, $this->settings );
 	}
+
 	/**
-	 * Gets slider data for the carousel.
+	 * Prepares and returns slider configuration dataset for rendering in Elementor or frontend use.
 	 *
-	 * @return string
+	 * This method collects various slider-related metadata settings, normalizes them using helper
+	 * functions, and returns a structured dataset used to initialize and render a responsive slider.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param array  $meta         Metadata array containing configuration values for the slider.
+	 *                             Example keys: 'cols', 'cols_tablet', 'slider_loop', etc.
+	 * @param string $template     The template identifier or slug used for rendering slider content.
+	 * @param array  $raw_settings Raw settings passed directly from Elementor widget settings or similar source.
+	 *
+	 * @return array|null          Returns an array of slider settings suitable for frontend use,
+	 *                             optionally modified by the 'rtsb/elementor/render/slider_dataset_final' filter.
 	 */
 	protected function get_slider_meta_dataset( array $meta, $template = '', $raw_settings = [] ) {
 		$data = [
@@ -376,7 +388,7 @@ class GeneralAddons extends Render {
 			'speed'              => RenderHelpers::get_data( $meta, 'slide_speed', 2000 ),
 			'space_between'      => isset( $meta['grid_gap']['size'] ) && strlen( $meta['grid_gap']['size'] ) ? $meta['grid_gap']['size'] : 30,
 			'auto_play_timeout'  => RenderHelpers::get_data( $meta, 'autoplay_timeout', 5000 ),
-			'nav_position'       => RenderHelpers::get_data( $meta, 'slider_nav_position', 'top' ),
+			'nav_position'       => RenderHelpers::get_data( $meta, 'slider_nav_position', 'standard' ),
 			'left_arrow_icon'    => RenderHelpers::get_data( $meta, 'slider_left_arrow_icon', [] ),
 			'right_arrow_icon'   => RenderHelpers::get_data( $meta, 'slider_right_arrow_icon', [] ),
 		];
@@ -400,9 +412,20 @@ class GeneralAddons extends Render {
 	}
 
 	/**
-	 * Gets hero slider data for the carousel.
+	 * Generates the configuration and CSS class for the hero slider carousel.
 	 *
-	 * @return array
+	 * Prepares Swiper-compatible slider options and associated class names based on
+	 * the provided metadata. This includes autoplay settings, pagination type,
+	 * lazy loading, effects (e.g., parallax, fade), and responsive breakpoints.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param array $meta Metadata array for the slider settings, including keys like
+	 *                    'slide_speed', 'slider_loop', 'slider_pagi_type', etc.
+	 *
+	 * @return array Returns an associative array containing:
+	 *               - 'data' (string): JSON-encoded slider options for Swiper.
+	 *               - 'class' (string): Additional CSS class names for the carousel container.
 	 */
 	protected function get_hero_slider_data( array $meta ) {
 		$has_dots         = $meta['slider_pagi'] ? ' has-dot' : ' no-dot';
@@ -473,9 +496,21 @@ class GeneralAddons extends Render {
 
 
 	/**
-	 * Renders the carousel slider buttons.
+	 * Renders the carousel slider navigation arrows and pagination markup.
 	 *
-	 * @return string
+	 * This method returns HTML for Swiper navigation buttons (left/right arrows)
+	 * and optional pagination dots, depending on the provided slider settings.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param array $settings Slider configuration options. Expected keys:
+	 *                         - 'slider_left_arrow_icon' (string)  Icon for the left arrow.
+	 *                         - 'slider_right_arrow_icon' (string) Icon for the right arrow.
+	 *                         - 'slider_nav' (bool)                Whether to show navigation arrows.
+	 *                         - 'slider_pagi' (bool)               Whether to show pagination.
+	 *                         - 'slider_pagi_type' (string)        (Optional) Pagination style (e.g., 'bullets', 'fraction').
+	 *
+	 * @return string HTML markup for the slider navigation and pagination.
 	 */
 	protected function slider_buttons( $settings ) {
 		$html             = '';
@@ -615,12 +650,18 @@ class GeneralAddons extends Render {
 		<?php
 	}
 	/**
-	 * Function to render icon.
+	 * Renders an icon HTML markup based on position match.
 	 *
-	 * @param string $position icon position ('left' or 'right').
-	 * @param array  $icon Position of the separator in settings.
+	 * Compares the desired icon position with the configured position
+	 * and renders the icon HTML if they match.
 	 *
-	 * @return string
+	 * @since 1.0.0
+	 *
+	 * @param string $position       Desired position to render the icon ('left' or 'right').
+	 * @param string $icon           Icon identifier or SVG markup.
+	 * @param string $icon_position  Actual position set in the settings ('left' or 'right').
+	 *
+	 * @return string Icon HTML if position matches; otherwise, an empty string.
 	 */
 	public static function render_button_icon( $position, $icon, $icon_position ) {
 		$html = '';

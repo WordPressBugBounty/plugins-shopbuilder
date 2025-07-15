@@ -305,7 +305,7 @@ class ProductsArchive extends LoopWithProductSlider {
 
 		$page_type      = BuilderFns::builder_type( get_the_ID() );
 		$is_preview     = BuilderFns::is_builder_preview() && array_key_exists( $page_type, BuilderFns::builder_page_types() );
-		$posts_per_page = wc_get_default_products_per_row() * wc_get_default_product_rows_per_page();
+		$posts_per_page = apply_filters( 'loop_shop_per_page', wc_get_default_products_per_row() * wc_get_default_product_rows_per_page() );
 
 		if ( $is_preview ) {
 			global $wp_query, $post;

@@ -68,10 +68,6 @@ class BuilderHooks {
 
 		if ( BuilderFns::is_cart() ) {
 			$classes[] = 'woocommerce-cart';
-			// $indexToRemove = array_search( 'woocommerce' , $classes);
-			// if ($indexToRemove !== false) {
-			// unset($classes[$indexToRemove]);
-			// }
 		} else {
 			$classes[] = 'woocommerce';
 		}
@@ -151,8 +147,8 @@ class BuilderHooks {
 		} elseif ( BuilderFns::is_cart() ) {
 			$type = 'cart';
 		}
-		wp_enqueue_style( 'rtsb-frontend' );
-		wp_enqueue_script( 'rtsb-public' );
+		wp_enqueue_style( Fns::optimized_handle( 'rtsb-frontend' ) );
+		wp_enqueue_script( Fns::optimized_handle( 'rtsb-public' ) );
 
 		return apply_filters( 'rtsb/builder/set/current/page/type/external', $type );
 	}

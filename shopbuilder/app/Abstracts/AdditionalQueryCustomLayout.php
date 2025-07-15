@@ -78,8 +78,6 @@ abstract class AdditionalQueryCustomLayout extends ElementorWidgetBase {
 			)
 		);
 
-		// unset( $fields['grid_style'] );
-
 		return $fields;
 	}
 
@@ -126,14 +124,22 @@ abstract class AdditionalQueryCustomLayout extends ElementorWidgetBase {
 	protected function widget_layout() {
 		return Controls\LayoutFields::grid_layout( $this );
 	}
+
+	/**
+	 * Controls for layout tab
+	 *
+	 * @return array
+	 */
 	public function variation_swatch_conditionaly() {
-		if ( ! function_exists( 'rtwpvsp' ) ) {
+		if ( ! function_exists( 'rtwpvsp' ) && ! rtsb()->has_pro() ) {
 			return [];
 		}
-		$swatches_controls                                 = Controls\SettingsFields::variation_swatch( $this );
-		$swatches_controls['swatch_position']['condition'] = [
-			'layout' => [ 'grid-layout1' ],
-		];
+		$swatches_controls = Controls\SettingsFields::variation_swatch( $this );
+		if ( ! empty( $swatches_controls['swatch_position'] ) ) {
+			$swatches_controls['swatch_position']['condition'] = [
+				'layout' => [ 'grid-layout1' ],
+			];
+		}
 		return $swatches_controls;
 	}
 	/**
@@ -147,6 +153,11 @@ abstract class AdditionalQueryCustomLayout extends ElementorWidgetBase {
 		return $additional_query;
 	}
 
+	/**
+	 * Controls for style tab
+	 *
+	 * @return array
+	 */
 	protected function pagination_navigation() {
 		return Controls\StyleFields::pagination( $this );
 	}
@@ -184,7 +195,7 @@ abstract class AdditionalQueryCustomLayout extends ElementorWidgetBase {
 	/**
 	 * Widget Field
 	 *
-	 * @return void|array
+	 * @return string
 	 */
 	protected function render_template_file() {
 		return 'elementor/general/grid/';

@@ -3,7 +3,6 @@
 namespace RadiusTheme\SB\Controllers\Admin\Ajax;
 
 use Elementor\Plugin;
-use Elementor\TemplateLibrary\Source_Base;
 use RadiusTheme\SB\Helpers\BuilderFns;
 use RadiusTheme\SB\Helpers\Cache;
 use RadiusTheme\SB\Helpers\Fns;
@@ -18,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Default Template Switch.
  */
-class CreateTemplate extends Source_Base {
+class CreateTemplate {
 	/**
 	 * Singleton Trait.
 	 */
@@ -31,37 +30,6 @@ class CreateTemplate extends Source_Base {
 		add_action( 'wp_ajax_rtsb_builder_create_template', [ $this, 'response' ] );
 	}
 
-
-	public function get_id() {
-	}
-
-	public function get_title() {
-	}
-
-	public function register_data() {
-	}
-
-	public function get_items( $args = [] ) {
-	}
-
-	public function get_item( $template_id ) {
-	}
-
-	public function get_data( array $args ) {
-	}
-
-	public function delete_template( $template_id ) {
-	}
-
-	public function save_item( $template_data ) {
-	}
-
-	public function update_item( $new_data ) {
-	}
-
-	public function export_template( $template_id ) {
-	}
-
 	/**
 	 * Create template
 	 *
@@ -69,15 +37,16 @@ class CreateTemplate extends Source_Base {
 	 */
 	public function response() {
 		Cache::clear_transient_cache();
-		$page_type        = isset( $_POST['page_type'] ) ? sanitize_text_field( wp_unslash( $_POST['page_type'] ) ) : null; // rtsb_tb_template_type - it represent to template type
+		$page_type        = isset( $_POST['page_type'] ) ? sanitize_text_field( wp_unslash( $_POST['page_type'] ) ) : null; // rtsb_tb_template_type - it represent to template type.
 		$page_id          = isset( $_POST['page_id'] ) ? absint( wp_unslash( $_POST['page_id'] ) ) : null;
 		$page_name        = isset( $_POST['page_name'] ) ? sanitize_text_field( wp_unslash( $_POST['page_name'] ) ) : null;
 		$hasPro           = isset( $_POST['hasPro'] ) ? sanitize_text_field( wp_unslash( $_POST['hasPro'] ) ) : null;
 		$edit_with        = isset( $_POST['template_edit_with'] ) ? sanitize_text_field( wp_unslash( $_POST['template_edit_with'] ) ) : null;
 		$default_template = isset( $_POST['default_template'] ) ? sanitize_text_field( wp_unslash( $_POST['default_template'] ) ) : null;
 		$import_layout    = isset( $_POST['import_default_layout'] ) ? sanitize_text_field( $_POST['import_default_layout'] ) : null; //phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+		$layoutJson       = isset( $_POST['demoData'] ) ? $_POST['demoData'] : null; // phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		$product_id       = isset( $_POST['preview_product_id'] ) ? absint( $_POST['preview_product_id'] ) : null;
-		$url = '#';
+		$url              = '#';
 
 		if ( ! wp_verify_nonce( Fns::get_nonce(), rtsb()->nonceText ) || ! $page_type ) {
 			$return = [
@@ -105,20 +74,6 @@ class CreateTemplate extends Source_Base {
 
 		Plugin::$instance->files_manager->clear_cache();
 		add_filter( 'rtsb_import_status', '__return_true' );
-
-		$status            = sanitize_text_field( wp_unslash( $_REQUEST['status'] ?? '' ) );
-		$post_args         = [ 'timeout' => 120 ];
-		$post_args['body'] = [
-			'status'    => $status,
-			'layout_id' => $import_layout,
-			'has_pro'   => $hasPro,
-		];
-		$layoutRequest     = wp_remote_post( rtsb()->BASE_API, $post_args );
-
-		$layoutJson = [];
-		if ( ! is_wp_error( $layoutRequest ) && ! empty( $layoutRequest['body'] ) ) {
-			$layoutJson = json_decode( $layoutRequest['body'], true );
-		}
 
 		$option_name = BuilderFns::option_name( $page_type );
 
@@ -169,9 +124,7 @@ class CreateTemplate extends Source_Base {
 				if ( 'default_template' === $default_template ) {
 					TemplateSettings::instance()->set_option( $option_name, $page_id );
 				} else {
-					//if ( ! $has_default ) {
-						TemplateSettings::instance()->set_option( $option_name, '' );
-					// }
+					TemplateSettings::instance()->set_option( $option_name, '' );
 				}
 			}
 
@@ -187,10 +140,8 @@ class CreateTemplate extends Source_Base {
 				admin_url( 'post.php' )
 			);
 
-			if ( ! empty( $layoutJson['data'] ) ) {
-				$data    = json_decode( $layoutJson['data'], true );
-				$content = $this->process_export_import_content( $data, 'on_import' );
-				$content = wp_json_encode( $content );
+			if ( ! empty( $layoutJson ) && is_array( $layoutJson ) ) {
+				$content = wp_slash( wp_json_encode( $layoutJson ) );
 				update_post_meta( $page_id, '_elementor_data', $content );
 				update_post_meta( $page_id, '_rtsb_import_id', $import_layout );
 			}

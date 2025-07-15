@@ -33,6 +33,7 @@ class BillingFields extends CheckoutEditorBase {
 	 */
 	public function billing_fields_generator( $address_fields, $country ) {
 		$billing_fields = $this->render_fields( $this->billing_settings, $address_fields );
+		unset( $billing_fields['billing_address_1']['validate'] );
 		return $billing_fields;
 	}
 }

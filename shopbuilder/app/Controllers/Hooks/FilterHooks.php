@@ -36,6 +36,7 @@ class FilterHooks {
 		add_filter( 'woocommerce_product_data_store_cpt_get_products_query', [ __CLASS__, 'custom_query_keys' ], 10, 2 );
 		// Overriding Notice Template.
 		add_filter( 'wc_get_template', [ __CLASS__, 'get_notice_template' ], 15, 2 );
+		add_filter( 'rtsb/optimizer/theme_stylesheet_handle', [ __CLASS__, 'theme_stylesheet_handle' ], 99 );
 	}
 
 	/***
@@ -57,9 +58,13 @@ class FilterHooks {
 	}
 
 	/**
-	 * @param $url
-	 * @param $product
-	 * @return false|mixed|string
+	 * Get Star Rating Html.
+	 *
+	 * @param string $html Html.
+	 * @param string $rating Rating.
+	 * @param string $count Count.
+	 *
+	 * @return string
 	 */
 	public static function get_star_rating_html( $html, $rating, $count ) {
 		if ( '0' === $rating ) {
@@ -195,6 +200,11 @@ class FilterHooks {
 	/**
 	 * Set field Keyword.
 	 *
+	 * @param string $form_name Form Name.
+	 * @param array  $billing_settings Billing Settings.
+	 * @param array  $fields Fields.
+	 * @param string $field_id Field ID.
+	 *
 	 * @return array
 	 */
 	private static function checkout_field( $form_name, $billing_settings, $fields, $field_id = 'billing_field_name' ) {
@@ -233,6 +243,8 @@ class FilterHooks {
 
 	/**
 	 * Set Widget Keyword.
+	 *
+	 * @param array $fields Fields.
 	 *
 	 * @return array
 	 */
@@ -280,6 +292,8 @@ class FilterHooks {
 	/**
 	 * Set Widget Keyword.
 	 *
+	 * @param array $fields Fields.
+	 *
 	 * @return array
 	 */
 	public static function default_address_fields( $fields ) {
@@ -314,6 +328,10 @@ class FilterHooks {
 
 	/**
 	 * Set field Keyword.
+	 *
+	 * @param array  $billing_settings Billing Settings.
+	 * @param array  $fields Fields.
+	 * @param string $field_id Field ID.
 	 *
 	 * @return array
 	 */
@@ -354,16 +372,18 @@ class FilterHooks {
 		$brand_key  = 'product_brand_id';
 		$rating_key = 'product_rating';
 		if ( ! empty( $query_vars[ $tax_key ] ) ) {
-			// foreach ( $query_vars[ $tax_key ] as $atts ) {
-			// $attribute_tax = get_term( $atts )->taxonomy;
-			//
-			// $wp_query_args['tax_query'][] = [
-			// 'taxonomy' => $attribute_tax,
-			// 'field'    => 'term_id',
-			// 'terms'    => [ $atts ],
-			// 'operator' => 'IN',
-			// ];
-			// }
+			/**
+			Foreach ( $query_vars[ $tax_key ] as $atts ) {
+				$attribute_tax = get_term( $atts )->taxonomy;
+
+				$wp_query_args['tax_query'][] = [
+					'taxonomy' => $attribute_tax,
+					'field'    => 'term_id',
+					'terms'    => [ $atts ],
+					'operator' => 'IN',
+				];
+			}
+			*/
 			// added new code.
 			$tax_groups = [];
 
@@ -451,5 +471,46 @@ class FilterHooks {
 		];
 
 		return $wp_query_args;
+	}
+
+	/**
+	 * Theme stylesheet handle.
+	 *
+	 * @return string
+	 */
+	public static function theme_stylesheet_handle() {
+		$theme_slug = get_template();
+
+		switch ( $theme_slug ) {
+			case 'hello-elementor':
+				return 'hello-elementor';
+
+			case 'astra':
+				return 'astra-theme-css';
+
+			case 'generatepress':
+				return 'generate-style';
+
+			case 'neve':
+				return 'neve-style';
+
+			case 'kadence':
+				return 'kadence-style';
+
+			case 'storefront':
+				return 'storefront-style';
+
+			case 'oceanwp':
+				return 'oceanwp-style';
+
+			case 'twentytwentyfour':
+				return 'twentytwentyfour-style';
+
+			case 'twentytwentyone':
+				return 'twentytwentyone-style';
+
+			default:
+				return $theme_slug . '-main';
+		}
 	}
 }

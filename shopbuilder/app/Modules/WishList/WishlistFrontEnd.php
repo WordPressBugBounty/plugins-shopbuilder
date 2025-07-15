@@ -1,4 +1,9 @@
 <?php
+/**
+ * Wishlist Module Class
+ *
+ * @package RadiusTheme\SB
+ */
 
 namespace RadiusTheme\SB\Modules\WishList;
 
@@ -11,6 +16,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit( 'This script cannot be accessed directly.' );
 }
 
+/**
+ * Wishlist Module Class
+ */
 class WishlistFrontEnd {
 
 	/**
@@ -18,17 +26,25 @@ class WishlistFrontEnd {
 	 */
 	use SingletonTrait;
 
+	/**
+	 * Asset Handle
+	 *
+	 * @var string
+	 */
+	private $handle = 'rtsb-wishlist';
+
+	/**
+	 * Class constructor.
+	 */
 	public function __construct() {
-		// Template
 		add_filter( 'body_class', [ $this, 'add_body_class' ] );
 		add_filter( 'rtsb/module/wishlist/show_button', [ $this, 'wishlist_button_show_hide' ], 12 );
-		// Note:: Add do_action('rtsb/modules/wishlist/frontend/display' ); for display anywhere.
 		add_action( 'rtsb/modules/wishlist/frontend/display', [ $this, 'button_hook' ] );
 
 		add_action( 'rtsb/modules/wishlist/print_button', [ $this, 'print_button' ] );
-		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue' ] );
+		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue' ], 20 );
 
-		// ShortCode
+		// ShortCode.
 		add_shortcode( 'rtsb_wishlist', [ $this, 'list_shortcode' ] );
 		add_shortcode( 'rtsb_wishlist_button', [ $this, 'button_shortcode' ] );
 		add_shortcode( 'rtsb_wishlist_counter', [ $this, 'counter_shortcode' ] );
@@ -57,19 +73,9 @@ class WishlistFrontEnd {
 	 * @return void
 	 */
 	public function enqueue() {
-		wp_register_style( 'rtsb-modules', rtsb()->get_assets_uri( 'modules/modules.css' ), [], RTSB_VERSION );
-		wp_register_script(
-			'rtsb-wishlist',
-			rtsb()->get_assets_uri( 'modules/wishlist.js' ),
-			[
-				'jquery',
-				'rtsb-public',
-			],
-			RTSB_VERSION,
-			true
-		);
-		wp_enqueue_style( 'rtsb-modules' );
-		wp_enqueue_script( 'rtsb-wishlist' );
+		// Enqueue assets.
+		$this->handle = Fns::enqueue_module_assets( $this->handle, 'wishlist' );
+
 		if ( is_user_logged_in() && is_account_page() ) {
 			wp_enqueue_script( 'wc-add-to-cart' );
 			wp_enqueue_script( 'wc-add-to-cart-variation' );
@@ -97,7 +103,7 @@ class WishlistFrontEnd {
 			]
 		);
 
-		wp_localize_script( 'rtsb-wishlist', 'rtsbWishlistParams', $params );
+		wp_localize_script( $this->handle, 'rtsbWishlistParams', $params );
 	}
 
 	/**
@@ -177,7 +183,6 @@ class WishlistFrontEnd {
 			add_action( $positions[ $loop_btn_position ]['hook'], [ $this, 'button_hook' ], isset( $positions[ $loop_btn_position ]['priority'] ) ? $positions[ $loop_btn_position ]['priority'] : '' );
 		}
 
-		// TODO:: Maybe this hooks is not working. Need to Check gutenberg compatibility.
 		// Add the link "Add to wishlist" for Gutenberg blocks.
 		add_filter( 'woocommerce_blocks_product_grid_item_html', [ $this, 'add_button_for_block' ], 10, 3 );
 	}
@@ -261,22 +266,18 @@ class WishlistFrontEnd {
 	}
 
 	/**
+	 * Print "Add to compare" button
+	 *
+	 * @param int $product_id Product ID.
+	 *
 	 * @return void
 	 */
 	public function print_button( $product_id = 0 ) {
-		// Wishlist button will not show in ajax call for below codes.
-//		if ( ! apply_filters( 'rtsb/module/wishlist/show_button', true ) ) {
-//			return;
-//		}
 		global $product;
 
 		if ( ! $product instanceof WC_Product && $product_id ) {
 			$product = wc_get_product( $product_id );
 		}
-
-		// if ( ! $current_product instanceof WC_Product ) {
-		// return '';
-		// }
 
 		// product parent.
 		$product_parent = $product->get_parent_id();
@@ -345,14 +346,16 @@ class WishlistFrontEnd {
 	/**
 	 * Table List Shortcode callable function
 	 *
-	 * @param array  $atts
-	 * @param string $content
+	 * @param array  $atts Shortcode attributes.
+	 * @param string $content Shortcode content.
 	 *
 	 * @return string [HTML]
 	 */
 	public function list_shortcode( $atts, $content = '' ) {
-		wp_enqueue_style( 'rtsb-modules' );
-		wp_enqueue_script( 'rtsb-wishlist' );
+		$this->handle = Fns::optimized_handle( $this->handle );
+
+		wp_enqueue_style( $this->handle );
+		wp_enqueue_script( $this->handle );
 
 		/* Fetch From option data */
 		$empty_text = Fns::get_option( 'modules', 'wishlist', 'empty_table_text', esc_html__( 'No product found at your wishlist.', 'shopbuilder' ) );
@@ -377,17 +380,17 @@ class WishlistFrontEnd {
 	/**
 	 * Wishlist button Shortcode callable function
 	 *
-	 * @param array  $atts
-	 * @param string $content
-	 *
 	 * @return string [HTML]
 	 */
-	public function button_shortcode( $atts, $content = '' ) {
-		wp_enqueue_style( 'rtsb-modules' );
-		wp_enqueue_script( 'rtsb-wishlist' );
+	public function button_shortcode() {
+		$this->handle = Fns::optimized_handle( $this->handle );
+
+		wp_enqueue_style( $this->handle );
+		wp_enqueue_script( $this->handle );
 
 		ob_start();
 		global $product;
+
 		if ( ! $product instanceof WC_Product ) {
 			return '';
 		}
@@ -397,8 +400,16 @@ class WishlistFrontEnd {
 		return ob_get_clean();
 	}
 
+	/**
+	 * Counter Shortcode callable function
+	 *
+	 * @param array  $atts Shortcode attributes.
+	 * @param string $content Shortcode content.
+	 *
+	 * @return string [HTML]
+	 */
 	public function counter_shortcode( $atts, $content = '' ) {
-		wp_enqueue_style( 'rtsb-modules' );
+		wp_enqueue_style( Fns::optimized_handle( $this->handle ) );
 
 		$enable_login_limit = Fns::get_option( 'modules', 'wishlist', 'enable_login_limit', false, 'checkbox' );
 

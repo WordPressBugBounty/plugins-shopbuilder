@@ -17,6 +17,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit( 'This script cannot be accessed directly.' );
 }
 
+/**
+ * Select2AjaxControl Register
+ */
 class Select2AjaxControl extends Base_Data_Control {
 
 	/**
@@ -26,15 +29,21 @@ class Select2AjaxControl extends Base_Data_Control {
 	 */
 	public static $controlName = 'rt-select2';
 
+	/**
+	 * @return string
+	 */
 	public function get_type() {
 		return self::$controlName;
 	}
 
+	/**
+	 * @return void
+	 */
 	public function enqueue() {
 		wp_enqueue_script( 'rtsb-editor-script' );
 		wp_localize_script(
 			'rtsb-editor-script',
-			'rtSelect2Obj',
+			'rtsbSelect2Obj',
 			[
 				'ajaxurl'       => esc_url( admin_url( 'admin-ajax.php' ) ),
 				'search_text'   => esc_html__( 'Please Select', 'shopbuilder' ),
@@ -65,6 +74,9 @@ class Select2AjaxControl extends Base_Data_Control {
 		<?php
 	}
 
+	/**
+	 * @return array
+	 */
 	protected function get_default_settings() {
 		return [
 			'multiple'                 => false,
@@ -76,6 +88,9 @@ class Select2AjaxControl extends Base_Data_Control {
 		];
 	}
 
+	/**
+	 * @return void
+	 */
 	public function content_template() {
 		$control_uid = $this->get_control_uid();
 		?>

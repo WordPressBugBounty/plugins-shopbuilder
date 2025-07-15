@@ -9,8 +9,9 @@
 
 namespace RadiusTheme\SB\Helpers;
 
-use RadiusTheme\SB\Traits\SingletonTrait;
 use W3TC\Dispatcher;
+use RadiusTheme\SB\Traits\SingletonTrait;
+use RadiusTheme\SB\Controllers\AssetRegistry;
 
 // Do not allow directly accessing this file.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -32,6 +33,7 @@ class Cache {
 		self::clear_template_cache();
 		self::clear_plugins_cache();
 		self::clear_transient_cache();
+		self::clear_asset_cache();
 	}
 	/**
 	 * Clear the template cache.
@@ -155,8 +157,10 @@ class Cache {
 	 *
 	 * Source: https://github.com/wp-media/wp-rocket/blob/master/inc/3rd-party/hosting/godaddy.php
 	 *
-	 * @param String      $method
-	 * @param String|Null $url
+	 * @param string $method The request method.
+	 * @param string $url    The request URL.
+	 *
+	 * @return void
 	 */
 	public static function godaddy_request( $method, $url = null ) {
 		$url  = empty( $url ) ? home_url() : $url;
@@ -210,7 +214,8 @@ class Cache {
 	 *
 	 * @since 4.3.0
 	 * @param string $cache_key Object cache key.
-	 * @param string $data Located template.
+	 *
+	 * @return void
 	 */
 	public static function set_data_cache_key( $cache_key ) {
 		$cached_data = wp_cache_get( 'shopbuilder_cached_data', 'shopbuilder' );
@@ -233,6 +238,68 @@ class Cache {
 				wp_cache_delete( $cache_key, 'shopbuilder' );
 			}
 			wp_cache_delete( 'shopbuilder_cached_data', 'shopbuilder' );
+		}
+	}
+
+	/**
+	 * Clear asset cache.
+	 *
+	 * @return void
+	 */
+	public static function clear_asset_cache() {
+		if ( ! Fns::is_optimization_enabled() ) {
+			return;
+		}
+
+		$upload_dir = wp_upload_dir();
+		$asset_dir  = trailingslashit( $upload_dir['basedir'] ) . 'shopbuilder_uploads/cache/';
+
+		// Delete old assets.
+		if ( is_dir( $asset_dir ) ) {
+			self::delete_dir_contents( $asset_dir );
+		}
+
+		// Re-generate assets.
+		AssetRegistry::instance()->regenerate_bundles();
+	}
+
+	/**
+	 * Recursively delete directory contents.
+	 *
+	 * @param string $dir Directory path.
+	 * @return void
+	 */
+	public static function delete_dir_contents( $dir ) {
+		global $wp_filesystem;
+
+		if ( ! function_exists( 'WP_Filesystem' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/file.php';
+		}
+
+		if ( ! $wp_filesystem ) {
+			WP_Filesystem();
+		}
+
+		if ( ! $wp_filesystem->is_dir( $dir ) ) {
+			return;
+		}
+
+		$contents = $wp_filesystem->dirlist( $dir );
+
+		if ( ! is_array( $contents ) ) {
+			return;
+		}
+
+		foreach ( $contents as $item ) {
+			$path = trailingslashit( $dir ) . $item['name'];
+
+			if ( 'f' === $item['type'] ) {
+				$wp_filesystem->delete( $path, false );
+			} elseif ( 'd' === $item['type'] ) {
+				self::delete_dir_contents( $path );
+
+				$wp_filesystem->delete( $path, true );
+			}
 		}
 	}
 
@@ -266,6 +333,34 @@ class Cache {
 				delete_transient( $cache_key );
 			}
 			delete_transient( 'shopbuilder_transient_cached_data' );
+		}
+
+		self::delete_all_theme_css_handle_transients();
+	}
+
+	/**
+	 * Clear all theme css handle transients.
+	 *
+	 * @return void
+	 */
+	public static function delete_all_theme_css_handle_transients() {
+		global $wpdb;
+
+		$prefix       = '_transient_';
+		$transient_ns = 'rtsb_theme_css_handle_';
+
+		// Fetch all matching transient option names.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$transients = $wpdb->get_col(
+			$wpdb->prepare(
+				"SELECT option_name FROM {$wpdb->options} WHERE option_name LIKE %s",
+				$wpdb->esc_like( $prefix . $transient_ns ) . '%'
+			)
+		);
+
+		foreach ( $transients as $option_name ) {
+			$key = str_replace( '_transient_', '', $option_name );
+			delete_transient( $key );
 		}
 	}
 }

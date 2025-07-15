@@ -152,9 +152,7 @@ class ProductsArchiveCustom extends ElementorWidgetBase {
 	}
 
 	/**
-	 * @param $obj
-	 *
-	 * @return void
+	 * @return array
 	 */
 	public function list_layout() {
 		$fields                     = [];
@@ -202,7 +200,6 @@ class ProductsArchiveCustom extends ElementorWidgetBase {
 			'description' => esc_html__( 'Please select the image width in %.', 'shopbuilder' ),
 			'selectors'   => [
 				$this->selectors['columns']['image_width']['image'] => 'flex-basis: {{SIZE}}{{UNIT}}; max-width: {{SIZE}}{{UNIT}};',
-				// $this->selectors['columns']['image_width']['content'] => 'flex-basis: calc(100% - {{SIZE}}{{UNIT}}); max-width: calc(100% - {{SIZE}}{{UNIT}});',
 			],
 		];
 
@@ -240,13 +237,14 @@ class ProductsArchiveCustom extends ElementorWidgetBase {
 	protected function settings_tab() {
 		$visibility = Controls\SettingsFields::content_visibility( $this );
 
-		if ( function_exists( 'rtwpvsp' ) ) {
+		if ( function_exists( 'rtwpvsp' ) || rtsb()->has_pro() ) {
 			unset(
 				$visibility['show_swatches']['condition'],
 				$visibility['show_vs_clear_btn']['condition']['layout!'],
 			);
-
-			$visibility['show_swatches']['description'] .= '<br /><span style="color: #93003c;">' . esc_html__( ' Note: Variation swatch will not work on grid layout 2.', 'shopbuilder' ) . '</span>';
+			if ( ! empty( $visibility['show_swatches'] ) ) {
+				$visibility['show_swatches']['description'] .= '<br /><span style="color: #93003c;">' . esc_html__( ' Note: Variation swatch will not work on grid layout 2.', 'shopbuilder' ) . '</span>';
+			}
 		}
 
 		$sections = apply_filters(
@@ -265,7 +263,7 @@ class ProductsArchiveCustom extends ElementorWidgetBase {
 			$this
 		);
 
-		if ( function_exists( 'rtwpvsp' ) ) {
+		if ( function_exists( 'rtwpvsp' ) || rtsb()->has_pro() ) {
 			$sections['swatch_position']['description'] .= '<span style="color: #93003c;">' . esc_html__( ' Note: This control is specific to the grid view.', 'shopbuilder' ) . '</span>';
 		}
 
@@ -281,14 +279,19 @@ class ProductsArchiveCustom extends ElementorWidgetBase {
 		return $this;
 	}
 
+	/**
+	 * @return array
+	 */
 	public function variation_swatch_conditionaly() {
-		if ( ! function_exists( 'rtwpvsp' ) ) {
+		if ( ! function_exists( 'rtwpvsp' ) && ! rtsb()->has_pro() ) {
 			return [];
 		}
-		$swatches_controls                                 = Controls\SettingsFields::variation_swatch( $this );
-		$swatches_controls['swatch_position']['condition'] = [
-			'layout' => [ 'grid-layout1' ],
-		];
+		$swatches_controls = Controls\SettingsFields::variation_swatch( $this );
+		if ( ! empty( $swatches_controls['swatch_position'] ) ) {
+			$swatches_controls['swatch_position']['condition'] = [
+				'layout' => [ 'grid-layout1' ],
+			];
+		}
 		return $swatches_controls;
 	}
 
@@ -339,6 +342,9 @@ class ProductsArchiveCustom extends ElementorWidgetBase {
 		return $this->control_fields;
 	}
 
+	/**
+	 * @return array
+	 */
 	public function template_data_arg() {
 
 		$controllers = $this->get_settings_for_display();
@@ -377,17 +383,14 @@ class ProductsArchiveCustom extends ElementorWidgetBase {
 	}
 
 	/**
-	 * Widget Field
+	 * Widget Field.
 	 *
-	 * @return array
+	 * @param string $thumbnail_size Image size.
+	 * @return string
 	 */
 	public function thumbnail_size( $thumbnail_size ) {
 		$settings = $this->get_settings_for_display();
 		if ( 'rtsb_custom' === $settings['image'] ) {
-			// Custom image size is not supported. It may be implemented later.
-			// $thumbnail_size   = [];
-			// $thumbnail_size[] = $settings['image_custom_dimension']['width'] ?? 0;
-			// $thumbnail_size[] = $settings['image_custom_dimension']['height'] ?? 0;.
 			return $thumbnail_size;
 		}
 

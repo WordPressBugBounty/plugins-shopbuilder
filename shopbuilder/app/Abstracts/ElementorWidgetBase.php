@@ -21,6 +21,7 @@ use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Text_Shadow;
 use Elementor\Group_Control_Text_Stroke;
 use RadiusTheme\SB\Elementor\Helper\ControlSelectors;
+use RadiusTheme\SB\Helpers\Fns;
 
 
 // Do not allow directly accessing this file.
@@ -299,12 +300,12 @@ abstract class ElementorWidgetBase extends Widget_Base {
 						unset( $value['mode'] );
 						$repeater->add_responsive_control( $rf_id, $value );
 					} elseif ( isset( $value['mode'] ) && 'group' === $value['mode'] ) {
-                        $type          = $value['type'];
-                        $value['name'] = $rf_id;
-                        unset( $value['mode'] );
-                        unset( $value['type'] );
-                        $repeater->add_group_control( $type, $value );
-                    } else {
+						$type          = $value['type'];
+						$value['name'] = $rf_id;
+						unset( $value['mode'] );
+						unset( $value['type'] );
+						$repeater->add_group_control( $type, $value );
+					} else {
 						$repeater->add_control( $rf_id, $value );
 					}
 				}
@@ -373,7 +374,6 @@ abstract class ElementorWidgetBase extends Widget_Base {
 							'.product_type_grouped, .add_to_cart_button, .single_add_to_cart_button '
 						);
 						if (cartIcon) {
-							//console.log( cartButton.find('svg') )
 							cartButton.find('i').remove();
 							cartButton.find('svg').remove();
 							cartButton.find('img').remove();
@@ -397,6 +397,7 @@ abstract class ElementorWidgetBase extends Widget_Base {
 		}
 		$ajaxurl = admin_url( 'admin-ajax.php' );
 
+		// phpcs:ignore WordPress.PHP.StrictInArray.MissingTrueStrict
 		if ( in_array( 'sitepress-multilingual-cms/sitepress.php', get_option( 'active_plugins' ) ) ) {
 			$ajaxurl = admin_url( 'admin-ajax.php?lang=' . ICL_LANGUAGE_CODE );
 		}
@@ -405,14 +406,29 @@ abstract class ElementorWidgetBase extends Widget_Base {
 			var rtsb = {
 				ajaxurl: '<?php echo esc_url( $ajaxurl ); ?>',
 				nonce: '<?php echo esc_attr( wp_create_nonce( rtsb()->nonceId ) ); ?>',
-				is_pro: '<?php echo esc_attr( rtsb()->has_pro() ? 'true' : 'false' ); ?>'
+				is_pro: '<?php echo esc_attr( rtsb()->has_pro() ? 'true' : 'false' ); ?>',
+				isOptimizationEnabled: '<?php echo esc_attr( Fns::is_optimization_enabled() ); ?>'
 			};
 
-			rtsbElFrontend();
+			if (!rtsb.isOptimizationEnabled) {
+				rtsbElFrontend();
 
-			setTimeout(function() {
-				rtsbProductPageInit();
-			}, 1000);
+				setTimeout(function() {
+					rtsbProductPageInit();
+				}, 1000);
+			} else {
+				if (typeof elementorFrontend !== 'undefined') {
+					window.waitForRTSB((RTSB) => {
+						RTSB.modules.get('elementorInit')?.refresh();
+						RTSB.modules.get('singleProductTabs')?.refresh();
+						RTSB.modules.get('reviewFormStar')?.refresh();
+						RTSB.modules.get('addCartIcon')?.refresh();
+						RTSB.modules.get('productImage')?.refresh();
+						RTSB.modules.get('CartQuantityHandler')?.refresh();
+					});
+				}
+			}
+
 			<?php if ( rtsb()->has_pro() ) { ?>
 				var isMasonry = jQuery('.rtsb-elementor-container .rtsb-masonry');
 
@@ -420,13 +436,23 @@ abstract class ElementorWidgetBase extends Widget_Base {
 					isMasonry.masonry();
 				}
 
-				if (typeof rtsbFilters === 'function') {
-					rtsbFilters();
-				}
+				if (!'<?php echo esc_attr( Fns::is_optimization_enabled() ); ?>') {
+					if (typeof rtsbFilters === 'function') {
+						rtsbFilters();
+					}
 
-				setTimeout( function (){
-					window.rtsbCountdownApply();
-				}, 1000 );
+					setTimeout( function (){
+						window.rtsbCountdownApply();
+					}, 1000 );
+				} else {
+					if (typeof elementorFrontend !== 'undefined') {
+						window.waitForRTSB((RTSB) => {
+							RTSB.modules.get('countdownPro')?.refresh();
+							RTSB.modules.get('elementorInitPro')?.refresh();
+							RTSB.modules.get('ajaxProductFiltersPro')?.refresh();
+						});
+					}
+				}
 			<?php } ?>
 		</script>
 
@@ -714,7 +740,9 @@ abstract class ElementorWidgetBase extends Widget_Base {
 	/**
 	 * Archive Custom Layout Widget Rendering.
 	 *
-	 * @return void
+	 * @param array $classes class list.
+	 *
+	 * @return array
 	 */
 	public function countdown_campaign_parent_class( $classes ) {
 		$settings         = $this->get_settings_for_display();
@@ -732,7 +760,7 @@ abstract class ElementorWidgetBase extends Widget_Base {
 		$classes    = array_filter(
 			$classes,
 			function ( $item ) use ( $remove ) {
-				return ! in_array( $item, $remove );
+				return ! in_array( $item, $remove ); // phpcs:ignore WordPress.PHP.StrictInArray.MissingTrueStrict
 			}
 		);
 		$new_class  = 'rtsb-countdown-' . esc_attr( $countdown_preset );

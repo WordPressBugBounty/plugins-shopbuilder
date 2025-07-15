@@ -4,12 +4,17 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInite9ff1e32c9bb8a92af36b24dd2f901f8
+class ComposerStaticInitdd70dec7ef3242d32c17fa77e31decf4
 {
     public static $prefixLengthsPsr4 = array (
         'R' => 
         array (
             'RadiusTheme\\SB\\' => 15,
+        ),
+        'M' => 
+        array (
+            'MatthiasMullie\\PathConverter\\' => 29,
+            'MatthiasMullie\\Minify\\' => 22,
         ),
     );
 
@@ -18,10 +23,29 @@ class ComposerStaticInite9ff1e32c9bb8a92af36b24dd2f901f8
         array (
             0 => __DIR__ . '/../..' . '/app',
         ),
+        'MatthiasMullie\\PathConverter\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/matthiasmullie/path-converter/src',
+        ),
+        'MatthiasMullie\\Minify\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/matthiasmullie/minify/src',
+        ),
     );
 
     public static $classMap = array (
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
+        'MatthiasMullie\\Minify\\CSS' => __DIR__ . '/..' . '/matthiasmullie/minify/src/CSS.php',
+        'MatthiasMullie\\Minify\\Exception' => __DIR__ . '/..' . '/matthiasmullie/minify/src/Exception.php',
+        'MatthiasMullie\\Minify\\Exceptions\\BasicException' => __DIR__ . '/..' . '/matthiasmullie/minify/src/Exceptions/BasicException.php',
+        'MatthiasMullie\\Minify\\Exceptions\\FileImportException' => __DIR__ . '/..' . '/matthiasmullie/minify/src/Exceptions/FileImportException.php',
+        'MatthiasMullie\\Minify\\Exceptions\\IOException' => __DIR__ . '/..' . '/matthiasmullie/minify/src/Exceptions/IOException.php',
+        'MatthiasMullie\\Minify\\Exceptions\\PatternMatchException' => __DIR__ . '/..' . '/matthiasmullie/minify/src/Exceptions/PatternMatchException.php',
+        'MatthiasMullie\\Minify\\JS' => __DIR__ . '/..' . '/matthiasmullie/minify/src/JS.php',
+        'MatthiasMullie\\Minify\\Minify' => __DIR__ . '/..' . '/matthiasmullie/minify/src/Minify.php',
+        'MatthiasMullie\\PathConverter\\Converter' => __DIR__ . '/..' . '/matthiasmullie/path-converter/src/Converter.php',
+        'MatthiasMullie\\PathConverter\\ConverterInterface' => __DIR__ . '/..' . '/matthiasmullie/path-converter/src/ConverterInterface.php',
+        'MatthiasMullie\\PathConverter\\NoConverter' => __DIR__ . '/..' . '/matthiasmullie/path-converter/src/NoConverter.php',
         'RadiusTheme\\SB\\Abstracts\\AbsSettings' => __DIR__ . '/../..' . '/app/Abstracts/AbsSettings.php',
         'RadiusTheme\\SB\\Abstracts\\AdditionalQueryCustomLayout' => __DIR__ . '/../..' . '/app/Abstracts/AdditionalQueryCustomLayout.php',
         'RadiusTheme\\SB\\Abstracts\\Api' => __DIR__ . '/../..' . '/app/Abstracts/Api.php',
@@ -37,6 +61,7 @@ class ComposerStaticInite9ff1e32c9bb8a92af36b24dd2f901f8
         'RadiusTheme\\SB\\Controllers\\Admin\\Notice\\Review' => __DIR__ . '/../..' . '/app/Controllers/Admin/Notice/Review.php',
         'RadiusTheme\\SB\\Controllers\\Admin\\Notice\\Upgrade' => __DIR__ . '/../..' . '/app/Controllers/Admin/Notice/Upgrade.php',
         'RadiusTheme\\SB\\Controllers\\Admin\\PluginRow' => __DIR__ . '/../..' . '/app/Controllers/Admin/PluginRow.php',
+        'RadiusTheme\\SB\\Controllers\\AssetRegistry' => __DIR__ . '/../..' . '/app/Controllers/AssetRegistry.php',
         'RadiusTheme\\SB\\Controllers\\AssetsController' => __DIR__ . '/../..' . '/app/Controllers/AssetsController.php',
         'RadiusTheme\\SB\\Controllers\\BuilderController' => __DIR__ . '/../..' . '/app/Controllers/BuilderController.php',
         'RadiusTheme\\SB\\Controllers\\Builder\\BuilderCpt' => __DIR__ . '/../..' . '/app/Controllers/Builder/BuilderCpt.php',
@@ -241,6 +266,7 @@ class ComposerStaticInite9ff1e32c9bb8a92af36b24dd2f901f8
         'RadiusTheme\\SB\\Helpers\\Fns' => __DIR__ . '/../..' . '/app/Helpers/Fns.php',
         'RadiusTheme\\SB\\Helpers\\Installation' => __DIR__ . '/../..' . '/app/Helpers/Installation.php',
         'RadiusTheme\\SB\\Helpers\\Migration' => __DIR__ . '/../..' . '/app/Helpers/Migration.php',
+        'RadiusTheme\\SB\\Models\\AssetBundler' => __DIR__ . '/../..' . '/app/Models/AssetBundler.php',
         'RadiusTheme\\SB\\Models\\Base\\ListModel' => __DIR__ . '/../..' . '/app/Models/Base/ListModel.php',
         'RadiusTheme\\SB\\Models\\DataModel' => __DIR__ . '/../..' . '/app/Models/DataModel.php',
         'RadiusTheme\\SB\\Models\\ElementList' => __DIR__ . '/../..' . '/app/Models/ElementList.php',
@@ -273,6 +299,15 @@ class ComposerStaticInite9ff1e32c9bb8a92af36b24dd2f901f8
         'RadiusTheme\\SB\\Modules\\QuickView\\QuickViewFrontEnd' => __DIR__ . '/../..' . '/app/Modules/QuickView/QuickViewFrontEnd.php',
         'RadiusTheme\\SB\\Modules\\ShopifyCheckout\\ShopifyCheckout' => __DIR__ . '/../..' . '/app/Modules/ShopifyCheckout/ShopifyCheckout.php',
         'RadiusTheme\\SB\\Modules\\ShopifyCheckout\\ShopifyCheckoutFns' => __DIR__ . '/../..' . '/app/Modules/ShopifyCheckout/ShopifyCheckoutFns.php',
+        'RadiusTheme\\SB\\Modules\\VariationGallery\\GalleryAdmin' => __DIR__ . '/../..' . '/app/Modules/VariationGallery/GalleryAdmin.php',
+        'RadiusTheme\\SB\\Modules\\VariationGallery\\GalleryFns' => __DIR__ . '/../..' . '/app/Modules/VariationGallery/GalleryFns.php',
+        'RadiusTheme\\SB\\Modules\\VariationGallery\\GalleryFrontEnd' => __DIR__ . '/../..' . '/app/Modules/VariationGallery/GalleryFrontEnd.php',
+        'RadiusTheme\\SB\\Modules\\VariationGallery\\VariationGalleryInit' => __DIR__ . '/../..' . '/app/Modules/VariationGallery/VariationGalleryInit.php',
+        'RadiusTheme\\SB\\Modules\\VariationSwatches\\SwatchesFns' => __DIR__ . '/../..' . '/app/Modules/VariationSwatches/SwatchesFns.php',
+        'RadiusTheme\\SB\\Modules\\VariationSwatches\\SwatchesHooks' => __DIR__ . '/../..' . '/app/Modules/VariationSwatches/SwatchesHooks.php',
+        'RadiusTheme\\SB\\Modules\\VariationSwatches\\SwatchesTerms' => __DIR__ . '/../..' . '/app/Modules/VariationSwatches/SwatchesTerms.php',
+        'RadiusTheme\\SB\\Modules\\VariationSwatches\\TermMeta' => __DIR__ . '/../..' . '/app/Modules/VariationSwatches/TermMeta.php',
+        'RadiusTheme\\SB\\Modules\\VariationSwatches\\VariationSwatches' => __DIR__ . '/../..' . '/app/Modules/VariationSwatches/VariationSwatches.php',
         'RadiusTheme\\SB\\Modules\\WishList\\Wishlist' => __DIR__ . '/../..' . '/app/Modules/WishList/Wishlist.php',
         'RadiusTheme\\SB\\Modules\\WishList\\WishlistAdmin' => __DIR__ . '/../..' . '/app/Modules/WishList/WishlistAdmin.php',
         'RadiusTheme\\SB\\Modules\\WishList\\WishlistFns' => __DIR__ . '/../..' . '/app/Modules/WishList/WishlistFns.php',
@@ -287,9 +322,9 @@ class ComposerStaticInite9ff1e32c9bb8a92af36b24dd2f901f8
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInite9ff1e32c9bb8a92af36b24dd2f901f8::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInite9ff1e32c9bb8a92af36b24dd2f901f8::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInite9ff1e32c9bb8a92af36b24dd2f901f8::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInitdd70dec7ef3242d32c17fa77e31decf4::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitdd70dec7ef3242d32c17fa77e31decf4::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInitdd70dec7ef3242d32c17fa77e31decf4::$classMap;
 
         }, null, ClassLoader::class);
     }

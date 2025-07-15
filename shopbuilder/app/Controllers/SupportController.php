@@ -6,7 +6,7 @@ use RadiusTheme\SB\Helpers\BuilderFns;
 use RadiusTheme\SB\Helpers\ElementorDataMap;
 use RadiusTheme\SB\Helpers\Fns;
 use RadiusTheme\SB\Traits\SingletonTrait;
-use RadiusTheme\SB\Controllers\PluginsSupport;
+
 // Do not allow directly accessing this file.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit( 'This script cannot be accessed directly.' );
@@ -27,7 +27,7 @@ class SupportController {
 	private function __construct() {
 		add_action( 'init', [ $this, 'plugins_support' ], 9 );
 		add_action( 'init', [ $this, 'themes_support' ], 9 );
-		add_filter( 'woocommerce_locate_template', [ $this, 'locate_template' ], 10, 3 );
+		add_filter( 'woocommerce_locate_template', [ $this, 'locate_template' ], 10, 2 );
 		if ( defined( 'RTSB_DEVELOPER_MODE' ) && RTSB_DEVELOPER_MODE ) {
 			$this->developer_support();
 		}
@@ -71,7 +71,7 @@ class SupportController {
 		$themeClass = ucwords( str_replace( [ '_', '-', ' ' ], '', rtsb()->current_theme ) );
 
 		$supportClass = apply_filters(
-			'RadiusTheme/SB/ThemesSupport/Class',
+			'RadiusTheme/SB/ThemesSupport/Class', // phpcs:ignore WordPress.NamingConventions.ValidHookName.NotLowercase
 			[
 				'ThemesSupport' => 'RadiusTheme\SB\Controllers\ThemesSupport\\' . $themeClass . '\\ThemeSupport',
 				'TheTheme'      => '\ThemeSupport',
@@ -90,11 +90,18 @@ class SupportController {
 	}
 
 	/**
-	 * Theme Support
+	 * Filters and overrides the default WooCommerce template paths for specific templates
+	 * based on builder context and available Elementor widgets.
 	 *
-	 * @return void
+	 * - Replaces the checkout review order template if a custom widget is present.
+	 * - Replaces the single product description tab template if on a product page.
+	 *
+	 * @param string $template      The path to the template to include.
+	 * @param string $template_name The name of the template.
+	 *
+	 * @return string Modified or original template path.
 	 */
-	public function locate_template( $template, $template_name, $template_path ) {
+	public function locate_template( $template, $template_name ) {
 		if ( 'checkout/review-order.php' === $template_name && BuilderFns::is_checkout() ) {
 			$id    = BuilderFns::is_builder_preview() ? get_the_ID() : BuilderFns::builder_page_id_by_type( 'checkout' );
 			$elmap = ElementorDataMap::instance();

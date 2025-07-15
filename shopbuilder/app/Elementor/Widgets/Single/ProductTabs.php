@@ -55,8 +55,6 @@ class ProductTabs extends ElementorWidgetBase {
 	/**
 	 * Widget Field.
 	 *
-	 * @param array $controllers Control.
-	 *
 	 * @return void
 	 */
 	public function apply_hooks() {
@@ -75,11 +73,11 @@ class ProductTabs extends ElementorWidgetBase {
 	}
 
 	/**
-	 * @param $title
+	 * Product Description
 	 *
 	 * @return mixed|string
 	 */
-	public function woocommerce_product_description_heading( $title ) {
+	public function woocommerce_product_description_heading() {
 		$controllers = $this->get_settings_for_display();
 
 		return $controllers['description_title_text'] ?? '';
@@ -87,18 +85,18 @@ class ProductTabs extends ElementorWidgetBase {
 
 
 	/**
-	 * @param $title
+	 * Additional Information
 	 *
 	 * @return mixed|string
 	 */
-	public function additional_information_title_text( $title ) {
+	public function additional_information_title_text() {
 		$controllers = $this->get_settings_for_display();
 
 		return $controllers['additional_information_title_text'] ?? '';
 	}
 
 	/**
-	 * Undocumented function
+	 * Product Page Script
 	 *
 	 * @return void
 	 */
@@ -108,7 +106,26 @@ class ProductTabs extends ElementorWidgetBase {
 		}
 		?>
 		<script type="text/javascript">
-			window.rtsbProductPageInit();
+			if (!'<?php echo esc_attr( Fns::is_optimization_enabled() ); ?>') {
+				setTimeout(function() {
+					window.rtsbProductPageInit();
+				}, 1000);
+			} else {
+				if (typeof elementorFrontend !== 'undefined') {
+					elementorFrontend.hooks.addAction(
+						'frontend/element_ready/rtsb-product-tabs.default',
+						() => {
+							window.waitForRTSB((RTSB) => {
+								RTSB.modules.get('singleProductTabs')?.refresh();
+								RTSB.modules.get('reviewFormStar')?.refresh();
+								RTSB.modules.get('addCartIcon')?.refresh();
+								RTSB.modules.get('productImage')?.refresh();
+								RTSB.modules.get('CartQuantityHandler')?.refresh();
+							});
+						}
+					);
+				}
+			}
 		</script>
 		<?php
 	}

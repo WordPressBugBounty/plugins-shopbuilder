@@ -32,7 +32,7 @@ do_action( 'rtsb/builder/before/header' );
 
 	    do_action( 'rtsb/builder/after/header' );
 		?>
-		<div id="rtsb-builder-content" class="rtsb-builder-content content-invisible <?php echo esc_attr( implode( ' ', $parent_class ) ); ?>">
+		<div id="rtsb-builder-content" class="rtsb-builder-content -content-invisible <?php echo esc_attr( implode( ' ', $parent_class ) ); ?>">
 			<?php
 			do_action( 'rtsb/builder/template/before/content' );
 			if ( is_singular( BuilderFns::$post_type_tb ) && 'elementor' === Fns::page_edit_with( get_the_ID() ) ) {

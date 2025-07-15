@@ -1,13 +1,21 @@
 <?php
+/**
+ * Admin Init.
+ *
+ * @package RadiusTheme\SB
+ */
 
 namespace RadiusTheme\SB\Controllers\Admin;
 
 defined( 'ABSPATH' ) || exit();
 
-use RadiusTheme\SB\Controllers\Admin\Ajax as Ajax;
 use RadiusTheme\SB\Helpers\Fns;
 use RadiusTheme\SB\Traits\SingletonTrait;
+use RadiusTheme\SB\Controllers\Admin\Ajax as Ajax;
 
+/**
+ * Admin Init.
+ */
 class AdminInit {
 	/**
 	 * Parent Menu Page Slug
@@ -24,12 +32,13 @@ class AdminInit {
 	 *
 	 * @var string
 	 */
-	static $parent_menu_hook = '';
-
-	// private $menu_link_part;
+	public static $parent_menu_hook = '';
 
 	use SingletonTrait;
 
+	/**
+	 * Class constructor.
+	 */
 	public function __construct() {
 		$this->init();
 		$this->ajax_actions();
@@ -61,12 +70,22 @@ class AdminInit {
 		Notice\Review::instance();
 	}
 
+	/**
+	 * Init.
+	 *
+	 * @return void
+	 */
 	public function init() {
 		add_action( 'admin_menu', [ $this, 'add_menu' ], 25 );
 		add_action( 'in_admin_header', [ $this, 'in_admin_header_functionality' ], 1000 );
 		PluginRow::instance();
 	}
 
+	/**
+	 * Add menu.
+	 *
+	 * @return void
+	 */
 	public function add_menu() {
 		self::$parent_menu_hook = add_menu_page(
 			esc_html__( 'ShopBuilder', 'shopbuilder' ),
@@ -104,15 +123,24 @@ class AdminInit {
 		);
 		do_action( 'rtsb/add/more/submenu', self::MENU_PAGE_SLUG, self::MENU_CAPABILITY );
 
-		// Remove Parent Submenu
+		// Remove Parent Submenu.
 		remove_submenu_page( self::MENU_PAGE_SLUG, self::MENU_PAGE_SLUG );
 	}
 
-	function redirect_to_content() {
-		wp_redirect( admin_url( 'admin.php?page=rtsb-settings' ) );
+	/**
+	 * Redirect to content.
+	 *
+	 * @return void
+	 */
+	public function redirect_to_content() {
+		wp_redirect( admin_url( 'admin.php?page=rtsb-settings' ) ); // phpcs:ignore WordPress.Security.SafeRedirect.wp_redirect_wp_redirect
 	}
 
-
+	/**
+	 * Settings Page.
+	 *
+	 * @return void
+	 */
 	public function settings_page() {
 		?>
 		<div class="wrap rtsb-admin-wrap">
@@ -121,10 +149,20 @@ class AdminInit {
 		<?php
 	}
 
+	/**
+	 * Help Page.
+	 *
+	 * @return void
+	 */
 	public function get_help_page() {
 		Fns::renderView( 'help' );
 	}
 
+	/**
+	 * Themes Page.
+	 *
+	 * @return void
+	 */
 	public function get_themes_page() {
 		Fns::renderView( 'themes' );
 	}
@@ -146,20 +184,47 @@ class AdminInit {
 			remove_all_actions( 'admin_notices' );
 			remove_all_actions( 'all_admin_notices' );
 		}
-		if ( ! defined( 'ELEMENTOR_VERSION' ) && $isBuilderTemplate ) {
-			?>
-			<div class='rtsb-message-for-elementor-missing'>
-				<div class="rtsb-builder-notice-content">
-					<?php
-					echo sprintf(
-						/* translators: %s: Elementor */
-						esc_html__( 'To build your WooCommerce pages, please Install and Activate the %s Plugin.', 'shopbuilder' ),
-						'<a href="' . esc_url( admin_url( 'plugin-install.php?s=elementor&tab=search&type=term' ) ) . '" target="_blank">' . esc_html__( 'Elementor Website Builder', 'shopbuilder' ) . '</a>'
-					);
-					?>
+
+		$load_elementor_scripts = Fns::should_load_elementor_scripts();
+
+		if ( $isBuilderTemplate ) {
+			if ( ! defined( 'ELEMENTOR_VERSION' ) && $load_elementor_scripts ) {
+				?>
+				<div class='rtsb-message-for-elementor-missing'>
+					<div class="rtsb-builder-notice-content">
+						<?php
+						echo sprintf(
+							/* translators: %s: Elementor */
+							esc_html__( 'To build your WooCommerce pages, please Install and Activate the %s Plugin.', 'shopbuilder' ),
+							'<a href="' . esc_url( admin_url( 'plugin-install.php?s=elementor&tab=search&type=term' ) ) . '" target="_blank">' . esc_html__( 'Elementor Website Builder', 'shopbuilder' ) . '</a>'
+						);
+						?>
+					</div>
 				</div>
-			</div>
-			<?php
+				<?php
+			} elseif ( defined( 'ELEMENTOR_VERSION' ) && ! $load_elementor_scripts ) {
+				?>
+				<div class='rtsb-message-for-elementor-missing'>
+					<div class="rtsb-builder-notice-content">
+					<?php esc_html_e( 'Elementor is installed, but script loading is disabled. Please enable "Load Elementor Scripts" in the Advanced Optimization Settings.', 'shopbuilder' ); ?>
+					</div>
+				</div>
+				<?php
+			} elseif ( ! defined( 'ELEMENTOR_VERSION' ) && ! $load_elementor_scripts ) {
+				?>
+				<div class='rtsb-message-for-elementor-missing'>
+					<div class="rtsb-builder-notice-content">
+						<?php
+						echo sprintf(
+						/* translators: %s: Elementor */
+							esc_html__( 'To build your WooCommerce pages, please Install and Activate the %s Plugin.', 'shopbuilder' ),
+							'<a href="' . esc_url( admin_url( 'plugin-install.php?s=Elementor%2520Website%2520Builder&tab=search&type=term' ) ) . '" target="_blank">' . esc_html__( 'Elementor Website Builder', 'shopbuilder' ) . '</a>'
+						);
+						?>
+					</div>
+				</div>
+				<?php
+			}
 		}
 	}
 }

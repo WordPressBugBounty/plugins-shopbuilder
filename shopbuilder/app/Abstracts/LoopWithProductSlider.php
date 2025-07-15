@@ -113,15 +113,17 @@ abstract class LoopWithProductSlider extends ElementorWidgetBase {
 	 * @return void
 	 */
 	public function script_init() {
-		wp_dequeue_script( 'rtsb-public' );
+		$handle = Fns::optimized_handle( 'rtsb-public' );
+		wp_dequeue_script( $handle );
 
-		//wp_enqueue_style( 'swiper' );
 		wp_enqueue_script( 'swiper' );
-		wp_enqueue_script( 'rtsb-public' );
+		wp_enqueue_script( $handle );
 	}
 
 	/**
 	 * Product loop start function
+	 *
+	 * @param string $html html.
 	 *
 	 * @return string
 	 */
@@ -189,6 +191,8 @@ abstract class LoopWithProductSlider extends ElementorWidgetBase {
 	/**
 	 * Product loop start function
 	 *
+	 * @param string $html html.
+	 *
 	 * @return string
 	 */
 	public function product_loop_end( $html ) {
@@ -205,6 +209,8 @@ abstract class LoopWithProductSlider extends ElementorWidgetBase {
 	}
 	/**
 	 * Product loop start function
+	 *
+	 * @param string $classes classes.
 	 *
 	 * @return string
 	 */
@@ -282,16 +288,15 @@ abstract class LoopWithProductSlider extends ElementorWidgetBase {
 			remove_action( 'woocommerce_shop_loop_item_title', 'woocommerce_template_loop_product_link_close', 12 );
 		}
 
-		// Remove Action Button
+		// Remove Action Button.
 		add_filter( 'rtsb/module/wishlist/show_button', '__return_false' );
 		add_filter( 'rtsb/module/quick_view/show_button', '__return_false' );
 		add_filter( 'rtsb/module/compare/show_button', '__return_false' );
 
-        //TODO:: Pro Will move if necessary
-        if ( empty( $controllers['show_quick_checkout'] ) ) {
+		if ( empty( $controllers['show_quick_checkout'] ) ) {
 			add_filter( 'rtsb/module/quick_checkout/show_button', '__return_false' );
 		}
-        if ( empty( $controllers['show_flash_sale_countdown'] ) ) {
+		if ( empty( $controllers['show_flash_sale_countdown'] ) ) {
 			add_filter( 'rtsb/module/flash_sale_countdown/show_counter', '__return_false' );
 		}
 
@@ -319,17 +324,19 @@ abstract class LoopWithProductSlider extends ElementorWidgetBase {
 		// Content Wrapper Close.
 		add_action( 'woocommerce_after_shop_loop_item', [ $this, 'div_close' ], 99 );
 
+		if ( $this->is_edit_mode() ) {
+			if ( class_exists( Rtwpvs\Controllers\Hooks::class ) ) {
+				remove_filter( 'woocommerce_ajax_variationX_threshold', [ Rtwpvs\Controllers\Hooks::class, 'ajax_variation_threshold' ], 99 );
+			}
+			add_filter(
+				'woocommerce_ajax_variation_threshold',
+				function () {
+					return 1;
+				},
+				99
+			);
 
-        if ( $this->is_edit_mode() ){
-            if( class_exists( Rtwpvs\Controllers\Hooks::class ) ){
-		        remove_filter( 'woocommerce_ajax_variationX_threshold', [ Rtwpvs\Controllers\Hooks::class, 'ajax_variation_threshold' ], 99 );
-            }
-	        add_filter( 'woocommerce_ajax_variation_threshold', function (){
-		        return 1;
-	        }, 99 );
-
-        }
-
+		}
 	}
 	/**
 	 * Apply hooks function.
@@ -367,7 +374,6 @@ abstract class LoopWithProductSlider extends ElementorWidgetBase {
 		remove_filter( 'rtsb/module/wishlist/show_button', '__return_false' );
 		remove_filter( 'rtsb/module/quick_view/show_button', '__return_false' );
 		remove_filter( 'rtsb/module/compare/show_button', '__return_false' );
-
 	}
 	/**
 	 * Related Product Args function'
@@ -404,10 +410,18 @@ abstract class LoopWithProductSlider extends ElementorWidgetBase {
 		?>
 		<script>
 			<?php if ( rtsb()->has_pro() ) { ?>
-                setTimeout( function (){
-                    window.rtsbCountdownApply();
-                }, 1000 );
-            <?php } ?>
+				if (!'<?php echo esc_attr( Fns::is_optimization_enabled() ); ?>') {
+					setTimeout( function (){
+						window.rtsbCountdownApply();
+					}, 1000 );
+				} else {
+					if (typeof elementorFrontend !== 'undefined') {
+						window.waitForRTSB((RTSB) => {
+							RTSB.modules.get('countdownPro')?.refresh();
+						});
+					}
+				}
+			<?php } ?>
 		</script>
 		<?php
 	}
@@ -452,7 +466,5 @@ abstract class LoopWithProductSlider extends ElementorWidgetBase {
 
 		$this->editor_script();
 		$this->editor_cart_icon_script();
-
 	}
-
 }

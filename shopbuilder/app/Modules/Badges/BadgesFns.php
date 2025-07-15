@@ -44,11 +44,11 @@ class BadgesFns {
 	/**
 	 * Get Badges.
 	 *
-	 * @param WC_Product|null $product Product object.
+	 * @param object $product Product Object.
 	 *
 	 * @return array|mixed
 	 */
-	public static function get_product_badges_for_current_product( WC_Product $product = null ) {
+	public static function get_product_badges_for_current_product( $product = null ) {
 		$available_badges = [];
 
 		if ( is_null( $product ) ) {

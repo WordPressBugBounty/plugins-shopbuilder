@@ -1,4 +1,9 @@
 <?php
+/**
+ * Quick View Module Class.
+ *
+ * @package RadiusTheme\SB
+ */
 
 namespace RadiusTheme\SB\Modules\QuickView;
 
@@ -10,6 +15,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 use RadiusTheme\SB\Helpers\Fns;
 use RadiusTheme\SB\Traits\SingletonTrait;
 
+/**
+ * Quick View Module Class.
+ */
 final class QuickView {
 	/**
 	 * @var array
@@ -29,6 +37,11 @@ final class QuickView {
 	 */
 	use SingletonTrait;
 
+	/**
+	 * Class constructor.
+	 *
+	 * @return void
+	 */
 	private function __construct() {
 		QuickViewFrontEnd::instance();
 		$this->options = Fns::get_options( 'modules', 'quick_view' );
@@ -42,8 +55,10 @@ final class QuickView {
 	public function enqueue_public_scripts() {
 		$cache_key = 'quick_view_style_cache';
 		$width     = ! empty( $this->options['modal_width'] ) ? $this->options['modal_width'] : '950';
+		$handle    = Fns::optimized_handle( 'rtsb-public' );
+
 		wp_localize_script(
-			'rtsb-public',
+			$handle,
 			'QvModalParams',
 			[
 				'modal_width' => absint( $width ),
@@ -51,7 +66,7 @@ final class QuickView {
 		);
 
 		if ( isset( $this->cache[ $cache_key ] ) && ! empty( $this->cache[ $cache_key ] ) ) {
-			wp_add_inline_style( 'rtsb-frontend', $this->cache[ $cache_key ] );
+			wp_add_inline_style( Fns::optimized_handle( 'rtsb-frontend' ), $this->cache[ $cache_key ] );
 			return;
 		}
 
@@ -103,7 +118,7 @@ final class QuickView {
 		$dynamic_css               = ob_get_clean();
 		$this->cache[ $cache_key ] = $dynamic_css;
 		if ( ! empty( $dynamic_css ) ) {
-			wp_add_inline_style( 'rtsb-frontend', $dynamic_css );
+			wp_add_inline_style( Fns::optimized_handle( 'rtsb-frontend' ), $dynamic_css );
 		}
 	}
 }

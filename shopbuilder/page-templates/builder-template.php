@@ -32,7 +32,7 @@ if ( Fns::check_is_block_theme() ) { ?>
 }
 
 $parent_class = apply_filters( 'rtsb/builder/wrapper/parent_class', [] );
-$type         = apply_filters( 'rtsb/builder/set/current/page/type', '' );
+$type         = apply_filters( 'rtsb/builder/set/current/page/type', '' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 
 do_action( 'rtsb/builder/after/header' );
 
@@ -41,7 +41,6 @@ do_action( 'rtsb/builder/after/header' );
 	<?php
 	do_action( 'rtsb/builder/template/before/content' );
 	if ( is_singular( BuilderFns::$post_type_tb ) && 'elementor' === Fns::page_edit_with( get_the_ID() ) ) {
-		// \Elementor\Plugin::$instance->modules_manager->get_modules( 'page-templates' )->print_content();
 		the_content();
 	} else {
 		do_action( 'rtsb/builder/template/main/content' );

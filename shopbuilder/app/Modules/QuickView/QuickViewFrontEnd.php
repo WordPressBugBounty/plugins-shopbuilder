@@ -1,4 +1,9 @@
 <?php
+/**
+ * Quick View Module Class.
+ *
+ * @package RadiusTheme\SB
+ */
 
 namespace RadiusTheme\SB\Modules\QuickView;
 
@@ -11,19 +16,30 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit( 'This script cannot be accessed directly.' );
 }
 
+/**
+ * Quick View Module Class.
+ */
 class QuickViewFrontEnd {
 	use SingletonTrait;
 
+	/**
+	 * Asset Handle
+	 *
+	 * @var string
+	 */
+	private $handle = 'rtsb-quick-view';
+
+	/**
+	 * Class constructor.
+	 */
 	public function __construct() {
-		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue' ] );
+		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue' ], 20 );
 
 		// Gallery Plugin Support rtwpvg_disable_enqueue_scripts.
 		add_filter( 'rtwpvg_disable_enqueue_scripts', '__return_false', 11 );
 
 		// Template.
-
 		add_action( 'rtsb/modules/quick_view/frontend/display', [ $this, 'button_hook' ] );
-		// Add do_action( 'rtsb/modules/quick_view/frontend/display' ); for display anywhere.
 
 		add_action( 'rtsb/modules/quick_view/print_button', [ $this, 'print_button' ] );
 
@@ -64,6 +80,11 @@ class QuickViewFrontEnd {
 		add_action( 'rtsb/wcqv/product/summary', 'woocommerce_template_single_meta', 30 );
 	}
 
+	/**
+	 * Quick View AJAX.
+	 *
+	 * @return void
+	 */
 	public function product_quick_view_ajax() {
 		$product_id = isset( $_REQUEST['product_id'] ) ? absint( $_REQUEST['product_id'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
@@ -85,10 +106,6 @@ class QuickViewFrontEnd {
 		if ( defined( 'RTWPVG_VERSION' ) ) {
 			remove_action( 'woocommerce_product_thumbnails', 'woocommerce_show_product_thumbnails', 20 );
 		}
-		if ( ! defined( 'RTWPVG_VERSION' ) ) {
-			// add_action( 'woocommerce_product_thumbnails', [ $this, 'woocommerce_product_thumbnails_before' ], 1 );
-			// add_action( 'woocommerce_product_thumbnails', [ $this, 'woocommerce_product_thumbnails_after' ], 25 );
-		}
 
 		ob_start();
 		Fns::load_template( 'quick-view/content' );
@@ -105,7 +122,6 @@ class QuickViewFrontEnd {
 	 * @since 1.0.0
 	 */
 	public function attach_button() {
-
 		$positions = apply_filters(
 			'rtsb/module/quick_view/loop_btn_position',
 			[
@@ -126,7 +142,6 @@ class QuickViewFrontEnd {
 		);
 
 		// Add the link "Add to wishlist" in the loop.
-
 		$loop_btn_position = Fns::get_option( 'modules', 'quick_view', 'loop_btn_position', 'after_add_to_cart' );
 
 		if ( 'shortcode' !== $loop_btn_position && isset( $positions[ $loop_btn_position ]['hook'] ) ) {
@@ -139,31 +154,9 @@ class QuickViewFrontEnd {
 				isset( $positions[ $loop_btn_position ]['priority'] ) ? $positions[ $loop_btn_position ]['priority'] : ''
 			);
 		}
-		// TODO:: Maybe this hooks is not working. Need to Check gutenberg compatibility.
+
 		// Add the link "Quick view" for Gutenberg blocks.
 		add_filter( 'woocommerce_blocks_product_grid_item_html', [ $this, 'add_button_for_block' ], 10, 3 );
-	}
-
-	/**
-	 * Print "Add to compare" button
-	 *
-	 * @return void
-	 */
-	public function woocommerce_product_thumbnails_before() {
-		?>
-		<div class="rtsb-gallery-images-wrapper">
-		<?php
-	}
-	/**
-	 * Print "Add to compare" button
-	 *
-	 * @return void
-	 */
-	public function woocommerce_product_thumbnails_after() {
-
-		?>
-		</div>
-		<?php
 	}
 
 	/**
@@ -183,7 +176,11 @@ class QuickViewFrontEnd {
 
 
 	/**
-	 * @return string|void
+	 * Print "Add to compare" button.
+	 *
+	 * @param int $product_id Product ID.
+	 *
+	 * @return void
 	 */
 	public function print_button( $product_id = 0 ) {
 		global $product;
@@ -192,11 +189,7 @@ class QuickViewFrontEnd {
 			$product = wc_get_product( $product_id );
 		}
 
-		// if ( ! $current_product instanceof WC_Product ) {
-		// return '';
-		// }
-
-		$classes     = []; // button class.
+		$classes     = [];
 		$button_text = Fns::get_option( 'modules', 'quick_view', 'button_text', esc_html__( 'Quick View', 'shopbuilder' ) );
 
 		$icon_html = '<i class="rtsb-icon rtsb-icon-eye"></i>';
@@ -219,68 +212,57 @@ class QuickViewFrontEnd {
 		Fns::load_template( 'quick-view/button', $atts );
 	}
 
-
 	/**
 	 * Wishlist button Shortcode callable function
 	 *
-	 * @param array  $atts
-	 * @param string $content
-	 *
-	 * @return string [HTML]
+	 * @return string
 	 */
-	public function button_shortcode( $atts, $content = '' ) {
+	public function button_shortcode() {
 		global $product;
+
 		if ( ! $product instanceof WC_Product ) {
 			return '';
 		}
-		ob_start();
 
+		ob_start();
 		do_action( 'rtsb/modules/quick_view/print_button', $product->get_id() );
 
 		return ob_get_clean();
 	}
 
+	/**
+	 * Enqueue assets.
+	 *
+	 * @return void
+	 */
 	public function enqueue() {
-
 		wp_enqueue_style( 'elementor-icons-fa-regular' );
-
-		 wp_enqueue_style( 'elementor-icons-fa-solid' );
-		 wp_enqueue_style( 'elementor-icons-shared-0' );
-		// wp_enqueue_style( 'elementor-frontend' );
+		wp_enqueue_style( 'elementor-icons-fa-solid' );
+		wp_enqueue_style( 'elementor-icons-shared-0' );
 
 		if ( ! class_exists( 'WooProductVariationGallery' ) && current_theme_supports( 'wc-product-gallery-slider' ) ) {
 			wp_enqueue_script( 'flexslider' );
 		}
 
 		wp_enqueue_script( 'wc-add-to-cart-variation' );
+
 		if ( version_compare( WC()->version, '3.0.0', '>=' ) ) {
 			if ( current_theme_supports( 'wc-product-gallery-zoom' ) ) {
 				wp_enqueue_script( 'zoom' );
 			}
+
 			if ( current_theme_supports( 'wc-product-gallery-lightbox' ) ) {
 				wp_enqueue_script( 'photoswipe-ui-default' );
 				wp_enqueue_style( 'photoswipe-default-skin' );
+
 				if ( has_action( 'wp_footer', 'woocommerce_photoswipe' ) === false ) {
 					add_action( 'wp_footer', 'woocommerce_photoswipe', 15 );
 				}
 			}
 			wp_enqueue_script( 'wc-single-product' );
 		}
-
-		wp_register_style( 'rtsb-modules', rtsb()->get_assets_uri( 'modules/modules.css' ), [], RTSB_VERSION );
-		wp_register_script(
-			'rtsb-quick-view',
-			rtsb()->get_assets_uri( 'modules/quick-view.js' ),
-			[
-				'jquery',
-				'rtsb-public',
-			],
-			RTSB_VERSION,
-			true
-		);
-		wp_enqueue_style( 'rtsb-modules' );
-		wp_enqueue_script( 'rtsb-quick-view' );
-
+		// Enqueue assets.
+		$this->handle = Fns::enqueue_module_assets( $this->handle, 'quick-view' );
 		// Allow user to load custom style and scripts!
 		do_action( 'rtsb/modules/quick_view/custom_scripts' );
 
@@ -293,7 +275,7 @@ class QuickViewFrontEnd {
 			]
 		);
 
-		wp_localize_script( 'rtsb-quick-view', 'rtsbQvParams', $params );
+		wp_localize_script( $this->handle, 'rtsbQvParams', $params );
 	}
 
 

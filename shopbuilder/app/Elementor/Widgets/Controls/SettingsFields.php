@@ -11,6 +11,7 @@ namespace RadiusTheme\SB\Elementor\Widgets\Controls;
 
 use RadiusTheme\SB\Helpers\Fns;
 use RadiusTheme\SB\Elementor\Helper\ControlHelper;
+use RadiusTheme\SB\Modules\VariationSwatches\SwatchesFns;
 
 // Do not allow directly accessing this file.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -131,6 +132,30 @@ class SettingsFields {
 				'layout!'         => [ 'grid-layout2', 'slider-layout2' ],
 			],
 		];
+		if ( function_exists( 'rtwpvsp' ) || ( Fns::is_module_active( 'variation_swatches' ) && 'on' === SwatchesFns::get_options( 'enable_showcase_swatches' ) ) ) {
+			$fields['show_swatches'] = [
+				'type'        => 'switch',
+				'label'       => esc_html__( 'Show Variation Swatches?', 'shopbuilder' ),
+				'description' => esc_html__( 'Switch on to show variation swatches.', 'shopbuilder' ),
+				'label_on'    => esc_html__( 'On', 'shopbuilder' ),
+				'label_off'   => esc_html__( 'Off', 'shopbuilder' ),
+				'default'     => 'yes',
+				'condition'   => [ 'layout!' => [ 'grid-layout2', 'slider-layout2' ] ],
+			];
+
+			$fields['show_vs_clear_btn'] = [
+				'type'        => 'switch',
+				'label'       => esc_html__( 'Show Swatches Reset?', 'shopbuilder' ),
+				'description' => esc_html__( 'Switch on to show swatches clear button.', 'shopbuilder' ),
+				'label_on'    => esc_html__( 'On', 'shopbuilder' ),
+				'label_off'   => esc_html__( 'Off', 'shopbuilder' ),
+				'separator'   => 'default',
+				'condition'   => [
+					'show_swatches' => [ 'yes' ],
+					'layout!'       => [ 'grid-layout2', 'slider-layout2' ],
+				],
+			];
+		}
 
 		$fields['action_btn_visibility'] = $obj->el_heading( esc_html__( 'Action Buttons Visibility', 'shopbuilder' ), 'before' );
 
@@ -180,7 +205,6 @@ class SettingsFields {
 		}
 
 		$fields['visibility_section_end'] = $obj->end_section();
-
 		return apply_filters( 'rtsb/elements/elementor/visibility_control', $fields, $obj );
 	}
 
@@ -241,7 +265,6 @@ class SettingsFields {
 			[ 'show_add_to_cart' => [ 'yes' ] ]
 		);
 
-		// TODO:: Variable product button text change option.
 		$fields['show_cart_text'] = [
 			'type'        => 'switch',
 			'label'       => esc_html__( 'Show Add to Cart Text?', 'shopbuilder' ),
@@ -567,7 +590,7 @@ class SettingsFields {
 		$fields['show_hover_image'] = [
 			'type'        => 'switch',
 			'label'       => esc_html__( 'Display Gallery Image on Hover?', 'shopbuilder' ),
-			'description' => __( 'Switch on to display gallery image on hover. <br /><b>Note: </b>It will display the first gallery image on hover.', 'shopbuilder' ) . ( function_exists( 'rtwpvsp' ) ? esc_html__( ' It will not work if variation swatches are enabled.', 'shopbuilder' ) : '' ),
+			'description' => __( 'Switch on to display gallery image on hover. <br /><b>Note: </b>It will display the first gallery image on hover.', 'shopbuilder' ) . ( ( function_exists( 'rtwpvsp' ) || rtsb()->has_pro() ) ? esc_html__( ' It will not work if variation swatches are enabled.', 'shopbuilder' ) : '' ),
 			'label_on'    => esc_html__( 'On', 'shopbuilder' ),
 			'label_off'   => esc_html__( 'Off', 'shopbuilder' ),
 			'separator'   => rtsb()->has_pro() ? 'default' : 'before-short',
@@ -1075,7 +1098,7 @@ class SettingsFields {
 			$condition
 		);
 
-		$fields['title_tag'] = [
+		$fields['title_tag']   = [
 			'type'        => 'select2',
 			'label'       => esc_html__( 'Product Title Tag', 'shopbuilder' ),
 			'options'     => ControlHelper::heading_tags(),
@@ -1083,16 +1106,6 @@ class SettingsFields {
 			'default'     => 'h3',
 			'description' => esc_html__( 'Please select the product title tag.', 'shopbuilder' ),
 		];
-
-		// TODO: Will be activated later.
-		// $fields['title_hover'] = [
-		// 'type'        => 'switch',
-		// 'label'       => esc_html__( 'Title Hover Underline', 'shopbuilder' ),
-		// 'default'     => 200,
-		// 'description' => esc_html__( 'Switch on to enable title hover underline.', 'shopbuilder' ),
-		// 'classes'     => $obj->pro_class(),
-		// ];
-
 		$fields['title_limit'] = [
 			'type'        => 'select2',
 			'label'       => esc_html__( 'Product Title Limit', 'shopbuilder' ),
@@ -1388,10 +1401,9 @@ class SettingsFields {
 	 * @return array
 	 */
 	public static function variation_swatch( $obj ) {
-		if ( ! function_exists( 'rtwpvsp' ) ) {
+		if ( ! function_exists( 'rtwpvsp' ) && ! rtsb()->has_pro() ) {
 			return [];
 		}
-
 		$condition = [
 			'show_swatches' => [ 'yes' ],
 		];
@@ -1415,19 +1427,19 @@ class SettingsFields {
 			'label_block' => true,
 			'default'     => 'top',
 		];
-
-		$fields['swatch_type'] = [
-			'type'        => 'select2',
-			'label'       => esc_html__( 'Color Swatches Type', 'shopbuilder' ),
-			'description' => esc_html__( 'Please select the variation swatches display type (only work with color swatch).', 'shopbuilder' ),
-			'options'     => [
-				'square' => esc_html__( 'Square', 'shopbuilder' ),
-				'circle' => esc_html__( 'Circle', 'shopbuilder' ),
-			],
-			'label_block' => true,
-			'default'     => 'circle',
-		];
-
+		if ( function_exists( 'rtwpvsp' ) ) {
+			$fields['swatch_type'] = [
+				'type'        => 'select2',
+				'label'       => esc_html__( 'Color Swatches Type', 'shopbuilder' ),
+				'description' => esc_html__( 'Please select the variation swatches display type (only work with color swatch).', 'shopbuilder' ),
+				'options'     => [
+					'square' => esc_html__( 'Square', 'shopbuilder' ),
+					'circle' => esc_html__( 'Circle', 'shopbuilder' ),
+				],
+				'label_block' => true,
+				'default'     => 'circle',
+			];
+		}
 		$fields['swatch_margin'] = [
 			'mode'       => 'responsive',
 			'type'       => 'dimensions',

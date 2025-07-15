@@ -1,4 +1,9 @@
 <?php
+/**
+ * Compare Module Class
+ *
+ * @package RadiusTheme\SB
+ */
 
 namespace RadiusTheme\SB\Modules\Compare;
 
@@ -11,23 +16,29 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit( 'This script cannot be accessed directly.' );
 }
 
-
+/**
+ * Compare Module Class
+ */
 class CompareFrontEnd {
 	use SingletonTrait;
 
+	/**
+	 * Asset Handle
+	 *
+	 * @var string
+	 */
+	private $handle = 'rtsb-compare';
+
+	/**
+	 * Class constructor.
+	 */
 	public function __construct() {
-		// Template
-
 		add_filter( 'body_class', [ $this, 'add_body_class' ] );
-
-		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue' ] );
-
+		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue' ], 20 );
 		add_action( 'rtsb/modules/compare/frontend/display', [ $this, 'button_hook' ] );
-		// Add do_action('rtsb/modules/compare/frontend/display' ); for display anywhere.
-
 		add_action( 'rtsb/modules/compare/print_button', [ $this, 'print_button' ] );
 
-		// ShortCode
+		// ShortCode.
 		add_shortcode( 'rtsb_compare_list', [ $this, 'list_shortcode' ] );
 		add_shortcode( 'rtsb_compare_button', [ $this, 'button_shortcode' ] );
 		add_shortcode( 'rtsb_compare_counter', [ $this, 'counter_shortcode' ] );
@@ -35,21 +46,14 @@ class CompareFrontEnd {
 		$this->attach_button();
 	}
 
-
+	/**
+	 * Enqueue assets.
+	 *
+	 * @return void
+	 */
 	public function enqueue() {
-		wp_register_style( 'rtsb-modules', rtsb()->get_assets_uri( 'modules/modules.css' ), [], RTSB_VERSION );
-		wp_register_script(
-			'rtsb-compare',
-			rtsb()->get_assets_uri( 'modules/compare.js' ),
-			[
-				'jquery',
-				'rtsb-public',
-			],
-			RTSB_VERSION,
-			true
-		);
-		wp_enqueue_style( 'rtsb-modules' );
-		wp_enqueue_script( 'rtsb-compare' );
+		// Enqueue assets.
+		$this->handle     = Fns::enqueue_module_assets( $this->handle, 'compare' );
 		$ajax_button_text = Fns::get_option( 'modules', 'compare', 'button_text', esc_html__( 'Compare', 'shopbuilder' ) );
 		$params           = apply_filters(
 			'rtsb/module/compare/js_params',
@@ -70,7 +74,7 @@ class CompareFrontEnd {
 			]
 		);
 
-		wp_localize_script( 'rtsb-compare', 'rtsbCompareParams', $params );
+		wp_localize_script( $this->handle, 'rtsbCompareParams', $params );
 	}
 
 	/**
@@ -164,7 +168,6 @@ class CompareFrontEnd {
 			);
 		}
 
-		// TODO:: Maybe this hooks is not working. Need to Check gutenberg compatibility.
 		// Add the link "Add to wishlist" for Gutenberg blocks.
 		add_filter( 'woocommerce_blocks_product_grid_item_html', [ $this, 'add_button_for_block' ], 10, 3 );
 	}
@@ -234,7 +237,11 @@ class CompareFrontEnd {
 
 
 	/**
-	 * @return string|void
+	 * Print "Add to compare" button
+	 *
+	 * @param int $product_id Product ID.
+	 *
+	 * @return void
 	 */
 	public function print_button( $product_id = 0 ) {
 		global $product;
@@ -242,10 +249,6 @@ class CompareFrontEnd {
 		if ( ! $product instanceof WC_Product && $product_id ) {
 			$product = wc_get_product( $product_id );
 		}
-
-		// if ( ! $current_product instanceof WC_Product ) {
-		// return '';
-		// }
 
 		// product parent.
 		$product_parent = $product->get_parent_id();
@@ -311,14 +314,16 @@ class CompareFrontEnd {
 	/**
 	 * List Shortcode callable function
 	 *
-	 * @param array  $atts
-	 * @param string $content
+	 * @param array  $atts Shortcode attributes.
+	 * @param string $content Shortcode content.
 	 *
 	 * @return string [HTML]
 	 */
 	public function list_shortcode( $atts, $content = '' ) {
-		wp_enqueue_style( 'rtsb-modules' );
-		wp_enqueue_script( 'rtsb-compare' );
+		$this->handle = Fns::optimized_handle( $this->handle );
+
+		wp_enqueue_style( $this->handle );
+		wp_enqueue_script( $this->handle );
 
 		/* Fetch From option data */
 
@@ -348,15 +353,16 @@ class CompareFrontEnd {
 	/**
 	 * Compare button Shortcode callable function
 	 *
-	 * @param array  $atts
-	 * @param string $content
-	 *
 	 * @return string [HTML]
 	 */
-	public function button_shortcode( $atts, $content = '' ) {
-		wp_enqueue_style( 'rtsb-modules' );
-		wp_enqueue_script( 'rtsb-compare' );
+	public function button_shortcode() {
+		$this->handle = Fns::optimized_handle( $this->handle );
+
+		wp_enqueue_style( $this->handle );
+		wp_enqueue_script( $this->handle );
+
 		global $product;
+
 		if ( ! $product instanceof WC_Product ) {
 			return '';
 		}
@@ -370,13 +376,13 @@ class CompareFrontEnd {
 	/**
 	 * Compare counter Shortcode callable function
 	 *
-	 * @param array  $atts
-	 * @param string $content
+	 * @param array  $atts Shortcode attributes.
+	 * @param string $content Shortcode content.
 	 *
 	 * @return string [HTML]
 	 */
 	public function counter_shortcode( $atts, $content = '' ) {
-		wp_enqueue_style( 'rtsb-modules' );
+		wp_enqueue_style( Fns::optimized_handle( $this->handle ) );
 
 		$product_ids = CompareFns::instance()->get_compared_product_ids();
 

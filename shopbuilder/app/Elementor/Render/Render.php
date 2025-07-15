@@ -248,15 +248,18 @@ class Render {
 		$i = 0;
 
 		global $product;
+
 		$isGlobalProduct = false;
+
 		if ( $product instanceof WC_Product ) {
 			$isGlobalProduct = $product;
 		}
 
+		$layout = RenderHelpers::filter_layout( esc_html( $settings['layout'] ), $template );
+
 		foreach ( $products as $_product ) {
 			$i++;
 			$GLOBALS['product'] = $_product;
-			$layout             = RenderHelpers::filter_layout( esc_html( $settings['layout'] ), $template );
 
 			/**
 			 * Before product template render hook.
@@ -298,7 +301,8 @@ class Render {
 			return null;
 		}
 
-		$i = 0;
+		$i      = 0;
+		$layout = RenderHelpers::filter_layout( esc_html( $settings['layout'] ), $template );
 
 		while ( $query->have_posts() ) {
 			$query->the_post();
@@ -308,7 +312,7 @@ class Render {
 			$arg = $this->arg_dataset( $settings, $product, $settings['lazy_load'], $i );
 
 			// Get template.
-			$html .= Fns::load_template( $template . $settings['layout'], $arg, true );
+			$html .= Fns::load_template( $template . $layout, $arg, true );
 		}
 
 		return $html;
@@ -460,8 +464,7 @@ class Render {
 
 		$page_type      = BuilderFns::builder_type( get_the_ID() );
 		$is_preview     = BuilderFns::is_builder_preview() && array_key_exists( $page_type, BuilderFns::builder_page_types() );
-		$posts_per_page = wc_get_default_products_per_row() * wc_get_default_product_rows_per_page();
-
+		$posts_per_page = apply_filters( 'loop_shop_per_page', wc_get_default_products_per_row() * wc_get_default_product_rows_per_page() );
 		if ( $is_preview ) {
 			$main_query = clone $wp_query;
 			$main_post  = clone $post;
@@ -716,6 +719,7 @@ class Render {
 	 * @return array
 	 */
 	public function wp_arg_dataset( array $meta, int $post_id, bool $lazy_load = false, $i = 0 ) {
+		// phpcs:ignore WordPress.PHP.StrictInArray.MissingTrueStrict
 		if ( ( empty( $meta ) && ! $post_id ) || ! in_array( get_post_type( $post_id ), [ 'product_variation', 'product' ] ) ) {
 			return [];
 		}
@@ -1125,7 +1129,12 @@ class Render {
 
 			$this->add_attribute( 'rtsb_add_to_cart_button_' . $id . $rand, $cart_attr );
 
-			$text_btn = 'grouped' === $type ? __( 'View Products', 'shopbuilder' ) : __( 'Select Options', 'shopbuilder' );
+			$text_btn = apply_filters(
+				'rtsb/elementor/render/add_to_cart_text',
+				'grouped' === $type ? __( 'View Products', 'shopbuilder' ) : __( 'Select Options', 'shopbuilder' ),
+				$product,
+				$type
+			);
 
 			$content .= '<a ' . $this->get_attribute_string( 'rtsb_add_to_cart_button_' . $id . $rand ) . '>';
 			$content .= $icon_html;
@@ -1466,7 +1475,12 @@ class Render {
 			return '';
 		}
 
-		return Utils::render_html_attributes( $this->attributes[ $element ] );
+		if ( class_exists( '\Elementor\Utils' ) ) {
+			return Utils::render_html_attributes( $this->attributes[ $element ] );
+		}
+
+		// Fallback.
+		return $this->render_fallback_attributes( $this->attributes[ $element ] );
 	}
 
 	/**
@@ -1488,5 +1502,26 @@ class Render {
 		}
 
 		return $this->get_attribute_string( $id );
+	}
+
+	/**
+	 * Render fallback attributes.
+	 *
+	 * @param array $attributes The attributes.
+	 *
+	 * @return string
+	 */
+	private function render_fallback_attributes( $attributes ) {
+		$rendered_attributes = [];
+
+		foreach ( $attributes as $attribute_key => $attribute_values ) {
+			if ( is_array( $attribute_values ) ) {
+				$attribute_values = implode( ' ', $attribute_values );
+			}
+
+			$rendered_attributes[] = sprintf( '%1$s="%2$s"', $attribute_key, esc_attr( $attribute_values ) );
+		}
+
+		return implode( ' ', $rendered_attributes );
 	}
 }

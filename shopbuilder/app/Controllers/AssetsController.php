@@ -1,10 +1,15 @@
 <?php
+/**
+ * Assets Controller Class
+ *
+ * @package RadiusTheme\SB
+ */
 
 namespace RadiusTheme\SB\Controllers;
 
-use RadiusTheme\SB\Helpers\BuilderFns;
 use RadiusTheme\SB\Helpers\Fns;
 use RadiusTheme\SB\Models\Settings;
+use RadiusTheme\SB\Helpers\BuilderFns;
 use RadiusTheme\SB\Traits\SingletonTrait;
 
 // Do not allow directly accessing this file.
@@ -12,6 +17,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit( 'This script cannot be accessed directly.' );
 }
 
+/**
+ * Assets Controller Class
+ */
 class AssetsController {
 
 	use SingletonTrait;
@@ -45,11 +53,19 @@ class AssetsController {
 	private $scripts = [];
 
 	/**
+	 * Cached bundled assets.
+	 *
+	 * @var array|null
+	 */
+	private $cached_bundled_assets = null;
+
+	/**
 	 * Class Constructor
 	 */
 	public function __construct() {
 		$this->version = ( defined( 'WP_DEBUG' ) && WP_DEBUG ) ? time() : RTSB_VERSION;
 
+		// phpcs:ignore WordPress.PHP.StrictInArray.MissingTrueStrict
 		if ( in_array( 'sitepress-multilingual-cms/sitepress.php', get_option( 'active_plugins' ) ) ) {
 			self::$ajaxurl = admin_url( 'admin-ajax.php?lang=' . ICL_LANGUAGE_CODE );
 		} else {
@@ -65,7 +81,7 @@ class AssetsController {
 		/**
 		 * Public scripts.
 		 */
-		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_public_scripts' ], 15 );
+		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_public_scripts' ], 25 );
 		/**
 		 * General scripts.
 		 */
@@ -88,6 +104,7 @@ class AssetsController {
 	 */
 	private function get_public_styles() {
 		$rtl_suffix = is_rtl() ? '-rtl' : '';
+		$rtl_dir    = is_rtl() ? trailingslashit( 'rtl' ) : trailingslashit( 'css' );
 
 		$this->styles[] = [
 			'handle' => 'rtsb-odometer',
@@ -108,24 +125,20 @@ class AssetsController {
 		$pro_version     = defined( 'RTSBPRO_VERSION' ) ? RTSBPRO_VERSION : '0';
 		$addon_condition = version_compare( $pro_version, '1.9.0', '<' );
 
-		if ( $addon_condition ) {
+		if ( ! rtsb()->has_pro() && Fns::is_optimization_enabled() ) {
+			$this->styles[] = AssetRegistry::instance()->load_optimized_assets();
+		} else {
+			if ( $addon_condition ) {
+				$this->styles[] = [
+					'handle' => 'rtsb-general-addons',
+					'src'    => rtsb()->get_assets_uri( $rtl_dir . 'frontend/general-addons' . $rtl_suffix . '.css' ),
+				];
+			}
 			$this->styles[] = [
-				'handle' => 'rtsb-general-addons',
-				'src'    => rtsb()->get_assets_uri( 'css/frontend/general-addons' . $rtl_suffix . '.css' ),
+				'handle' => 'rtsb-frontend',
+				'src'    => rtsb()->get_assets_uri( $rtl_dir . 'frontend/frontend' . $rtl_suffix . '.css' ),
 			];
 		}
-		$this->styles[] = [
-			'handle' => 'rtsb-frontend',
-			'src'    => rtsb()->get_assets_uri( 'css/frontend/frontend' . $rtl_suffix . '.css' ),
-		];
-
-		/*
-		$this->styles[] = [
-			'handle' => 'swiper',
-			'src'    => rtsb()->get_assets_uri( 'vendor/swiper/css/swiper-bundle.min.css' ),
-		];
-		*/
-
 		if ( BuilderFns::is_builder_preview() && 'elementor' == Fns::page_edit_with( get_the_ID() ) ) {
 			$this->styles[] = [
 				'handle' => 'photoswipe',
@@ -153,28 +166,9 @@ class AssetsController {
 	 * @return object
 	 */
 	private function get_public_scripts() {
-
-		$default_swiper_path = rtsb()->get_assets_uri( 'vendor/swiper/js/swiper-bundle.min.js' );
-
-		if ( defined( 'ELEMENTOR_ASSETS_PATH' ) ) {
-			$is_swiper8_enable = get_option( 'elementor_experiment-e_swiper_latest' );
-
-			if ( 'active' === $is_swiper8_enable || 'default' === $is_swiper8_enable ) {
-				$el_swiper_path = 'lib/swiper/v8/swiper.min.js';
-			} else {
-				$el_swiper_path = 'lib/swiper/swiper.min.js';
-			}
-
-			$elementor_swiper_path = ELEMENTOR_ASSETS_PATH . $el_swiper_path;
-
-			if ( file_exists( $elementor_swiper_path ) ) {
-				$default_swiper_path = ELEMENTOR_ASSETS_URL . $el_swiper_path;
-			}
-		}
-
 		$this->scripts[] = [
 			'handle' => 'swiper',
-			'src'    => esc_url( $default_swiper_path ),
+			'src'    => esc_url( $this->get_swiper_url() ),
 			'deps'   => [ 'jquery' ],
 			'footer' => true,
 		];
@@ -187,13 +181,6 @@ class AssetsController {
 		$this->scripts[] = [
 			'handle' => 'rtsb-odometer',
 			'src'    => rtsb()->get_assets_uri( 'vendor/odometer/js/odometer.min.js' ),
-			'deps'   => [ 'jquery' ],
-			'footer' => true,
-		];
-
-		$this->scripts[] = [
-			'handle' => 'rtsb-imagesloaded',
-			'src'    => rtsb()->get_assets_uri( 'vendor/isotope/imagesloaded.pkgd.min.js' ),
 			'deps'   => [ 'jquery' ],
 			'footer' => true,
 		];
@@ -273,12 +260,16 @@ class AssetsController {
 			];
 		}
 
-		$this->scripts[] = [
-			'handle' => 'rtsb-public',
-			'src'    => rtsb()->get_assets_uri( 'js/frontend/frontend.js' ),
-			'deps'   => [ 'jquery', 'rtsb-imagesloaded', 'swiper' ],
-			'footer' => true,
-		];
+		if ( ! rtsb()->has_pro() && Fns::is_optimization_enabled() ) {
+			$this->scripts[] = AssetRegistry::instance()->load_optimized_assets( 'js' );
+		} else {
+			$this->scripts[] = [
+				'handle' => 'rtsb-public',
+				'src'    => rtsb()->get_assets_uri( 'js/frontend/frontend.js' ),
+				'deps'   => [ 'jquery', 'imagesloaded', 'swiper' ],
+				'footer' => true,
+			];
+		}
 
 		return $this;
 	}
@@ -290,6 +281,8 @@ class AssetsController {
 	 */
 	public function register_public_scripts() {
 		$this->get_public_assets();
+		$this->styles  = array_filter( $this->styles );
+		$this->scripts = array_filter( $this->scripts );
 
 		// Register public styles.
 		foreach ( $this->styles as $style ) {
@@ -312,7 +305,7 @@ class AssetsController {
 		 * Register scripts.
 		 */
 		$this->register_public_scripts();
-		// wp_enqueue_style( 'swiper' );
+
 		/**
 		 * Enqueue scripts.
 		 */
@@ -328,25 +321,29 @@ class AssetsController {
 			/**
 			 * Scripts.
 			 */
+			$handle = Fns::optimized_handle( 'rtsb-public' );
+
 			wp_enqueue_script( 'flexslider' );
 			wp_enqueue_script( 'wc-single-product' );
-			wp_dequeue_script( 'rtsb-public' );
+			wp_dequeue_script( $handle );
 			wp_enqueue_script( 'swiper' );
-			wp_enqueue_script( 'rtsb-public' );
+
+			if ( Fns::is_optimization_enabled() ) {
+				Fns::enqueue_optimized_assets();
+			} else {
+				wp_enqueue_script( $handle );
+			}
 		}
 
-		/**
-		 * Styles.
-		 */
-		wp_enqueue_style( 'rtsb-fonts' );
-		wp_enqueue_style( 'rtsb-frontend' );
-
-		/**
-		 * Scripts.
-		 */
-		wp_enqueue_script( 'rtsb-imagesloaded' );
 		wp_enqueue_script( 'rtsb-tipsy' );
-		wp_enqueue_script( 'rtsb-public' );
+
+		if ( Fns::is_optimization_enabled() ) {
+			Fns::enqueue_optimized_assets();
+		} else {
+			wp_enqueue_style( 'rtsb-fonts' );
+			wp_enqueue_style( 'rtsb-frontend' );
+			wp_enqueue_script( 'rtsb-public' );
+		}
 
 		/**
 		 * Localize script.
@@ -361,22 +358,25 @@ class AssetsController {
 	 * @return void
 	 */
 	public static function localizeData() {
+		$handle = Fns::optimized_handle( 'rtsb-public' );
+
 		wp_localize_script(
-			'rtsb-public',
+			$handle,
 			'rtsbPublicParams',
 			[
-				'ajaxUrl'              => esc_url( self::$ajaxurl ),
-				'homeurl'              => home_url(),
-				'wcCartUrl'            => wc_get_cart_url(),
-				'addedToCartText'      => esc_html__( 'Product Added', 'shopbuilder' ),
-				'singleCartToastrText' => esc_html__( 'Successfully Added', 'shopbuilder' ),
-				'singleCartBtnText'    => apply_filters( 'rtsb/global/single_add_to_cart_success', esc_html__( 'Added to Cart', 'shopbuilder' ) ),
-				'browseCartText'       => esc_html__( 'Browse Cart', 'shopbuilder' ),
-				'noProductsText'       => apply_filters( 'rtsb/global/no_products_text', esc_html__( 'No more products to load', 'shopbuilder' ) ),
-				'notice'               => [
+				'ajaxUrl'               => esc_url( self::$ajaxurl ),
+				'homeurl'               => home_url(),
+				'wcCartUrl'             => wc_get_cart_url(),
+				'addedToCartText'       => esc_html__( 'Product Added', 'shopbuilder' ),
+				'singleCartToastrText'  => esc_html__( 'Successfully Added', 'shopbuilder' ),
+				'singleCartBtnText'     => apply_filters( 'rtsb/global/single_add_to_cart_success', esc_html__( 'Added to Cart', 'shopbuilder' ) ),
+				'browseCartText'        => esc_html__( 'Browse Cart', 'shopbuilder' ),
+				'noProductsText'        => apply_filters( 'rtsb/global/no_products_text', esc_html__( 'No more products to load', 'shopbuilder' ) ),
+				'isOptimizationEnabled' => Fns::is_optimization_enabled(),
+				'notice'                => [
 					'position' => Fns::get_option( 'general', 'notification', 'notification_position', 'center-center' ),
 				],
-				rtsb()->nonceId        => wp_create_nonce( rtsb()->nonceText ),
+				rtsb()->nonceId         => wp_create_nonce( rtsb()->nonceText ),
 			]
 		);
 	}
@@ -415,11 +415,9 @@ class AssetsController {
 	/**
 	 * Enqueues admin scripts.
 	 *
-	 * @param string $hook Hooks.
-	 *
 	 * @return void
 	 */
-	public function enqueue_backend_scripts( $hook ) {
+	public function enqueue_backend_scripts() {
 		ob_start(); ?>
 			#adminmenu .toplevel_page_rtsb .wp-menu-image img {
 				width: auto;
@@ -436,7 +434,6 @@ class AssetsController {
 		$admin_global_style = ob_get_clean();
 		// Speed Optimization.
 		wp_add_inline_style( 'admin-menu', $admin_global_style );
-		// wp_enqueue_style( 'rtsb-admin-global' );
 
 		global $pagenow;
 
@@ -460,6 +457,7 @@ class AssetsController {
 			wp_dequeue_script( 'elementor-import-export-admin' );
 			wp_dequeue_script( 'elementor-app-loader' );
 			wp_dequeue_script( 'elementor-admin-modules' );
+			wp_dequeue_script( 'elementor-ai-media-library' );
 			wp_dequeue_script( 'elementor-admin' );
 
 			wp_dequeue_style( 'elementor-admin-top-bar' );
@@ -470,24 +468,28 @@ class AssetsController {
 			/**
 			 * Scripts.
 			 */
+			wp_enqueue_media();
 			wp_enqueue_script( 'updates' );
 			wp_enqueue_script( 'rtsb-admin-app' );
 			wp_localize_script(
 				'rtsb-admin-app',
 				'rtsbParams',
 				[
-					'ajaxurl'      => esc_url( self::$ajaxurl ),
-					'homeurl'      => home_url(),
-					'adminLogo'    => rtsb()->get_assets_uri( 'images/icon/ShopBuilder-Logo.svg' ),
-					'restApiUrl'   => esc_url_raw( rest_url() ),
-					'rest_nonce'   => wp_create_nonce( 'wp_rest' ),
-					'nonce'        => wp_create_nonce( rtsb()->nonceText ),
-					'pages'        => Fns::get_pages(),
-					'hasPro'       => rtsb()->has_pro() ? 'yes' : 'no',
-					'updateRates'  => esc_html__( 'Update All Rates', 'shopbuilder' ),
-					'sections'     => Settings::instance()->get_sections(),
-					'userRoles'    => Fns::get_all_user_roles(),
-					'hasElementor' => defined( 'ELEMENTOR_VERSION' ),
+					'ajaxurl'               => esc_url( self::$ajaxurl ),
+					'homeurl'               => home_url(),
+					'adminLogo'             => rtsb()->get_assets_uri( 'images/icon/ShopBuilder-Logo.svg' ),
+					'restApiUrl'            => esc_url_raw( rest_url() ),
+					'rest_nonce'            => wp_create_nonce( 'wp_rest' ),
+					'nonce'                 => wp_create_nonce( rtsb()->nonceText ),
+					'pages'                 => Fns::get_pages(),
+					'hasPro'                => rtsb()->has_pro() ? 'yes' : 'no',
+					'proVersion'            => defined( 'RTSBPRO_VERSION' ) ? RTSBPRO_VERSION : '0',
+					'updateRates'           => esc_html__( 'Update All Rates', 'shopbuilder' ),
+					'sections'              => Settings::instance()->get_sections(),
+					'userRoles'             => Fns::get_all_user_roles(),
+					'hasElementor'          => defined( 'ELEMENTOR_VERSION' ),
+					'loadElementor'         => Fns::should_load_elementor_scripts(),
+					'isOptimizationEnabled' => Fns::is_optimization_enabled(),
 				]
 			);
 		} else {
@@ -550,7 +552,32 @@ class AssetsController {
 		}
 
 		if ( ! empty( $dynamic_css ) ) {
-			wp_add_inline_style( 'rtsb-frontend', $dynamic_css );
+			wp_add_inline_style( Fns::optimized_handle( 'rtsb-frontend' ), $dynamic_css );
 		}
+	}
+
+	/**
+	 * Get the appropriate Swiper JS file URL.
+	 *
+	 * @return string
+	 */
+	private function get_swiper_url() {
+		$default_swiper_url = rtsb()->get_assets_uri( 'vendor/swiper/js/swiper-bundle.min.js' );
+
+		if ( defined( 'ELEMENTOR_ASSETS_PATH' ) && defined( 'ELEMENTOR_ASSETS_URL' ) ) {
+			$experiment = get_option( 'elementor_experiment-e_swiper_latest' );
+
+			$el_relative_path = ( 'active' === $experiment || 'default' === $experiment )
+				? 'lib/swiper/v8/swiper.min.js'
+				: 'lib/swiper/swiper.min.js';
+
+			$el_full_path = ELEMENTOR_ASSETS_PATH . $el_relative_path;
+
+			if ( file_exists( $el_full_path ) ) {
+				return ELEMENTOR_ASSETS_URL . $el_relative_path;
+			}
+		}
+
+		return $default_swiper_url;
 	}
 }

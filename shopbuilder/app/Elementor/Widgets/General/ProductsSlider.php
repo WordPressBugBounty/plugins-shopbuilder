@@ -54,7 +54,7 @@ class ProductsSlider extends ElementorWidgetBase {
 			return [];
 		}
 
-		return [];
+		return [ 'swiper' ];
 	}
 
 	/**
@@ -121,14 +121,19 @@ class ProductsSlider extends ElementorWidgetBase {
 		return $this;
 	}
 
+	/**
+	 * @return array
+	 */
 	public function variation_swatch_conditionaly() {
-		if ( ! function_exists( 'rtwpvsp' ) ) {
+		if ( ! function_exists( 'rtwpvsp' ) && ! rtsb()->has_pro() ) {
 			return [];
 		}
-		$swatches_controls                                 = Controls\SettingsFields::variation_swatch( $this );
-		$swatches_controls['swatch_position']['condition'] = [
-			'layout' => [ 'slider-layout1', 'slider-layout2' ],
-		];
+		$swatches_controls = Controls\SettingsFields::variation_swatch( $this );
+		if ( ! empty( $swatches_controls['swatch_position'] ) ) {
+			$swatches_controls['swatch_position']['condition'] = [
+				'layout' => [ 'slider-layout1', 'slider-layout2' ],
+			];
+		}
 		return $swatches_controls;
 	}
 
@@ -200,5 +205,4 @@ class ProductsSlider extends ElementorWidgetBase {
 		// Ending the render.
 		$this->render_end();
 	}
-
 }

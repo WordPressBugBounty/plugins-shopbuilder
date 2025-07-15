@@ -631,13 +631,6 @@ class ControlSelectors {
 				'image_border'                   => '{{WRAPPER}} .rtwpvg-wrapper .rtwpvg-slider-wrapper,{{WRAPPER}} .rtsb-product-images .woocommerce-product-gallery__image',
 				'image_border_radius'            => '{{WRAPPER}} .rtsb-product-images .woocommerce-product-gallery__image',
 				'gallery_thumbs_column'          => '{{WRAPPER}} div.images .flex-control-thumbs li',
-				// 'gallery_thumbs_column_gap'      => '{{WRAPPER}} div.images .flex-control-thumbs',
-				// 'gallery_image_gap_with_main'    => [
-				// 'margin-top'      => '{{WRAPPER}} div.images .flex-control-thumbs',
-				// 'rtwpvg-thumb-mb' => '{{WRAPPER}} .rtsb-product-images .rtwpvg-has-product-thumbnail .rtwpvg-thumbnail-position-bottom .rtwpvg-slider-wrapper',
-				// 'rtwpvg-thumb-ml' => '{{WRAPPER}} .rtsb-product-images .rtwpvg-has-product-thumbnail .rtwpvg-thumbnail-position-left .rtwpvg-slider-wrapper',
-				// 'rtwpvg-thumb-mr' => '{{WRAPPER}} .rtsb-product-images .rtwpvg-has-product-thumbnail .rtwpvg-thumbnail-position-right .rtwpvg-slider-wrapper',
-				// ],
 				'thumb_border'                   => '{{WRAPPER}} .rtsb-product-images div.images .flex-control-thumbs li img, {{WRAPPER}} .rtsb-product-images .rtwpvg-thumbnail-image img, {{WRAPPER}} .rtsb-product-images .rtwpvg-grid-layout .rtwpvg-gallery-image',
 				'thumbs_border_radius'           => '{{WRAPPER}} .rtsb-product-images div.images .flex-control-thumbs li img, {{WRAPPER}} .rtsb-product-images :is( .rtwpvg-thumbnail-image, img), {{WRAPPER}} .rtsb-product-images .rtwpvg-grid-layout .rtwpvg-gallery-image',
 				'flash_sale_typography'          => '{{WRAPPER}} .rtsb-product-images .onsale',
@@ -672,7 +665,8 @@ class ControlSelectors {
 			'rtsb-product-meta'            => [
 				'meta_layout'            => '{{WRAPPER}} .rtsb-product-meta .product_meta',
 				'align'                  => '{{WRAPPER}} .product_meta',
-				'gap'                    => '{{WRAPPER}} .rtsb-product-meta .product_meta',
+				'row_gap'                => '{{WRAPPER}} .rtsb-product-meta .product_meta',
+				'column_gap'             => '{{WRAPPER}} .rtsb-product-meta .product_meta',
 				'meta_padding'           => '{{WRAPPER}} .rtsb-product-meta .product_meta :is(.sku_wrapper, .posted_in, .tagged_as)',
 				'label_typo'             => '{{WRAPPER}} .rtsb-product-meta .product_meta :is(.sku_wrapper, .posted_in, .tagged_as)',
 				'meta_label_color'       => '{{WRAPPER}} .rtsb-product-meta .product_meta :is(.sku_wrapper, .posted_in, .tagged_as)',
@@ -1126,7 +1120,6 @@ class ControlSelectors {
 				'cart_icon_bg_color'                    => '{{WRAPPER}} .woocommerce table.shop_table tbody tr td.product-remove a',
 				'cart_icon_hover_color'                 => '{{WRAPPER}} .woocommerce table.shop_table tbody tr td.product-remove a:hover',
 				'cart_icon_hover_bg_color'              => '{{WRAPPER}} .woocommerce table.shop_table tbody tr td.product-remove a:hover',
-				// 'table_content_column_padding'          => '{{WRAPPER}} .rtsb-cart-table table.shop_table tr td',
 				'table_column_header_padding'           => '{{WRAPPER}} .woocommerce table.shop_table thead tr th',
 				'cart_element_alignment'                => '#rtsb-builder-content {{WRAPPER}} .woocommerce table.shop_table th, #rtsb-builder-content {{WRAPPER}} .woocommerce table.shop_table td, #rtsb-builder-content {{WRAPPER}} .woocommerce table.shop_table .table-column-wrapper .product-attributes-wrapper .product-attributes li',
 				'cart_table_border'                     => '{{WRAPPER}} .woocommerce table.shop_table',
@@ -1347,7 +1340,6 @@ class ControlSelectors {
 				'title_margin'                => '#rtsb-builder-content {{WRAPPER}} .rtsb-checkout-order-review #order_review_heading',
 				'title_padding'               => '#rtsb-builder-content {{WRAPPER}} .rtsb-checkout-order-review #order_review_heading',
 				'title_border'                => '#rtsb-builder-content {{WRAPPER}} .rtsb-checkout-order-review #order_review_heading',
-				// Table Settings.
 				'table_wrapper_border'        => '#rtsb-builder-content {{WRAPPER}} #order_review',
 				'table_wrapper_padding'       => '#rtsb-builder-content {{WRAPPER}} #order_review',
 				'table_wrapper_margin'        => '#rtsb-builder-content {{WRAPPER}} #order_review',
@@ -1356,15 +1348,15 @@ class ControlSelectors {
 				'label_color'                 => '{{WRAPPER}} #order_review thead th',
 				'label_bg_color'              => '{{WRAPPER}} #order_review thead th',
 				'label_item_padding'          => '{{WRAPPER}} #order_review thead th',
-				// Table Body
+				// Table Body.
 				'body_text_typo'              => '{{WRAPPER}} #order_review tbody td',
 				'body_text_color'             => '{{WRAPPER}} #order_review tbody td',
 				'body_item_padding'           => '{{WRAPPER}} #order_review tbody td',
 				'table_body_bg_color'         => '{{WRAPPER}} #order_review tbody td',
-				// Counter
+				// Counter.
 				'counter_text_color'          => '{{WRAPPER}} .product-quantity',
 				'counter_style'               => '{{WRAPPER}} .product-quantity',
-				// Table Footer
+				// Table Footer.
 				'table_footer_label_typo'     => '{{WRAPPER}} #order_review tfoot :is( th, td )',
 				'table_footer_label_color'    => '{{WRAPPER}} #order_review tfoot th',
 				'table_footer_text_color'     => '{{WRAPPER}} #order_review tfoot td',
@@ -1572,7 +1564,6 @@ class ControlSelectors {
 					],
 					'image_width'        => [
 						'image' => '{{WRAPPER}} .rtsb-product .rtsb-list-item .rtsb-product-img, {{WRAPPER}} .rtsb-elementor-container .rtsb-list-layout6 .rtsb-content-left',
-						// 'content' => '{{WRAPPER}} .rtsb-product .rtsb-list-item .rtsb-product-content',
 					],
 					'v_action_btn_width' => '{{WRAPPER}} .rtsb-elementor-container .rtsb-list-layout3 .rtsb-product .rtsb-action-buttons.after-content',
 					'image_gap'          => '{{WRAPPER}} .rtsb-product .rtsb-list-item,{{WRAPPER}} .rtsb-elementor-container .rtsb-list-layout6 .rtsb-product .rtsb-list-item .rtsb-product-content',
@@ -1875,7 +1866,10 @@ class ControlSelectors {
 				],
 				'hover_icon_button'   => [
 					'typography'         => '{{WRAPPER}} .rtsb-elementor-container .product-title-with-btn .btn-wrap a',
-					'icon_size'          => '{{WRAPPER}} .rtsb-elementor-container .product-title-with-btn .btn-wrap a .icon',
+					'icon_size'          => [
+						'font_size' => '{{WRAPPER}} .rtsb-elementor-container .product-title-with-btn .btn-wrap a .icon',
+						'svg'       => '{{WRAPPER}} .rtsb-elementor-container .product-title-with-btn .btn-wrap a .icon svg',
+					],
 					'hover_icon_spacing' => '{{WRAPPER}} .rtsb-elementor-container .product-title-with-btn .btn-wrap a .text + .icon',
 					'color'              => '{{WRAPPER}} .rtsb-elementor-container .product-title-with-btn .btn-wrap a',
 					'bg_color'           => '{{WRAPPER}} .rtsb-elementor-container .product-title-with-btn .btn-wrap a',

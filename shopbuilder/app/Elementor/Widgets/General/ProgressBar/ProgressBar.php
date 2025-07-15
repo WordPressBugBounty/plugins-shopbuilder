@@ -102,15 +102,34 @@ class ProgressBar extends ElementorWidgetBase {
 		$this->edit_mode_progress_bar_script();
 		$this->theme_support( 'render_reset' );
 	}
+
+	/**
+	 * Edit mode progress bar script.
+	 *
+	 * @return void
+	 */
 	private function edit_mode_progress_bar_script() {
 		if ( ! $this->is_edit_mode() ) {
 			return;
 		}
 		?>
 		<script>
-			setTimeout(function() {
-				rtsbProgressBarAnimationInit();
-			}, 1000);
+			if (!'<?php echo esc_attr( Fns::is_optimization_enabled() ); ?>') {
+				setTimeout(function() {
+					rtsbProgressBarAnimationInit();
+				}, 1000);
+			} else {
+				if (typeof elementorFrontend !== 'undefined') {
+					elementorFrontend.hooks.addAction(
+						'frontend/element_ready/rtsb-progress-bar-addon.default',
+						() => {
+							window.waitForRTSB((RTSB) => {
+								RTSB.modules.get('progressBar')?.refresh();
+							});
+						}
+					);
+				}
+			}
 		</script>
 
 		<?php

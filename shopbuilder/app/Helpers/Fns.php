@@ -12,13 +12,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit( 'This script cannot be accessed directly.' );
 }
 
+use WP_Styles;
 use WC_Product;
+use Elementor\Plugin;
 use WC_Product_Query;
 use Elementor\Icons_Manager;
 use RadiusTheme\SB\Models\ReSizer;
+use RadiusTheme\SB\Models\Settings;
 use RadiusTheme\SB\Models\DataModel;
 use RadiusTheme\SB\Models\ModuleList;
-use RadiusTheme\SB\Models\Settings;
+use RadiusTheme\SB\Models\GeneralList;
+use RadiusTheme\SB\Models\ElementList;
+use RadiusTheme\SB\Controllers\AssetRegistry;
 
 /**
  * Fns class
@@ -45,16 +50,21 @@ class Fns {
 		return false;
 	}
 
+	/**
+	 * Get nonce.
+	 *
+	 * @return string|null
+	 */
 	public static function get_nonce() {
         // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		return isset( $_REQUEST[ rtsb()->nonceId ] ) ? sanitize_text_field( $_REQUEST[ rtsb()->nonceId ] ) : null;
 	}
 
 	/**
-	 * Set Cookie or Session
+	 * Set Session
 	 *
-	 * @param $name
-	 * @param $value
+	 * @param string $name Name.
+	 * @param mixed  $value Value.
 	 */
 	public static function setSession( $name, $value ) {
 		if ( ! headers_sent() && session_status() == PHP_SESSION_NONE ) {
@@ -64,10 +74,11 @@ class Fns {
 			$_SESSION[ $name ] = $value;
 		}
 	}
+
 	/**
 	 * Get Cookie or Session
 	 *
-	 * @param $name
+	 * @param string $name Name.
 	 *
 	 * @return bool
 	 */
@@ -92,7 +103,9 @@ class Fns {
 	}
 
 	/**
-	 * @param $plugin_slug
+	 * Check if a plugin is installed.
+	 *
+	 * @param string $plugin_slug Plugin slug.
 	 *
 	 * @return bool
 	 */
@@ -103,7 +116,9 @@ class Fns {
 	}
 
 	/**
-	 * @param $plugin_slug
+	 * Check if a plugin is active.
+	 *
+	 * @param string $plugin_slug Plugin slug.
 	 *
 	 * @return bool
 	 */
@@ -117,7 +132,7 @@ class Fns {
 	/**
 	 * Get all user roles.
 	 *
-	 * @return array|false|mixed
+	 * @return array
 	 */
 	public static function get_current_user_roles() {
 		$current_user = wp_get_current_user();
@@ -153,7 +168,9 @@ class Fns {
 	}
 
 	/**
-	 * @param $data
+	 * Stripslashes value.
+	 *
+	 * @param mixed $data Data.
 	 *
 	 * @return mixed|string
 	 */
@@ -181,7 +198,9 @@ class Fns {
 	}
 
 	/**
-	 * @param $string
+	 * Multiselect settings field value
+	 *
+	 * @param string $string String.
 	 *
 	 * @return array
 	 */
@@ -204,6 +223,8 @@ class Fns {
 	}
 
 	/**
+	 * Check if is block theme
+	 *
 	 * @return bool
 	 */
 	public static function check_is_block_theme(): bool {
@@ -213,6 +234,8 @@ class Fns {
 	}
 
 	/**
+	 * Locate template
+	 *
 	 * @param string $template_name Template name.
 	 * @param string $template_path Template path. (default: '').
 	 * @param string $plugin_path Plugin path. (default: ''). fallback file from plugin.
@@ -245,10 +268,10 @@ class Fns {
 		);
 
 		if ( ! $located ) {
-			if ( file_exists( $plugin_path ) ) {
-				return apply_filters( 'rtsb/core/locate_template', $plugin_path, $template_name );
-			} elseif ( $pro_plugin_path && rtsb()->has_pro() && file_exists( $pro_plugin_path ) ) {
+			if ( $pro_plugin_path && rtsb()->has_pro() && file_exists( $pro_plugin_path ) ) {
 				return apply_filters( 'rtsb/core/locate_template', $pro_plugin_path, $template_name );
+			} elseif ( file_exists( $plugin_path ) ) {
+				return apply_filters( 'rtsb/core/locate_template', $plugin_path, $template_name );
 			}
 		}
 
@@ -287,7 +310,7 @@ class Fns {
 	 *
 	 * @return false|string|void
 	 */
-	public static function load_template( $template_name, array $args = null, $return = false, $template_path = '', $plugin_path = '' ) {
+	public static function load_template( $template_name, $args = null, $return = false, $template_path = '', $plugin_path = '' ) {
 		$cache_key = sanitize_key( implode( '-', [ 'template', $template_name, $template_path ] ) );
 		$located   = (string) wp_cache_get( $cache_key, 'shopbuilder' );
 		if ( ! $located ) {
@@ -454,7 +477,6 @@ class Fns {
 		global $product;
 
 		if ( is_singular( 'product' ) && $product instanceof WC_Product ) {
-			// do_action( 'rtsb_before_product_template_render' );.
 			return $product;
 		}
 		$cache_key = 'prepared_product_for_preview';
@@ -497,6 +519,13 @@ class Fns {
 		return $pages;
 	}
 
+	/**
+	 * Get section items
+	 *
+	 * @param string $section_id Section ID.
+	 *
+	 * @return array
+	 */
 	public static function get_section_items( $section_id ) {
 		if ( ! $section_id ) {
 			return [];
@@ -505,6 +534,14 @@ class Fns {
 		return DataModel::source()->get_option( $section_id, [] );
 	}
 
+	/**
+	 * Get options items
+	 *
+	 * @param string $section_id Section ID.
+	 * @param string $item_id Item ID.
+	 *
+	 * @return array
+	 */
 	public static function get_options( $section_id, $item_id ) {
 		if ( ! $section_id || ! $item_id ) {
 			return [];
@@ -517,9 +554,9 @@ class Fns {
 	/**
 	 * Get options value with default value if options doesn't exist.
 	 *
-	 * @param $group
-	 * @param $option_key
-	 * @param $default_value
+	 * @param array  $group Group.
+	 * @param string $option_key Option key.
+	 * @param string $default_value Default value.
 	 *
 	 * @return mixed|string
 	 */
@@ -533,30 +570,32 @@ class Fns {
 	}
 
 	/**
-	 * @param string $section_id
-	 * @param string $item_id
-	 * @param string $option_id
-	 * @param null   $default EXCEPT multi_checkbox you can provide default value if given option does not set any value
-	 * @param null   $type checkbox, multi_checkbox, number
+	 * Get option.
+	 *
+	 * @param string $section_id Section ID.
+	 * @param string $item_id Item ID.
+	 * @param string $option_id Option ID.
+	 * @param null   $default EXCEPT multi_checkbox you can provide default value if given option does not set any value.
+	 * @param null   $type checkbox, multi_checkbox, number.
 	 *
 	 * @return bool|int|mixed|null
 	 */
 	public static function get_option( $section_id, $item_id, $option_id, $default = null, $type = null ) {
 		$options = self::get_options( $section_id, $item_id );
 
-		if ( $type === 'checkbox' ) {
+		if ( 'checkbox' === $type ) {
 			if ( isset( $options[ $option_id ] ) ) {
-				return $options[ $option_id ] === 'on';
+				return 'on' === $options[ $option_id ];
 			}
 
 			return $default;
-		} elseif ( $type === 'multi_checkbox' ) {
-			return isset( $options[ $option_id ] ) && is_array( $options[ $option_id ] ) && in_array( $default, $options[ $option_id ] );
-		} elseif ( $type === 'number' ) {
+		} elseif ( 'multi_checkbox' === $type ) {
+			return isset( $options[ $option_id ] ) && is_array( $options[ $option_id ] ) && in_array( $default, $options[ $option_id ] ); // phpcs:ignore WordPress.PHP.StrictInArray.MissingTrueStrict
+		} elseif ( 'number' === $type ) {
 			return isset( $options[ $option_id ] ) ? absint( $options[ $option_id ] ) : absint( $default );
 		}
 
-		return isset( $options[ $option_id ] ) && ! empty( $options[ $option_id ] ) ? $options[ $option_id ] : $default;
+		return ! empty( $options[ $option_id ] ) ? $options[ $option_id ] : $default;
 	}
 
 
@@ -685,6 +724,11 @@ class Fns {
 		return $page_id;
 	}
 
+	/**
+	 * Get allowed HTML tags.
+	 *
+	 * @return array
+	 */
 	public static function get_kses_array() {
 		return [
 			'a'                             => [
@@ -785,11 +829,12 @@ class Fns {
 	}
 
 
-	/*
+	/**
 	 * Escape output of wishlist icon
 	 *
 	 * @param string $data Data to escape.
-	 * @return string Escaped data
+	 *
+	 * @return void
 	 */
 	public static function print_icon( $data ) {
 		/**
@@ -875,7 +920,7 @@ class Fns {
 	 */
 	public static function allowedHtml( $level = 'basic' ) {
 		$allowed_html = [];
-		// TODO:: Need Optimize.
+
 		switch ( $level ) {
 			case 'basic':
 				$allowed_html = [
@@ -1124,9 +1169,15 @@ class Fns {
 	/**
 	 * Free Layouts
 	 *
+	 * @param string $layout Layout.
+	 *
 	 * @return array
 	 */
-	public static function free_layouts() {
+	public static function free_layouts( $layout = '' ) {
+		if ( ! empty( $layout ) && false !== strpos( $layout, 'rtsb-' ) ) {
+			return [ $layout => esc_html__( 'Addon Layout', 'shopbuilder' ) ];
+		}
+
 		$layouts = [
 			'grid-layout1'            => esc_html__( 'Grid Layout 1', 'shopbuilder' ),
 			'grid-layout2'            => esc_html__( 'Grid Layout 2', 'shopbuilder' ),
@@ -1312,7 +1363,6 @@ class Fns {
 			return [];
 		}
 
-		// TODO:: Return Slug always true for all settings.
 		$term_list = [];
 		$args      = [
 			'taxonomy'   => $taxonomy,
@@ -1411,6 +1461,11 @@ class Fns {
 		self::print_html( $html, true );
 	}
 
+	/**
+	 * Get product simple rating.
+	 *
+	 * @return void
+	 */
 	public static function get_product_simple_rating_html() {
 		global $product;
 		$html           = null;
@@ -1755,7 +1810,7 @@ class Fns {
 			return '';
 		}
 		if ( is_array( $control['value'] ) ) {
-			$cache_key = 'icons_managet_' . str_replace( ' ', '', md5( serialize( $control['value'] ) ) );
+			$cache_key = 'icons_managet_' . str_replace( ' ', '', md5( serialize( $control['value'] ) ) ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.serialize_serialize
 		} else {
 			$cache_key = 'icons_managet_' . str_replace( ' ', '', $control['value'] );
 		}
@@ -1793,7 +1848,11 @@ class Fns {
 		?>
 		<div class="rtsb-swatches <?php echo esc_attr( $type ); ?>-layout">
 			<?php
-			do_action( 'rtwpvs_show_archive_variation' );
+			if ( class_exists( 'Rtwpvsp' ) ) {
+				do_action( 'rtwpvs_show_archive_variation' );
+			} else {
+				do_action( 'rtsb/vs/showcase/variation' );
+			}
 			?>
 		</div>
 		<?php
@@ -1949,13 +2008,13 @@ class Fns {
 		global $paged;
 
 		if ( is_front_page() ) {
-			$paged = ( get_query_var( 'page' ) ) ? get_query_var( 'page' ) : 1;
+			$paged = ( get_query_var( 'page' ) ) ? get_query_var( 'page' ) : 1; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 		} else {
-			$paged = ( get_query_var( 'paged' ) ) ? get_query_var( 'paged' ) : 1;
+			$paged = ( get_query_var( 'paged' ) ) ? get_query_var( 'paged' ) : 1; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 		}
 
 		if ( empty( $paged ) ) {
-			$paged = 1;
+			$paged = 1; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 		}
 
 		if ( '' === $pages ) {
@@ -2115,15 +2174,15 @@ class Fns {
 			$class .= ' rtsb-' . esc_attr( str_replace( '_', '-', $type ) );
 		}
 
-		$html .= '<' . esc_attr( $wrapper ) . ' class="' . esc_attr( $class ) . '">';
-
 		if ( ( 'add_to_cart' === $type ) && ( ! empty( $cart_html ) ) ) {
 			$html .= $cart_html;
 		} else {
 			$html .= shortcode_exists( 'rtsb_' . $type . '_button' ) ? do_shortcode( '[rtsb_' . $type . '_button]' ) : null;
 		}
 
-		$html .= '</' . esc_attr( $wrapper ) . '>';
+		if ( ! empty( $html ) ) {
+			$html = '<' . esc_attr( $wrapper ) . ' class="' . esc_attr( $class ) . '">' . $html . '</' . esc_attr( $wrapper ) . '>';
+		}
 
 		return apply_filters( 'rtsb/elements/elementor/get_action_button_by_type', $html );
 	}
@@ -2226,7 +2285,7 @@ class Fns {
 					$link['social_action']  = 'Share';
 					break;
 				case 'twitter':
-					$link['link']           = esc_url( 'https://twitter.com/intent/tweet?text=' . htmlspecialchars( rawurlencode( html_entity_decode( $link['title'], ENT_COMPAT, 'UTF-8' ) ), ENT_COMPAT, 'UTF-8' ) . '&url=' . $link['url'] );
+					$link['link']           = esc_url( 'https://x.com/intent/tweet?text=' . htmlspecialchars( rawurlencode( html_entity_decode( $link['title'], ENT_COMPAT, 'UTF-8' ) ), ENT_COMPAT, 'UTF-8' ) . '&url=' . $link['url'] );
 					$link['icon']           = '<svg width="24" height="24" viewBox="0 0 1200 1227" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M714.163 519.284L1160.89 0H1055.03L667.137 450.887L357.328 0H0L468.492 681.821L0 1226.37H105.866L515.491 750.218L842.672 1226.37H1200L714.137 519.284H714.163ZM569.165 687.828L521.697 619.934L144.011 79.6944H306.615L611.412 515.685L658.88 583.579L1055.08 1150.3H892.476L569.165 687.854V687.828Z" /></svg>';
 					$link['attr_title']     = esc_html__( 'Share on Twitter', 'shopbuilder' );
 					$link['social_network'] = 'Twitter';
@@ -2352,11 +2411,29 @@ class Fns {
 	/**
 	 * Social Share Platforms.
 	 *
-	 * @return mixed|null
+	 * @param string $module Module.
+	 *
+	 * @return true|void
 	 */
 	public static function is_module_active( $module ) {
-		$modulelist = ModuleList::instance()->get_data();
+		$modulelist = self::get_modules_list();
+
 		if ( ! empty( $modulelist[ $module ]['active'] ) ) {
+			return true;
+		}
+	}
+
+	/**
+	 * Elementor Widget Active.
+	 *
+	 * @param string $widget Elementor Widget.
+	 *
+	 * @return true|void
+	 */
+	public static function is_elementor_widget_active( $widget ) {
+		$element_list = self::get_widgets_list();
+
+		if ( ! empty( $element_list[ $widget ]['active'] ) ) {
 			return true;
 		}
 	}
@@ -2364,13 +2441,13 @@ class Fns {
 	/***
 	 * Save Settings data
 	 *
-	 * @param $section_id
-	 * @param $block_id
-	 * @param $rawOptions
+	 * @param string $section_id Section ID.
+	 * @param string $block_id Block ID.
+	 * @param array  $rawOptions Raw Options.
 	 *
 	 * @return array
 	 */
-	public static function set_options( $section_id = '', $block_id = '', $rawOptions = [] ) {
+	public static function set_options( $section_id = '', $block_id = '', $rawOptions = [] ) { // phpcs:ignore Generic.Metrics.NestingLevel.TooHigh
 		$section_id = ! empty( $section_id ) ? sanitize_text_field( wp_unslash( $section_id ) ) : '';
 		$block_id   = ! empty( $block_id ) ? sanitize_text_field( wp_unslash( $block_id ) ) : '';
 		$rawOptions = ! empty( $rawOptions ) ? $rawOptions : [];
@@ -2406,13 +2483,13 @@ class Fns {
 			}
 		} else {
 			foreach ( $rawOptions as $raw_option_key => $raw_value ) {
-				if ( $raw_option_key === 'active' ) {
+				if ( 'active' === $raw_option_key ) {
 					$changed                        = true;
-					$options[ $block_id ]['active'] = $sections[ $section_id ]['list'][ $block_id ]['active'] = 'on' === $raw_value ? 'on' : '';
+					$options[ $block_id ]['active'] = $sections[ $section_id ]['list'][ $block_id ]['active'] = 'on' === $raw_value ? 'on' : ''; // phpcs:ignore Squiz.PHP.DisallowMultipleAssignments.Found
 				} else {
 					if ( isset( $fields[ $raw_option_key ] ) ) {
 						$field = $fields[ $raw_option_key ];
-						if ( $field['type'] === 'switch' ) {
+						if ( 'switch' === $field['type'] ) {
 							$value = 'on' === $raw_value ? 'on' : '';
 						} elseif ( 'repeaters' === $field['type'] ) {
 							$the_value = [];
@@ -2434,19 +2511,19 @@ class Fns {
 							} elseif ( ! empty( $raw_value ) && is_string( $raw_value ) ) {
 								$the_value = $raw_value;
 							}
-							$value = wp_json_encode( $the_value );
-						} elseif ( in_array( $field['type'], [ 'product_addons_special_settings', 'checkout_fields' ] ) ) {
+							$value = wp_json_encode( $the_value, JSON_UNESCAPED_UNICODE );
+						} elseif ( in_array( $field['type'], [ 'product_addons_special_settings', 'checkout_fields' ] ) ) { // phpcs:ignore WordPress.PHP.StrictInArray.MissingTrueStrict
 							$manual_field_value = [];
 							if ( is_array( $raw_value ) ) {
 								foreach ( $raw_value as $key => $value ) {
 									$manual_field_value[] = json_decode( stripslashes( $value ), true );
 								}
-								$value = wp_json_encode( $manual_field_value );
+								$value = wp_json_encode( $manual_field_value, JSON_UNESCAPED_UNICODE );
 							} elseif ( is_string( $raw_value ) ) {
 								$value = $raw_value;
 							}
 						} else {
-							if ( ! empty( $field['multiple'] ) || in_array( $field['type'], [ 'checkbox', 'search_and_multi_select' ] ) ) {
+							if ( ! empty( $field['multiple'] ) || in_array( $field['type'], [ 'checkbox', 'search_and_multi_select' ] ) ) { // phpcs:ignore WordPress.PHP.StrictInArray.MissingTrueStrict
 								if ( isset( $raw_value ) && is_array( $raw_value ) ) {
 									if ( ! empty( $field['sanitize_fn'] ) && is_callable( $field['sanitize_fn'] ) ) {
 										$value = array_map( $field['sanitize_fn'], $raw_value );
@@ -2470,7 +2547,7 @@ class Fns {
 								}
 							}
 						}
-						$options[ $block_id ][ $raw_option_key ] = $sections[ $section_id ]['list'][ $block_id ]['fields'][ $raw_option_key ]['value'] = $value ?? null;
+						$options[ $block_id ][ $raw_option_key ] = $sections[ $section_id ]['list'][ $block_id ]['fields'][ $raw_option_key ]['value'] = $value ?? null; // phpcs:ignore Squiz.PHP.DisallowMultipleAssignments.Found
 						$changed                                 = true;
 					}
 				}
@@ -2492,25 +2569,13 @@ class Fns {
 		return $results;
 	}
 
-	/***
-	 * @param $meta_key
-	 * @param $meta_value
+	/**
+	 * Count products by taxonomies.
 	 *
-	 * @return mixed|void
+	 * @param array  $terms Terms.
+	 * @param string $taxonomy Taxonomy.
 	 *
-	 *
-	 * public static function get_post_id_by_meta_key_and_value( $meta_key, $meta_value ) {
-	 * if( ! $meta_key || ! $meta_value ){
-	 * return;
-	 * }
-	 * global $wpdb;
-	 * $prepare_guery = $wpdb->prepare( "SELECT post_id FROM $wpdb->postmeta WHERE meta_key = '%s' and meta_value = '%d'", $meta_key, $meta_value );
-	 * $the_products = $wpdb->get_col( $prepare_guery );
-	 * if( count( $the_products ) > 0 ){
-	 * return $the_products[0];
-	 * }
-	 * return;
-	 * }
+	 * @return int|void
 	 */
 	public static function count_products_by_taxonomies( $terms, $taxonomy = 'product_cat' ) {
 		if ( empty( $terms ) || ! is_array( $terms ) ) {
@@ -2531,8 +2596,18 @@ class Fns {
 		}
 
 		$query = new WC_Product_Query( $args );
+
 		return ! empty( $query->get_products() ) ? count( $query->get_products() ) : 0;
 	}
+
+	/**
+	 * Count products by attribute terms.
+	 *
+	 * @param array  $term_ids Term IDs.
+	 * @param string $relation Relation.
+	 *
+	 * @return int
+	 */
 	public static function count_products_by_attribute_terms( $term_ids, $relation = 'AND' ) {
 		if ( empty( $term_ids ) || ! is_array( $term_ids ) ) {
 			return 0;
@@ -2651,7 +2726,7 @@ class Fns {
 			return [];
 		}
 
-		$cache_key = 'rtsb_product_categories_' . md5( serialize( $search_query ) );
+		$cache_key = 'rtsb_product_categories_' . md5( serialize( $search_query ) ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.serialize_serialize
 
 		if ( isset( self::$cache[ $cache_key ] ) ) {
 			return self::$cache[ $cache_key ];
@@ -2707,7 +2782,7 @@ class Fns {
 			return [];
 		}
 
-		$cache_key = 'rtsb_product_tags_' . md5( serialize( $search_query ) );
+		$cache_key = 'rtsb_product_tags_' . md5( serialize( $search_query ) ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.serialize_serialize
 
 		if ( isset( self::$cache[ $cache_key ] ) ) {
 			return self::$cache[ $cache_key ];
@@ -2811,6 +2886,7 @@ class Fns {
 	 * Get Post Types.
 	 *
 	 * @param string $search_query Search query.
+	 * @param array  $args         Arguments.
 	 *
 	 * @return array
 	 */
@@ -2823,7 +2899,6 @@ class Fns {
 				'posts_per_page' => 20,
 				'orderby'        => 'ID',
 				'order'          => 'DESC',
-				// 'suppress_filters' => false, // WPML Support, Remove Others Languages.
 			]
 		);
 
@@ -2883,7 +2958,7 @@ class Fns {
 		$viewName = str_replace( '.', '/', $viewName );
 
 		if ( ! empty( $args ) && is_array( $args ) ) {
-			extract( $args );
+			extract( $args ); // phpcs:ignore WordPress.PHP.DontExtract.extract_extract
 		}
 
 		$view_file = rtsb()->plugin_path() . '/resources/' . $viewName . '.php';
@@ -2907,7 +2982,7 @@ class Fns {
 	/**
 	 * Best selling product query.
 	 *
-	 * @param int $minimum_sale Minimum sale/
+	 * @param int $minimum_sale Minimum sale.
 	 * @param int $limit Total limit.
 	 *
 	 * @return array|mixed
@@ -3002,10 +3077,7 @@ class Fns {
 	/**
 	 * Checks if a feature is disabled for guest users based on the provided option.
 	 *
-	 * @param string $option  The option to retrieve from the item.
-	 * @param mixed  $default The default value if the option is not found.
-	 *
-	 * @return bool
+	 * @return void
 	 */
 	public static function woocommerce_output_all_notices() {
 		if ( function_exists( 'wc_print_notices' ) ) :
@@ -3126,7 +3198,6 @@ class Fns {
 	 * Generates HTML markup for displaying an endpoint icon.
 	 *
 	 * @param array   $data     The endpoint data containing icon information.
-	 * @param string  $endpoint The endpoint identifier.
 	 * @param boolean $wrapper  Whether to wrap the icon in a span element.
 	 *
 	 * @return string
@@ -3211,10 +3282,16 @@ class Fns {
 	/**
 	 * Social Share Platforms.
 	 *
-	 * @return mixed|null
+	 * @param string $section_id Section ID.
+	 * @param string $block_id Block ID.
+	 * @param string $option_key Option key.
+	 * @param string $compare_key Compare key.
+	 * @param string $compare_value Compare value.
+	 * @param array  $values Values.
+	 *
+	 * @return void
 	 */
 	public static function set_repeater_options( $section_id, $block_id, $option_key, $compare_key, $compare_value, $values ) {
-		// $options = self::get_options( $section_id, $block_id );
 		$modules = DataModel::source()->get_option( $section_id, [], false );
 		if ( empty( $modules[ $block_id ] ) ) {
 			return;
@@ -3262,12 +3339,12 @@ class Fns {
 	 * @param array  $options      CSS options to apply (e.g. padding, margin).
 	 * @param string $cache_key    Cache key for the CSS.
 	 * @param array  $css_properties An array of CSS properties with selectors and properties.
-	 * @param string $style_handle  The handle for the inline styles.
 	 *
 	 * @return void
 	 */
-	public static function dynamic_styles( $options, $cache_key, $css_properties, $style_handle = 'rtsb-frontend' ) {
-		$cached_css = wp_cache_get( $cache_key, 'shopbuilder' );
+	public static function dynamic_styles( $options, $cache_key, $css_properties ) {
+		$cached_css   = wp_cache_get( $cache_key, 'shopbuilder' );
+		$style_handle = self::optimized_handle( 'rtsb-frontend' );
 
 		if ( false !== $cached_css ) {
 			wp_add_inline_style( $style_handle, $cached_css );
@@ -3316,6 +3393,9 @@ class Fns {
 	 * Pro version notice.
 	 *
 	 * @param string $ver Pro Version.
+	 * @param string $tab Tab.
+	 * @param string $name Name.
+	 * @param bool   $enable_free_Link Enable free link.
 	 *
 	 * @return array[]
 	 */
@@ -3381,5 +3461,450 @@ class Fns {
 		Cache::set_data_cache_key( $cache_key );
 
 		return $gallery_ids;
+	}
+
+	/**
+	 * Check if optimization settings are enabled.
+	 *
+	 * @return bool
+	 */
+	public static function is_optimization_enabled() {
+		$has_pro = rtsb()->has_pro();
+		$pro_ver = defined( 'RTSBPRO_VERSION' ) ? RTSBPRO_VERSION : 0;
+
+		if ( $has_pro && version_compare( $pro_ver, '2.0.0', '<' ) ) {
+			return false;
+		}
+
+		$generalList = GeneralList::instance()->get_data();
+
+		return 'on' === ( $generalList['optimization']['enable_optimization'] ?? '' );
+	}
+
+	/**
+	 * Get the optimized handle.
+	 *
+	 * @param string $handle Base handle used for script/style IDs.
+	 *
+	 * @return string
+	 */
+	public static function optimized_handle( $handle ) {
+		$use_optimization = self::is_optimization_enabled();
+
+		if ( $use_optimization ) {
+			$handle = self::is_contextual_loading() ? self::get_optimized_handle_by_context() : 'rtsb-bundled';
+		}
+
+		return $handle;
+	}
+
+	/**
+	 * Get the optimized handle by context.
+	 *
+	 * @return string
+	 */
+	public static function get_optimized_handle_by_context() {
+		$context = self::detect_context();
+
+		if ( 'account' === $context ) {
+			return 'rtsb-bundled-global';
+		}
+
+		return "rtsb-bundled-$context";
+	}
+
+	/**
+	 * Check if Elementor page.
+	 *
+	 * @param int $post_id Post ID.
+	 *
+	 * @return bool
+	 */
+	public static function is_elementor_page( $post_id = null ) {
+		if ( ! defined( 'ELEMENTOR_VERSION' ) ) {
+			return false;
+		}
+
+		$post_id = $post_id ?: get_the_ID();
+
+		if ( ! $post_id ) {
+			return true;
+		}
+
+		return Plugin::$instance->documents->get( $post_id )->is_built_with_elementor();
+	}
+
+	/**
+	 * Check if shop or archive.
+	 *
+	 * @return bool
+	 */
+	public static function is_shop_or_archive() {
+		return is_shop() || is_product_category() || is_product_tag() || is_post_type_archive( 'product' ) || BuilderFns::is_archive() || BuilderFns::is_shop() || is_tax( 'product_brand' );
+	}
+
+	/**
+	 * Detect context.
+	 *
+	 * @return string
+	 */
+	public static function detect_context() {
+		switch ( true ) {
+			case is_product() || BuilderFns::is_product():
+				$context = 'product';
+				break;
+
+			case is_cart() || BuilderFns::is_cart():
+				$context = 'cart';
+				break;
+
+			case is_checkout() || BuilderFns::is_checkout():
+				$context = 'checkout';
+				break;
+
+			case self::is_shop_or_archive():
+				$context = 'shop';
+				break;
+
+			default:
+				$context = 'global';
+				break;
+		}
+
+		return apply_filters( 'rtsb/optimizer/context_detect', $context );
+	}
+
+	/**
+	 * Enqueue optimized assets.
+	 *
+	 * @return void
+	 */
+	public static function enqueue_optimized_assets() {
+		$asset_registry     = AssetRegistry::instance();
+		$bundled_assets     = $asset_registry->get_bundled_assets();
+		$context            = self::detect_context();
+		$contextual_loading = self::is_contextual_loading();
+		$theme_handle       = self::find_theme_stylesheet_handle();
+
+		if ( $contextual_loading ) {
+			// Enqueue JS.
+			if ( ! empty( $bundled_assets['js'] ) ) {
+				$js_context = isset( $bundled_assets['js'][ $context ] ) ? $context : 'global';
+
+				if ( $js_context ) {
+					wp_enqueue_script( $bundled_assets['js'][ $js_context ]['handle'] );
+				}
+			}
+
+			// Enqueue CSS.
+			if ( ! empty( $bundled_assets['css'] ) ) {
+				$css_context = isset( $bundled_assets['css'][ $context ] ) ? $context : 'global';
+
+				if ( $css_context ) {
+					$handle = $bundled_assets['css'][ $css_context ]['handle'];
+
+					wp_enqueue_style( $handle );
+
+					if ( ! empty( $theme_handle ) ) {
+						self::set_theme_dependency( $theme_handle, $handle );
+					}
+				}
+			}
+		} else {
+			// Enqueue JS.
+			if ( ! empty( $bundled_assets['js'] ) ) {
+				wp_enqueue_script( $bundled_assets['js']['handle'] );
+			}
+
+			// Enqueue CSS.
+			if ( ! empty( $bundled_assets['css'] ) ) {
+				$handle = $bundled_assets['css']['handle'];
+
+				wp_enqueue_style( $handle );
+
+				if ( ! empty( $theme_handle ) ) {
+					self::set_theme_dependency( $theme_handle, $handle );
+				}
+			}
+		}
+	}
+
+	/**
+	 * Find theme stylesheet handle.
+	 *
+	 * @return string|false
+	 */
+	private static function find_theme_stylesheet_handle() {
+		static $cached_handle = null;
+
+		if ( null !== $cached_handle ) {
+			return $cached_handle;
+		}
+
+		global $wp_styles;
+
+		if ( ! $wp_styles instanceof WP_Styles ) {
+			return false;
+		}
+
+		$stylesheet_uri      = get_stylesheet_uri();
+		$theme_directory_uri = get_stylesheet_directory_uri();
+
+		$hash          = md5( $stylesheet_uri );
+		$transient_key = 'rtsb_theme_css_handle_' . $hash;
+
+		$transient = get_transient( $transient_key );
+
+		if ( false !== $transient ) {
+			$cached_handle = $transient;
+
+			return $transient;
+		}
+
+		foreach ( $wp_styles->registered as $handle => $style ) {
+			$src = $style->src;
+
+			if (
+				( $src === $stylesheet_uri || strpos( $src, $theme_directory_uri ) !== false ) &&
+				strpos( $src, 'style.css' ) !== false
+			) {
+				set_transient( $transient_key, $handle, DAY_IN_SECONDS );
+				Cache::set_transient_cache_key( $transient_key );
+				$cached_handle = $handle;
+
+				return $handle;
+			}
+		}
+
+		$filtered_handle = apply_filters( 'rtsb/optimizer/theme_stylesheet_handle', false );
+
+		if ( is_string( $filtered_handle ) && ! empty( $filtered_handle ) ) {
+			set_transient( $transient_key, $filtered_handle, DAY_IN_SECONDS );
+			Cache::set_transient_cache_key( $transient_key );
+			$cached_handle = $filtered_handle;
+
+			return $filtered_handle;
+		}
+
+		set_transient( $transient_key, false, DAY_IN_SECONDS );
+		Cache::set_transient_cache_key( $transient_key );
+		$cached_handle = false;
+
+		return false;
+	}
+
+	/**
+	 * Set theme dependency.
+	 *
+	 * @param string $theme_handle Theme handle.
+	 * @param string $our_handle   Our handle.
+	 *
+	 * @return void
+	 */
+	private static function set_theme_dependency( $theme_handle, $our_handle ) {
+		global $wp_styles;
+
+		if ( ! isset( $wp_styles->registered[ $theme_handle ] ) ) {
+			return;
+		}
+
+		$theme_style = $wp_styles->registered[ $theme_handle ];
+
+		// Add our handle as a dependency if it's not already there.
+		if ( ! in_array( $our_handle, $theme_style->deps, true ) ) {
+			$theme_style->deps[] = $our_handle;
+		}
+	}
+
+	/**
+	 * Check if Elementor scripts should be loaded.
+	 *
+	 * @return bool
+	 */
+	public static function should_load_elementor_scripts() {
+		$data = GeneralList::instance()->get_data()['optimization'] ?? [];
+
+		$enable_optimization    = $data['enable_optimization'] ?? 'on';
+		$load_elementor_scripts = $data['load_elementor_scripts'] ?? 'on';
+
+		if ( 'on' !== $enable_optimization ) {
+			return true;
+		}
+
+		return 'on' === $load_elementor_scripts;
+	}
+
+	/**
+	 * Locate asset.
+	 *
+	 * @param string $relative_path Relative path.
+	 *
+	 * @return string|null
+	 */
+	public static function locate_asset( $relative_path ) {
+		$free_context = rtsb();
+		$pro_context  = function_exists( 'rtsbpro' ) && rtsb()->has_pro() ? rtsbpro() : null;
+
+		$paths = [];
+
+		if ( $pro_context ) {
+			$paths[] = $pro_context->get_assets_path( $relative_path );
+		}
+
+		$paths[] = $free_context->get_assets_path( $relative_path );
+
+		foreach ( $paths as $path ) {
+			if ( file_exists( $path ) ) {
+				return $path;
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Enqueue module assets.
+	 *
+	 * @param string $handle Asset handle.
+	 * @param string $module_name Module name.
+	 * @param array  $options Options array: ['type' => 'css|js|both', 'deps' => [], 'context' => null].
+	 *
+	 * @return string
+	 */
+	public static function enqueue_module_assets( $handle, $module_name, $options = [] ) {
+		$use_optimization = self::is_optimization_enabled();
+		$handle           = self::optimized_handle( $handle );
+
+		if ( $use_optimization ) {
+			return $handle;
+		}
+
+		$defaults = [
+			'type'    => 'both',
+			'deps'    => [ 'jquery', 'rtsb-public' ],
+			'context' => null,
+			'version' => RTSB_VERSION,
+		];
+
+		$config     = array_merge( $defaults, $options );
+		$rtl_suffix = is_rtl() ? '-rtl' : '';
+		$rtl_dir    = is_rtl() ? trailingslashit( 'rtl' ) : trailingslashit( 'css' );
+		$context    = $config['context'] ?: rtsb();
+		$load_css   = in_array( $config['type'], [ 'css', 'both' ], true );
+		$load_js    = in_array( $config['type'], [ 'js', 'both' ], true );
+
+		// Register CSS if enabled.
+		if ( $load_css ) {
+			wp_register_style(
+				$handle,
+				$context->get_assets_uri( $rtl_dir . 'modules/' . $module_name . $rtl_suffix . '.css' ),
+				[],
+				$config['version']
+			);
+		}
+
+		// Register JS if enabled.
+		if ( $load_js ) {
+			wp_register_script(
+				$handle,
+				$context->get_assets_uri( 'js/modules/' . $module_name . '.js' ),
+				$config['deps'],
+				$config['version'],
+				true
+			);
+		}
+
+		if ( $load_css ) {
+			wp_enqueue_style( $handle );
+
+			$theme_handle = self::find_theme_stylesheet_handle();
+
+			if ( ! empty( $theme_handle ) ) {
+				self::set_theme_dependency( $theme_handle, $handle );
+			}
+		}
+
+		if ( $load_js ) {
+			wp_enqueue_script( $handle );
+		}
+
+		return $handle;
+	}
+
+	/**
+	 * Check if contextual loading is enabled.
+	 *
+	 * @return bool
+	 */
+	public static function is_contextual_loading() {
+		$data = GeneralList::instance()->get_data()['optimization'] ?? [];
+
+		return ! empty( $data['context_asset_loading'] ) && 'on' === $data['context_asset_loading'] ?? false;
+	}
+
+	/**
+	 * Get Modules list with cache support.
+	 *
+	 * @return array
+	 */
+	public static function get_modules_list() {
+		static $cached_modules = null;
+
+		if ( null !== $cached_modules ) {
+			return $cached_modules;
+		}
+
+		$cache_key   = 'rtsb_module_list';
+		$cache_group = 'shopbuilder';
+
+		$cached = wp_cache_get( $cache_key, $cache_group );
+
+		if ( false !== $cached ) {
+			$cached_modules = $cached;
+
+			return $cached;
+		}
+
+		$modules = ModuleList::instance()->get_data();
+
+		wp_cache_set( $cache_key, $modules, $cache_group, 12 * HOUR_IN_SECONDS );
+		Cache::set_data_cache_key( $cache_key );
+
+		$cached_modules = $modules;
+
+		return $modules;
+	}
+
+	/**
+	 * Get Elementor widgets list with cache support.
+	 *
+	 * @return array
+	 */
+	public static function get_widgets_list() {
+		static $cached_widgets = null;
+
+		if ( null !== $cached_widgets ) {
+			return $cached_widgets;
+		}
+
+		$cache_key   = 'rtsb_elementor_widget_list';
+		$cache_group = 'shopbuilder';
+
+		$cached = wp_cache_get( $cache_key, $cache_group );
+
+		if ( false !== $cached ) {
+			$cached_widgets = $cached;
+
+			return $cached;
+		}
+
+		$widgets = ElementList::instance()->get_list();
+
+		wp_cache_set( $cache_key, $widgets, $cache_group, 12 * HOUR_IN_SECONDS );
+		Cache::set_data_cache_key( $cache_key );
+
+		$cached_widgets = $widgets;
+
+		return $widgets;
 	}
 }

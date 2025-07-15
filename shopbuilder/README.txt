@@ -4,7 +4,7 @@ Donate link:
 Tags: Elementor, Woocommerce Builder, Elementor Woocommerce Builder, Woocommerce, Woocommerce Product
 Requires at least: 5.5
 Tested up to: 6.8
-Stable tag: 2.6.5
+Stable tag: 3.0.0
 Requires PHP: 7.4
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -417,6 +417,21 @@ If you like the ShopBuilder Plugin, then consider checking out our other WordPre
 == Screenshots ==
 
 == Changelog ==
+
+= 3.0.0 (July 15, 2025) =
+* New: Introduced a dynamic asset optimization system for loading module and widget assets only when needed.
+* Fix: Resolved template fallback errors when a template file is missing.
+* Fix: Rectified layout compatibility issues with default templates.
+* Fix: Addressed general Elementor widget slider control inconsistencies.
+* Fix: Resolved template import issues occurring on specific server environments.
+* Fix: Rectified some CSS selector issues in the Product Add to Cart widget.
+* Dev: Added a new hook to change the Add to Cart button text.
+* Update: Replaced the sortable control package used in the Settings page.
+* Enhancement: Improved rendering logic for action buttons.
+* Enhancement: Updated the Settings page file upload system to use the native WordPress Media Library.
+* Optimization: Optimized core, module, and widget CSS/JS for faster load times.
+* Optimization: Refactored JS with a unified module pattern to eliminate global namespace pollution.
+* Optimization: Implemented LRU caching across multiple components to reduce redundant processing.
 
 = 2.6.5 (May 09, 2025) =
 * Fix: Resolved a PHP warning caused by early loading of the text domain.

@@ -50,8 +50,6 @@ class ProductAddToCart extends ElementorWidgetBase {
 	/**
 	 * Widget Field.
 	 *
-	 * @param array $controllers Control.
-	 *
 	 * @return void
 	 */
 	public function the_hooks() {
@@ -110,10 +108,10 @@ class ProductAddToCart extends ElementorWidgetBase {
 		$controllers = $this->get_settings_for_display();
 		?>
 		<!-- Quantity Wrapper Start -->
-		<div class="rtsb-quantity-box-group">
-		<button type="button" class="rtsb-quantity-btn rtsb-quantity-minus">
-			<?php Fns::print_html( Fns::icons_manager( $controllers['decrement_icon'] ), true ); ?>
-		</button>
+		<div class="rtsb-quantity-box-group rtsb-quantity-box-group-<?php echo esc_attr( $controllers['quantity_style'] ); ?>"">
+			<button type="button" class="rtsb-quantity-btn rtsb-quantity-minus">
+				<?php Fns::print_html( Fns::icons_manager( $controllers['decrement_icon'] ), true ); ?>
+			</button>
 		<?php
 	}
 
@@ -125,9 +123,9 @@ class ProductAddToCart extends ElementorWidgetBase {
 	public function quantity_wrapper_end() {
 		$controllers = $this->get_settings_for_display();
 		?>
-		<button type="button" class="rtsb-quantity-btn rtsb-quantity-plus">
-			<?php Fns::print_html( Fns::icons_manager( $controllers['increment_icon'] ), true ); ?>
-		</button>
+			<button type="button" class="rtsb-quantity-btn rtsb-quantity-plus">
+				<?php Fns::print_html( Fns::icons_manager( $controllers['increment_icon'] ), true ); ?>
+			</button>
 		</div>
 		<!-- Quantity Wrapper End -->
 		<?php
@@ -175,6 +173,40 @@ class ProductAddToCart extends ElementorWidgetBase {
 	public function override_ajax_variation_threshold() {
 		return 1;
 	}
+
+	/**
+	 * Elementor Edit mode need some extra js for isotop reinitialize
+	 *
+	 * @return void
+	 */
+	public function editor_script() {
+		if ( $this->is_edit_mode() ) {
+			?>
+			<script type="text/javascript">
+				function addToCartAction() {
+					var singleAddToCart = jQuery('.rtsb-product-add-to-cart');
+
+					if (singleAddToCart.length > 0) {
+						singleAddToCart
+							.find(
+								'.stock.available-on-pre-order, .stock.available-on-backorder'
+							)
+							.remove();
+					}
+				}
+				if (typeof elementorFrontend !== 'undefined') {
+					elementorFrontend.hooks.addAction(
+						'frontend/element_ready/rtsb-product-add-to-cart.default',
+						() => {
+							addToCartAction();
+						}
+					);
+				}
+			</script>
+			<?php
+		}
+	}
+
 	/**
 	 * Render Function
 	 *
@@ -208,6 +240,7 @@ class ProductAddToCart extends ElementorWidgetBase {
 		add_filter( 'rtsb/module/flash_sale_countdown/show_counter', '__return_true', 99 );
 		$this->reset_hooks();
 		$this->theme_support( 'render_reset' );
+		$this->editor_script();
 		$product = $_product; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 	}
 }

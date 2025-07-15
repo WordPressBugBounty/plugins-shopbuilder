@@ -120,15 +120,33 @@ class CallToAction extends ElementorWidgetBase {
 		$this->theme_support( 'render_reset' );
 	}
 
+	/**
+	 * Edit mode parallax script.
+	 *
+	 * @return void
+	 */
 	private function edit_mode_parallax_script() {
 		if ( ! $this->is_edit_mode() ) {
 			return;
 		}
 		?>
 		<script>
-			setTimeout(function() {
-				rtsbParallax();
-			}, 1000);
+			if (!'<?php echo esc_attr( Fns::is_optimization_enabled() ); ?>') {
+				setTimeout(function() {
+					rtsbParallax();
+				}, 1000);
+			} else {
+				if (typeof elementorFrontend !== 'undefined') {
+					elementorFrontend.hooks.addAction(
+						'frontend/element_ready/rtsb-call-to-action.default',
+						() => {
+							window.waitForRTSB((RTSB) => {
+								RTSB.modules.get('CTAParallax')?.refresh();
+							});
+						}
+					);
+				}
+			}
 		</script>
 
 		<?php

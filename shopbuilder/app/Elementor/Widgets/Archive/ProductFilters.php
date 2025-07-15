@@ -1,4 +1,9 @@
 <?php
+/**
+ * Product Filters class
+ *
+ * @package RadiusTheme\SB
+ */
 
 namespace RadiusTheme\SB\Elementor\Widgets\Archive;
 
@@ -11,6 +16,10 @@ use RadiusTheme\SB\Helpers\Fns;
 if ( ! defined( 'ABSPATH' ) ) {
 	exit( 'This script cannot be accessed directly.' );
 }
+
+/**
+ * Product Filters class
+ */
 class ProductFilters extends ElementorWidgetBase {
 	/**
 	 * Construct function
@@ -64,17 +73,35 @@ class ProductFilters extends ElementorWidgetBase {
 		$this->edit_mode_default_filter_script();
 		$this->theme_support( 'render_reset' );
 	}
+
+	/**
+	 * Edit Mode Default Filter Script
+	 *
+	 * @return void
+	 */
 	private function edit_mode_default_filter_script() {
 		if ( ! $this->is_edit_mode() ) {
 			return;
 		}
 		?>
-		<script>
-			setTimeout(function() {
-				rtsbProductDefaultFilterInit();
-			}, 1000);
+		<script type="text/javascript">
+			if (!'<?php echo esc_attr( Fns::is_optimization_enabled() ); ?>') {
+				setTimeout(function() {
+					rtsbProductDefaultFilterInit();
+				}, 1000);
+			} else {
+				if (typeof elementorFrontend !== 'undefined') {
+					elementorFrontend.hooks.addAction(
+						'frontend/element_ready/rtsb-product-filters.default',
+						() => {
+							window.waitForRTSB((RTSB) => {
+								RTSB.modules.get('productFilters')?.refresh();
+							});
+						}
+					);
+				}
+			}
 		</script>
-
 		<?php
 	}
 }

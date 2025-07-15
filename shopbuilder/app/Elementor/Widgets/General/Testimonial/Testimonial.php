@@ -75,6 +75,15 @@ class Testimonial extends ElementorWidgetBase {
 	}
 
 	/**
+	 * Script dependencies.
+	 *
+	 * @return array
+	 */
+	public function get_script_depends(): array {
+		return [ 'swiper' ];
+	}
+
+	/**
 	 * Addon Render.
 	 *
 	 * @return void

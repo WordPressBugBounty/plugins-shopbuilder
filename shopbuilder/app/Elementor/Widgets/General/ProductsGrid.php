@@ -128,13 +128,15 @@ class ProductsGrid extends ElementorWidgetBase {
 	 * @return array
 	 */
 	public function variation_swatch_conditionaly() {
-		if ( ! function_exists( 'rtwpvsp' ) ) {
+		if ( ! function_exists( 'rtwpvsp' ) && ! rtsb()->has_pro() ) {
 			return [];
 		}
-		$swatches_controls                                 = Controls\SettingsFields::variation_swatch( $this );
-		$swatches_controls['swatch_position']['condition'] = [
-			'layout' => [ 'grid-layout1' ],
-		];
+		$swatches_controls = Controls\SettingsFields::variation_swatch( $this );
+		if ( ! empty( $swatches_controls['swatch_position'] ) ) {
+			$swatches_controls['swatch_position']['condition'] = [
+				'layout' => [ 'grid-layout1' ],
+			];
+		}
 		return $swatches_controls;
 	}
 
@@ -191,15 +193,12 @@ class ProductsGrid extends ElementorWidgetBase {
 	/**
 	 * Widget Field
 	 *
-	 * @return array
+	 * @param string $thumbnail_size Image size.
+	 * @return string
 	 */
 	public function thumbnail_size( $thumbnail_size ) {
 		$settings = $this->get_settings_for_display();
 		if ( 'rtsb_custom' === $settings['image'] ) {
-			// Custom image size is not supported. It may be implemented later.
-			// $thumbnail_size   = [];
-			// $thumbnail_size[] = $settings['image_custom_dimension']['width'] ?? 0;
-			// $thumbnail_size[] = $settings['image_custom_dimension']['height'] ?? 0;.
 			return $thumbnail_size;
 		}
 		return $settings['image'] ?? $thumbnail_size;

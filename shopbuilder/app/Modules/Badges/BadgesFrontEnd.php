@@ -1,6 +1,6 @@
 <?php
 /**
- * Main FilterHooks class.
+ * Main BadgesFrontEnd class.
  *
  * @package RadiusTheme\SB
  */
@@ -15,7 +15,7 @@ use WC_Product;
 defined( 'ABSPATH' ) || exit();
 
 /**
- * Main FilterHooks class.
+ * Main BadgesFrontEnd class.
  */
 class BadgesFrontEnd {
 	/**
@@ -60,12 +60,10 @@ class BadgesFrontEnd {
 	private function __construct() {
 		$this->options = Fns::get_options( 'modules', 'product_badges' );
 		add_filter( 'woocommerce_sale_flash', [ $this, 'woocommerce_sale_flash' ], 99 );
-		// Generate Badge For Each Product. In no is isung then badge will not render.
 		add_action( 'the_post', [ $this, 'wc_setup_product_badge_data' ], 20 );
-        // do_action( 'rtsb_before_product_template_render' );.
-        add_action( 'rtsb_before_product_template_render', [ $this, 'wc_setup_product_badge_data' ], 12 );
+		add_action( 'rtsb_before_product_template_render', [ $this, 'wc_setup_product_badge_data' ], 12 );
 
-        // show_group_custom_position.
+		// show_group_custom_position.
 		$loop_above_image = 'above_image' === ( $this->options['loop_group_position'] ?? '' );
 		if ( ( wp_doing_ajax() || ! is_admin() ) && $loop_above_image ) {
 			// Loop action will go here.
@@ -98,7 +96,7 @@ class BadgesFrontEnd {
 		$cache_key = 'badge_style_cache';
 
 		if ( isset( $this->cache[ $cache_key ] ) && ! empty( $this->cache[ $cache_key ] ) ) {
-			wp_add_inline_style( 'rtsb-frontend', $this->cache[ $cache_key ] );
+			wp_add_inline_style( Fns::optimized_handle( 'rtsb-frontend' ), $this->cache[ $cache_key ] );
 
 			return;
 		}
@@ -159,20 +157,22 @@ class BadgesFrontEnd {
 		$this->cache[ $cache_key ] = $dynamic_css;
 
 		if ( ! empty( $dynamic_css ) ) {
-			wp_add_inline_style( 'rtsb-frontend', $dynamic_css );
+			wp_add_inline_style( Fns::optimized_handle( 'rtsb-frontend' ), $dynamic_css );
 		}
 	}
 
 	/**
-	 * Get Badge Html
+	 * Setup Product Badges
 	 *
-	 * @return void
+	 * @return array|void
 	 */
 	public function wc_setup_product_badge_data() {
-		global $post, $product;
+		global $product;
+
 		if ( ! $product instanceof WC_Product ) {
 			return;
 		}
+
 		$this->all_badges           = [];
 		$this->above_image_loop     = [];
 		$this->above_image_product  = [];
@@ -195,10 +195,9 @@ class BadgesFrontEnd {
 			return;
 		}
 
-		// $badges_in_group        = ! empty( $this->options['show_badges_in_group'] );
 		$loop_group_above_image = 'above_image' == ( $this->options['loop_group_position'] ?? '' );
+		$above_image_product    = 'above_image' == ( $this->options['product_page_group_position'] ?? '' );
 
-		$above_image_product = 'above_image' == ( $this->options['product_page_group_position'] ?? '' );
 		foreach ( $badges as $badge_applied ) {
 			$this->all_badges[] = $badge_applied;
 			// loop_group_position.
@@ -265,6 +264,8 @@ class BadgesFrontEnd {
 	/**
 	 * Get Badge Html
 	 *
+	 * @param array $badge_applied badge array.
+	 *
 	 * @return void
 	 */
 	private function badge_html_for_image( $badge_applied ) {
@@ -280,6 +281,10 @@ class BadgesFrontEnd {
 
 	/**
 	 * Get Badge Html
+	 *
+	 * @param array  $badge_applied badge array.
+	 * @param string $badges_type badges type.
+	 * @param array  $badge_classes badges classes.
 	 *
 	 * @return void
 	 */
@@ -321,7 +326,7 @@ class BadgesFrontEnd {
 		}
 
 		$group_position = ( $this->options['product_page_group_badge_position'] ?? 'top-left' );
-		// group_badge_position
+		// group_badge_position.
 		$group_classes[] = 'rtsb-group-position-' . $group_position;
 		Fns::print_html( $this->group_badges_html( $this->above_image_product, $group_classes ) );
 	}
@@ -484,8 +489,8 @@ class BadgesFrontEnd {
 	/**
 	 * Image badge styles.
 	 *
-	 * @param string $parent_selector Selectors.
-	 * @param array  $badge Badges array.
+	 * @param array $parent_selector Selectors.
+	 * @param array $badge Badges array.
 	 *
 	 * @return string
 	 */
@@ -521,8 +526,8 @@ class BadgesFrontEnd {
 	/**
 	 * Text badge styles.
 	 *
-	 * @param string $parent_selector Selectors.
-	 * @param array  $badge Badges array.
+	 * @param array $parent_selector Selectors.
+	 * @param array $badge Badges array.
 	 *
 	 * @return string
 	 */
@@ -689,6 +694,9 @@ class BadgesFrontEnd {
 	/**
 	 * Get Badge Html
 	 *
+	 * @param array $group_badges badge array.
+	 * @param array $group_classes badges classes.
+	 *
 	 * @return string
 	 */
 	private function group_badges_html( $group_badges, $group_classes = [] ) {
@@ -786,7 +794,7 @@ class BadgesFrontEnd {
 		}
 
 		$group_position = ( $this->options['product_page_group_badge_position'] ?? 'top-left' );
-		// group_badge_position
+		// group_badge_position.
 		$group_classes[] = 'rtsb-group-position-' . $group_position;
 
 		return $this->image_badges_html( $image_html, $this->group_badges_html( $this->above_image_product, $group_classes ) );

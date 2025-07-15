@@ -10,6 +10,7 @@
 namespace RadiusTheme\SB\Controllers;
 
 use RadiusTheme\SB\Helpers\Cache;
+use RadiusTheme\SB\Helpers\Fns;
 use RadiusTheme\SB\Traits\SingletonTrait;
 
 // Do not allow directly accessing this file.
@@ -57,23 +58,35 @@ class CacheController {
 			[
 				'id'     => 'clear_all_cache',
 				'parent' => 'shop_builder', // Set the parent to the top-level item ID.
-				'title'  => 'Clear All Cache',
+				'title'  => esc_html__( 'Clear All Cache', 'shopbuilder' ),
 				'href'   => wp_nonce_url( add_query_arg( 'rtsb_clear_cache', 'all', add_query_arg( null, null ) ), rtsb()->nonceText ),
 			]
 		);
+
+		if ( Fns::is_optimization_enabled() ) {
+			$wp_admin_bar->add_node(
+				[
+					'id'     => 'clear_asset_cache',
+					'parent' => 'shop_builder',
+					'title'  => esc_html__( 'Clear Asset Cache', 'shopbuilder' ),
+					'href'   => wp_nonce_url( add_query_arg( 'rtsb_clear_cache', 'asset', add_query_arg( null, null ) ), rtsb()->nonceText ),
+				]
+			);
+		}
+
 		$wp_admin_bar->add_node(
 			[
 				'id'     => 'clear_object_cache',
-				'parent' => 'shop_builder', // Set the parent to the top-level item ID.
-				'title'  => 'Clear Object Cache',
+				'parent' => 'shop_builder',
+				'title'  => esc_html__( 'Clear Object Cache', 'shopbuilder' ),
 				'href'   => wp_nonce_url( add_query_arg( 'rtsb_clear_cache', 'data', add_query_arg( null, null ) ), rtsb()->nonceText ),
 			]
 		);
 		$wp_admin_bar->add_node(
 			[
 				'id'     => 'clear_template_cache',
-				'parent' => 'shop_builder', // Set the parent to the top-level item ID.
-				'title'  => 'Clear Template Cache',
+				'parent' => 'shop_builder',
+				'title'  => esc_html__( 'Clear Template Cache', 'shopbuilder' ),
 				'href'   => wp_nonce_url( add_query_arg( 'rtsb_clear_cache', 'template', add_query_arg( null, null ) ), rtsb()->nonceText ),
 			]
 		);
@@ -106,6 +119,9 @@ class CacheController {
 				break;
 			case 'template':
 				Cache::clear_template_cache();
+				break;
+			case 'asset':
+				Cache::clear_asset_cache();
 				break;
 		}
 		// Set the notice flag.

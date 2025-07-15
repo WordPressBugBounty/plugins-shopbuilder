@@ -591,10 +591,6 @@ class StyleFields {
 					'max' => 100,
 				],
 			],
-			// 'default'    => [
-			// 'unit' => 'px',
-			// 'size' => 14,
-			// ],
 			'selectors'  => $selectors['typography'],
 		];
 
@@ -1749,7 +1745,10 @@ class StyleFields {
 		];
 		$selectors     = [
 			'typography'         => $css_selectors['typography'],
-			'icon_size'          => [ $css_selectors['icon_size'] => 'font-size: {{SIZE}}{{UNIT}}' ],
+			'icon_size'          => [
+				$css_selectors['icon_size']['font_size'] => 'font-size: {{SIZE}}{{UNIT}} !important;',
+				$css_selectors['icon_size']['svg']       => 'width: {{SIZE}}{{UNIT}} !important;',
+			],
 			'hover_icon_spacing' => [ $css_selectors['hover_icon_spacing'] => 'margin-left: {{SIZE}}{{UNIT}}' ],
 			'color'              => [ $css_selectors['color'] => 'color: {{VALUE}}' ],
 			'bg_color'           => [ $css_selectors['bg_color'] => 'background-color: {{VALUE}}' ],
@@ -1802,7 +1801,7 @@ class StyleFields {
 			],
 			'default'    => [
 				'unit' => 'px',
-				'size' => 3,
+				'size' => 5,
 			],
 			'condition'  => [
 				'show_hover_btn_icon' => [ 'yes' ],

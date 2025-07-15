@@ -7,7 +7,6 @@
 
 namespace RadiusTheme\SB\Elementor\Widgets\Controls;
 
-use Elementor\Controls_Manager;
 use RadiusTheme\SB\Elementor\Helper\ControlHelper;
 
 // Do not allow directly accessing this file.
@@ -20,8 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class MetaSettings {
 	/**
-	 * Widget Field
-	 *
+	 * @param object $widget widget.
 	 * @return array
 	 */
 	public static function widget_fields( $widget ) {
@@ -51,7 +49,7 @@ class MetaSettings {
 				'prefix_class' => 'shopbuilder-layout-',
 				'separator'    => 'default',
 				'selectors'    => [
-					$widget->selectors['meta_layout'] => 'gap: 5px;flex-direction: {{VALUE}};',
+					$widget->selectors['meta_layout'] => 'flex-direction: {{VALUE}};',
 				],
 			],
 
@@ -65,8 +63,8 @@ class MetaSettings {
 					$widget->selectors['align'] => 'align-items: {{VALUE}};justify-content: {{VALUE}};',
 				],
 			],
-			'gap'                       => [
-				'label'      => esc_html__( 'Meta Gap (px)', 'shopbuilder' ),
+			'row_gap'                   => [
+				'label'      => esc_html__( 'Meta Row gap(px)', 'shopbuilder' ),
 				'type'       => 'slider',
 				'mode'       => 'responsive',
 				'size_units' => [ 'px' ],
@@ -77,8 +75,30 @@ class MetaSettings {
 						'step' => 1,
 					],
 				],
+				'default'    => [
+					'size' => 20,
+				],
 				'selectors'  => [
-					$widget->selectors['gap'] => 'gap: {{SIZE}}{{UNIT}}',
+					$widget->selectors['row_gap'] => 'row-gap: {{SIZE}}{{UNIT}}',
+				],
+			],
+			'column_gap'                => [
+				'label'      => esc_html__( 'Meta Column Gap (px)', 'shopbuilder' ),
+				'type'       => 'slider',
+				'mode'       => 'responsive',
+				'size_units' => [ 'px' ],
+				'range'      => [
+					'px' => [
+						'min'  => 0,
+						'max'  => 100,
+						'step' => 1,
+					],
+				],
+				'default'    => [
+					'size' => 15,
+				],
+				'selectors'  => [
+					$widget->selectors['column_gap'] => 'column-gap: {{SIZE}}{{UNIT}}',
 				],
 			],
 			'show_sku'                  => [

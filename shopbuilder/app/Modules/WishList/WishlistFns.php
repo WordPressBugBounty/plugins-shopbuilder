@@ -49,7 +49,7 @@ class WishlistFns {
 
 	public static function get_page_url() {
 		$page_id = Fns::get_option( 'modules', 'wishlist', 'page' );
-		return absint( $page_id ) ? get_permalink( $page_id ) : '#';
+		return $page_id && absint( $page_id ) ? get_permalink( $page_id ) : '#';
 	}
 
 	/**

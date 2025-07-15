@@ -2,8 +2,6 @@
 
 namespace RadiusTheme\SB\Models;
 
-// use RadiusTheme\SB\Helpers\Fns;
-use RadiusTheme\SB\Elementor\Helper\ControlHelper;
 use RadiusTheme\SB\Helpers\Fns;
 use RadiusTheme\SB\Models\Base\ListModel;
 use RadiusTheme\SB\Traits\SingletonTrait;
@@ -52,6 +50,71 @@ class GeneralList extends ListModel {
 	 */
 	protected function raw_list() {
 		$list = [
+			'optimization'  => apply_filters(
+				'rtsb/settings/optimization/options',
+				[
+					'id'           => 'optimization',
+					'category'     => 'general',
+					'title'        => esc_html__( 'Advanced Optimizations', 'shopbuilder' ),
+					'package'      => $this->pro_version_checker(),
+					'badge'        => 'new',
+					'active_field' => [
+						'disable' => true,
+					],
+					'fields'       => [
+						'optimization_intro'     => [
+							'id'   => 'optimization_intro',
+							'type' => 'description',
+							'text' => __( 'Optimize your website for maximum performance from these advanced options. <br /> <span style="color: #dc3545; display: block; margin-top: 10px;">⚠️ Note: After enabling or disabling any of these settings, clear the ShopBuilder cache to ensure changes are applied correctly.</span>', 'shopbuilder' ),
+						],
+						'enable_optimization'    => [
+							'id'    => 'enable',
+							'type'  => 'switch',
+							'label' => esc_html__( 'Enable Asset Optimization?', 'shopbuilder' ),
+							'help'  => esc_html__( 'Enable this option to dynamically load assets (styles, scripts) only when needed, helping to optimize your website’s performance', 'shopbuilder' ),
+						],
+						'load_elementor_scripts' => [
+							'id'         => 'enable',
+							'type'       => 'switch',
+							'label'      => esc_html__( 'Load Elementor Assets?', 'shopbuilder' ),
+							'help'       => __( 'Enable this option to load necessary Elementor assets on your website. <br /> <span style="color: #dc3545;">Turn this off if you are not using Elementor widgets to optimize site performance.</span>', 'shopbuilder' ),
+							'value'      => 'on',
+							'dependency' => [
+								'rules' => [
+									[
+										'item'     => 'general.optimization.enable_optimization',
+										'value'    => 'on',
+										'operator' => '==',
+									],
+								],
+							],
+						],
+						'context_asset_loading'  => [
+							'id'         => 'enable',
+							'type'       => 'switch',
+							'label'      => esc_html__( 'Context-Aware Asset Loading?', 'shopbuilder' ),
+							'help'       => esc_html__( 'Enable this option to dynamically Load only the necessary CSS and JS for each page type (e.g., product, cart, checkout). Disabling this option will include all assets globally on every page.', 'shopbuilder' ),
+							'dependency' => [
+								'rules' => [
+									[
+										'item'     => 'general.optimization.enable_optimization',
+										'value'    => 'on',
+										'operator' => '==',
+									],
+								],
+							],
+						],
+						/**
+						'load_gutenberg_scripts' => [
+							'id'    => 'enable',
+							'type'  => 'switch',
+							'label' => esc_html__( 'Load Gutenberg Scripts?', 'shopbuilder' ),
+							'help'  => esc_html__( 'Switch on to load elementor scripts by dynamically loading scripts', 'shopbuilder' ),
+						],
+						*/
+					],
+				],
+			),
 			'notification'  => apply_filters(
 				'rtsb/settings/notification/options',
 				[
@@ -140,23 +203,6 @@ class GeneralList extends ListModel {
 							'label' => esc_html__( 'Sharing Button in Single Product Page', 'shopbuilder' ),
 							'help'  => esc_html__( 'Enable this option to allow share a product from product page. Woocommerce Supported Sharing plugins added to Hook: woocommerce_share', 'shopbuilder' ),
 						],
-						/*
-						 * TODO : Implement later.
-						'share_icon_show_to_product_page' => array(
-							'id'    => 'share_icon_show_to_product_page',
-							'type'  => 'switch',
-							'label' => esc_html__( 'Sharing Icon in Single Product Page', 'shopbuilder' ),
-							'dependency' => [
-								'rules' => [
-									[
-										'item'     => 'general.social_share.share_platforms_to_product_page',
-										'value'    => 'on',
-										'operator' => '==', // 'operator' => 'any','in', !in' only valid for multiple value //
-									],
-								],
-							],
-						),
-						*/
 						'share_icon_layout'               => [
 							'type'       => 'select',
 							'value'      => 'share-layout1',
@@ -395,17 +441,14 @@ class GeneralList extends ListModel {
 							'type'        => 'checkbox',
 							'orientation' => 'vertical',
 							'value'       => [ 'show', 'required' ],
-							// 'help'       => esc_html__( 'If the Shipping Form is enabled, the Country field is mandatory.', 'shopbuilder' ),
 							'options'     => [
 								[
 									'value' => 'show',
 									'label' => 'Show Country?',
-									// 'disabled' => true,
 								],
 								[
 									'value' => 'required',
 									'label' => 'Required Field',
-									// 'disabled' => true,
 								],
 							],
 						],
@@ -640,7 +683,6 @@ class GeneralList extends ListModel {
 							'label'      => esc_html__( 'State label', 'shopbuilder' ),
 							'type'       => 'text',
 							'help'       => esc_html__( 'Leave empty to set default.', 'shopbuilder' ),
-							// 'help'       => esc_html__( 'Leave empty to set default. If the Shipping Form is enabled, the State field is mandatory.', 'shopbuilder' ),
 							'dependency' => [
 								'rules' => [
 									[
@@ -1006,12 +1048,10 @@ class GeneralList extends ListModel {
 								[
 									'value' => 'show',
 									'label' => 'Show Country?',
-									// 'disabled' => true,
 								],
 								[
 									'value' => 'required',
 									'label' => 'Required Field',
-									// 'disabled' => true,
 								],
 							],
 						],
@@ -1236,27 +1276,6 @@ class GeneralList extends ListModel {
 								],
 							],
 						],
-						//
-						// 'shipping_state_label'            => [
-						// 'id'         => 'shipping_state_label',
-						// 'label'      => esc_html__( 'State label', 'shopbuilder' ),
-						// 'type'       => 'text',
-						// 'help'       => esc_html__( 'Leave empty to set default.', 'shopbuilder' ),
-						// 'dependency' => [
-						// 'rules' => [
-						// [
-						// 'item'     => 'general.shipping_form.shipping_state',
-						// 'value'    => 'show',
-						// 'operator' => '==', // 'operator' => 'any','in', !in' only valid for multiple value //
-						// ],
-						// ],
-						// ],
-						// ],
-						// 'shipping_postcode_heading'   => [
-						// 'id'    => 'shipping_postcode_heading',
-						// 'type'  => 'title',
-						// 'label' => esc_html__( 'Postcode / ZIP', 'shopbuilder' ),
-						// ],
 						'shipping_postcode'               => [
 							'id'          => 'shipping_postcode',
 							'label'       => esc_html__( 'Postcode / ZIP', 'shopbuilder' ),
@@ -1270,41 +1289,15 @@ class GeneralList extends ListModel {
 								],
 							],
 						],
-						// 'shipping_postcode_label'         => [
-						// 'id'         => 'shipping_postcode_label',
-						// 'label'      => esc_html__( 'Postcode / ZIP label', 'shopbuilder' ),
-						// 'type'       => 'text',
-						// 'help'       => esc_html__( 'Leave empty to set default. ', 'shopbuilder' ),
-						// 'dependency' => [
-						// 'rules' => [
-						// [
-						// 'item'     => 'general.shipping_form.shipping_postcode',
-						// 'value'    => 'show',
-						// 'operator' => '==', // 'operator' => 'any','in', !in' only valid for multiple value //
-						// ],
-						// ],
-						// ],
-						// ],
-						// 'shipping_postcode_placeholder'   => [
-						// 'id'         => 'shipping_postcode_placeholder',
-						// 'label'      => esc_html__( 'Postcode / ZIP placeholder', 'shopbuilder' ),
-						// 'type'       => 'text',
-						// 'help'       => esc_html__( 'Leave empty to set default.', 'shopbuilder' ),
-						// 'dependency' => [
-						// 'rules' => [
-						// [
-						// 'item'     => 'general.shipping_form.shipping_postcode',
-						// 'value'    => 'show',
-						// 'operator' => '==', // 'operator' => 'any','in', !in' only valid for multiple value //
-						// ],
-						// ],
-						// ],
-						// ],
 
 					],
 				]
 			),
 		];
+
+		if ( ! defined( 'ELEMENTOR_VERSION' ) ) {
+			unset( $list['optimization']['fields']['load_elementor_scripts'] );
+		}
 
 		return apply_filters( 'rtsb/core/general_settings/raw_list', $list );
 	}

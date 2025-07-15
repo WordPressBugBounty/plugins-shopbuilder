@@ -242,7 +242,7 @@ class ModuleBtnControls {
 				'value'    => 'yes',
 			];
 		}
-		if ( Fns::is_module_active( 'quick_view' ) ) {
+		if ( Fns::is_module_active( 'quick_view' ) && isset( $fields['quick_view_button'] ) ) {
 			$fields['module_section']['conditions']['terms'][] = [
 				'name'     => 'quick_view_button',
 				'operator' => '===',

@@ -7,6 +7,7 @@
 
 namespace RadiusTheme\SB;
 
+use RadiusTheme\SB\Helpers\Cache;
 use RadiusTheme\SB\Helpers\Migration;
 use RadiusTheme\SB\Helpers\Installation;
 use RadiusTheme\SB\Modules\ModuleManager;
@@ -83,6 +84,7 @@ final class ShopBuilder {
 		$this->current_theme = wp_get_theme()->get( 'Template' ) ? wp_get_theme()->get( 'Template' ) : ( wp_get_theme()->get( 'TextDomain' ) ? wp_get_theme()->get( 'TextDomain' ) : strtolower( str_replace( ' ', '', wp_get_theme()->get( 'Name' ) ) ) );
 		add_action( 'init', [ $this, 'language' ] );
 		add_action( 'plugins_loaded', [ $this, 'init' ], 15 );
+		add_action( 'upgrader_process_complete', [ $this, 'maybe_run_after_update' ], 10, 2 );
 
 		// Register Plugin Active Hook.
 		register_activation_hook( RTSB_FILE, [ Installation::class, 'activate' ] );
@@ -132,6 +134,19 @@ final class ShopBuilder {
 		$file = ltrim( $file, '/' );
 
 		return trailingslashit( RTSB_URL . '/assets' ) . $file;
+	}
+
+	/**
+	 * Assets path.
+	 *
+	 * @param string $file File.
+	 *
+	 * @return string
+	 */
+	public function get_assets_path( $file ) {
+		$file = ltrim( $file, '/' );
+
+		return trailingslashit( RTSB_PATH . 'assets' ) . $file;
 	}
 
 	/**
@@ -194,6 +209,39 @@ final class ShopBuilder {
 		Shortcodes::instance();
 
 		do_action( 'rtsb/after/loaded' );
+	}
+
+	/**
+	 * Maybe Run After Update
+	 *
+	 * @param object $upgrader_object Upgrader Object.
+	 * @param array  $options Options.
+	 *
+	 * @return void
+	 */
+	public function maybe_run_after_update( $upgrader_object, $options ) {
+		if ( 'plugin' !== $options['type'] || ! in_array( $options['action'], [ 'install', 'update' ], true ) ) {
+			return;
+		}
+
+		// For normal update flow.
+		if ( ! empty( $options['plugins'] ) ) {
+			foreach ( $options['plugins'] as $plugin ) {
+				if ( strpos( $plugin, 'shopbuilder' ) !== false ) {
+					Cache::clear_all_cache();
+					break;
+				}
+			}
+			return;
+		}
+
+		// For upload-based installation.
+		if (
+			! empty( $upgrader_object->result['destination_name'] ) &&
+			strpos( $upgrader_object->result['destination_name'], 'shopbuilder' ) !== false
+		) {
+			Cache::clear_all_cache();
+		}
 	}
 
 	/**

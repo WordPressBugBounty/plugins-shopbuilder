@@ -127,15 +127,34 @@ class ImageAccordion extends ElementorWidgetBase {
 		$this->edit_mode_image_accordion_script();
 		$this->theme_support( 'render_reset' );
 	}
+
+	/**
+	 * Edit mode image accordion script.
+	 *
+	 * @return void
+	 */
 	private function edit_mode_image_accordion_script() {
 		if ( ! $this->is_edit_mode() ) {
 			return;
 		}
 		?>
-		<script>
-			setTimeout(function() {
-				rtsbImageAccordionInit();
-			}, 1000);
+		<script type="text/javascript">
+			if (!'<?php echo esc_attr( Fns::is_optimization_enabled() ); ?>') {
+				setTimeout(function() {
+					rtsbImageAccordionInit();
+				}, 1000);
+			} else {
+				if (typeof elementorFrontend !== 'undefined') {
+					elementorFrontend.hooks.addAction(
+						'frontend/element_ready/rtsb-image-accordion-addon.default',
+						() => {
+							window.waitForRTSB((RTSB) => {
+								RTSB.modules.get('imageAccordion')?.refresh();
+							});
+						}
+					);
+				}
+			}
 		</script>
 
 		<?php

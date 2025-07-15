@@ -15,6 +15,12 @@ $themes = [
 		'purchase_link' => 'https://shopbuilderwp.com/shopbuilder-apps/shopbuilder-flutter-woocommerce-mobile-app/',
 	],
 	[
+		'theme_name'    => 'Sbmart – Free WooCommerce WordPress Theme',
+		'thumbnail'     => esc_url( rtsb()->get_assets_uri( 'images/admin-themes/sbmart-theme.jpg' ) ),
+		'download_link' => 'https://shopbuilderwp.com/shopbuilder-themes/sbmart/',
+		'demo_link'     => 'https://radiustheme.net/themes/sbmart/',
+	],
+	[
 		'theme_name'    => 'EasyShop - Woocommerce WordPress Theme',
 		'thumbnail'     => esc_url( rtsb()->get_assets_uri( 'images/admin-themes/easyshop-theme.jpg' ) ),
 		'purchase_link' => 'https://shopbuilderwp.com/theme/easyshop/',
@@ -56,10 +62,12 @@ $themes = [
 		'purchase_link' => 'https://shopbuilderwp.com/theme/omart/',
 		'demo_link'     => 'https://www.radiustheme.com/demo/shopbuilder/omart/',
 	],
+	/**
 	[
 		'theme_name' => 'More Themes are Coming Soon',
 		'thumbnail'  => esc_url( rtsb()->get_assets_uri( 'images/admin-themes/coming-soon.jpg' ) ),
 	],
+	*/
 ];
 
 ?>
@@ -106,6 +114,12 @@ $themes = [
 												if ( ! empty( $theme['purchase_link'] ) ) {
 													?>
 													<a href="<?php echo esc_url( $theme['purchase_link'] ); ?>" class="rtsb-button rtsb-button-purchase" target="_blank"><?php echo esc_html__( 'Buy Now', 'shopbuilder' ); ?></a>
+													<?php
+												}
+
+												if ( ! empty( $theme['download_link'] ) ) {
+													?>
+													<a href="<?php echo esc_url( $theme['download_link'] ); ?>" class="rtsb-button rtsb-button-purchase" target="_blank"><?php echo esc_html__( 'Download', 'shopbuilder' ); ?></a>
 													<?php
 												}
 												?>

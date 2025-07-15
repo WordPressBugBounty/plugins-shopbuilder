@@ -117,15 +117,34 @@ class Counter extends ElementorWidgetBase {
 		$this->edit_mode_flip_box_script();
 		$this->theme_support( 'render_reset' );
 	}
+
+	/**
+	 * Edit mode script.
+	 *
+	 * @return void
+	 */
 	private function edit_mode_flip_box_script() {
 		if ( ! $this->is_edit_mode() ) {
 			return;
 		}
 		?>
 		<script>
-			setTimeout(function() {
-				rtsbCounterInit();
-			}, 1000);
+			if (!'<?php echo esc_attr( Fns::is_optimization_enabled() ); ?>') {
+				setTimeout(function() {
+					rtsbCounterInit();
+				}, 1000);
+			} else {
+				if (typeof elementorFrontend !== 'undefined') {
+					elementorFrontend.hooks.addAction(
+						'frontend/element_ready/rtsb-counter.default',
+						() => {
+							window.waitForRTSB((RTSB) => {
+								RTSB.modules.get('counterUp')?.refresh();
+							});
+						}
+					);
+				}
+			}
 		</script>
 
 		<?php

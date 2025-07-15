@@ -38,7 +38,7 @@ class ModalTemplate {
 	 *
 	 * @return void
 	 */
-	public function response() {
+	public function response() { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.MaxExceeded
 		$title = '<h2>' . esc_html__( 'Template Settings', 'shopbuilder' ) . '</h2>';
 		if ( ! wp_verify_nonce( Fns::get_nonce(), rtsb()->nonceText ) ) {
 			$return = [
@@ -79,13 +79,13 @@ class ModalTemplate {
 		}
 
 		// Check if the user is not logged in and the provided 'user_id' in the request does not match the currently logged-in user's ID.
-		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.PHP.YodaConditions.NotYoda
 		if ( ! is_user_logged_in() && $user->ID !== sanitize_text_field( $_REQUEST['user_id'] ) ) {
 			wp_die( esc_html__( 'You don\'t have proper authorization to perform this action', 'shopbuilder' ) );
 		}
 
-		$post_id   = isset( $_POST['post_id'] ) ? absint( $_POST['post_id'] ) : null;
-		$layout_id = isset( $_POST['layout_id'] ) ? absint( $_POST['layout_id'] ) : null;
+		$post_id   = isset( $_REQUEST['post_id'] ) ? absint( $_REQUEST['post_id'] ) : null;
+		$layout_id = isset( $_REQUEST['layout_id'] ) ? absint( $_REQUEST['layout_id'] ) : null;
 
 		$template_type    = null;
 		$product_page_for = 'all_products';
@@ -105,7 +105,7 @@ class ModalTemplate {
 				$product_page_for = get_post_meta( $post_id, '_is_product_page_template_for', true );
 			}
 
-			// TODO:: This Condition Will remove after release Gutenberg Addons.
+			/* This Condition Will remove after release Gutenberg Addons. */
 			if ( 'gutenberg' == $edit_by ) {
 				$action  = 'elementor';
 				$edit_by = 'elementor';
@@ -125,19 +125,6 @@ class ModalTemplate {
 
 			$_rtsb_import_id = get_post_meta( $post_id, '_rtsb_import_id', true );
 		}
-
-		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
-		$status            = $_REQUEST['status'] ?? '';
-		$post_args         = [ 'timeout' => 120 ];
-		$post_args['body'] = [
-			'status' => $status,
-		];
-		$layoutRequest     = wp_remote_post( rtsb()->BASE_API, $post_args );
-		$layoutData        = [];
-		if ( ! is_wp_error( $layoutRequest ) && ! empty( $layoutRequest['body'] ) ) {
-			$layoutData = json_decode( $layoutRequest['body'], true );
-		}
-
 		ob_start();
 
 		?>
@@ -407,29 +394,21 @@ class ModalTemplate {
 					</span>
 				</div>
 				<!--                TODO: Moday Layout -->
-				<?php if ( ! $post_id ) { ?>
-					<div class="set-default-layout-wrapper rtsb-tb-field-wraper">
+				<?php
+				if ( ! $post_id ) {
+					if ( defined( 'ELEMENTOR_PATH' ) && class_exists( '\Elementor\Utils' ) ) {
+						$placeholderImageSrc = \Elementor\Utils::get_placeholder_image_src();
+					} else {
+						$placeholderImageSrc = '#';
+					}
+					?>
+					<div class="set-default-layout-wrapper rtsb-tb-field-wraper" style="opacity: 0" >
 						<label>
 							<?php esc_html_e( 'Pre-built Templates ', 'shopbuilder' ); ?>
 							<span id="modallabelPrefix"></span>
 						</label>
-						<div class="set-default-layout">
-							<?php
-							$default_item = [
-								'template_type' => 'default',
-								'image_url'     => \Elementor\Utils::get_placeholder_image_src(),
-								'preview_link'  => '',
-								'title'         => __( 'Blank Template', 'shopbuilder' ),
-							];
-
-							$this->get_modal_card_html( $default_item );
-
-							if ( ! empty( $layoutData['layouts'] ) ) {
-								foreach ( $layoutData['layouts'] as $item ) {
-									$this->get_modal_card_html( $item );
-								}
-							}
-							?>
+						<div class="set-default-layout" data-has-pro="<?php echo esc_attr( rtsb()->has_pro() ); ?>"  data-rest-url="<?php echo esc_url( rtsb()->BASE_API ); ?>" data-placeholder-image-src="<?php echo esc_url( $placeholderImageSrc ); ?>">
+							<!-- Layout Will Add Via Ajax-->
 						</div>
 					</div>
 				<?php } ?>
@@ -469,61 +448,27 @@ class ModalTemplate {
 		wp_send_json( $return );
 		wp_die();
 	}
-
-	public function default_layout_template_html( $key, $is_checked, $builder, $value = [] ) {
-		$layout_type = $key . ( $builder ? '_' . $builder : null );
-		?>
-		<!--  Elementor  -->
-		<label class="layout-container type-<?php echo esc_attr( $key ); ?>"
-			   data-layout-type='<?php echo esc_attr( $layout_type ); ?>'>
-			<input <?php echo esc_attr( $is_checked ); ?>
-					class="rtsb-field" type="radio"
-					value="<?php echo ! empty( $value['import_file'] ) ? esc_attr( $value['import_file'] ) : ''; ?>"
-					name="import_default_layout"/>
-
-			<span class="checkmark dashicons"></span>
-			<div class="image-wrapper">
-				<?php if ( ! empty( $value['image'] ) ) { ?>
-					<img src="<?php echo esc_url( $value['image'] ); ?>" alt="">
-				<?php } ?>
-			</div>
-			<?php if ( ! empty( $value['text_label'] ) ) { ?>
-				<div class="image-label">
-					<span class="label-text"><?php echo esc_html( $value['text_label'] ); ?></span>
-					<?php if ( ! empty( $value['live_preview'] ) ) { ?>
-						<a target="_blank" class="btn-live-preview" href="<?php echo esc_url( $value['live_preview'] ); ?>">
-							<span class="dashicons dashicons-visibility"></span>
-							<?php esc_html_e( 'Live Preview', 'shopbuilder' ); ?>
-						</a>
-					<?php } ?>
-				</div>
-			<?php } ?>
-		</label>
-		<?php
-	}
-
+    
 	/**
 	 * Get Modal Card Markup.
 	 *
-	 * @param $item
-	 * @param $checked
+	 * @param array $item Item.
 	 *
 	 * @return void
 	 */
 	public function get_modal_card_html( $item ) {
-
 		?>
 		<div class="layout-container rtsb-template-item type-<?php echo esc_attr( $item['template_type'] ); ?>"
 			 data-layout-type='<?php echo esc_attr( $item['template_type'] ); ?>'>
 			<input class="rtsb-field" type="hidden" value="<?php echo esc_attr( $item['id'] ?? '' ); ?>" name="import_default_layout"/>
-
 			<div class="image-wrapper">
 				<?php if ( $item['image_url'] ) : ?>
 					<img src="<?php echo esc_url( $item['image_url'] ); ?>" alt="<?php echo esc_attr( $item['title'] ); ?>">
 				<?php endif; ?>
 
 				<?php if ( 'default' != $item['template_type'] && ( ! rtsb()->has_pro() ) ) : ?>
-					<div class="card-label">
+					<div class="card-label lllllll">
+						label
 					<span class="rtsb-btn-import <?php echo esc_attr( $item['status'] ?? 'free' ); ?>-btn">
 						<?php echo esc_html( $item['status'] ?? 'Free' ); ?>
 					</span>
@@ -543,7 +488,10 @@ class ModalTemplate {
 						</a>
 
 
-						<?php if ( rtsb()->has_pro() || $item['status'] == 'free' ) : ?>
+						<?php
+						// phpcs:ignore WordPress.PHP.YodaConditions.NotYoda
+						if ( rtsb()->has_pro() || $item['status'] == 'free' ) :
+							?>
 							<a class="rtsb-btn-import import-btn rtsb-import-layout">
 								<svg width="22" height="20" viewBox="0 0 22 20" fill="none" xmlns="http://www.w3.org/2000/svg">
 									<path d="M11 12.2295C10.9048 12.2296 10.8106 12.2113 10.7226 12.1757C10.6347 12.14 10.5547 12.0878 10.4874 12.0219C10.4201 11.956 10.3668 11.8778 10.3304 11.7917C10.294 11.7056 10.2753 11.6134 10.2754 11.5202L10.2754 0.912773C10.2754 0.72466 10.3517 0.544251 10.4876 0.411235C10.6235 0.278219 10.8078 0.203491 11 0.203491C11.1922 0.203491 11.3765 0.278219 11.5124 0.411235C11.6483 0.544251 11.7246 0.72466 11.7246 0.912773L11.7246 11.5202C11.7246 11.7083 11.6483 11.8887 11.5124 12.0218C11.3765 12.1548 11.1922 12.2295 11 12.2295Z"

@@ -64,6 +64,7 @@ class Controls {
 	 * @return array
 	 */
 	private static function preset( $obj ) {
+		$status                        = ! rtsb()->has_pro();
 		$fields['sb_accordion_preset'] = $obj->start_section(
 			esc_html__( 'Layout', 'shopbuilder' ),
 			'content'
@@ -107,6 +108,8 @@ class Controls {
 			'tablet_default' => '1',
 			'mobile_default' => '1',
 			'required'       => true,
+			'classes'        => $obj->pro_class(),
+			'is_pro'         => $status,
 			'condition'      => [ 'activate_slider_item' => 'yes' ],
 		];
 
@@ -322,7 +325,8 @@ class Controls {
 	 * @return array
 	 */
 	public static function slider_settings( $obj ) {
-		$fields                                        = SettingsFields::slider_settings( $obj );
+		$fields = SettingsFields::slider_settings( $obj );
+		unset( $fields['slider_nav_position'] );
 		$fields['slider_control_section']['condition'] = [
 			'activate_slider_item' => 'yes',
 		];

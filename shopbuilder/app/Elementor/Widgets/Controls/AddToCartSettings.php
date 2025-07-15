@@ -35,6 +35,7 @@ class AddToCartSettings {
 	/**
 	 * Widget Field
 	 *
+	 * @param object $widget object.
 	 * @return array
 	 */
 	public static function widget_fields( $widget ) {
@@ -378,6 +379,7 @@ class AddToCartSettings {
 				],
 				'selectors' => [
 					self::$selectors['variation_height'] => 'height: {{SIZE}}{{UNIT}};',
+					':root'                              => '--details-page-attr-height:{{SIZE}}{{UNIT}};',
 				],
 			],
 			'variation_width'            => [
@@ -400,6 +402,7 @@ class AddToCartSettings {
 				],
 				'selectors'  => [
 					self::$selectors['variation_width'] => 'min-width: {{SIZE}}{{UNIT}};',
+					':root'                             => '--details-page-attr-width:{{SIZE}}{{UNIT}};',
 				],
 			],
 			'variation_border'           => [
@@ -414,6 +417,7 @@ class AddToCartSettings {
 				'type'       => 'slider',
 				'selectors'  => [
 					self::$selectors['variation_border_radius'] => 'border-radius: {{SIZE}}{{UNIT}};',
+					':root' => '--variation-border-radius:{{SIZE}}{{UNIT}};',
 				],
 			],
 			'variation_padding'          => [
@@ -432,6 +436,7 @@ class AddToCartSettings {
 				'separator'   => 'default',
 				'selectors'   => [
 					self::$selectors['variation_padding'] => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					':root'                               => '--variation-padding:{{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			],
 			'variation_label_margin'     => [
