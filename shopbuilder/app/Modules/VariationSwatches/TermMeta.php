@@ -119,7 +119,7 @@ class TermMeta {
 				break;
 			case 'button':
 			default:
-				do_action( 'rtsb_variation_attribute_preview', $term_id, $attribute, $fields );
+				do_action( 'rtsb/variation/attribute/preview', $term_id, $attribute, $fields );
 				break;
 		}
 	}
@@ -204,14 +204,14 @@ class TermMeta {
 					break;
 				default:
 					$post_value = sanitize_text_field( wp_unslash( $_POST[ $field_id ] ) );
-					do_action( 'rtsb_save_term_meta', $term_id, $field, $post_value, $taxonomy );
+					do_action( 'rtsb/save/term/meta', $term_id, $field, $post_value, $taxonomy );
 					break;
 			}
 
 			update_term_meta( $term_id, $field_id, $post_value );
 		}
 
-		do_action( 'rtsb_after_term_meta_saved', $term_id, $taxonomy );
+		do_action( 'rtsb/after/term/meta/saved', $term_id, $taxonomy );
 	}
 
 	/**
@@ -252,7 +252,7 @@ class TermMeta {
 	 */
 	public static function generate_form_fields( $fields, $term ) {
 		wp_enqueue_script( 'rtsb-variation-swatch-admin' );
-		$fields = apply_filters( 'rtsb_term_meta_fields', $fields, $term );
+		$fields = apply_filters( 'rtsb/term/meta/fields', $fields, $term );
 
 		if ( empty( $fields ) ) {
 			return;
@@ -260,7 +260,7 @@ class TermMeta {
 		wp_nonce_field( rtsb()->nonceText, rtsb()->nonceId );
 		foreach ( $fields as $field ) {
 
-			$field = apply_filters( 'rtsb_term_meta_field', $field, $term );
+			$field = apply_filters( 'rtsb/term/meta/field', $field, $term );
 
 			$field['id'] = esc_html( $field['id'] );
 
@@ -361,7 +361,7 @@ class TermMeta {
 					<?php
 					break;
 				default:
-					do_action( 'rtsb_term_meta_field', $field, $term );
+					do_action( 'rtsb/term/meta/field', $field, $term );
 					break;
 
 			}

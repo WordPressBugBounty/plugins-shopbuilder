@@ -86,6 +86,7 @@ class GalleryAdmin {
 		// Save the checkbox value as 'yes' or 'no'.
 		$value = isset( $_POST['rtsb_vg_disable_valiation_gallery'] ) ? 'yes' : 'no';
 		update_post_meta( $post_id, '_rtsb_vg_disable_valiation_gallery', $value );
+		GalleryFns::delete_transients( $post_id, 'default-images' );
 	}
 	/**
 	 * Saves variation gallery image IDs from the variation admin panel.
@@ -96,12 +97,10 @@ class GalleryAdmin {
 	 */
 	public function save_variation_gallery( $variation_id ) {
 		check_ajax_referer( 'save-variations', 'security' );
-
 		// Check permissions again and make sure we have what we need.
 		if ( ! current_user_can( 'edit_products' ) || empty( $_POST ) || empty( $_POST['product_id'] ) ) { // phpcs:ignore WordPress.WP.Capabilities.Unknown
 			wp_die( -1 );
 		}
-
 		// Sanitize and save or delete meta.
 		if ( isset( $_POST['rtsb_vg'][ $variation_id ] ) && is_array( $_POST['rtsb_vg'][ $variation_id ] ) ) {
 			$rtsb_vg_ids = array_map( 'absint', $_POST['rtsb_vg'][ $variation_id ] );
@@ -110,6 +109,7 @@ class GalleryAdmin {
 		} else {
 			delete_post_meta( $variation_id, 'rtsb_vg_images' );
 		}
+		GalleryFns::delete_transients( $variation_id, 'variation-images' );
 	}
 	/**
 	 * @return void
@@ -144,14 +144,17 @@ class GalleryAdmin {
 						$gallery_images = array_values( array_unique( $gallery_images ) );
 						foreach ( $gallery_images as $image_id ) :
 							$image = wp_get_attachment_image_src( $image_id );
-							$video = false;
 							/**
 							 * Functions::gallery_has_video( $image_id );.
 							 */
 							if ( empty( $image[0] ) ) {
 								continue;
 							}
-							$add_video_class = $video ? ' video' : '';
+							$add_video_class = '';
+							if ( rtsb()->has_pro() ) {
+								$video           = trim( get_post_meta( $image_id, 'rtsb_vg_video_link', true ) ?? '' );
+								$add_video_class = ! empty( $video ) ? ' video' : '';
+							}
 							?>
 							<li class="image<?php echo esc_html( $add_video_class ); ?>">
 								<input type="hidden" name="rtsb_vg[<?php echo absint( $variation_id ); ?>][]" value="<?php echo absint( $image_id ); ?>">

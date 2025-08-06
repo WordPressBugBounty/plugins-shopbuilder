@@ -55,6 +55,124 @@ class ModuleList extends ListModel {
 	 * @return mixed|null
 	 */
 	protected function raw_list() {
+		$isSwatchActive  = false;
+		$isGalleryActive = false;
+		$variationSwatch = apply_filters(
+			'rtsb/module/variation_swatches/options',
+			[
+				'id'           => 'variation_swatches',
+				'title'        => esc_html__( 'Variation Swatches', 'shopbuilder' ),
+				'badge'        => 'new',
+				'package'      => 'free',
+				'active'       => 'on',
+				'base_class'   => VariationSwatches::class,
+				'category'     => 'general',
+				'active_field' => [
+					'label' => esc_html__( 'Enable Variation Swatches Module?', 'shopbuilder' ),
+					'help'  => esc_html__( 'Switch on to enable variation swatches module.', 'shopbuilder' ),
+				],
+				'tabs'         => [
+					'general'       => [
+						'title' => esc_html__( 'General', 'shopbuilder' ),
+					],
+					'showcase_shop' => [
+						'title' => esc_html__( 'Showcase / Shop', 'shopbuilder' ),
+					],
+					'style'         => [
+						'title' => esc_html__( 'Style', 'shopbuilder' ),
+					],
+				],
+				'fields'       => $this->get_variation_swatches_fields(),
+			],
+			$isSwatchActive
+		);
+
+		if ( Fns::check_plugin_active( 'woo-product-variation-swatches/woo-product-variation-swatches.php' ) ) {
+			$isSwatchActive  = true;
+			$variationSwatch = apply_filters(
+				'rtsb/module/variation_swatches/options',
+				[
+					'id'                => 'variation_swatches',
+					'external'          => true,
+					'category'          => 'general',
+					'title'             => esc_html__( 'Variation Swatches', 'shopbuilder' ),
+					'pluginSlug'        => 'woo-product-variation-swatches',
+					'pluginIsInstalled' => Fns::check_plugin_installed( 'woo-product-variation-swatches/woo-product-variation-swatches.php' ),
+					'pluginIsActive'    => Fns::check_plugin_active( 'woo-product-variation-swatches/woo-product-variation-swatches.php' ),
+					'pluginActiveUrl'   => add_query_arg(
+						[
+							'_wpnonce' => wp_create_nonce( 'activate-plugin_woo-product-variation-swatches/woo-product-variation-swatches.php' ),
+							'action'   => 'activate',
+							'plugin'   => 'woo-product-variation-swatches/woo-product-variation-swatches.php',
+						],
+						admin_url( 'plugins.php' )
+					),
+					'help'              => __( 'Currently using an external plugin. You can disable the external plugin and enable the built-in module for better performance. You’ll need to reconfigure settings if you switch to  built-in module.', 'shopbuilder' ),
+					'package'           => 'free',
+					'active_field'      => [
+						'disable' => false,
+					],
+					'fields'            => [],
+				],
+				$isSwatchActive
+			);
+		}
+		$variationGallery = apply_filters(
+			'rtsb/module/variation_gallery/options',
+			[
+				'id'           => 'variation_gallery',
+				'title'        => esc_html__( 'Variation Gallery', 'shopbuilder' ),
+				'badge'        => 'new',
+				'package'      => 'free',
+				'active'       => 'on',
+				'base_class'   => VariationGalleryInit::class,
+				'category'     => 'general',
+				'active_field' => [
+					'label' => esc_html__( 'Enable Variation Gallery Module?', 'shopbuilder' ),
+					'help'  => esc_html__( 'Switch on to enable variation gallery module.', 'shopbuilder' ),
+				],
+				'tabs'         => [
+					'general' => [
+						'title' => esc_html__( 'General', 'shopbuilder' ),
+					],
+					'styles'  => [
+						'title' => esc_html__( 'Styles', 'shopbuilder' ),
+					],
+				],
+				'fields'       => $this->get_variation_gallery_fields(),
+			],
+			$isGalleryActive
+		);
+		if ( Fns::check_plugin_active( 'woo-product-variation-gallery/woo-product-variation-gallery.php' ) ) {
+			$isGalleryActive  = true;
+			$variationGallery = apply_filters(
+				'rtsb/module/variation_gallery/options',
+				[
+					'id'                => 'variation_gallery',
+					'external'          => true,
+					'category'          => 'general',
+					'title'             => esc_html__( 'Variation Gallery', 'shopbuilder' ),
+					'pluginSlug'        => 'woo-product-variation-gallery',
+					'pluginIsInstalled' => Fns::check_plugin_installed( 'woo-product-variation-gallery/woo-product-variation-gallery.php' ),
+					'pluginIsActive'    => Fns::check_plugin_active( 'woo-product-variation-gallery/woo-product-variation-gallery.php' ),
+					'pluginActiveUrl'   => add_query_arg(
+						[
+							'_wpnonce' => wp_create_nonce( 'activate-plugin_woo-product-variation-gallery/woo-product-variation-gallery.php' ),
+							'action'   => 'activate',
+							'plugin'   => 'woo-product-variation-gallery/woo-product-variation-gallery.php',
+						],
+						admin_url( 'plugins.php' )
+					),
+					'help'              => __( 'Currently using an external plugin. You can disable the external plugin and enable the built-in module for better performance. You’ll need to reconfigure settings if you switch to  built-in module.', 'shopbuilder' ),
+					'package'           => 'free',
+					'active_field'      => [
+						'disable' => false,
+					],
+					'fields'            => [],
+				],
+				$isGalleryActive
+			);
+		}
 		$list = [
 			'quick_view'                    => apply_filters(
 				'rtsb/module/quick_view/options',
@@ -880,111 +998,8 @@ class ModuleList extends ListModel {
 					],
 				]
 			),
-			/**
-			'variation_swatches'            => apply_filters(
-				'rtsb/module/variation_swatches/options',
-				[
-					'id'           => 'variation_swatches',
-					'title'        => esc_html__( 'Variation Swatches', 'shopbuilder' ),
-					'package'      => 'free',
-					'active'       => 'on',
-					'base_class'   => VariationSwatches::class,
-					'category'     => 'general',
-					'active_field' => [
-						'label' => esc_html__( 'Enable Variation Swatches Module?', 'shopbuilder' ),
-						'help'  => esc_html__( 'Switch on to enable variation swatches module.', 'shopbuilder' ),
-					],
-					'tabs'         => [
-						'general'       => [
-							'title' => esc_html__( 'General', 'shopbuilder' ),
-						],
-						'showcase_shop' => [
-							'title' => esc_html__( 'Showcase / Shop', 'shopbuilder' ),
-						],
-						'style'         => [
-							'title' => esc_html__( 'Style', 'shopbuilder' ),
-						],
-					],
-					'fields'       => $this->get_variation_swatches_fields(),
-				]
-			),
-			'variation_gallery'             => apply_filters(
-				'rtsb/module/variation_gallery/options',
-				[
-					'id'           => 'variation_gallery',
-					'title'        => esc_html__( 'Variation Gallery', 'shopbuilder' ),
-					'package'      => 'free',
-					'active'       => 'on',
-					'base_class'   => VariationGalleryInit::class,
-					'category'     => 'general',
-					'active_field' => [
-						'label' => esc_html__( 'Enable Variation Gallery Module?', 'shopbuilder' ),
-						'help'  => esc_html__( 'Switch on to enable variation gallery module.', 'shopbuilder' ),
-					],
-					'tabs'         => [
-						'general' => [
-							'title' => esc_html__( 'General', 'shopbuilder' ),
-						],
-						'style'   => [
-							'title' => esc_html__( 'Style', 'shopbuilder' ),
-						],
-					],
-					'fields'       => $this->get_variation_gallery_fields(),
-				]
-			),
-			*/
-			'variation_swatches'            => apply_filters(
-				'rtsb/module/variation_swatches/options',
-				[
-					'id'                => 'variation_swatches',
-					'external'          => true,
-					'category'          => 'general',
-					'title'             => esc_html__( 'Variation Swatches', 'shopbuilder' ),
-					'pluginSlug'        => 'woo-product-variation-swatches',
-					'pluginIsInstalled' => Fns::check_plugin_installed( 'woo-product-variation-swatches/woo-product-variation-swatches.php' ),
-					'pluginIsActive'    => Fns::check_plugin_active( 'woo-product-variation-swatches/woo-product-variation-swatches.php' ),
-					'pluginActiveUrl'   => add_query_arg(
-						[
-							'_wpnonce' => wp_create_nonce( 'activate-plugin_woo-product-variation-swatches/woo-product-variation-swatches.php' ),
-							'action'   => 'activate',
-							'plugin'   => 'woo-product-variation-swatches/woo-product-variation-swatches.php',
-						],
-						admin_url( 'plugins.php' )
-					),
-					'help'              => __( 'This module requires: <a href="https://wordpress.org/plugins/woo-product-variation-swatches/">Variation Swatches for WooCommerce</a>.', 'shopbuilder' ),
-					'package'           => 'free',
-					'active_field'      => [
-						'disable' => false,
-					],
-					'fields'            => [],
-				]
-			),
-			'variation_gallery'             => apply_filters(
-				'rtsb/module/variation_gallery/options',
-				[
-					'id'                => 'variation_gallery',
-					'external'          => true,
-					'category'          => 'general',
-					'title'             => esc_html__( 'Variation Gallery', 'shopbuilder' ),
-					'pluginSlug'        => 'woo-product-variation-gallery',
-					'pluginIsInstalled' => Fns::check_plugin_installed( 'woo-product-variation-gallery/woo-product-variation-gallery.php' ),
-					'pluginIsActive'    => Fns::check_plugin_active( 'woo-product-variation-gallery/woo-product-variation-gallery.php' ),
-					'pluginActiveUrl'   => add_query_arg(
-						[
-							'_wpnonce' => wp_create_nonce( 'activate-plugin_woo-product-variation-gallery/woo-product-variation-gallery.php' ),
-							'action'   => 'activate',
-							'plugin'   => 'woo-product-variation-gallery/woo-product-variation-gallery.php',
-						],
-						admin_url( 'plugins.php' )
-					),
-					'help'              => __( 'This module requires: <a href="https://wordpress.org/plugins/woo-product-variation-gallery/">Variation Images Gallery for WooCommerce</a>.', 'shopbuilder' ),
-					'package'           => 'free',
-					'active_field'      => [
-						'disable' => false,
-					],
-					'fields'            => [],
-				]
-			),
+			'variation_swatches'            => $variationSwatch,
+			'variation_gallery'             => $variationGallery,
 			'product_badges'                => apply_filters(
 				'rtsb/module/product_badges/options',
 				[
@@ -3671,13 +3686,11 @@ class ModuleList extends ListModel {
 					'id'      => 'default_dropdown_convert',
 					'label'   => esc_html__( 'Default Dropdown Convert', 'shopbuilder' ),
 					'help'    => esc_html__( 'Dropdown Convert To Button Or Image', 'shopbuilder' ),
-					/**
-					*   'isPro'   => ! rtsb()->has_pro(),
-					*/
+					'isPro'   => ! rtsb()->has_pro(),
 					'type'    => 'select',
-					'value'   => '',
+					'value'   => 'button',
 					'options' => [
-						'select' => esc_html__( 'Select ( Default )', 'shopbuilder' ),
+						'select' => esc_html__( 'Select ( Default, Not Convert )', 'shopbuilder' ),
 						'button' => esc_html__( 'Button', 'shopbuilder' ),
 						'image'  => esc_html__( 'Image', 'shopbuilder' ),
 					],
@@ -3697,7 +3710,7 @@ class ModuleList extends ListModel {
 					'label'   => esc_html__( 'Disabled Attribute behavior', 'shopbuilder' ),
 					'help'    => esc_html__( 'Disabled attribute will be hide / blur.', 'shopbuilder' ) . ' <span>' . __( ' Note: This feature will be operational for variation quantities below the "Ajax variation threshold.', 'shopbuilder' ) . '</span>',
 					'type'    => 'select',
-					'value'   => 'blur',
+					'value'   => 'blur-cross',
 					'options' => [
 						'blur-cross'    => esc_html__( 'Blur And Cross', 'shopbuilder' ),
 						'blur-no-cross' => esc_html__( 'Only Blur', 'shopbuilder' ),
@@ -3819,7 +3832,7 @@ class ModuleList extends ListModel {
 					'isPro'      => ! rtsb()->has_pro(),
 					'label'      => esc_html__( 'Image Selector', 'shopbuilder' ),
 					'help'       => esc_html__( 'Archive product image selector to show variation image. You can also use multiple selectors separated by comma (.attachment-woocommerce_thumbnail, .wp-post-image) ', 'shopbuilder' ),
-					'value'      => '.wp-post-image, .attachment-woocommerce_thumbnail',
+					'value'      => '.wp-post-image, .attachment-woocommerce_thumbnail, .rtsb-product-image',
 					'dependency' => [
 						'rules' => [
 							[
@@ -3837,7 +3850,7 @@ class ModuleList extends ListModel {
 					'help'       => esc_html__( 'Display showcase swatches in a specific position.', 'shopbuilder' ) . '<br/>' . __( 'Note: Some themes remove or override default WooCommerce hooks. If the swatches do not appear as expected, you may need to manually set a custom position.', 'shopbuilder' ),
 					'isPro'      => ! rtsb()->has_pro(),
 					'type'       => 'select',
-					'value'      => 'after_title_and_price',
+					'value'      => 'before_add_to_cart',
 					'options'    => apply_filters(
 						'rtsb_showcase_swatches_positions',
 						[
@@ -4083,7 +4096,24 @@ class ModuleList extends ListModel {
 				'details_page_attribute_size'       => [
 					'id'    => 'details_page_attribute_size',
 					'type'  => 'title',
-					'label' => esc_html__( 'Details Page Attributes Size', 'shopbuilder' ),
+					'label' => esc_html__( 'Details Page Attributes', 'shopbuilder' ),
+					'tab'   => 'style',
+				],
+				'details_page_attr_label_color'     => [
+					'id'    => 'details_page_attr_label_color',
+					'label' => esc_html__( 'Product Page Attribute Label Color', 'shopbuilder' ),
+					'type'  => 'color',
+					'value' => '#333333',
+					'tab'   => 'style',
+				],
+				'details_page_attr_label_font_size' => [
+					'id'    => 'details_page_attr_label_font_size',
+					'label' => esc_html__( 'Product Page Attribute Label Font Size', 'shopbuilder' ),
+					'type'  => 'slider',
+					'min'   => 8,
+					'max'   => 50,
+					'unit'  => 'px',
+					'value' => 16,
 					'tab'   => 'style',
 				],
 				'details_page_attribute_width'      => [
@@ -4122,7 +4152,7 @@ class ModuleList extends ListModel {
 				'showcase_attribute_size'           => [
 					'id'    => 'showcase_attribute_size',
 					'type'  => 'title',
-					'label' => esc_html__( 'Product Showcase Attributes Size', 'shopbuilder' ),
+					'label' => esc_html__( 'Shop Page / Product Showcase Attributes Size', 'shopbuilder' ),
 					'tab'   => 'style',
 				],
 				'showcase_attribute_width'          => [
@@ -4198,7 +4228,35 @@ class ModuleList extends ListModel {
 		return apply_filters(
 			'rtsb/module/variation_gallery/fields',
 			[
-				'thumbnails_columns'    => [
+				'image_zoom'                   => [
+					'id'      => 'image_zoom',
+					'type'    => 'switch',
+					'default' => false,
+					'label'   => esc_html__( 'Zoom Gallery image', 'shopbuilder' ),
+					'tab'     => 'general',
+				],
+				'lightBox'                     => [
+					'id'      => 'lightBox',
+					'type'    => 'switch',
+					'default' => false,
+					'label'   => esc_html__( 'Enable Images lightBox', 'shopbuilder' ),
+					'tab'     => 'general',
+				],
+				'lightBox_button_position'     => [
+					'id'      => 'lightBox_button_position',
+					'type'    => 'select',
+					'value'   => 'top-right',
+					'label'   => esc_html__( 'Zoom Button Position', 'shopbuilder' ),
+					'isPro'   => ! rtsb()->has_pro(),
+					'options' => [
+						'top-right'    => esc_html__( 'Top Right', 'shopbuilder' ),
+						'top-left'     => esc_html__( 'Top Left', 'shopbuilder' ),
+						'bottom-right' => esc_html__( 'Bottom Right', 'shopbuilder' ),
+						'bottom-left'  => esc_html__( 'Bottom Left', 'shopbuilder' ),
+					],
+					'tab'     => 'general',
+				],
+				'thumbnails_columns'           => [
 					'id'    => 'thumbnails_columns',
 					'type'  => 'slider',
 					'label' => esc_html__( 'Thumbnails Items per row / slider view', 'shopbuilder' ),
@@ -4209,29 +4267,7 @@ class ModuleList extends ListModel {
 					'value' => 4,
 					'tab'   => 'general',
 				],
-				'thumbnails_columns_sm' => [
-					'id'    => 'thumbnails_columns_sm',
-					'type'  => 'slider',
-					'label' => esc_html__( 'Thumbnails Items per row / slider view (Medium Device)', 'shopbuilder' ),
-					'help'  => esc_html__( 'Product Thumbnails Item Image. Default value is: 4. Limit: 2-8. The field required for slider.', 'shopbuilder' ),
-					'min'   => 2,
-					'max'   => 8,
-					'unit'  => '',
-					'value' => 4,
-					'tab'   => 'general',
-				],
-				'thumbnails_columns_xs' => [
-					'id'    => 'thumbnails_columns_xs',
-					'type'  => 'slider',
-					'label' => esc_html__( 'Product Thumbnails Item Image For (Small Device)', 'shopbuilder' ),
-					'help'  => esc_html__( 'Product Thumbnails Item Image. Default value is: 3. Limit: 2-8. The field required for slider.', 'shopbuilder' ),
-					'min'   => 2,
-					'max'   => 8,
-					'unit'  => '',
-					'value' => 3,
-					'tab'   => 'general',
-				],
-				'thumbnails_gap'        => [
+				'thumbnails_gap'               => [
 					'id'    => 'thumbnails_gap',
 					'type'  => 'slider',
 					'label' => esc_html__( 'Thumbnails Gap', 'shopbuilder' ),
@@ -4241,6 +4277,156 @@ class ModuleList extends ListModel {
 					'unit'  => 'px',
 					'value' => 0,
 					'tab'   => 'general',
+				],
+				'gallery_style'                => [
+					'id'      => 'gallery_style',
+					'type'    => 'select',
+					'value'   => 'bottom',
+					'label'   => esc_html__( 'Gallery Style', 'shopbuilder' ),
+					'isPro'   => ! rtsb()->has_pro(),
+					'options' => [
+						'bottom' => esc_html__( 'Thumbnail Position Bottom', 'shopbuilder' ),
+						'left'   => esc_html__( 'Thumbnail Position Left', 'shopbuilder' ),
+						'right'  => esc_html__( 'Thumbnail Position Right', 'shopbuilder' ),
+						'grid'   => esc_html__( 'Grid View Images', 'shopbuilder' ),
+					],
+					'tab'     => 'general',
+				],
+				'adaptive_height'              => [
+					'id'         => 'adaptive_height',
+					'type'       => 'switch',
+					'default'    => false,
+					'label'      => esc_html__( 'Main Slider Adaptive Height', 'shopbuilder' ),
+					'tab'        => 'general',
+					'dependency' => [
+						'rules' => [
+							[
+								'item'     => 'modules.variation_gallery.gallery_style',
+								'value'    => 'bottom',
+								'operator' => '==',
+							],
+						],
+					],
+				],
+				'main_slider_alignment'        => [
+					'id'         => 'main_slider_alignment',
+					'type'       => 'switch',
+					'value'      => 'center',
+					'label'      => esc_html__( 'Main Image Middle Position', 'shopbuilder' ),
+					'help'       => esc_html__( 'The main image area will align vertically in the center if the inner content is shorter than the adjacent content.', 'shopbuilder' ),
+					'tab'        => 'general',
+					'dependency' => [
+						'rules' => [
+							[
+								'item'     => 'modules.variation_gallery.gallery_style',
+								'value'    => [ 'left', 'right' ],
+								'operator' => 'in',
+							],
+						],
+					],
+				],
+
+				'main_image_transition_effect' => [
+					'id'         => 'main_image_transition_effect',
+					'type'       => 'select',
+					'value'      => 'slide',
+					'label'      => esc_html__( 'Main Image Transition Effect', 'shopbuilder' ),
+					'isPro'      => ! rtsb()->has_pro(),
+					'options'    => [
+						'slide' => esc_html__( 'Slide', 'shopbuilder' ),
+						'fade'  => esc_html__( 'Fade', 'shopbuilder' ),
+					],
+					'tab'        => 'general',
+					'dependency' => [
+						'rules' => [
+							[
+								'item'     => 'modules.variation_gallery.gallery_style',
+								'value'    => 'grid',
+								'operator' => '!=',
+							],
+						],
+					],
+				],
+				'thumb_image_section_width'    => [
+					'id'         => 'thumb_image_section_width',
+					'type'       => 'slider',
+					'label'      => esc_html__( 'Thumbnail Image Section Width', 'shopbuilder' ),
+					'help'       => esc_html__( 'Product Thumbnails Section Width In Pixel.', 'shopbuilder' ),
+					'min'        => 150,
+					'max'        => 1000,
+					'unit'       => 'px',
+					'value'      => 150,
+					'tab'        => 'general',
+					'dependency' => [
+						'rules' => [
+							[
+								'item'     => 'modules.variation_gallery.gallery_style',
+								'value'    => [ 'left', 'right' ],
+								'operator' => 'in',
+							],
+						],
+					],
+				],
+				'image_section_height'         => [
+					'id'         => 'image_section_height',
+					'type'       => 'slider',
+					'label'      => esc_html__( 'Slider Height/Image Section Height', 'shopbuilder' ),
+					'help'       => esc_html__( 'Product Thumbnails And Main Image Section Height In Pixel.', 'shopbuilder' ),
+					'min'        => 400,
+					'max'        => 2000,
+					'unit'       => 'px',
+					'value'      => 500,
+					'tab'        => 'general',
+					'dependency' => [
+						'rules' => [
+							[
+								'item'     => 'modules.variation_gallery.gallery_style',
+								'value'    => [ 'left', 'right' ],
+								'operator' => 'in',
+							],
+						],
+					],
+				],
+				'main_image_border_color'      => [
+					'id'         => 'main_image_border_color',
+					'label'      => esc_html__( 'Main Image Border Color', 'shopbuilder' ),
+					'tab'        => 'styles',
+					'type'       => 'color',
+					'dependency' => [
+						'rules' => [
+							[
+								'item'     => 'modules.variation_gallery.gallery_style',
+								'value'    => 'grid',
+								'operator' => '!=',
+							],
+						],
+					],
+				],
+				'thumbnail_item_border_color'  => [
+					'id'    => 'thumbnail_item_border_color',
+					'label' => esc_html__( 'Thumbnail item Border Color', 'shopbuilder' ),
+					'tab'   => 'styles',
+					'type'  => 'color',
+				],
+				'thumbnail_item_inner_padding' => [
+					'id'    => 'thumbnail_item_inner_padding',
+					'type'  => 'slider',
+					'label' => esc_html__( 'Thumbnail Item Inner Padding', 'shopbuilder' ),
+					'min'   => 0,
+					'max'   => 30,
+					'unit'  => 'px',
+					'value' => 10,
+					'tab'   => 'styles',
+				],
+				'thumbnail_item_border_radius' => [
+					'id'    => 'thumbnail_item_border_radius',
+					'type'  => 'slider',
+					'label' => esc_html__( 'Thumbnail Item Border Radius', 'shopbuilder' ),
+					'min'   => 0,
+					'max'   => 30,
+					'unit'  => 'px',
+					'value' => 5,
+					'tab'   => 'styles',
 				],
 			]
 		);

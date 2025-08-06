@@ -74,7 +74,8 @@ class BadgesFrontEnd {
 
 		if ( $product_page_above_image ) {
 			add_filter( 'woocommerce_single_product_image_thumbnail_html', [ $this, 'show_badge_on_product_page_thumbnail' ], 99, 1 );
-			add_action( 'rtwpvg_product_badge', [ $this, 'rtwpvg_product_badge' ], 15, 5 );
+			add_action( 'rtwpvg_product_badge', [ $this, 'product_gallery_images_badge' ], 15, 5 );
+			add_action( 'rtsb_product_badge', [ $this, 'product_gallery_images_badge' ], 15, 5 );
 			// Product details action will go here.
 		}
 
@@ -309,7 +310,7 @@ class BadgesFrontEnd {
 	/**
 	 * @return void
 	 */
-	public function rtwpvg_product_badge() {
+	public function product_gallery_images_badge() {
 		if ( ! apply_filters( 'rtsb/module/badges/show', true ) ) {
 			return;
 		}

@@ -34,7 +34,6 @@ final class VariationSwatches {
 	private function __construct() {
 		$already_active = Fns::check_plugin_active( 'woo-product-variation-swatches/woo-product-variation-swatches.php' );
 		if ( ! $already_active ) {
-			$this->handle = Fns::optimized_handle( $this->handle );
 			$this->scripts();
 			$this->init();
 			do_action( 'rtsb/variation/swatches/init' );
@@ -77,9 +76,9 @@ final class VariationSwatches {
 		$this->frontend_dynamic_css();
 		wp_localize_script(
 			$this->handle,
-			'rtsb_vs_params',
+			'rtsbVsParams',
 			apply_filters(
-				'rtsb_vs_js_object',
+				'rtsb/vs/js/object',
 				[
 					'is_product_page'      => is_product(),
 					'ajax_url'             => WC()->ajax_url(),
@@ -101,6 +100,14 @@ final class VariationSwatches {
 	private function frontend_dynamic_css() {
 		$options     = SwatchesFns::get_options();
 		$dynamic_css = ':root{';
+
+		if ( ! empty( $options['details_page_attr_label_font_size'] ) ) {
+			$dynamic_css .= '--details-page-attr-label-font-size:' . $options['details_page_attr_label_font_size'] . 'px;';
+		}
+		if ( ! empty( $options['details_page_attr_label_color'] ) ) {
+			$dynamic_css .= '--details-page-attr-label-color:' . $options['details_page_attr_label_color'] . ';';
+		}
+
 		if ( ! empty( $options['attribute_border_color'] ) ) {
 			$dynamic_css .= '--attribute-border-color:' . $options['attribute_border_color'] . ';';
 		}
@@ -158,6 +165,7 @@ final class VariationSwatches {
 
 		$dynamic_css .= '}';
 		if ( ! empty( $dynamic_css ) ) {
+			$dynamic_css = apply_filters( 'rtsb/variation/swatches/dynamic/css', $dynamic_css, $options );
 			wp_add_inline_style( $this->handle, $dynamic_css );
 		}
 	}

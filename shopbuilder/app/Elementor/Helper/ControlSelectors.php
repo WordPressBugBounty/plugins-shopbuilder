@@ -628,10 +628,10 @@ class ControlSelectors {
 
 			'rtsb-product-image'           => [
 				'image_width'                    => '{{WRAPPER}} .rtsb-product-images .woocommerce-product-gallery__image a > img',
-				'image_border'                   => '{{WRAPPER}} .rtwpvg-wrapper .rtwpvg-slider-wrapper,{{WRAPPER}} .rtsb-product-images .woocommerce-product-gallery__image',
+				'image_border'                   => '{{WRAPPER}} .rtwpvg-wrapper .rtwpvg-slider-wrapper,{{WRAPPER}} .rtsb-product-images .woocommerce-product-gallery__image, {{WRAPPER}} .rtsb-product-images .product-vg-gallery',
 				'image_border_radius'            => '{{WRAPPER}} .rtsb-product-images .woocommerce-product-gallery__image',
 				'gallery_thumbs_column'          => '{{WRAPPER}} div.images .flex-control-thumbs li',
-				'thumb_border'                   => '{{WRAPPER}} .rtsb-product-images div.images .flex-control-thumbs li img, {{WRAPPER}} .rtsb-product-images .rtwpvg-thumbnail-image img, {{WRAPPER}} .rtsb-product-images .rtwpvg-grid-layout .rtwpvg-gallery-image',
+				'thumb_border'                   => '{{WRAPPER}} .rtsb-vg-main-slider-wrapper .rtsb-vs-thumb-item, {{WRAPPER}} .rtsb-product-images div.images .flex-control-thumbs li img, {{WRAPPER}} .rtsb-product-images .rtwpvg-thumbnail-image img, {{WRAPPER}} .rtsb-product-images .rtwpvg-grid-layout .rtwpvg-gallery-image',
 				'thumbs_border_radius'           => '{{WRAPPER}} .rtsb-product-images div.images .flex-control-thumbs li img, {{WRAPPER}} .rtsb-product-images :is( .rtwpvg-thumbnail-image, img), {{WRAPPER}} .rtsb-product-images .rtwpvg-grid-layout .rtwpvg-gallery-image',
 				'flash_sale_typography'          => '{{WRAPPER}} .rtsb-product-images .onsale',
 				'product_flash_sale_color'       => '{{WRAPPER}} .rtsb-product-images .onsale',

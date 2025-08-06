@@ -68,8 +68,8 @@ class SwatchesHooks {
 			$thumbnail_size                     = apply_filters( 'woocommerce_thumbnail_size', 'woocommerce_thumbnail' );
 			$thumb_srcset                       = function_exists( 'wp_get_attachment_image_srcset' ) ? wp_get_attachment_image_srcset( $attachment_id, $thumbnail_size ) : false;
 			$thumb_sizes                        = function_exists( 'wp_get_attachment_image_sizes' ) ? wp_get_attachment_image_sizes( $attachment_id, $thumbnail_size ) : false;
-			$variation['image']['thumb_srcset'] = apply_filters( 'rtsb_thumb_srcset', $thumb_srcset, $variation, $product, $variationObj );
-			$variation['image']['thumb_sizes']  = apply_filters( 'rtsb_thumb_sizes', $thumb_sizes, $variation, $product, $variationObj );
+			$variation['image']['thumb_srcset'] = apply_filters( 'rtsb/thumb/srcset', $thumb_srcset, $variation, $product, $variationObj );
+			$variation['image']['thumb_sizes']  = apply_filters( 'rtsb/thumb/sizes', $thumb_sizes, $variation, $product, $variationObj );
 		}
 		if ( 'on' === SwatchesFns::get_options( 'disable_out_of_stock' ) && ( ( defined( 'DOING_AJAX' ) && DOING_AJAX ) || ! is_admin() ) ) {
 			return $variationObj->is_in_stock() ? $variation : false;
@@ -139,7 +139,7 @@ class SwatchesHooks {
 	 * @return string
 	 */
 	public function variation_attribute_options_html( $html, $args ) {
-		if ( apply_filters( 'default_rtsb_variation_attribute_options_html', false, $args, $html ) ) {
+		if ( apply_filters( 'rtsb/default/variation/attribute/options/html', false, $args, $html ) ) {
 			return $html;
 		}
 		// WooCommerce Product Bundle Fixing.
@@ -154,6 +154,6 @@ class SwatchesHooks {
 		if ( empty( $args['product'] ) ) {
 			return $html;
 		}
-		return SwatchesFns::generate_variation_attribute_option_html( apply_filters( 'rtsb_vs_variation_attribute_options_args', $args ), $html );
+		return SwatchesFns::generate_variation_attribute_option_html( apply_filters( 'rtsb/vs/variation/attribute/options/args', $args ), $html );
 	}
 }

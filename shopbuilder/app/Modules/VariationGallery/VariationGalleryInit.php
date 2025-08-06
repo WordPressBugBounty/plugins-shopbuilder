@@ -2,6 +2,7 @@
 
 namespace RadiusTheme\SB\Modules\VariationGallery;
 
+use RadiusTheme\SB\Helpers\BuilderFns;
 use RadiusTheme\SB\Helpers\Fns;
 use RadiusTheme\SB\Traits\SingletonTrait;
 
@@ -34,7 +35,6 @@ final class VariationGalleryInit {
 	private function __construct() {
 		$already_active = Fns::check_plugin_active( 'woo-product-variation-gallery/woo-product-variation-gallery.php' );
 		if ( ! $already_active ) {
-			$this->handle = Fns::optimized_handle( $this->handle );
 			$this->scripts();
 			$this->init();
 			do_action( 'rtsb/variation/gallery/init' );
@@ -46,7 +46,8 @@ final class VariationGalleryInit {
 	 * @return void
 	 */
 	private function scripts() {
-		add_action( 'wp_enqueue_scripts', [ $this, 'frontend_assets' ], 20 );
+		add_filter( 'rtsb/optimizer/scripts/deps', [ $this, 'extend_shared_dependencies' ] );
+		add_action( 'wp_enqueue_scripts', [ $this, 'frontend_assets' ], 99 );
 		add_action( 'admin_enqueue_scripts', [ $this, 'register_backend_assets' ], 1 );
 	}
 	/**
@@ -59,11 +60,26 @@ final class VariationGalleryInit {
 		GalleryFrontEnd::instance();
 	}
 	/**
+	 * Shared dependencies.
+	 *
+	 * @param array $deps Dependencies.
+	 *
+	 * @return array
+	 */
+	public function extend_shared_dependencies( $deps ) {
+		if ( is_product() || BuilderFns::is_product() ) {
+			$deps[] = 'swiper';
+		}
+		return $deps;
+	}
+
+	/**
 	 * Assets.
 	 *
 	 * @return void
 	 */
 	public function frontend_assets() {
+		wp_dequeue_script( 'flexslider' );
 		// Enqueue assets.
 		$this->handle = Fns::enqueue_module_assets(
 			$this->handle,
@@ -71,6 +87,16 @@ final class VariationGalleryInit {
 			[
 				'context' => ( function_exists( 'rtsbpro' ) && rtsb()->has_pro() ) ? rtsbpro() : rtsb(),
 				'version' => rtsb()->has_pro() ? RTSBPRO_VERSION : RTSB_VERSION,
+				'type'    => 'css',
+			]
+		);
+		$this->handle = Fns::enqueue_module_assets(
+			$this->handle,
+			'variation-gallery',
+			[
+				'context' => rtsb(),
+				'version' => RTSB_VERSION,
+				'type'    => 'js',
 			]
 		);
 		$this->frontend_dynamic_css();
@@ -82,8 +108,24 @@ final class VariationGalleryInit {
 	private function frontend_dynamic_css() {
 		$options      = GalleryFns::get_options();
 		$dynamic_css  = ':root{';
+		$alignment    = 'on' === ( $options['main_slider_alignment'] ?? '' ) ? 'center' : 'flex-start';
+		$col          = GalleryFns::get_options( 'thumbnails_columns', 3 );
+		$dynamic_css .= '--vg-main-slider-v-alignment:' . $alignment . ';';
+		$dynamic_css .= '--vg-grid-column:' . absint( $col ) . ';';
+		$dynamic_css .= '--vg-main-slider-border-color:' . ( ! empty( $options['main_image_border_color'] ) ? $options['main_image_border_color'] : 'transparent' ) . ';';
+		$dynamic_css .= '--vg-thumb-border-color:' . ( ! empty( $options['thumbnail_item_border_color'] ) ? $options['thumbnail_item_border_color'] : '#eee' ) . ';';
+		$dynamic_css .= '--vg-thumb-item-inner-padding:' . ( ! empty( $options['thumbnail_item_inner_padding'] ) ? $options['thumbnail_item_inner_padding'] : '8' ) . 'px;';
+		$dynamic_css .= '--vg-thumb-border-radius:' . ( ! empty( $options['thumbnail_item_border_radius'] ) ? absint( $options['thumbnail_item_border_radius'] ) : '3' ) . 'px;';
+		$dynamic_css .= '--vg-thumb-gap:' . ( ! empty( $options['thumbnails_gap'] ) ? absint( $options['thumbnails_gap'] ) : '10' ) . 'px;';
+		if ( ! empty( $options['main_image_section_width'] ) && absint( $options['image_section_height'] ) ) {
+			$dynamic_css .= '--vg-image-slider-height:' . absint( $options['image_section_height'] ) . 'px;';
+		}
+		if ( ! empty( $options['thumb_image_section_width'] ) && absint( $options['thumb_image_section_width'] ) ) {
+			$dynamic_css .= '--vg-thumb-slider-width:' . absint( $options['thumb_image_section_width'] ) . 'px;';
+		}
 		$dynamic_css .= '}';
 		if ( ! empty( $dynamic_css ) ) {
+			$dynamic_css = apply_filters( 'rtsb/variation/gallery/dynamic/css', $dynamic_css, $options );
 			wp_add_inline_style( $this->handle, $dynamic_css );
 		}
 	}

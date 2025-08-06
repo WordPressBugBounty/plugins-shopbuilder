@@ -24,13 +24,18 @@ class SwatchesFns {
 		return esc_url( trailingslashit( home_url( add_query_arg( $args, $wp->request ) ) ) );
 	}
 	/**
-	 * @param string $key Default Attribute.
+	 * @param string       $key Default Attribute.
+	 * @param array|string $default Default.
 	 * @return array|string
 	 */
-	public static function get_options( $key = null ) {
+	public static function get_options( $key = null, $default = '' ) {
 		$options = Fns::get_options( 'modules', 'variation_swatches' );
-		if ( $key && isset( $options[ $key ] ) ) {
-			return $options[ $key ];
+		if ( $key ) {
+			if ( isset( $options[ $key ] ) ) {
+				return $options[ $key ];
+			} else {
+				return $default;
+			}
 		}
 		return $options;
 	}
@@ -64,7 +69,7 @@ class SwatchesFns {
 			'radio'  => esc_html__( 'Radio', 'shopbuilder' ),
 		];
 
-		$types = apply_filters( 'rtsb_available_attributes_types', $types );
+		$types = apply_filters( 'rtsb/available/attributes/types', $types );
 
 		if ( $type ) {
 			return $types[ $type ] ?? null;
@@ -147,7 +152,7 @@ class SwatchesFns {
 	 */
 	public static function wc_product_has_attribute_type( $type, $taxonomy_name ) {
 		$attribute = self::get_wc_attribute_taxonomy( $taxonomy_name );
-		return apply_filters( 'rtsb_wc_product_has_attribute_type', ( isset( $attribute->attribute_type ) && ( $attribute->attribute_type == $type ) ), $type, $taxonomy_name, $attribute );
+		return apply_filters( 'rtsb/wc/product/has/attribute/type', ( isset( $attribute->attribute_type ) && ( $attribute->attribute_type == $type ) ), $type, $taxonomy_name, $attribute );
 	}
 	/**
 	 * @param object $term Default Attribute.
@@ -182,7 +187,7 @@ class SwatchesFns {
 			$image_size    = sanitize_text_field( self::get_options( 'tooltip_image_size' ) );
 			$image_url     = wp_get_attachment_image_url( $attachment_id, $image_size );
 			$image_tooltip = apply_filters(
-				'rtbs_tooltip_image',
+				'rtbs/tooltip/image',
 				sprintf(
 					// translators: %s: Tooltip Image source.
 					'<span class="%s"><img alt="%s" src="%s"/></span>',
@@ -198,9 +203,9 @@ class SwatchesFns {
 		}
 		if ( ! $tooltip_type || 'text' === $tooltip_type ) {
 			if ( $tooltip_data && rtsb()->has_pro() ) {
-				$text_tooltip = trim( apply_filters( 'rtsb_variable_item_text_tooltip_text', $tooltip_data, $term, $args ) );
+				$text_tooltip = trim( apply_filters( 'rtsb/variable/item/text/tooltip/text', $tooltip_data, $term, $args ) );
 			} else {
-				$text_tooltip = trim( apply_filters( 'rtsb_variable_item_text_tooltip', $term->name, $term, $args ) );
+				$text_tooltip = trim( apply_filters( 'rtsb/variable/item/text/tooltip', $term->name, $term, $args ) );
 			}
 		}
 
@@ -254,8 +259,8 @@ class SwatchesFns {
 			$data .= '<a href="#">' . sprintf( _n( '%d more', '%d more', $more, 'shopbuilder' ), $more ) . '</a>';
 			$data .= '</div>';
 		}
-		$contents    = apply_filters( 'rtsb_variable_term', $data, $type, $options, $args, $term_data );
-		$css_classes = apply_filters( 'rtsb_variable_terms_wrapper_class', [ "$type-variable-wrapper" ], $type, $args, $term_data );
+		$contents    = apply_filters( 'rtsb/variable/term', $data, $type, $options, $args, $term_data );
+		$css_classes = apply_filters( 'rtsb/variable/terms/wrapper/class', [ "$type-variable-wrapper" ], $type, $args, $term_data );
 		if ( $more ) {
 			$css_classes[] = 'has-more-variation';
 		}
@@ -267,7 +272,7 @@ class SwatchesFns {
 			$contents
 		);
 
-		return apply_filters( 'rtsb_variable_items_wrapper', $wrapper, $contents, $type, $args, $term_data );
+		return apply_filters( 'rtsb/variable/items/wrapper', $wrapper, $contents, $type, $args, $term_data );
 	}
 	/**
 	 * Renders a single swatch for a taxonomy-based attribute term.
@@ -389,7 +394,7 @@ class SwatchesFns {
 			if ( 'image' === $type && $data ) {
 				$image_url     = wp_get_attachment_image_url( absint( $data ), self::get_options( 'tooltip_image_size' ) );
 				$image_tooltip = apply_filters(
-					'rtbs_custom_attribute_tooltip_image',
+					'rtbs/custom/attribute/tooltip/image',
 					sprintf(
 					// translators: %s: Tooltip Image source.
 						'<span class="%s"><img alt="%s" src="%s"/></span>',
@@ -408,7 +413,10 @@ class SwatchesFns {
 			}
 		}
 
-		$html  = sprintf( '<div %1$s class="rtsb-term rtsb-%2$s-term %2$s-variable-term-%3$s %4$s" data-term="%3$s" data-theme="rtsb-vs-tooltip-%5$s">', $tooltip_html_attr, esc_attr( $term_type ), esc_attr( $term_name ), esc_attr( $classes ), esc_attr( $type ) );
+		$html = sprintf( '<div %1$s class="rtsb-term rtsb-%2$s-term %2$s-variable-term-%3$s %4$s" data-term="%3$s" data-theme="rtsb-vs-tooltip-%5$s">', $tooltip_html_attr, esc_attr( $term_type ), esc_attr( $term_name ), esc_attr( $classes ), esc_attr( $type ) );
+		if ( 'radio' !== $term_type && 'on' === self::get_options( 'shape_style_checkmark' ) ) {
+			$html .= '<span class="rtsb-term-checkmark"></span>';
+		}
 		$args  = compact( 'term_type', 'term_data', 'base_args', 'attr_first_image' ) + [
 			'slug'    => $option,
 			'label'   => $term_name,
@@ -498,7 +506,7 @@ class SwatchesFns {
 					: absint( get_term_meta( $term_id, 'rtsb_vs_product_attribute_image', true ) );
 
 				$image_size = self::get_options( 'attribute_image_size' );
-				$image_url  = wp_get_attachment_image_url( $attachment_id, apply_filters( 'rtsb_product_attribute_image_size', $image_size ) );
+				$image_url  = wp_get_attachment_image_url( $attachment_id, apply_filters( 'rtsb/product/attribute/image/size', $image_size ) );
 
 				if ( ! $image_url ) {
 					$image_url = $attr_first_image[ $slug ] ?? '';
@@ -536,7 +544,7 @@ class SwatchesFns {
 
 			default:
 				$html .= apply_filters(
-					'rtsb_variable_default_item_content',
+					'rtsb/variable/default/item/content',
 					'',
 					(object) [
 						'slug'    => $slug,
@@ -561,7 +569,7 @@ class SwatchesFns {
 		$attributes_image = [];
 		$variation_ids    = $product->get_children();
 		$image_size       = self::get_options( 'attribute_image_size' );
-		$image_size       = apply_filters( 'rtsb_product_attribute_image_size', $image_size );
+		$image_size       = apply_filters( 'rtsb/product/attribute/image/size', $image_size );
 		foreach ( $variation_ids as $variation_id ) {
 			$variation            = wc_get_product( $variation_id );
 			$variation_attributes = array_values( $variation->get_variation_attributes() );
@@ -580,10 +588,10 @@ class SwatchesFns {
 	 */
 	public static function get_taxonomy_meta_fields( $field_id = false ) {
 		$fields          = [];
-		$common_fields   = apply_filters( 'rtsb_taxonomy_common_fields', [] );
+		$common_fields   = apply_filters( 'rtsb/taxonomy/common/fields', [] );
 		$fields['color'] = array_merge(
 			apply_filters(
-				'rtsb_get_taxonomy_meta_color',
+				'rtsb/get/taxonomy/meta/color',
 				[
 					[
 						'label' => esc_html__( 'Color', 'shopbuilder' ),
@@ -609,7 +617,7 @@ class SwatchesFns {
 		);
 		$fields['button'] = $common_fields;
 		$fields['radio']  = $common_fields;
-		$fields           = apply_filters( 'rtsb_get_product_taxonomy_meta_fields', $fields );
+		$fields           = apply_filters( 'rtsb/get/product/taxonomy/meta/fields', $fields );
 		if ( $field_id ) {
 			return $fields[ $field_id ] ?? [];
 		}
@@ -710,6 +718,6 @@ class SwatchesFns {
 		} else {
 			$transient_html = $html;
 		}
-		return apply_filters( 'rtsb_variation_attribute_options_html', $transient_html, $args );
+		return apply_filters( 'rtsb/variation/attribute/options/html', $transient_html, $args );
 	}
 }

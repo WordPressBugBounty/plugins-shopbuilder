@@ -4,7 +4,7 @@ Donate link:
 Tags: Elementor, Woocommerce Builder, Elementor Woocommerce Builder, Woocommerce, Woocommerce Product
 Requires at least: 5.5
 Tested up to: 6.8
-Stable tag: 3.0.0
+Stable tag: 3.1.0
 Requires PHP: 7.4
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -417,6 +417,12 @@ If you like the ShopBuilder Plugin, then consider checking out our other WordPre
 == Screenshots ==
 
 == Changelog ==
+
+= 3.1.0 ( Aug 04, 2025) =
+* New: Added Variation Swatch module — users can now disable third-party variation swatch plugins and use this built-in module instead.
+* New: Added Variation Gallery module — users can now disable separate variation gallery plugins and rely on the built-in module.
+* Fix: Resolved infinite loading issue with Slider Widgets loader.
+* Fix: Resolved hook error in Cart Page **Cart Table Widget**.
 
 = 3.0.0 (July 15, 2025) =
 * New: Introduced a dynamic asset optimization system for loading module and widget assets only when needed.

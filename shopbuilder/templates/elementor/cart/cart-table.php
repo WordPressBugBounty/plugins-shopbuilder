@@ -16,13 +16,11 @@ $wrapper_classes  .= ! empty( $controllers['ajax_on_qty_change'] ) && rtsb()->ha
 ?>
 <div class="rtsb-cart-table woocommerce <?php echo esc_attr( $wrapper_classes ); ?>">
 	<?php
-	// do_action( 'woocommerce_before_cart' );
 	if ( WC()->cart->is_empty() ) {
 		wc_get_template( 'cart/cart-empty.php' );
 	} else {
 		?>
 		<form class="woocommerce-cart-form" action="<?php echo esc_url( wc_get_cart_url() ); ?>" method="post">
-			<?php // do_action( 'woocommerce_before_cart_table' ); ?>
 			<table class="shop_table cart woocommerce-cart-form__contents <?php echo esc_attr( $horizontal_scroll ? '' : 'shop_table_responsive' ); ?>" cellspacing="0">
 				<thead>
 					<tr>
@@ -58,7 +56,8 @@ $wrapper_classes  .= ! empty( $controllers['ajax_on_qty_change'] ) && rtsb()->ha
 							<tr class="woocommerce-cart-form__cart-item <?php echo esc_attr( apply_filters( 'woocommerce_cart_item_class', 'cart_item', $cart_item, $cart_item_key ) ); ?>">
 								<?php
 								foreach ( $controllers['cart_table'] as $table ) {
-									$product_name = apply_filters( 'woocommerce_cart_item_name', $_product->get_name(), $cart_item, $cart_item_key, $table );
+									$cart_item['custom_table_data'] = $table;
+									$product_name                   = apply_filters( 'woocommerce_cart_item_name', $_product->get_name(), $cart_item, $cart_item_key );
 									switch ( $table['cart_table_items'] ) {
 										case 'remove':
 											echo '<td class="product-remove elementor-repeater-item-' . esc_attr( $table['_id'] ) . '"><div class="table-column-wrapper">';
@@ -102,9 +101,9 @@ $wrapper_classes  .= ! empty( $controllers['ajax_on_qty_change'] ) && rtsb()->ha
 											echo '<td class="product-name elementor-repeater-item-' . esc_attr( $table['_id'] ) . '" data-title="' . esc_attr( $table['cart_table_heading_title'] ) . '"><div class="table-column-wrapper rtsb-product-content">';
 
 											if ( ! $product_permalink ) {
-												echo wp_kses_post( apply_filters( 'woocommerce_cart_item_name', $_product->get_name(), $cart_item, $cart_item_key ) . '&nbsp;', $table );
+												echo wp_kses_post( apply_filters( 'woocommerce_cart_item_name', $_product->get_name(), $cart_item, $cart_item_key ) . '&nbsp;' );
 											} else {
-												echo wp_kses_post( apply_filters( 'woocommerce_cart_item_name', sprintf( '<a href="%s">%s</a>', esc_url( $product_permalink ), $_product->get_name() ), $cart_item, $cart_item_key, $table ) );
+												echo wp_kses_post( apply_filters( 'woocommerce_cart_item_name', sprintf( '<a href="%s">%s</a>', esc_url( $product_permalink ), $_product->get_name() ), $cart_item, $cart_item_key ) );
 											}
 
 											do_action( 'woocommerce_after_cart_item_name', $cart_item, $cart_item_key );
@@ -231,8 +230,6 @@ $wrapper_classes  .= ! empty( $controllers['ajax_on_qty_change'] ) && rtsb()->ha
 					<?php do_action( 'woocommerce_after_cart_contents' ); ?>
 				</tfoot>
 			</table>
-			<?php // do_action( 'woocommerce_after_cart_table' ); ?>
 		</form>
 	<?php } ?>
-	<?php // do_action( 'woocommerce_after_cart' ); ?>
 </div>

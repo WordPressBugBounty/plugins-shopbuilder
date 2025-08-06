@@ -58,7 +58,7 @@ class SwatchesTerms {
 	public function add_product_taxonomy_meta() {
 
 		$fields         = SwatchesFns::get_taxonomy_meta_fields();
-		$meta_added_for = apply_filters( 'rtsb_product_taxonomy_meta_for', array_keys( $fields ) );
+		$meta_added_for = apply_filters( 'rtsb/product/taxonomy/meta/for', array_keys( $fields ) );
 		if ( function_exists( 'wc_get_attribute_taxonomies' ) ) :
 			$attribute_taxonomies = wc_get_attribute_taxonomies();
 			if ( $attribute_taxonomies ) :
@@ -67,7 +67,7 @@ class SwatchesTerms {
 					$product_attr_type = $tax->attribute_type;
 					if ( in_array( $product_attr_type, $meta_added_for, true ) ) :
 						new TermMeta( $product_attr, $fields[ $product_attr_type ] );
-						do_action( 'rtsb_wc_attribute_taxonomy_meta_added', $product_attr, $product_attr_type );
+						do_action( 'rtsb/wc/attribute/taxonomy/meta/added', $product_attr, $product_attr_type );
 					endif;
 				endforeach;
 			endif;

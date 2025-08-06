@@ -30,6 +30,7 @@ class ProductImagesSettings {
 	/**
 	 * Widget Field
 	 *
+	 * @param object $widget Widget.
 	 * @return array
 	 */
 	public static function widget_fields( $widget ) {
@@ -37,7 +38,7 @@ class ProductImagesSettings {
 		return self::general_section() +
 			self::image() +
 			self::flash_sale( $widget ) +
-			self::zoom_icon();
+			self::lightbox_icon();
 	}
 
 	/**
@@ -71,9 +72,8 @@ class ProductImagesSettings {
 				'description' => esc_html__( 'Switch on to show Thumbnails.', 'shopbuilder' ),
 				'default'     => 'yes',
 			],
-
 			'show_zoom'                   => [
-				'label'       => esc_html__( 'Show Zoom Icon?', 'shopbuilder' ),
+				'label'       => esc_html__( 'Show Lightbox Icon?', 'shopbuilder' ),
 				'type'        => 'switch',
 				'description' => esc_html__( 'Switch on to show Zoom Icon.', 'shopbuilder' ),
 				'default'     => 'yes',
@@ -95,8 +95,8 @@ class ProductImagesSettings {
 			],
 		];
 
-		if ( function_exists( 'rtwpvg' ) && rtwpvg()->active_pro() ) {
-			$image_layout = [
+		if ( ( function_exists( 'rtwpvg' ) && rtwpvg()->active_pro() ) || rtsb()->has_pro() ) {
+			$image_layout                           = [
 				'image_layout' => [
 					'type'        => 'rtsb-image-selector',
 					'label'       => esc_html__( 'Image Layout', 'shopbuilder' ),
@@ -122,7 +122,10 @@ class ProductImagesSettings {
 					'default'     => 'bottom',
 				],
 			];
-			$fields       = Fns::insert_controls( 'image_general_section_start', $fields, $image_layout, true );
+			$fields['show_thumbnails']['condition'] = [
+				'image_layout!' => 'grid',
+			];
+			$fields                                 = Fns::insert_controls( 'image_general_section_start', $fields, $image_layout, true );
 
 		}
 
@@ -158,10 +161,12 @@ class ProductImagesSettings {
 				],
 				'default'    => [
 					'unit' => '%',
+					'size' => 100,
 				],
 				'separator'  => 'default',
 				'selectors'  => [
 					self::$selectors['image_width'] => 'width: {{SIZE}}{{UNIT}} !important;',
+					':root'                         => '--vg-image-width: {{SIZE}}{{UNIT}} !important;',
 				],
 			],
 			'image_border_radius'         => [
@@ -182,6 +187,7 @@ class ProductImagesSettings {
 				],
 				'selectors'  => [
 					self::$selectors['image_border_radius'] => 'border-radius: {{SIZE}}{{UNIT}} !important;',
+					':root' => '--vg-image-border-radius: {{SIZE}}{{UNIT}} !important;',
 				],
 			],
 			'gallery_thumbs_style'        => [
@@ -223,7 +229,7 @@ class ProductImagesSettings {
 					'unit' => 'px',
 				],
 				'selectors'       => [
-					':root' => '--rtwpvg-thumbnail-gap:{{SIZE}}{{UNIT}};',
+					':root' => '--rtwpvg-thumbnail-gap:{{SIZE}}{{UNIT}};--vg-thumb-gap:{{SIZE}}{{UNIT}};',
 				],
 			],
 			'gallery_thumbs_column'       => [
@@ -231,6 +237,7 @@ class ProductImagesSettings {
 				'label'           => esc_html__( 'Column', 'shopbuilder' ),
 				'description'     => esc_html__( 'Above Control the Gallery Thumbnails Gap is required.', 'shopbuilder' ),
 				'type'            => 'slider',
+				'render_type'     => 'template',
 				'range'           => [
 					'px' => [
 						'min'  => 2,
@@ -255,6 +262,7 @@ class ProductImagesSettings {
 					'unit' => 'px',
 				],
 				'selectors'       => [
+					':root' => '--vg-thumbnail-column:{{SIZE}};',
 					self::$selectors['gallery_thumbs_column'] => 'width: calc(100%/{{SIZE}} - ( {{gallery_thumbs_column_gap.size}}{{gallery_thumbs_column_gap.unit}} / {{SIZE}} ) *  ({{SIZE}} - 1 ) );flex: 0 0 auto;max-width: initial;',
 				],
 			],
@@ -274,11 +282,7 @@ class ProductImagesSettings {
 					'size' => 10,
 				],
 				'selectors' => [
-					':root' => '--rtwpvg-thumbnail-gap-with-main:{{SIZE}}{{UNIT}};',
-					// self::$selectors['gallery_image_gap_with_main']['margin-top'] => 'margin-top: {{SIZE}}{{UNIT}};',
-					// self::$selectors['gallery_image_gap_with_main']['rtwpvg-thumb-mb'] => 'margin-bottom: {{SIZE}}{{UNIT}};',
-					// self::$selectors['gallery_image_gap_with_main']['rtwpvg-thumb-ml'] => 'margin-left: {{SIZE}}{{UNIT}};',
-					// self::$selectors['gallery_image_gap_with_main']['rtwpvg-thumb-mr'] => 'margin-right: {{SIZE}}{{UNIT}};',
+					':root' => '--rtwpvg-thumbnail-gap-with-main:{{SIZE}}{{UNIT}};--vg-main-slider-thumb-gap:{{SIZE}}{{UNIT}};',
 				],
 			],
 			'thumb_border'                => [
@@ -304,6 +308,7 @@ class ProductImagesSettings {
 					],
 				],
 				'selectors'  => [
+					':root' => '--vg-thumb-border-radius:{{SIZE}}{{UNIT}};',
 					self::$selectors['thumbs_border_radius'] => 'border-radius: {{SIZE}}{{UNIT}}',
 				],
 			],
@@ -313,13 +318,13 @@ class ProductImagesSettings {
 		];
 		if ( function_exists( 'rtwpvg' ) ) {
 			unset( $fields['gallery_thumbs_column']['selectors'] );
-			// unset( $fields['gallery_thumbs_column_gap'] );
 		}
 		return $fields;
 	}
 	/**
 	 * Widget Field
 	 *
+	 * @param object $widget widget.
 	 * @return array
 	 */
 	public static function flash_sale( $widget ) {
@@ -404,11 +409,11 @@ class ProductImagesSettings {
 	 *
 	 * @return array
 	 */
-	public static function zoom_icon() {
+	public static function lightbox_icon() {
 		$fields = [
 			'zoom_section_start'       => [
 				'mode'      => 'section_start',
-				'label'     => esc_html__( 'Image Zoom', 'shopbuilder' ),
+				'label'     => esc_html__( 'Image Lightbox', 'shopbuilder' ),
 				'tab'       => 'style',
 				'condition' => [
 					'show_zoom' => 'yes',
@@ -420,6 +425,7 @@ class ProductImagesSettings {
 
 				'separator' => 'default',
 				'selectors' => [
+					':root'                        => '--vg-lightbox-icon-color: {{VALUE}};',
 					self::$selectors['zoom_color'] => 'color: {{VALUE}};',
 				],
 			],
@@ -427,6 +433,7 @@ class ProductImagesSettings {
 				'label'     => esc_html__( 'Background Color', 'shopbuilder' ),
 				'type'      => 'color',
 				'selectors' => [
+					':root'                           => '--vg-lightbox-icon-bg-color: {{VALUE}};',
 					self::$selectors['zoom_bg_color'] => 'background-color: {{VALUE}};',
 				],
 			],
@@ -442,13 +449,14 @@ class ProductImagesSettings {
 					],
 				],
 				'selectors'  => [
+					':root' => '--vg-lightbox-icon-size: {{SIZE}}{{UNIT}}',
 					self::$selectors['zoom_icon_size']['icon'] => 'font-size: {{SIZE}}{{UNIT}};',
 					self::$selectors['zoom_icon_size']['svg'] => 'width: {{SIZE}}{{UNIT}};',
 				],
 				'separator'  => 'before',
 			],
 			'zoom_badge_width'         => [
-				'label'      => esc_html__( 'Badge Width (px)', 'shopbuilder' ),
+				'label'      => esc_html__( 'Icon Area Width (px)', 'shopbuilder' ),
 				'type'       => 'slider',
 				'size_units' => [ 'px' ],
 				'range'      => [
@@ -459,11 +467,12 @@ class ProductImagesSettings {
 					],
 				],
 				'selectors'  => [
+					':root'                              => '--vg-lightbox-area-width: {{SIZE}}{{UNIT}}',
 					self::$selectors['zoom_badge_width'] => 'width: {{SIZE}}{{UNIT}};min-width: initial;',
 				],
 			],
 			'zoom_badge_height'        => [
-				'label'      => esc_html__( 'Badge Height (px)', 'shopbuilder' ),
+				'label'      => esc_html__( 'Icon Area Height (px)', 'shopbuilder' ),
 				'type'       => 'slider',
 				'size_units' => [ 'px' ],
 				'range'      => [
@@ -474,11 +483,12 @@ class ProductImagesSettings {
 					],
 				],
 				'selectors'  => [
+					':root'                               => '--vg-lightbox-area-height: {{SIZE}}{{UNIT}}',
 					self::$selectors['zoom_badge_height'] => 'height: {{SIZE}}{{UNIT}};min-height: initial;',
 				],
 			],
 			'zoom_badge_border_radius' => [
-				'label'      => esc_html__( 'Badge Border Radius (px)', 'shopbuilder' ),
+				'label'      => esc_html__( 'Icon Area Border Radius (px)', 'shopbuilder' ),
 				'type'       => 'slider',
 				'size_units' => [ 'px', '%' ],
 				'range'      => [
@@ -494,6 +504,7 @@ class ProductImagesSettings {
 					],
 				],
 				'selectors'  => [
+					':root' => '--vg-lightbox-area-radius: {{SIZE}}{{UNIT}}',
 					self::$selectors['zoom_badge_border_radius'] => 'border-radius: {{SIZE}}{{UNIT}};',
 				],
 			],
@@ -511,6 +522,7 @@ class ProductImagesSettings {
 					'isLinked' => true,
 				],
 				'selectors'  => [
+					':root'                          => '--vg-lightbox-area-padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 					self::$selectors['zoom_padding'] => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			],
@@ -572,10 +584,30 @@ class ProductImagesSettings {
 					self::$selectors['zoom_position_vertical']['zoom-icon-bottom'] . ':is(.rtwpvg-trigger-position-bottom-right, .rtwpvg-trigger-position-bottom-left)' => 'bottom:  {{SIZE}}{{UNIT}};',
 				],
 			],
-			'zoom_section_end'         => [
-				'mode' => 'section_end',
-			],
 		];
+		if ( Fns::is_module_active( 'variation_gallery' ) ) {
+			unset(
+				$fields['zoom_position'],
+				$fields['zoom_position_horizontal'],
+				$fields['zoom_position_vertical']
+			);
+			$fields['vg_lightbox_position'] = [
+				'label'     => esc_html__( 'Lightbox Icon Position', 'shopbuilder' ),
+				'type'      => 'select',
+				'options'   => [
+					'top-right'    => esc_html__( 'Top Right', 'shopbuilder' ),
+					'top-left'     => esc_html__( 'Top Left', 'shopbuilder' ),
+					'bottom-right' => esc_html__( 'Bottom Right', 'shopbuilder' ),
+					'bottom-left'  => esc_html__( 'Bottom Left', 'shopbuilder' ),
+				],
+				'default'   => 'top-right',
+				'separator' => 'default',
+			];
+		}
+		$fields['zoom_section_end'] = [
+			'mode' => 'section_end',
+		];
+
 		if ( function_exists( 'rtwpvg' ) ) {
 			unset( $fields['zoom_position'] );
 		}

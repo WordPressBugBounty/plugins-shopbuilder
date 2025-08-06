@@ -66,7 +66,8 @@ class AdminInit {
 	 */
 	public function upgrade() {
 		Notice\Upgrade::instance();
-		Notice\BFDiscount::instance();
+        // phpcs:ignore Squiz.PHP.CommentedOutCode.Found
+		// Notice\BFDiscount::instance();.
 		Notice\Review::instance();
 	}
 

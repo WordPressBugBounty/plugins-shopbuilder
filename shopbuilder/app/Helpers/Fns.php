@@ -3907,4 +3907,16 @@ class Fns {
 
 		return $widgets;
 	}
+
+	/**
+	 * Convert the given price to the active currency.
+	 *
+	 * @param float        $price The original price.
+	 * @param Object||null $product Product.
+	 *
+	 * @return float
+	 */
+	public static function get_currency_base_price( $price, $product = null ) {
+		return apply_filters( 'rtsb/convert/currency/price', $price, $product );
+	}
 }

@@ -541,6 +541,7 @@ class AssetsController {
 		if ( ! empty( $notification_color ) ) {
 			$dynamic_css .= ".rtsb-shopbuilder-plugin #toast-container .toast-success{color:{$notification_color}}";
 			$dynamic_css .= ".rtsb-shopbuilder-plugin #toast-container .toast-success:before{background-color:{$notification_color}}";
+			$dynamic_css .= ".rtsb-shopbuilder-plugin #toast-container .toast-close-button{color:{$notification_color}}";
 		}
 
 		if ( ! empty( $notification_bgcolor ) ) {

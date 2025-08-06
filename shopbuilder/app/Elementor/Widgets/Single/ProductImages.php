@@ -44,7 +44,6 @@ class ProductImages extends ElementorWidgetBase {
 	public function widget_fields() {
 		return $this->modify_widget_fields();
 	}
-
 	/**
 	 * Widget Field
 	 *
@@ -78,18 +77,35 @@ class ProductImages extends ElementorWidgetBase {
 	 */
 	public function init_scripts() {
 		?>
-		<script>
+		<script type="text/javascript">
+			if (!'<?php echo esc_attr( Fns::is_optimization_enabled() ); ?>') {
+				setTimeout(function() {
+					window.rtsbVariationGallery();
+				}, 4000);
+			} else {
+				if (typeof elementorFrontend !== 'undefined') {
+					elementorFrontend.hooks.addAction(
+						'frontend/element_ready/<?php echo esc_attr( $this->rtsb_base ); ?>.default',
+						() => {
+							window.waitForRTSB((RTSB) => {
+								RTSB.modules.get('variationGallery')?.refresh();
+							});
+						}
+					);
+				}
+			}
 			/*
 			* Initialize all galleries on page.
 			*/
 			jQuery('.woocommerce-product-gallery').each(function () {
 				const that = this;
-				jQuery(this).trigger('wc-product-gallery-before-init', [this, wc_single_product_params]);
+
 				setTimeout(function () {
+					jQuery(this).trigger('wc-product-gallery-before-init', [this, wc_single_product_params]);
 					jQuery(that).wc_product_gallery(wc_single_product_params);
+					jQuery(that).trigger('wc-product-gallery-after-init', [this, wc_single_product_params]);
 				}, 1000);
 
-				jQuery(this).trigger('wc-product-gallery-after-init', [this, wc_single_product_params]);
 			});
 			<?php if ( function_exists( 'rtwpvg' ) ) { ?>
 			setTimeout(function () {
@@ -115,7 +131,7 @@ class ProductImages extends ElementorWidgetBase {
 			} else {
 				if (typeof elementorFrontend !== 'undefined') {
 					elementorFrontend.hooks.addAction(
-						'frontend/element_ready/rtsb-product-image.default',
+						'frontend/element_ready/<?php echo esc_attr( $this->rtsb_base ); ?>.default',
 						($scope) => {
 							window.waitForRTSB((RTSB) => {
 								RTSB.modules.get('productImage')?.refresh?.($, $scope);
@@ -124,6 +140,7 @@ class ProductImages extends ElementorWidgetBase {
 					);
 				}
 			}
+
 		</script>
 		<?php
 	}
@@ -159,8 +176,28 @@ class ProductImages extends ElementorWidgetBase {
 		add_filter( 'rtwpvg_thumbnails_columns', [ $this, 'thumbnails_columns' ] );
 		add_filter( 'rtwpvg_sm_thumbnails_columns', [ $this, 'thumbnails_columns_sm' ] );
 		add_filter( 'rtwpvg_xs_thumbnails_columns', [ $this, 'thumbnails_columns_xs' ] );
+		// RTSB.
+		add_filter( 'rtsb/vg/thumbnails/position', [ $this, 'vg_thumbnail_position' ], 50 );
+		add_filter( 'rtsb/vg/lightbox', [ $this, 'vg_lightbox' ], 50 );
+		add_filter( 'rtsb/vg/lightbox/trigger/icon', [ $this, 'vg_lightbox' ], 50 );
+		add_filter( 'rtsb/vg/thumbnails/slider/options', [ $this, 'thumbnail_slider_js_options' ], 50, 2 );
+		add_filter( 'rtsb/vg/lightbox/position', [ $this, 'vg_lightbox_position' ], 50, 2 );
+		add_filter( 'rtsb/vg/gallery/columns', [ $this, 'vg_gallery_columns' ], 50, 2 );
 	}
-
+	/**
+	 * Thumbnail Columns.
+	 *
+	 * @param int $col number.
+	 *
+	 * @return int
+	 */
+	public function vg_gallery_columns( $col ) {
+		$controllers = $this->get_settings_for_display();
+		if ( ! empty( $controllers['gallery_thumbs_column']['size'] ) ) {
+			$col = absint( $controllers['gallery_thumbs_column']['size'] );
+		}
+		return $col;
+	}
 	/**
 	 * Thumbnail slider js options.
 	 *
@@ -169,8 +206,11 @@ class ProductImages extends ElementorWidgetBase {
 	 * @return array
 	 */
 	public function thumbnail_slider_js_options( $options ) {
-		if ( isset( $options['spaceBetween'] ) ) {
-			$controllers             = $this->get_settings_for_display();
+		$controllers = $this->get_settings_for_display();
+		if ( ! empty( $controllers['gallery_thumbs_column']['size'] ) ) {
+			$options['slidesPerView'] = absint( $controllers['gallery_thumbs_column']['size'] );
+		}
+		if ( ! empty( $controllers['gallery_thumbs_column_gap']['size'] ) ) {
 			$options['spaceBetween'] = $controllers['gallery_thumbs_column_gap']['size'];
 		}
 		return $options;
@@ -217,7 +257,6 @@ class ProductImages extends ElementorWidgetBase {
 
 		return $column;
 	}
-
 	/**
 	 * Thumbnail position.
 	 *
@@ -226,20 +265,49 @@ class ProductImages extends ElementorWidgetBase {
 	 * @return string
 	 */
 	public function thumbnail_position( $position ) {
-
 		if ( ! function_exists( 'rtwpvg' ) || ! rtwpvg()->active_pro() || ! ( BuilderFns::is_product() || BuilderFns::is_quick_views_page() ) ) {
 			return $position;
 		}
 
 		$controllers     = $this->get_settings_for_display();
 		$show_thumbnails = ! empty( $controllers['show_thumbnails'] ) ? $controllers['show_thumbnails'] : false;
-
 		if ( ! $show_thumbnails ) {
 			add_filter( 'rtwpvg_show_product_thumbnail_slider', '__return_false', 20 );
 			return 'bottom';
 		}
 
 		return ! empty( $controllers['image_layout'] ) ? $controllers['image_layout'] : 'bottom';
+	}
+	/**
+	 * Thumbnail position.
+	 *
+	 * @param string $position Position.
+	 *
+	 * @return string
+	 */
+	public function vg_thumbnail_position( $position ) {
+		if ( ! rtsb()->has_pro() ) {
+			return $position;
+		}
+		$controllers = $this->get_settings_for_display();
+		return ! empty( $controllers['image_layout'] ) ? $controllers['image_layout'] : 'bottom';
+	}
+
+	/**
+	 * @param bool $lightbox Lightbox.
+	 * @return mixed
+	 */
+	public function vg_lightbox( $lightbox ) {
+		$controllers = $this->get_settings_for_display();
+		return ! empty( $controllers['lightbox_icon'] ) ? Fns::icons_manager( $controllers['lightbox_icon'] ) : $lightbox;
+	}
+	/**
+	 * @param string $position position text.
+	 * @return mixed
+	 */
+	public function vg_lightbox_position( $position ) {
+		$controllers = $this->get_settings_for_display();
+		return ! empty( $controllers['vg_lightbox_position'] ) ? $controllers['vg_lightbox_position'] : $position;
 	}
 
 	/**
@@ -257,7 +325,6 @@ class ProductImages extends ElementorWidgetBase {
 		}
 
 		$this->theme_support();
-
 		$controllers['lightbox_icon'] = Fns::icons_manager( $controllers['lightbox_icon'] );
 		$data                         = [
 			'template'    => 'elementor/single-product/product-images',

@@ -894,18 +894,6 @@ class AssetRegistry {
 				],
 				[
 					'widgets'   => [
-						'products-slider',
-						'team-member',
-						'upsells-products-slider-custom',
-						'related-products-slider-custom',
-						'cross-sells-custom-slider',
-						'hero-slider',
-					],
-					'file_name' => 'shared/slider-core',
-					'context'   => [ 'global' ],
-				],
-				[
-					'widgets'   => [
 						'products-grid',
 						'products-slider',
 						'products-archive-catalog-custom',
@@ -1309,6 +1297,19 @@ class AssetRegistry {
 						'coupon-form',
 						'checkout-login-form',
 						'shipping-method',
+					],
+					'context'   => [ 'global' ],
+				],
+				'slider'   => [
+					'file_name' => 'shared/slider-core',
+					'modules'   => [ 'variation-gallery' ],
+					'widgets'   => [
+						'products-slider',
+						'team-member',
+						'upsells-products-slider-custom',
+						'related-products-slider-custom',
+						'cross-sells-custom-slider',
+						'hero-slider',
 					],
 					'context'   => [ 'global' ],
 				],
