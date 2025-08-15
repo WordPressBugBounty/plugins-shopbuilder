@@ -29,8 +29,7 @@ class CartTableSettings {
 	private static $selectors = [];
 
 	/**
-	 * Widget Field
-	 *
+	 * @param object $widget widget.
 	 * @return array
 	 */
 	public static function widget_fields( $widget ) {
@@ -49,7 +48,7 @@ class CartTableSettings {
 	}
 
 	/**
-	 * @param $widget
+	 * @param object $widget widget.
 	 *
 	 * @return array
 	 */
@@ -59,7 +58,7 @@ class CartTableSettings {
 	}
 
 	/**
-	 * Widget Field
+	 * @param object $widget widget.
 	 *
 	 * @return array
 	 */
@@ -733,8 +732,7 @@ class CartTableSettings {
 	}
 
 	/**
-	 * Widget Field
-	 *
+	 * @param object $widget widget.
 	 * @return array
 	 */
 	public static function general_settings( $widget ) {
@@ -884,9 +882,9 @@ class CartTableSettings {
 						],
 					],
 					'show_variation_data'              => [
-						'label'       => esc_html__( 'Show Variations Data?', 'shopbuilder' ),
+						'label'       => esc_html__( 'Show Custom Data?', 'shopbuilder' ),
 						'type'        => 'switch',
-						'description' => esc_html__( 'Switch on to show Show Variations Data.', 'shopbuilder' ),
+						'description' => esc_html__( 'Enable to display any custom data, such as variation details and extra options.', 'shopbuilder' ),
 						'separator'   => rtsb()->has_pro() ? 'default' : 'after',
 						'classes'     => $widget->pro_class(),
 						'default'     => 'yes',

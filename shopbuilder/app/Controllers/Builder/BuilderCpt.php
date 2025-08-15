@@ -55,7 +55,6 @@ class BuilderCpt {
 	 *
 	 * @param int     $post_ID ID of the post being saved.
 	 * @param WP_Post $post    Post object.
-	 * @param bool    $update  Whether this is an existing post being updated.
 	 *
 	 * @return void
 	 */
@@ -221,7 +220,7 @@ class BuilderCpt {
 	 *
 	 * @return void
 	 */
-	public function custom_columns( $column, $post_id ) {
+	public function custom_columns( $column, $post_id ) { // phpcs:ignore Generic.Metrics.NestingLevel.TooHigh
 		$post_id       = absint( $post_id );
 		$types         = BuilderFns::builder_page_types();
 		$template_type = BuilderFns::builder_type( $post_id ) ? BuilderFns::builder_type( $post_id ) : array_key_first( $types );
@@ -247,6 +246,9 @@ class BuilderCpt {
 							$set_default   = BuilderFns::get_specific_product_as_default( $post_id );
 							if ( $set_default ) {
 								$is_set_default = $post_id;
+							}
+							if ( ! $set_default && $is_set_default === $post_id ) {
+								$is_set_default = '';
 							}
 							break;
 						case 'product_cats':
@@ -274,6 +276,9 @@ class BuilderCpt {
 					if ( ! empty( $categories_name ) && $set_default ) {
 						$is_set_default = $post_id;
 						$page_type_for  = 'template-' . $post_id . '-specific-category';
+					}
+					if ( ! $set_default && $is_set_default === $post_id ) {
+						$is_set_default = '';
 					}
 				}
 				?>
@@ -413,7 +418,6 @@ class BuilderCpt {
 	 */
 	public function filter_post_row_actions( $actions ) {
 		if ( $this->is_current_screen() ) {
-			// unset( $actions['view'] );
 			unset( $actions['inline hide-if-no-js'] );
 
 			if ( isset( $actions['view'] ) ) {

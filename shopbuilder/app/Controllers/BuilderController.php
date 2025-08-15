@@ -340,7 +340,10 @@ class BuilderController {
 				return;
 			}
 			?>
-			<form name="checkout" method="post" class="rtsb-woocommerce-checkout checkout" action="<?php echo esc_url( wc_get_checkout_url() ); ?>" enctype="multipart/form-data">
+			<!--
+			woocommerce-checkout added for fix issue with payment method ( Revolut Pay )
+			-->
+			<form name="checkout" method="post" class="rtsb-woocommerce-checkout woocommerce-checkout checkout" action="<?php echo esc_url( wc_get_checkout_url() ); ?>" enctype="multipart/form-data">
 			<?php
 		}
 	}

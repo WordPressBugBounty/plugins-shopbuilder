@@ -108,8 +108,9 @@ $wrapper_classes  .= ! empty( $controllers['ajax_on_qty_change'] ) && rtsb()->ha
 
 											do_action( 'woocommerce_after_cart_item_name', $cart_item, $cart_item_key );
 
-											// Meta data.
-											echo wc_get_formatted_cart_item_data( $cart_item ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+											if ( ! empty( $table['show_variation_data'] ) ) {
+												Fns::print_html( wc_get_formatted_cart_item_data( $cart_item ), true ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+											}
 
 											// Backorder notification.
 											if ( $_product->backorders_require_notification() && $_product->is_on_backorder( $cart_item['quantity'] ) ) {

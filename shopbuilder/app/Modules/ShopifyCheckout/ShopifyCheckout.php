@@ -50,7 +50,7 @@ class ShopifyCheckout {
 		if ( defined( 'RTSBPRO_VERSION' ) && version_compare( RTSBPRO_VERSION, '1.8.0', '<' ) ) {
 			return $template;
 		}
-		$is_checkout_page = is_checkout() && ! is_order_received_page();
+		$is_checkout_page = is_checkout() && ! is_order_received_page() && ! is_checkout_pay_page();
 		if ( ! $is_checkout_page ) {
 			return $template;
 		}

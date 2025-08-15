@@ -172,7 +172,15 @@ class GalleryAdmin {
 			<p class="rtsb-vg-add-image-wrapper hide-if-no-js">
 				<a href="#" data-product_variation_loop="<?php echo absint( $loop ); ?>"
 				   data-product_variation_id="<?php echo esc_attr( $variation_id ); ?>"
-				   class="button rtsb-vg-add-image"><?php esc_html_e( 'Add Gallery Images', 'shopbuilder' ); ?></a>
+				   class="button rtsb-vg-add-image">
+					<?php
+					esc_html_e( 'Add Gallery Images', 'shopbuilder' );
+					if ( rtsb()->has_pro() ) {
+						echo ' & ';
+						esc_html_e( 'Videos', 'shopbuilder' );
+					}
+					?>
+				</a>
 			</p>
 		</div>
 		<?php

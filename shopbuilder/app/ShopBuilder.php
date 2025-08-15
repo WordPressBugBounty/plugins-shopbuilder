@@ -82,7 +82,6 @@ final class ShopBuilder {
 		$this->define_constants();
 		$this->post_type     = 'product';
 		$this->current_theme = wp_get_theme()->get( 'Template' ) ? wp_get_theme()->get( 'Template' ) : ( wp_get_theme()->get( 'TextDomain' ) ? wp_get_theme()->get( 'TextDomain' ) : strtolower( str_replace( ' ', '', wp_get_theme()->get( 'Name' ) ) ) );
-		add_action( 'init', [ $this, 'language' ] );
 		add_action( 'plugins_loaded', [ $this, 'init' ], 15 );
 		add_action( 'upgrader_process_complete', [ $this, 'maybe_run_after_update' ], 10, 2 );
 
@@ -165,13 +164,6 @@ final class ShopBuilder {
 	 */
 	public function plugin_path() {
 		return untrailingslashit( plugin_dir_path( RTSB_FILE ) );
-	}
-
-	/**
-	 * Load Text Domain
-	 */
-	public function language() {
-		load_plugin_textdomain( 'shopbuilder', false, dirname( plugin_basename( RTSB_FILE ) ) . '/languages/' );
 	}
 
 	/**

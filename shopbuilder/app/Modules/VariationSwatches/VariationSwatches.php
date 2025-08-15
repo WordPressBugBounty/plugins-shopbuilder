@@ -100,7 +100,6 @@ final class VariationSwatches {
 	private function frontend_dynamic_css() {
 		$options     = SwatchesFns::get_options();
 		$dynamic_css = ':root{';
-
 		if ( ! empty( $options['details_page_attr_label_font_size'] ) ) {
 			$dynamic_css .= '--details-page-attr-label-font-size:' . $options['details_page_attr_label_font_size'] . 'px;';
 		}
@@ -134,6 +133,10 @@ final class VariationSwatches {
 		if ( ! empty( $options['tooltip_bg_color'] ) ) {
 			$dynamic_css .= '--tooltip-bg-color:' . $options['tooltip_bg_color'] . ';';
 		}
+		if ( ! empty( $options['tooltip_image_bg_color'] ) ) {
+			$dynamic_css .= '--tooltip-image-bg-color:' . $options['tooltip_image_bg_color'] . ';';
+		}
+
 		if ( ! empty( $options['tooltip_text_color'] ) ) {
 			$dynamic_css .= '--tooltip-text-color:' . $options['tooltip_text_color'] . ';';
 		}

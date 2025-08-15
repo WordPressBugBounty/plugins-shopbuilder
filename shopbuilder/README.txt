@@ -4,7 +4,7 @@ Donate link:
 Tags: Elementor, Woocommerce Builder, Elementor Woocommerce Builder, Woocommerce, Woocommerce Product
 Requires at least: 5.5
 Tested up to: 6.8
-Stable tag: 3.1.0
+Stable tag: 3.1.1
 Requires PHP: 7.4
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -414,11 +414,16 @@ If you like the ShopBuilder Plugin, then consider checking out our other WordPre
 
 * You can report security bugs through the Patchstack Vulnerability Disclosure Program. The Patchstack team help validate, triage and handle any security vulnerabilities. [Report a security vulnerability.](https://patchstack.com/database/vdp/shopbuilder)
 
-== Screenshots ==
-
 == Changelog ==
 
-= 3.1.0 ( Aug 04, 2025) =
+= 3.1.1 (Aug 15, 2025) =
+* Fix: Default template selection in Template Builder was not working correctly for specific products and categories.
+* Fix: "Set as default" control in Template Builder modal was not functioning properly.
+* Fix: Resolved issue with the Revolut Pay payment method.
+* Fix: Missing Cart Table custom data.
+* Fix: Deprecated "load_plugin_textdomain" usage removed.
+
+= 3.1.0 ( Aug 06, 2025) =
 * New: Added Variation Swatch module — users can now disable third-party variation swatch plugins and use this built-in module instead.
 * New: Added Variation Gallery module — users can now disable separate variation gallery plugins and rely on the built-in module.
 * Fix: Resolved infinite loading issue with Slider Widgets loader.

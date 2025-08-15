@@ -356,6 +356,9 @@ class ModalTemplate {
 							if ( $set_default ) {
 								$template_default = $post_id;
 							}
+							if ( ! $set_default && $template_default === $post_id ) {
+								$template_default = '';
+							}
 						} else {
 							$set_default_option_name = '';
 							if ( 'product_cats' === $product_page_for ) {
@@ -373,6 +376,9 @@ class ModalTemplate {
 						$set_default     = BuilderFns::get_specific_category_as_default( $post_id );
 						if ( ! empty( $categories_name ) && $set_default ) {
 							$template_default = $post_id;
+						}
+						if ( ! $set_default && $template_default === $post_id ) {
+							$template_default = '';
 						}
 					}
 
@@ -448,7 +454,7 @@ class ModalTemplate {
 		wp_send_json( $return );
 		wp_die();
 	}
-    
+
 	/**
 	 * Get Modal Card Markup.
 	 *

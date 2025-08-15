@@ -4083,7 +4083,7 @@ class ModuleList extends ListModel {
 					'id'    => 'attribute_border_color',
 					'label' => esc_html__( 'Attribute Border Color', 'shopbuilder' ),
 					'type'  => 'color',
-					'value' => '#333333',
+					'value' => '#D1D5DB',
 					'tab'   => 'style',
 				],
 				'attribute_border_color_hover'      => [
@@ -4207,6 +4207,13 @@ class ModuleList extends ListModel {
 				'tooltip_bg_color'                  => [
 					'id'    => 'tooltip_bg_color',
 					'label' => esc_html__( 'Tooltip Background Color', 'shopbuilder' ),
+					'type'  => 'color',
+					'value' => '#333333',
+					'tab'   => 'style',
+				],
+				'tooltip_image_bg_color'            => [
+					'id'    => 'tooltip_bg_color',
+					'label' => esc_html__( 'Tooltip Image Background Color', 'shopbuilder' ),
 					'type'  => 'color',
 					'value' => '#333333',
 					'tab'   => 'style',
