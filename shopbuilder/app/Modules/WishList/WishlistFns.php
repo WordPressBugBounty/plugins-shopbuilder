@@ -11,16 +11,24 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit( 'This script cannot be accessed directly.' );
 }
 
+/**
+ * Class WishlistFns
+ */
 class WishlistFns {
-
+	/**
+	 * Singleton
+	 */
 	use SingletonTrait;
 
+	/**
+	 * Wishlist menu slug
+	 */
 	const WC_MENU_SLUG = 'wishlist';
 
 	/**
 	 * Remove product id
 	 *
-	 * @param int $product_id
+	 * @param int $product_id product id.
 	 *
 	 * @return bool|int
 	 */
@@ -47,6 +55,9 @@ class WishlistFns {
 		return true;
 	}
 
+	/**
+	 * @return false|string
+	 */
 	public static function get_page_url() {
 		$page_id = Fns::get_option( 'modules', 'wishlist', 'page' );
 		return $page_id && absint( $page_id ) ? get_permalink( $page_id ) : '#';
@@ -55,7 +66,7 @@ class WishlistFns {
 	/**
 	 * Product Add
 	 *
-	 * @param integer $product_id
+	 * @param integer $product_id product id.
 	 */
 	public function add_product( $product_id ) {
 
@@ -221,10 +232,10 @@ class WishlistFns {
 	}
 
 	/**
-	 * display_field
+	 * Display_field
 	 *
-	 * @param string $field_id
-	 * @param array  $product
+	 * @param string $field_id attribute slug.
+	 * @param array  $product product data.
 	 *
 	 * @return void [html]
 	 */
@@ -262,11 +273,6 @@ class WishlistFns {
 				<a href="<?php the_permalink( $product['id'] ); ?>"><?php echo esc_html( $product[ $field_id ] ); ?></a>
 				<?php
 				break;
-
-			case 'price':
-				echo wp_kses_post( $product[ $field_id ] );
-				break;
-
 			case 'quantity':
 				Fns::print_html( $product[ $field_id ] );
 				break;
@@ -278,14 +284,9 @@ class WishlistFns {
 			case 'add_to_cart':
 				Fns::print_html( apply_filters( 'rtsb/modules/wishlist/add_to_cart_btn', $product[ $field_id ] ) );
 				break;
-
-			case 'attribute':
-				echo wp_kses_post( $product[ $field_id ] );
-				break;
-
 			case 'weight':
 				if ( $product[ $field_id ] ) {
-					$unit = $product[ $field_id ] !== '-' ? get_option( 'woocommerce_weight_unit' ) : '';
+					$unit = '-' !== $product[ $field_id ] ? get_option( 'woocommerce_weight_unit' ) : '';
 					Fns::print_html( wc_format_localized_decimal( $product[ $field_id ] ) . ' ' . esc_attr( $unit ) );
 				}
 				break;
@@ -293,7 +294,8 @@ class WishlistFns {
 			case 'description':
 				Fns::print_html( apply_filters( 'woocommerce_short_description', $product[ $field_id ] ) );
 				break;
-
+			case 'attribute':
+			case 'price':
 			default:
 				echo wp_kses_post( $product[ $field_id ] );
 				break;
@@ -303,7 +305,8 @@ class WishlistFns {
 	/**
 	 * Field name
 	 *
-	 * @param string $field
+	 * @param string $field field.
+	 * @param bool   $custom custom or not.
 	 *
 	 * @return string|void
 	 */
@@ -313,7 +316,7 @@ class WishlistFns {
 			return;
 		}
 
-		if ( $custom === true ) {
+		if ( true === $custom ) {
 			return $field;
 		}
 
@@ -353,6 +356,10 @@ class WishlistFns {
 		return Fns::get_available_products_by_ids( $ids );
 	}
 
+	/**
+	 * @param array $product_ids ids.
+	 * @return void
+	 */
 	public function update_user_wishlist_ids( $product_ids ) {
 		$uid         = get_current_user_id();
 		$product_ids = Fns::get_available_products_by_ids( $product_ids );
@@ -360,7 +367,7 @@ class WishlistFns {
 	}
 
 	/**
-	 * @param $product_id
+	 * @param int $product_id product id.
 	 *
 	 * @return bool
 	 */
@@ -375,7 +382,7 @@ class WishlistFns {
 	}
 
 	/**
-	 * @param WC_Product $product
+	 * @param object $product product.
 	 *
 	 * @return string
 	 */
@@ -408,7 +415,7 @@ class WishlistFns {
 	/**
 	 * Generate Cart button
 	 *
-	 * @param WC_Product $product
+	 * @param object $product product.
 	 */
 	public function add_to_cart_html( $product ) {
 		if ( ! $product ) {
@@ -432,7 +439,6 @@ class WishlistFns {
 				'data-product_id'  => $product->get_id(),
 				'data-product_sku' => $product->get_sku(),
 				'aria-label'       => $product->add_to_cart_description(),
-				'rel'              => 'nofollow',
 			],
 		];
 

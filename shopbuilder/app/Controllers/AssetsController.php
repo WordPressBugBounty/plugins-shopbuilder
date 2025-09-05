@@ -71,7 +71,7 @@ class AssetsController {
 		} else {
 			self::$ajaxurl = admin_url( 'admin-ajax.php' );
 		}
-
+		add_filter( 'rtsb/optimizer/scripts/deps', [ $this, 'extend_shared_dependencies' ], 99 );
 		/**
 		 * Admin scripts.
 		 */
@@ -87,7 +87,19 @@ class AssetsController {
 		 */
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_general_public_scripts' ], 30 );
 	}
-
+	/**
+	 * Shared dependencies.
+	 *
+	 * @param array $deps Dependencies.
+	 *
+	 * @return array
+	 */
+	public function extend_shared_dependencies( $deps ) {
+		if ( Fns::is_elementor_widget_active( 'products_slider' ) ) {
+			$deps[] = 'swiper';
+		}
+		return array_unique( $deps );
+	}
 	/**
 	 * Get all frontend scripts.
 	 *
@@ -373,6 +385,7 @@ class AssetsController {
 				'browseCartText'        => esc_html__( 'Browse Cart', 'shopbuilder' ),
 				'noProductsText'        => apply_filters( 'rtsb/global/no_products_text', esc_html__( 'No more products to load', 'shopbuilder' ) ),
 				'isOptimizationEnabled' => Fns::is_optimization_enabled(),
+				'isLoaderEnabled'       => Fns::enable_loader(),
 				'notice'                => [
 					'position' => Fns::get_option( 'general', 'notification', 'notification_position', 'center-center' ),
 				],

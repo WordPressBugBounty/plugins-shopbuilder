@@ -62,18 +62,18 @@ class GeneralList extends ListModel {
 						'disable' => true,
 					],
 					'fields'       => [
-						'optimization_intro'     => [
+						'optimization_intro'      => [
 							'id'   => 'optimization_intro',
 							'type' => 'description',
 							'text' => __( 'Optimize your website for maximum performance from these advanced options. <br /> <span style="color: #dc3545; display: block; margin-top: 10px;">⚠️ Note: After enabling or disabling any of these settings, clear the ShopBuilder cache to ensure changes are applied correctly.</span>', 'shopbuilder' ),
 						],
-						'enable_optimization'    => [
+						'enable_optimization'     => [
 							'id'    => 'enable',
 							'type'  => 'switch',
 							'label' => esc_html__( 'Enable Asset Optimization?', 'shopbuilder' ),
 							'help'  => esc_html__( 'Enable this option to dynamically load assets (styles, scripts) only when needed, helping to optimize your website’s performance', 'shopbuilder' ),
 						],
-						'load_elementor_scripts' => [
+						'load_elementor_scripts'  => [
 							'id'         => 'enable',
 							'type'       => 'switch',
 							'label'      => esc_html__( 'Load Elementor Assets?', 'shopbuilder' ),
@@ -89,7 +89,7 @@ class GeneralList extends ListModel {
 								],
 							],
 						],
-						'context_asset_loading'  => [
+						'context_asset_loading'   => [
 							'id'         => 'enable',
 							'type'       => 'switch',
 							'label'      => esc_html__( 'Context-Aware Asset Loading?', 'shopbuilder' ),
@@ -103,6 +103,19 @@ class GeneralList extends ListModel {
 									],
 								],
 							],
+						],
+						'wp_rocket_compatibility' => [
+							'id'    => 'wp_rocket_compatibility',
+							'type'  => 'switch',
+							'label' => esc_html__( 'WP Rocket Compatibility', 'shopbuilder' ),
+							'help'  => esc_html__( 'Enable this option to ensure compatibility with the WP Rocket plugin for optimized asset loading.', 'shopbuilder' ),
+						],
+
+						'remove_pre_loader'       => [
+							'id'    => 'remove_pre_loader',
+							'type'  => 'switch',
+							'label' => esc_html__( 'Disable Element Preloader', 'shopbuilder' ),
+							'help'  => esc_html__( 'Enable this option to remove the element preloader.', 'shopbuilder' ),
 						],
 						/**
 						'load_gutenberg_scripts' => [

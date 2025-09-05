@@ -35,9 +35,11 @@ $parent_class = apply_filters( 'rtsb/builder/wrapper/parent_class', [] );
 $type         = apply_filters( 'rtsb/builder/set/current/page/type', '' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 
 do_action( 'rtsb/builder/after/header' );
-
+if ( Fns::content_invisible() ) {
+	$parent_class[] = 'content-invisible';
+}
 ?>
-<div id="rtsb-builder-content" class="rtsb-builder-content content-invisible <?php echo esc_attr( implode( ' ', $parent_class ) ); ?>">
+<div id="rtsb-builder-content" class="rtsb-builder-content <?php echo esc_attr( implode( ' ', $parent_class ) ); ?>">
 	<?php
 	do_action( 'rtsb/builder/template/before/content' );
 	if ( is_singular( BuilderFns::$post_type_tb ) && 'elementor' === Fns::page_edit_with( get_the_ID() ) ) {

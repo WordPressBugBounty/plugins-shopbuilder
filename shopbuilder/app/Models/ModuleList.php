@@ -1454,6 +1454,22 @@ class ModuleList extends ListModel {
 					'fields'       => Fns::pro_version_notice( '1.10.0' ),
 				]
 			),
+			'pdf_invoice'                   => apply_filters(
+				'rtsb/module/pdf_invoice/options',
+				[
+					'id'           => 'pdf_invoice',
+					'active'       => '',
+					'badge'        => 'new',
+					'title'        => esc_html__( 'PDF Invoice', 'shopbuilder' ),
+					'active_field' => [
+						'label' => esc_html__( 'Enable PDF Invoice?', 'shopbuilder' ),
+						'help'  => esc_html__( 'Switch on to enable PDF Invoice module.', 'shopbuilder' ),
+					],
+					'package'      => $this->pro_package(),
+					'fields'       => Fns::pro_version_notice( '2.1.0', 'general', 'ShopBuilder Pro', false ),
+				]
+			),
+
 		];
 		return apply_filters( 'rtsb/core/modules/raw_list', $list );
 	}
@@ -4029,24 +4045,16 @@ class ModuleList extends ListModel {
 					'value' => '#333333',
 					'tab'   => 'style',
 				],
-				'checkmark_icon_color'              => [
-					'id'    => 'checkmark_icon_color',
-					'label' => esc_html__( 'Checkmark Icon Color', 'shopbuilder' ),
-					'isPro' => ! rtsb()->has_pro(),
-					'type'  => 'color',
-					'value' => '#ffffff',
-					'tab'   => 'style',
-				],
 				'attribute_checkmark_width'         => [
 					'id'    => 'attribute_checkmark_width',
 					'label' => esc_html__( 'Checkmark Width', 'shopbuilder' ),
 					'isPro' => ! rtsb()->has_pro(),
 					'help'  => esc_html__( 'Set the width (in px) for selected attribute checkmark,', 'shopbuilder' ),
 					'type'  => 'slider',
-					'min'   => 10,
+					'min'   => 15,
 					'max'   => 200,
 					'unit'  => 'px',
-					'value' => 15,
+					'value' => 18,
 					'tab'   => 'style',
 				],
 				'attribute_checkmark_height'        => [
@@ -4055,10 +4063,10 @@ class ModuleList extends ListModel {
 					'isPro' => ! rtsb()->has_pro(),
 					'help'  => esc_html__( 'Set the height (in px) for selected attribute checkmark,', 'shopbuilder' ),
 					'type'  => 'slider',
-					'min'   => 10,
+					'min'   => 15,
 					'max'   => 200,
 					'unit'  => 'px',
-					'value' => 15,
+					'value' => 18,
 					'tab'   => 'style',
 				],
 				'attribute_checkmark_icon_size'     => [
@@ -4067,10 +4075,10 @@ class ModuleList extends ListModel {
 					'label' => esc_html__( 'Checkmark Icon Size', 'shopbuilder' ),
 					'help'  => esc_html__( 'Checkmark Icon Size.', 'shopbuilder' ),
 					'type'  => 'slider',
-					'min'   => 8,
+					'min'   => 10,
 					'max'   => 30,
 					'unit'  => 'px',
-					'value' => 11,
+					'value' => 13,
 					'tab'   => 'style',
 				],
 				'attribute_style'                   => [

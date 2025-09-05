@@ -1104,7 +1104,6 @@ class Render {
 		$cart_attr = [
 			'class'           => 'rtsb-action-btn ' . $type . '-product tipsy icon-' . $alignment . ' ' . ( empty( $text ) ? 'no-text' : 'has-text' ),
 			'href'            => esc_url( $link ),
-			'rel'             => 'nofollow',
 			'data-quantity'   => '1',
 			'data-product_id' => absint( $id ),
 			'data-id'         => absint( $id ),
@@ -1123,7 +1122,9 @@ class Render {
 		}
 
 		$content .= '<div class="rtsb-wc-add-to-cart-wrap">';
-
+		if ( 'variable' === $type ) {
+			$cart_attr['class'] = $cart_attr['class'] . ' rtsb_vs_add_to_cart ';
+		}
 		if ( 'variable' === $type || 'grouped' === $type ) {
 			$cart_attr = apply_filters( 'rtsb/elementor/render/cart_attributes', $cart_attr, $product );
 

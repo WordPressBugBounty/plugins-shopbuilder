@@ -543,6 +543,9 @@ class GeneralAddons extends Render {
 	 * @return string
 	 */
 	public function pre_loader() {
+		if ( ! Fns::enable_loader() ) {
+			return '';
+		}
 		if ( $this->is_carousel ) {
 			return '<div class="rtsb-elements-loading rtsb-ball-clip-rotate"><div></div></div>';
 		}

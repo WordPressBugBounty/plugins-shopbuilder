@@ -55,6 +55,29 @@ class Fns {
 	 *
 	 * @return string|null
 	 */
+	public static function enable_loader() {
+		return 'on' !== self::get_option( 'general', 'optimization', 'remove_pre_loader', '' );
+	}
+	/**
+	 * Get nonce.
+	 *
+	 * @return string|null
+	 */
+	public static function content_invisible() {
+		$wp_rocket_compatibility = 'on' !== self::get_option( 'general', 'optimization', 'wp_rocket_compatibility', '' );
+		if ( $wp_rocket_compatibility ) {
+			return true;
+		}
+		if ( defined( 'WP_ROCKET_VERSION' ) ) {
+			return false;
+		}
+		return true;
+	}
+	/**
+	 * Get nonce.
+	 *
+	 * @return string|null
+	 */
 	public static function get_nonce() {
         // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		return isset( $_REQUEST[ rtsb()->nonceId ] ) ? sanitize_text_field( $_REQUEST[ rtsb()->nonceId ] ) : null;
@@ -1951,45 +1974,33 @@ class Fns {
 		if ( is_null( $product ) ) {
 			global $product;
 		}
-
 		if ( ! $product instanceof WC_Product ) {
 			return '';
 		}
-
 		if ( ! $product->is_on_sale() ) {
 			return '';
 		}
-
-		$percentage     = null;
-		$max_percentage = '';
-
+		$max_percentage = 0;
 		if ( $product->is_type( 'simple' ) ) {
-			$max_percentage = $product->get_sale_price() ? ( ( $product->get_regular_price() - $product->get_sale_price() ) / $product->get_regular_price() ) * 100 : 0;
+			$regular_price = (float) $product->get_regular_price();
+			$sale_price    = (float) $product->get_sale_price();
+			if ( $regular_price > 0 && $sale_price > 0 ) {
+				$max_percentage = ( ( $regular_price - $sale_price ) / $regular_price ) * 100;
+			}
 		} elseif ( $product->is_type( 'variable' ) ) {
-			$max_percentage = 0;
+			$prices = $product->get_variation_prices( true );
+			if ( ! empty( $prices['regular_price'] ) && ! empty( $prices['sale_price'] ) ) {
+				foreach ( $prices['regular_price'] as $key => $regular_price ) {
+					$sale_price = $prices['sale_price'][ $key ];
 
-			foreach ( $product->get_children() as $child_id ) {
-
-				$variation = wc_get_product( $child_id );
-
-				$price = $variation->get_regular_price();
-				$sale  = $variation->get_sale_price();
-
-				if ( 0 !== $price && ! empty( $sale ) ) {
-					$percentage = ( $price - $sale ) / $price * 100;
-				}
-
-				if ( $percentage > $max_percentage ) {
-					$max_percentage = $percentage;
+					if ( $regular_price > 0 && $sale_price > 0 && $regular_price > $sale_price ) {
+						$percentage     = ( ( $regular_price - $sale_price ) / $regular_price ) * 100;
+						$max_percentage = max( $max_percentage, $percentage );
+					}
 				}
 			}
 		}
-
-		if ( $max_percentage > 0 ) {
-			return round( $max_percentage );
-		}
-
-		return 0;
+		return $max_percentage > 0 ? round( $max_percentage ) : 0;
 	}
 
 	/**
@@ -3839,7 +3850,7 @@ class Fns {
 	public static function is_contextual_loading() {
 		$data = GeneralList::instance()->get_data()['optimization'] ?? [];
 
-		return ! empty( $data['context_asset_loading'] ) && 'on' === $data['context_asset_loading'] ?? false;
+		return ! empty( $data['context_asset_loading'] ) && 'on' === $data['context_asset_loading'];
 	}
 
 	/**

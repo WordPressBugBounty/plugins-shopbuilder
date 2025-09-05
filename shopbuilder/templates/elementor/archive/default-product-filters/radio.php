@@ -26,7 +26,7 @@ $sale_options = [
 	'regular' => ! empty( $repeater_settings['regular_title'] ) ? esc_html( $repeater_settings['regular_title'] ) : esc_html__( 'Regular Products', 'shopbuilder' ),
 ];
 
-$tax_data     = RenderHelpers::get_products( $tax_type );
+$tax_data     = RenderHelpers::get_all_terms( $tax_type );
 $is_attribute = strpos( $tax_type, 'pa_' ) !== false;
 
 if ( is_wp_error( $tax_data ) && 'sale_filter' !== $tax_type ) {

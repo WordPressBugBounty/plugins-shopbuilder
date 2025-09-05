@@ -608,8 +608,11 @@ class RenderHelpers {
 	public static function prepare_row_classes( $settings = [] ) {
 		$masonry_class = null;
 		$classes       = 'rtsb-row rtsb-content-loader element-loading';
-		$loader_class  = ' rtsb-pre-loader';
 
+		$loader_class = '';
+		if ( Fns::enable_loader() ) {
+			$loader_class = ' rtsb-pre-loader';
+		}
 		$raw_layout  = esc_html( $settings['layout'] );
 		$layout      = self::filter_layout( $raw_layout );
 		$grid_type   = $settings['grid_type'];
@@ -738,6 +741,9 @@ class RenderHelpers {
 				0 => [
 					'slidesPerView'  => absint( $m_col ),
 					'slidesPerGroup' => absint( $meta['m_group'] ),
+					'grid'           => [
+						'rows' => 1,
+					],
 					'pagination'     => [
 						'dynamicBullets' => $has_dynamic_dots,
 					],
@@ -915,7 +921,9 @@ class RenderHelpers {
 		if ( $is_carousel ) {
 			$loader_class = ' full-op';
 		}
-
+		if ( ! Fns::enable_loader() ) {
+			return '';
+		}
 		return '<div class="rtsb-elements-loading rtsb-ball-clip-rotate"><div></div></div>';
 	}
 
@@ -1247,12 +1255,13 @@ class RenderHelpers {
 	 * @param string $taxonomy Taxonomy name.
 	 * @return int[]|string|string[]|\WP_Error|\WP_Term[]
 	 */
-	public static function get_products( $taxonomy ) {
+	public static function get_all_terms( $taxonomy ) {
 		$args = [
-			'taxonomy'     => esc_html( $taxonomy ),
-			'hide_empty'   => false,
-			'pad_counts'   => true,
-			'hierarchical' => true,
+			'taxonomy'        => $taxonomy,
+			'suppress_filter' => true,
+			'hide_empty'      => false,
+			'pad_counts'      => true,
+			'hierarchical'    => true,
 		];
 
 		$cache_key      = 'rtsb_get_terms_filter_products' . $taxonomy;

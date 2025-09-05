@@ -126,9 +126,7 @@ final class VariationSwatches {
 		if ( ! empty( $options['checkmark_bg_color'] ) ) {
 			$dynamic_css .= '--checkmark-bg-color:' . $options['checkmark_bg_color'] . ';';
 		}
-		if ( ! empty( $options['checkmark_icon_color'] ) ) {
-			$dynamic_css .= '--checkmark-icon-color:' . $options['checkmark_icon_color'] . ';';
-		}
+
 		// Tooltip.
 		if ( ! empty( $options['tooltip_bg_color'] ) ) {
 			$dynamic_css .= '--tooltip-bg-color:' . $options['tooltip_bg_color'] . ';';

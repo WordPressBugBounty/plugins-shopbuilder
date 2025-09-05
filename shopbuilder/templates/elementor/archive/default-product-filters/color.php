@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 $tax_type   = RenderHelpers::get_product_filters_tax_type( $tax_type, $attr_type );
 $show_label = ! empty( $repeater_settings['show_label'] ) ? ' has-label' : ' no-label';
-$tax_data   = RenderHelpers::get_products( $tax_type );
+$tax_data   = RenderHelpers::get_all_terms( $tax_type );
 
 if ( is_wp_error( $tax_data ) ) {
 	Fns::print_html( RenderHelpers::filter_error_message( $title, 'rtsb-' . esc_attr( $input ) ) );

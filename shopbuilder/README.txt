@@ -4,7 +4,7 @@ Donate link:
 Tags: Elementor, Woocommerce Builder, Elementor Woocommerce Builder, Woocommerce, Woocommerce Product
 Requires at least: 5.5
 Tested up to: 6.8
-Stable tag: 3.1.1
+Stable tag: 3.1.2
 Requires PHP: 7.4
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -415,6 +415,17 @@ If you like the ShopBuilder Plugin, then consider checking out our other WordPre
 * You can report security bugs through the Patchstack Vulnerability Disclosure Program. The Patchstack team help validate, triage and handle any security vulnerabilities. [Report a security vulnerability.](https://patchstack.com/database/vdp/shopbuilder)
 
 == Changelog ==
+
+= 3.1.2 ( Sep 05, 2025) =
+* Fix: Category widget image alignment issue.
+* Fix: Checkmark icon update for selected variation.
+* Fix: Brand count issue in filter.
+* Fix: Shopify checkout order summary meta data display.
+* Fix: Product slider grid view spacing per row on mobile.
+* Fix: Product grid slider layout dependency issue.
+* Fix: Variation Swatch Module Clear Button Spacing Issue
+* Fix: Support Wp Rocket plugin Issue
+* Add: FDF invoice compatibility for Pro version.
 
 = 3.1.1 (Aug 15, 2025) =
 * Fix: Default template selection in Template Builder was not working correctly for specific products and categories.

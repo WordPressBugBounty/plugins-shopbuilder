@@ -11,8 +11,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit( 'This script cannot be accessed directly.' );
 }
 
+/**
+ * Class CompareFns
+ */
 class CompareFns {
-
+	/**
+	 * @var singleton
+	 */
 	use SingletonTrait;
 
 	/**
@@ -28,7 +33,7 @@ class CompareFns {
 	 *
 	 * @return array
 	 */
-	static function get_available_list_fields() {
+	public static function get_available_list_fields() {
 		$attribute_list = [];
 
 		if ( function_exists( 'wc_get_attribute_taxonomies' ) ) {
@@ -51,7 +56,7 @@ class CompareFns {
 	 * Get default fields List
 	 * return array
 	 */
-	static function get_list_default_fields() {
+	public static function get_list_default_fields() {
 		$fields = [
 			'title'        => esc_html__( 'Title', 'shopbuilder' ),
 			'rating'       => esc_html__( 'Rating', 'shopbuilder' ),
@@ -73,7 +78,7 @@ class CompareFns {
 	 *
 	 * @return array Table Field list
 	 */
-	static function get_list_field_ids() {
+	public static function get_list_field_ids() {
 
 		$default_show    = array_keys( self::get_list_default_fields() );
 		$fields_settings = Fns::get_option( 'modules', 'compare', 'page_show_fields', [] );
@@ -87,7 +92,7 @@ class CompareFns {
 	}
 
 	/**
-	 * @param $field
+	 * @param string $field field.
 	 *
 	 * @return mixed|string|void
 	 */
@@ -109,6 +114,12 @@ class CompareFns {
 		return $field_name;
 	}
 
+	/**
+	 * @param string $field_id firld id.
+	 * @param object $product product object.
+	 *
+	 * @return void
+	 */
 	public function display_field( $field_id, $product ) {
 
 		$type = $field_id;
@@ -151,7 +162,7 @@ class CompareFns {
 
 			case 'weight':
 				if ( $product[ $field_id ] ) {
-					$unit = $product[ $field_id ] !== '-' ? get_option( 'woocommerce_weight_unit' ) : '';
+					$unit = '-' !== $product[ $field_id ] ? get_option( 'woocommerce_weight_unit' ) : '';
 					Fns::print_html( wc_format_localized_decimal( $product[ $field_id ] ) . ' ' . esc_attr( $unit ) );
 				}
 				break;
@@ -170,10 +181,13 @@ class CompareFns {
 		}
 	}
 
+	/**
+	 * @return array
+	 */
 	public function get_products_data() {
 		$ids = $this->get_compared_product_ids();
 
-		// For shareable link
+		// For shareable link.
 		if ( empty( $ids ) ) {
 			return [];
 		}
@@ -218,22 +232,25 @@ class CompareFns {
 				'sku'          => $product->get_sku() ? $product->get_sku() : $data_none,
 				'availability' => $this->availability_html( $product ),
 			];
-			if ( ! empty( $tax_field_ids ) ) {
-				foreach ( $tax_field_ids as $field_id ) {
-					if ( taxonomy_exists( $field_id ) ) {
-						$products_data[ $product->get_id() ][ $field_id ] = [];
-						$terms = get_the_terms( $product->get_id(), $field_id );
-						if ( ! empty( $terms ) ) {
-							foreach ( $terms as $term ) {
-								$term = sanitize_term( $term, $field_id );
-								$products_data[ $product->get_id() ][ $field_id ][] = $term->name;
-							}
-						} else {
-							$products_data[ $product->get_id() ][ $field_id ][] = '-';
-						}
-						$products_data[ $product->get_id() ][ $field_id ] = implode( ', ', $products_data[ $product->get_id() ][ $field_id ] );
-					}
+			if ( empty( $tax_field_ids ) ) {
+				continue;
+			}
+			foreach ( $tax_field_ids as $field_id ) {
+				if ( ! taxonomy_exists( $field_id ) ) {
+					continue;
 				}
+				$products_data[ $product->get_id() ][ $field_id ] = [];
+				$terms = get_the_terms( $product->get_id(), $field_id );
+				if ( ! empty( $terms ) ) {
+					foreach ( $terms as $term ) {
+						$term = sanitize_term( $term, $field_id );
+						$products_data[ $product->get_id() ][ $field_id ][] = $term->name;
+					}
+				} else {
+					$products_data[ $product->get_id() ][ $field_id ][] = '-';
+				}
+				$products_data[ $product->get_id() ][ $field_id ] = implode( ', ', $products_data[ $product->get_id() ][ $field_id ] );
+
 			}
 		}
 
@@ -241,7 +258,7 @@ class CompareFns {
 	}
 
 	/**
-	 * @param $product
+	 * @param object $product product object.
 	 *
 	 * @return mixed|void|null
 	 */
@@ -264,7 +281,6 @@ class CompareFns {
 				'data-product_id'  => $product->get_id(),
 				'data-product_sku' => $product->get_sku(),
 				'aria-label'       => $product->add_to_cart_description(),
-				'rel'              => 'nofollow',
 			],
 		];
 
@@ -288,7 +304,11 @@ class CompareFns {
 			$args
 		);
 	}
-
+	/**
+	 * @param object $product product object.
+	 *
+	 * @return mixed|void|null
+	 */
 	public function availability_html( $product ) {
 		$html         = '';
 		$availability = $product->get_availability();
@@ -315,6 +335,10 @@ class CompareFns {
 		return apply_filters( 'woocommerce_get_stock_html', $html, $product );
 	}
 
+	/**
+	 * @param int $id product id.
+	 * @return true|WP_Error
+	 */
 	public function add_product( $id ) {
 		$cookie_name = $this->get_cookie_name();
 
@@ -324,7 +348,7 @@ class CompareFns {
 
 		$product_ids = $this->get_compared_product_ids();
 
-		// Reached Maximum Limit
+		// Reached Maximum Limit.
 		if ( $this->reached_max_limit() ) {
 			return new \WP_Error( 'rtsb-compare-reached_max_limit', esc_html__( 'Reached maximum number of compare!.', 'shopbuilder' ) );
 		}
@@ -341,7 +365,7 @@ class CompareFns {
 	/**
 	 * Remove product from compare list
 	 *
-	 * @param integer $product_id
+	 * @param integer $product_id product id.
 	 *
 	 * @return bool|WP_Error
 	 */
@@ -370,6 +394,9 @@ class CompareFns {
 		return $delete_status;
 	}
 
+	/**
+	 * @return string
+	 */
 	public function get_cookie_name() {
 		$name = 'rtsb_compare_list';
 		if ( is_multisite() ) {
@@ -380,16 +407,19 @@ class CompareFns {
 	}
 
 	/**
-	 * @param $id
+	 * @param int $id product id.
 	 *
 	 * @return bool
 	 */
 	public function is_exists_in_list( $id ) {
 		$list = $this->get_compared_product_ids();
 
-		return in_array( $id, $list );
+		return in_array( $id, $list, true );
 	}
 
+	/**
+	 * @return array
+	 */
 	public function get_compared_product_ids() {
 		$cookie_name = $this->get_cookie_name();
 		$ids         = [];
@@ -403,6 +433,9 @@ class CompareFns {
 		return $ids;
 	}
 
+	/**
+	 * @return bool
+	 */
 	public function reached_max_limit() {
 
 		$product_ids = $this->get_compared_product_ids();
