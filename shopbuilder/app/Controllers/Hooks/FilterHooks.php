@@ -426,33 +426,128 @@ class FilterHooks {
 		}
 		return $wp_query_args;
 	}
+	/**
+	 * Add OR relation support for taxonomy queries.
+	 *
+	 * Processes the incoming WP_Query arguments and modifies the tax_query
+	 * relation to use "OR" instead of the default "AND" when needed.
+	 *
+	 * @param array $wp_query_args Existing WP_Query arguments.
+	 * @param array $query_vars    Query variables passed by WP.
+	 *
+	 * @return array Modified query arguments with OR relation applied.
+	 */
+	public static function extra_query_args_or( $wp_query_args, $query_vars ) {
+		return self::process_tax_query_relation( $wp_query_args, $query_vars, 'OR' );
+	}
 
 	/**
-	 * Define extra query arguments for WooCommerce product retrieval.
+	 * Apply AND relation to taxonomy queries.
 	 *
-	 * @param array $wp_query_args The original WooCommerce product query arguments.
-	 * @param array $query_vars    The query variables for the product query.
+	 * Modifies WP_Query arguments so that multiple taxonomy terms
+	 * are matched using an "AND" relation.
 	 *
-	 * @return array
+	 * @param array $wp_query_args Existing WP_Query arguments.
+	 * @param array $query_vars    Query variables passed by WordPress.
+	 *
+	 * @return array Modified query arguments with AND relation applied.
 	 */
-	public static function extra_query_args( $wp_query_args, $query_vars ) {
-		$type_condition = $query_vars['type'];
+	public static function extra_query_args_and( $wp_query_args, $query_vars ) {
+		return self::process_tax_query_relation( $wp_query_args, $query_vars, 'AND' );
+	}
+	/**
+	 * Process taxonomy query relation (AND / OR) for WC_Product_Query.
+	 *
+	 * @param array  $wp_query_args Existing WP_Query arguments.
+	 * @param array  $query_vars    Query vars passed by WooCommerce.
+	 * @param string $relation      Relation type: AND | OR.
+	 *
+	 * @return array Modified WP_Query args.
+	 */
+	public static function process_tax_query_relation( $wp_query_args, $query_vars, $relation ) {
+
+		$type_condition = $query_vars['type'] ?? '';
 
 		foreach ( $wp_query_args['tax_query'] as $key => $tax_query ) {
-			if ( isset( $tax_query['taxonomy'], $tax_query['field'], $tax_query['terms'] ) &&
+			if (
+				isset( $tax_query['taxonomy'], $tax_query['field'], $tax_query['terms'] ) &&
 				'product_type' === $tax_query['taxonomy'] &&
 				'slug' === $tax_query['field'] &&
-				$tax_query['terms'] === $type_condition ) {
-
+				$tax_query['terms'] === $type_condition
+			) {
 				unset( $wp_query_args['tax_query'][ $key ] );
 				break;
 			}
 		}
 
-		$wp_query_args['tax_query']['relation'] = 'OR';
+		$wp_query_args['tax_query'] = array_values( $wp_query_args['tax_query'] ); // phpcs:ignore
+
+		if ( empty( $wp_query_args['tax_query'] ) || count( $wp_query_args['tax_query'] ) < 2 ) {
+			return $wp_query_args;
+		}
+
+		$visibility_queries = [];
+		$user_queries       = [];
+
+		foreach ( $wp_query_args['tax_query'] as $tax_query ) {
+
+			if ( isset( $tax_query['taxonomy'] ) && 'product_visibility' === $tax_query['taxonomy'] ) {
+				$visibility_queries[] = $tax_query;
+				continue;
+			}
+
+			$user_queries[] = $tax_query;
+		}
+
+		if ( empty( $user_queries ) ) {
+			return $wp_query_args;
+		}
+
+		$final_tax_query = [
+			'relation' => 'AND',
+		];
+
+		if ( 'AND' === $relation ) {
+
+			foreach ( $user_queries as $query ) {
+
+				if ( isset( $query['terms'] ) && is_array( $query['terms'] ) && count( $query['terms'] ) > 1 ) {
+
+					foreach ( $query['terms'] as $single_term ) {
+						$final_tax_query[] = [
+							'taxonomy' => $query['taxonomy'],
+							'field'    => $query['field'],
+							'terms'    => [ $single_term ],
+							'operator' => $query['operator'] ?? 'IN',
+						];
+					}
+				} else {
+					$final_tax_query[] = $query;
+				}
+			}
+		} else {
+
+			$or_group = [
+				'relation' => 'OR',
+			];
+
+			foreach ( $user_queries as $query ) {
+				$or_group[] = $query;
+			}
+
+			$final_tax_query[] = $or_group;
+		}
+
+		foreach ( $visibility_queries as $vis_query ) {
+			$final_tax_query[] = $vis_query;
+		}
+
+		$wp_query_args['tax_query'] = $final_tax_query; // phpcs:ignore
 
 		return $wp_query_args;
 	}
+
+
 
 	/**
 	 * Define extra query arguments for out of stock visibility.

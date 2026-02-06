@@ -30,6 +30,27 @@ class RenderHelpers {
 	 */
 	private static $cache = [];
 	/**
+	 * @param string $order_by value.
+	 * @return string
+	 */
+	public static function escaping_product_orderby( $order_by ) {
+		$catalog_orderby_options = apply_filters(
+			'woocommerce_catalog_orderby',
+			[
+				'menu_order' => __( 'Default sorting', 'shopbuilder' ),
+				'popularity' => __( 'Sort by popularity', 'shopbuilder' ),
+				'rating'     => __( 'Sort by average rating', 'shopbuilder' ),
+				'date'       => __( 'Sort by latest', 'shopbuilder' ),
+				'price'      => __( 'Sort by price: low to high', 'shopbuilder' ),
+				'price-desc' => __( 'Sort by price: high to low', 'shopbuilder' ),
+			]
+		);
+		if ( in_array( $order_by, array_keys( $catalog_orderby_options ), true ) ) {
+			return $order_by;
+		}
+		return 'menu_order';
+	}
+	/**
 	 * Get data.
 	 *
 	 * @param array|string $haystack The array or string to search for the value.

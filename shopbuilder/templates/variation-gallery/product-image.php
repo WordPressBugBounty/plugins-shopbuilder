@@ -69,6 +69,10 @@ $custom_class    = [];
 if ( rtsb()->has_pro() ) {
 	$custom_class[] = 'rtsb-pro-active';
 }
+if ( ! ( did_action( 'elementor/loaded' ) && \Elementor\Plugin::$instance->editor->is_edit_mode() ) ) {
+	$custom_class[] = 'rtsb-content-loading';
+}
+
 $position       = apply_filters( 'rtsb/vg/thumbnails/position', $galleryStyle );
 $col            = GalleryFns::get_options( 'thumbnails_columns' ) ?: 4;
 $col            = apply_filters( 'rtsb/vg/gallery/columns', $col );
@@ -77,7 +81,7 @@ $icon_right     = '<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1
 $icon_left      = '<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 320 512" aria-hidden="true"><path d="M34.5 239l194-194c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9L135.4 256l150.6 149.4c9.4 9.4 9.4 24.6 0 33.9l-22.6 22.6c-9.4 9.4-24.6 9.4-33.9 0l-194-194c-9.4-9.4-9.4-24.6 0-34z"/></svg>';
 ?>
 <div class="<?php echo esc_attr( implode( ' ', array_map( 'sanitize_html_class', $wrapper_classes ) ) ); ?>">
-	<div class="rtsb-vg-main-slider-wrapper rtsb-content-loading <?php echo esc_attr( implode( ' ', array_map( 'sanitize_html_class', $custom_class ) ) ); ?>" data-image-zoom="<?php echo esc_attr( boolval( $image_zoom ) ); ?>" >
+	<div class="rtsb-vg-main-slider-wrapper <?php echo esc_attr( implode( ' ', array_map( 'sanitize_html_class', $custom_class ) ) ); ?>" data-image-zoom="<?php echo esc_attr( boolval( $image_zoom ) ); ?>" >
 		<div class="rtsb-carousel-slider product-vg-gallery"  data-options=<?php echo esc_js( wp_json_encode( $slider_options ) ); ?>>
 			<!-- Main Slider -->
 			<?php

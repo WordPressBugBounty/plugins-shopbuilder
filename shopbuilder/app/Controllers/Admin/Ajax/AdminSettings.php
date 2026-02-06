@@ -161,6 +161,7 @@ class AdminSettings {
 					$sections[ $section_id ]['list'][ $module_id ]['active'] = '';
 				}
 			}
+			do_action( 'rtsb/before/save/options', $section_id, $module_id, $options[ $module_id ] ?? [] );
 		}
 
 		DataModel::source()->set_option( $section_id, $options );

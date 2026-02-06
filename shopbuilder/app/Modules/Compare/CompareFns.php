@@ -413,8 +413,7 @@ class CompareFns {
 	 */
 	public function is_exists_in_list( $id ) {
 		$list = $this->get_compared_product_ids();
-
-		return in_array( $id, $list, true );
+		return in_array( absint( $id ), $list, true );
 	}
 
 	/**

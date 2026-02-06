@@ -85,7 +85,7 @@ class ImageAccordion extends ElementorWidgetBase {
 	public function get_script_depends() {
 		return [
 			'photoswipe',
-			'photoswipe-ui-default',
+			'wc-photoswipe-ui-default',
 		];
 	}
 

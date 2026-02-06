@@ -10,12 +10,14 @@ namespace RadiusTheme\SB\Models;
 use RadiusTheme\SB\Helpers\Fns;
 use RadiusTheme\SB\Models\Base\ListModel;
 use RadiusTheme\SB\Modules\Badges\Badges;
-use RadiusTheme\SB\Modules\CheckoutEditor\CheckoutEditorInit;
 use RadiusTheme\SB\Modules\CheckoutEditor\CheckoutFns;
-use RadiusTheme\SB\Modules\ShopifyCheckout\ShopifyCheckout;
-use RadiusTheme\SB\Modules\VariationGallery\VariationGalleryInit;
 use RadiusTheme\SB\Modules\VariationSwatches\SwatchesFns;
+use RadiusTheme\SB\Modules\ShopifyCheckout\ShopifyCheckout;
+use RadiusTheme\SB\Modules\CheckoutEditor\CheckoutEditorInit;
+use RadiusTheme\SB\Modules\AbandonedCartRecovery\CartRecoveryInit;
 use RadiusTheme\SB\Modules\VariationSwatches\VariationSwatches;
+use RadiusTheme\SB\Modules\VariationGallery\VariationGalleryInit;
+use RadiusTheme\SB\Modules\AbandonedCartRecovery\CartRecoveryOptions;
 use RadiusTheme\SB\Traits\SingletonTrait;
 use RadiusTheme\SB\Modules\Compare\Compare;
 use RadiusTheme\SB\Modules\WishList\Wishlist;
@@ -1459,7 +1461,6 @@ class ModuleList extends ListModel {
 				[
 					'id'           => 'pdf_invoice',
 					'active'       => '',
-					'badge'        => 'new',
 					'title'        => esc_html__( 'PDF Invoice', 'shopbuilder' ),
 					'active_field' => [
 						'label' => esc_html__( 'Enable PDF Invoice?', 'shopbuilder' ),
@@ -1469,11 +1470,88 @@ class ModuleList extends ListModel {
 					'fields'       => Fns::pro_version_notice( '2.1.0', 'general', 'ShopBuilder Pro', false ),
 				]
 			),
-
+			'extended_cross_sell'           => apply_filters(
+				'rtsb/module/extended_cross_sell/options',
+				[
+					'id'           => 'extended_cross_sell',
+					'active'       => '',
+					'title'        => esc_html__( 'Extended Cross Sell', 'shopbuilder' ),
+					'active_field' => [
+						'label' => esc_html__( 'Enable Extended Cross Sell?', 'shopbuilder' ),
+						'help'  => esc_html__( 'Switch on to enable Extended Cross Sell.', 'shopbuilder' ),
+					],
+					'package'      => $this->pro_package(),
+					'fields'       => Fns::pro_version_notice( '2.1.4', 'general', 'ShopBuilder Pro', false ),
+				]
+			),
+			'abandoned_cart_recovery'       => apply_filters(
+				'rtsb/module/abandoned_cart_recovery/options',
+				[
+					'id'           => 'abandoned_cart_recovery',
+					'active'       => '',
+					'badge'        => 'new',
+					'title'        => esc_html__( 'Abandoned Cart Recovery', 'shopbuilder' ),
+					'active_field' => [
+						'label' => esc_html__( 'Enable Abandoned Cart Recovery?', 'shopbuilder' ),
+						'help'  => esc_html__( 'Cart will be considered abandoned if order is not completed in cut-off time.', 'shopbuilder' ),
+					],
+					'fields'       => CartRecoveryOptions::get_cart_recovery_fields(),
+					'base_class'   => CartRecoveryInit::class,
+					'tabs'         => [
+						'general'        => [
+							'title' => esc_html__( 'General', 'shopbuilder' ),
+						],
+						'emailTemplates' => [
+							'title' => esc_html__( 'Email Templates', 'shopbuilder' ),
+						],
+					],
+				]
+			),
+			'popup_builder'                 => apply_filters(
+				'rtsb/module/popup_builder/options',
+				[
+					'id'           => 'popup_builder',
+					'active'       => '',
+					'title'        => esc_html__( 'Popup Builder', 'shopbuilder' ),
+					'active_field' => [
+						'label' => esc_html__( 'Enable Popup Builder?', 'shopbuilder' ),
+						'help'  => esc_html__( 'Switch on to enable Popup Builder.', 'shopbuilder' ),
+					],
+					'package'      => $this->pro_package(),
+					'fields'       => Fns::pro_version_notice( '2.1.5', 'general', 'ShopBuilder Pro', false ),
+				]
+			),
+			'save_for_buy_later'            => apply_filters(
+				'rtsb/module/save_for_buy_later/options',
+				[
+					'id'           => 'save_for_buy_later',
+					'active'       => '',
+					'title'        => esc_html__( 'Save Cart For Buy Later', 'shopbuilder' ),
+					'active_field' => [
+						'label' => esc_html__( 'Enable Save Cart For Buy Later?', 'shopbuilder' ),
+						'help'  => esc_html__( 'Switch on to enable Save Cart For Buy Later.', 'shopbuilder' ),
+					],
+					'package'      => $this->pro_package(),
+					'fields'       => Fns::pro_version_notice( '2.1.7', 'general', 'ShopBuilder Pro', false ),
+				]
+			),
+			'catalog_mode'                  => apply_filters(
+				'rtsb/module/catalog_mode/options',
+				[
+					'id'           => 'catalog_mode',
+					'active'       => '',
+					'title'        => esc_html__( 'Catalog Mode', 'shopbuilder' ),
+					'active_field' => [
+						'label' => esc_html__( 'Enable Catalog Mode?', 'shopbuilder' ),
+						'help'  => esc_html__( 'Switch on to enable Catalog Mode.', 'shopbuilder' ),
+					],
+					'package'      => $this->pro_package(),
+					'fields'       => Fns::pro_version_notice( '2.1.8', 'general', 'ShopBuilder Pro', false ),
+				]
+			),
 		];
 		return apply_filters( 'rtsb/core/modules/raw_list', $list );
 	}
-
 	/**
 	 * Get All Menu
 	 */
@@ -3164,7 +3242,6 @@ class ModuleList extends ListModel {
 					'label'  => '',
 					'tab'    => 'badges',
 					'repeat' => [
-
 						'title'                    => [
 							'id'          => 'title',
 							'label'       => esc_html__( 'Badge Name', 'shopbuilder' ),
@@ -4099,6 +4176,18 @@ class ModuleList extends ListModel {
 					'label' => esc_html__( 'Attribute Border Color Hover/Active', 'shopbuilder' ),
 					'type'  => 'color',
 					'value' => '#333333',
+					'tab'   => 'style',
+				],
+				'attribute_border_radius'           => [
+					'id'    => 'attribute_border_radius',
+					'label' => esc_html__( 'Attribute Border Radius', 'shopbuilder' ),
+					'isPro' => ! rtsb()->has_pro(),
+					'help'  => esc_html__( 'Set the border radius (in px) for attribute items to control how rounded the corners appear.', 'shopbuilder' ),
+					'type'  => 'slider',
+					'min'   => 0,
+					'max'   => 200,
+					'unit'  => 'px',
+					'value' => 4,
 					'tab'   => 'style',
 				],
 				'details_page_attribute_size'       => [

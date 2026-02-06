@@ -7,6 +7,7 @@
 
 namespace RadiusTheme\SB;
 
+use RadiusTheme\SB\AI\AIinit;
 use RadiusTheme\SB\Helpers\Cache;
 use RadiusTheme\SB\Helpers\Migration;
 use RadiusTheme\SB\Helpers\Installation;
@@ -71,7 +72,7 @@ final class ShopBuilder {
 	 *
 	 * @var string
 	 */
-	public $BASE_API = 'https://shopbuilderwp.com/wp-json/rtsb/v1/layouts/';
+	public $BASE_API = 'https://shopbuilderwp.com/demo/wp-json/rtsb/v1/layouts/';
 
 	use SingletonTrait;
 
@@ -94,7 +95,6 @@ final class ShopBuilder {
 		if ( Dependencies::instance()->check() ) {
 			SupportController::instance();
 		}
-
 		// HPOS Declare compatibility.
 		add_action(
 			'before_woocommerce_init',
@@ -193,6 +193,7 @@ final class ShopBuilder {
 
 		Installation::init();
 		Migration::init();
+		AIinit::instance();
 
 		if ( is_admin() ) {
 			AdminInit::instance();

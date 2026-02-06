@@ -7,6 +7,7 @@
 
 namespace RadiusTheme\SB\Elementor\Widgets\Archive;
 
+use RadiusTheme\SB\Elementor\Helper\RenderHelpers;
 use RadiusTheme\SB\Helpers\Fns;
 use RadiusTheme\SB\Elementor\Render\Render;
 use RadiusTheme\SB\Elementor\Widgets\Controls;
@@ -359,8 +360,9 @@ class ProductsArchiveCustom extends ElementorWidgetBase {
 
 		global $wp_query;
 
-		$controllers['rtsb_order']   = ! empty( $wp_query->query_vars['order'] ) ? $wp_query->query_vars['order'] : 'ASC';
-		$controllers['rtsb_orderby'] = ! empty( $wp_query->query_vars['orderby'] ) ? $wp_query->query_vars['orderby'] : 'menu_order';
+		$order                       = strtoupper( $wp_query->query_vars['order'] ?? 'ASC' );
+		$controllers['rtsb_orderby'] = RenderHelpers::escaping_product_orderby( $wp_query->query_vars['orderby'] ?? 'menu_order' );
+		$controllers['rtsb_order']   = in_array( $order, [ 'ASC','DESC' ], true ) ? $order : 'ASC';
 
 		add_filter(
 			'rtsb/elementor/render/meta_dataset_final',

@@ -7,6 +7,7 @@
 
 namespace RadiusTheme\SB\Controllers;
 
+use RadiusTheme\SB\AI\AIFns;
 use RadiusTheme\SB\Helpers\Fns;
 use RadiusTheme\SB\Models\Settings;
 use RadiusTheme\SB\Helpers\BuilderFns;
@@ -206,7 +207,7 @@ class AssetsController {
 
 		if ( BuilderFns::is_builder_preview() && 'elementor' == Fns::page_edit_with( get_the_ID() ) ) {
 			$this->scripts[] = [
-				'handle' => 'flexslider',
+				'handle' => 'wc-flexslider',
 				'src'    => plugins_url( 'assets/js/flexslider/jquery.flexslider.js', WC_PLUGIN_FILE ),
 				'deps'   => [ 'jquery' ],
 				'footer' => true,
@@ -220,14 +221,14 @@ class AssetsController {
 			];
 
 			$this->scripts[] = [
-				'handle' => 'zoom',
+				'handle' => 'wc-zoom',
 				'src'    => plugins_url( 'assets/js/zoom/jquery.zoom.js', WC_PLUGIN_FILE ),
 				'deps'   => [ 'jquery' ],
 				'footer' => true,
 			];
 
 			$this->scripts[] = [
-				'handle' => 'photoswipe-ui-default',
+				'handle' => 'wc-photoswipe-ui-default',
 				'src'    => plugins_url( 'assets/js/photoswipe/photoswipe-ui-default.js', WC_PLUGIN_FILE ),
 				'deps'   => [ 'jquery', 'photoswipe' ],
 				'footer' => true,
@@ -236,7 +237,7 @@ class AssetsController {
 			$this->scripts[] = [
 				'handle' => 'wc-single-product',
 				'src'    => plugins_url( 'assets/js/frontend/single-product.js', WC_PLUGIN_FILE ),
-				'deps'   => [ 'jquery', 'flexslider', 'photoswipe', 'photoswipe-ui-default', 'zoom' ],
+				'deps'   => [ 'jquery', 'wc-flexslider', 'photoswipe', 'wc-photoswipe-ui-default', 'wc-zoom' ],
 				'footer' => true,
 			];
 
@@ -335,7 +336,7 @@ class AssetsController {
 			 */
 			$handle = Fns::optimized_handle( 'rtsb-public' );
 
-			wp_enqueue_script( 'flexslider' );
+			wp_enqueue_script( 'wc-flexslider' );
 			wp_enqueue_script( 'wc-single-product' );
 			wp_dequeue_script( $handle );
 			wp_enqueue_script( 'swiper' );
@@ -370,13 +371,14 @@ class AssetsController {
 	 * @return void
 	 */
 	public static function localizeData() {
-		$handle = Fns::optimized_handle( 'rtsb-public' );
-
+		$handle  = Fns::optimized_handle( 'rtsb-public' );
+		$ai_data = AIFns::activated_ai_data();
 		wp_localize_script(
 			$handle,
 			'rtsbPublicParams',
 			[
 				'ajaxUrl'               => esc_url( self::$ajaxurl ),
+				'aiActivated'           => ! empty( $ai_data ),
 				'homeurl'               => home_url(),
 				'wcCartUrl'             => wc_get_cart_url(),
 				'addedToCartText'       => esc_html__( 'Product Added', 'shopbuilder' ),
@@ -388,6 +390,7 @@ class AssetsController {
 				'isLoaderEnabled'       => Fns::enable_loader(),
 				'notice'                => [
 					'position' => Fns::get_option( 'general', 'notification', 'notification_position', 'center-center' ),
+					'timeOut'  => absint( Fns::get_option( 'general', 'notification', 'notification_timeOut', 5 ) ),
 				],
 				rtsb()->nonceId         => wp_create_nonce( rtsb()->nonceText ),
 			]
@@ -423,6 +426,44 @@ class AssetsController {
 		 */
 		wp_register_script( 'rtsb-admin-app', rtsb()->get_assets_uri( 'js/backend/admin-settings.js' ), '', $this->version, true );
 		wp_register_script( 'rtsb-templatebuilder', rtsb()->get_assets_uri( 'js/backend/template-builder.js' ), '', $this->version, true );
+		wp_localize_script(
+			'rtsb-admin-app',
+			'rtsbParams',
+			[
+				'ajaxurl'               => esc_url( self::$ajaxurl ),
+				'homeurl'               => home_url(),
+				'adminLogo'             => rtsb()->get_assets_uri( 'images/icon/ShopBuilder-Logo.svg' ),
+				'blackFriday'           => rtsb()->get_assets_uri( 'images/black-friday-ribbon.svg' ),
+				'restApiUrl'            => esc_url_raw( rest_url() ),
+				'rest_nonce'            => wp_create_nonce( 'wp_rest' ),
+				'nonce'                 => wp_create_nonce( rtsb()->nonceText ),
+				'pages'                 => Fns::get_pages(),
+				'hasPro'                => rtsb()->has_pro() ? 'yes' : 'no',
+				'validLicence'          => Fns::has_valid_license() ? 'yes' : 'no',
+				'proVersion'            => defined( 'RTSBPRO_VERSION' ) ? RTSBPRO_VERSION : '0',
+				'updateRates'           => esc_html__( 'Update All Rates', 'shopbuilder' ),
+				'sections'              => Settings::instance()->get_sections(),
+				'userRoles'             => Fns::get_all_user_roles(),
+				'hasElementor'          => defined( 'ELEMENTOR_VERSION' ),
+				'loadElementor'         => Fns::should_load_elementor_scripts(),
+				'isOptimizationEnabled' => Fns::is_optimization_enabled(),
+			]
+		);
+		wp_localize_script(
+			'rtsb-admin-app',
+			'rtsbCaAbandonment',
+			[
+				'mainTitle'           => esc_html__( 'Abandoned Carts Follow Up', 'shopbuilder' ),
+				'followUpColumnTitle' => [
+					'UserName'    => esc_html__( 'Name', 'shopbuilder' ),
+					'EmailTo'     => esc_html__( 'Email To', 'shopbuilder' ),
+					'CartTotal'   => esc_html__( 'Cart Total', 'shopbuilder' ),
+					'OrderStatus' => esc_html__( 'Order Status', 'shopbuilder' ),
+					'DateTime'    => esc_html__( 'Date / Time', 'shopbuilder' ),
+					'Action'      => esc_html__( 'Action', 'shopbuilder' ),
+				],
+			]
+		);
 	}
 
 	/**
@@ -484,27 +525,6 @@ class AssetsController {
 			wp_enqueue_media();
 			wp_enqueue_script( 'updates' );
 			wp_enqueue_script( 'rtsb-admin-app' );
-			wp_localize_script(
-				'rtsb-admin-app',
-				'rtsbParams',
-				[
-					'ajaxurl'               => esc_url( self::$ajaxurl ),
-					'homeurl'               => home_url(),
-					'adminLogo'             => rtsb()->get_assets_uri( 'images/icon/ShopBuilder-Logo.svg' ),
-					'restApiUrl'            => esc_url_raw( rest_url() ),
-					'rest_nonce'            => wp_create_nonce( 'wp_rest' ),
-					'nonce'                 => wp_create_nonce( rtsb()->nonceText ),
-					'pages'                 => Fns::get_pages(),
-					'hasPro'                => rtsb()->has_pro() ? 'yes' : 'no',
-					'proVersion'            => defined( 'RTSBPRO_VERSION' ) ? RTSBPRO_VERSION : '0',
-					'updateRates'           => esc_html__( 'Update All Rates', 'shopbuilder' ),
-					'sections'              => Settings::instance()->get_sections(),
-					'userRoles'             => Fns::get_all_user_roles(),
-					'hasElementor'          => defined( 'ELEMENTOR_VERSION' ),
-					'loadElementor'         => Fns::should_load_elementor_scripts(),
-					'isOptimizationEnabled' => Fns::is_optimization_enabled(),
-				]
-			);
 		} else {
 			$current_screen = get_current_screen();
 

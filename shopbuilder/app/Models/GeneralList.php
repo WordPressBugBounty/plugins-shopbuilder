@@ -2,6 +2,7 @@
 
 namespace RadiusTheme\SB\Models;
 
+use RadiusTheme\SB\AI\AIFns;
 use RadiusTheme\SB\Helpers\Fns;
 use RadiusTheme\SB\Models\Base\ListModel;
 use RadiusTheme\SB\Traits\SingletonTrait;
@@ -50,7 +51,7 @@ class GeneralList extends ListModel {
 	 */
 	protected function raw_list() {
 		$list = [
-			'optimization'  => apply_filters(
+			'optimization'      => apply_filters(
 				'rtsb/settings/optimization/options',
 				[
 					'id'           => 'optimization',
@@ -128,7 +129,301 @@ class GeneralList extends ListModel {
 					],
 				],
 			),
-			'notification'  => apply_filters(
+			'ai_implementation' => apply_filters(
+				'rtsb/settings/ai_implementation/options',
+				[
+					'id'           => 'ai_implementation',
+					'category'     => 'general',
+					'title'        => esc_html__( 'AI-implementation', 'shopbuilder' ),
+					'package'      => 'free',
+					'badge'        => 'beta',
+					'active_field' => [
+						'disable' => true,
+					],
+					'fields'       => [
+						'data_ai_feature_beta_message' => [
+							'id'   => 'data_ai_feature_beta_message',
+							'type' => 'description',
+							'text' => esc_html__( '🧠 AI feature is in beta — stable and fully functional, with more enhancements coming soon.', 'shopbuilder' ),
+						],
+						'ai_tools'                     => [
+							'id'      => 'ai_tools',
+							'label'   => esc_html__( 'AI Tools', 'shopbuilder' ),
+							'type'    => 'select',
+							'value'   => '',
+							'options' => [
+								''       => esc_html__( '----', 'shopbuilder' ),
+								'OpenAI' => esc_html__( 'ChatGPT', 'shopbuilder' ),
+								'Gemini' => esc_html__( 'Google Gemini', 'shopbuilder' ),
+                                // phpcs:ignore Generic.Commenting
+								// DeepSeek' => esc_html__( 'DeepSeek', 'shopbuilder' ), .
+							],
+						],
+						// GPT.
+						'gpt_models'                   => [
+							'id'         => 'gpt_models',
+							'label'      => esc_html__( 'GPT Model', 'shopbuilder' ),
+							'type'       => 'select',
+							'value'      => 'gpt-4o',
+							'options'    => [
+								'gpt-4o'      => esc_html__( 'GPT-4o (Full Version)', 'shopbuilder' ),
+								'gpt-4o-mini' => esc_html__( 'GPT-4o Mini (Light Version)', 'shopbuilder' ),
+							],
+							'dependency' => [
+								'rules' => [
+									[
+										'item'     => 'general.ai_implementation.ai_tools',
+										'value'    => 'OpenAI',
+										'operator' => '==',
+									],
+								],
+							],
+						],
+						'gpt_api_key'                  => [
+							'id'          => 'gpt_api_key',
+							'label'       => esc_html__( 'ChatGPT API Key', 'shopbuilder' ),
+							'type'        => 'password',
+							'placeholder' => esc_html__( 'sk-p********', 'shopbuilder' ),
+							'help'        => wp_kses(
+								__(
+									'To integrate with ChatGPT, you need to obtain an API key from OpenAI. Visit <a href="https://platform.openai.com/account/api-keys" target="_blank">OpenAI API Keys</a> to generate one.',
+									'shopbuilder'
+								),
+								[
+									'a' => [
+										'href'   => [],
+										'target' => [],
+									],
+								]
+							),
+							'dependency'  => [
+								'rules' => [
+									[
+										'item'     => 'general.ai_implementation.ai_tools',
+										'value'    => 'OpenAI',
+										'operator' => '==',
+									],
+								],
+							],
+						],
+						'gpt_max_token'                => [
+							'id'          => 'gpt_max_token',
+							'label'       => esc_html__( 'ChatGPT Maximum Characters in Prompt Input', 'shopbuilder' ),
+							'type'        => 'number',
+							'help'        => esc_html__(
+								'Set the maximum character limit for the prompt input. This controls how many characters users can enter, ensuring input stays concise and manageable. Higher limits may affect performance and response quality.',
+								'shopbuilder'
+							),
+							'value'       => 200,
+							'placeholder' => esc_html__( '200', 'shopbuilder' ),
+							'dependency'  => [
+								'rules' => [
+									[
+										'item'     => 'general.ai_implementation.ai_tools',
+										'value'    => 'OpenAI',
+										'operator' => '==',
+									],
+								],
+							],
+						],
+						// Gemini.
+						'gemini_api_key'               => [
+							'id'          => 'gemini_api_key',
+							'label'       => esc_html__( 'Gemini API Key', 'shopbuilder' ),
+							'type'        => 'password',
+							'placeholder' => esc_html__( 'AIzaSy***********************', 'shopbuilder' ),
+							'help'        => wp_kses(
+								__(
+									'To integrate with Google Gemini, you need to obtain an API key from Google Cloud. Visit <a href="https://makersuite.google.com/app/apikey" target="_blank">Google AI Studio API Keys</a> to generate one.',
+									'shopbuilder'
+								),
+								[
+									'a' => [
+										'href'   => [],
+										'target' => [],
+									],
+								]
+							),
+							'dependency'  => [
+								'rules' => [
+									[
+										'item'     => 'general.ai_implementation.ai_tools',
+										'value'    => 'Gemini',
+										'operator' => '==',
+									],
+								],
+							],
+						],
+						/**
+						* User Will Not Understand how Its Works.
+						'gemini_models'                => [
+							'id'         => 'gemini_models',
+							'label'      => esc_html__( 'Gemini Model', 'shopbuilder' ),
+							'type'       => 'select',
+							'value'      => 'gemini-2.5-flash',
+							'options'    => [
+								'gemini-2.5-flash' => esc_html__( 'Gemini 2.5 Flash', 'shopbuilder' ),
+								'gemini-2.5-pro'   => esc_html__( 'Gemini 2.5 Pro', 'shopbuilder' ),
+							],
+							'dependency' => [
+								'rules' => [
+									[
+										'item'     => 'general.ai_implementation.ai_tools',
+										'value'    => 'Gemini',
+										'operator' => '==',
+									],
+								],
+							],
+						],
+						*/
+						'gemini_max_token'             => [
+							'id'          => 'gemini_max_token',
+							'label'       => esc_html__( 'Gemini Maximum Characters', 'shopbuilder' ),
+							'type'        => 'number',
+							'help'        => esc_html__(
+								'Set the maximum character limit for Gemini model prompts. Adjust according to model capabilities and performance.',
+								'shopbuilder'
+							),
+							'value'       => 200,
+							'placeholder' => esc_html__( '200', 'shopbuilder' ),
+							'dependency'  => [
+								'rules' => [
+									[
+										'item'     => 'general.ai_implementation.ai_tools',
+										'value'    => 'Gemini',
+										'operator' => '==',
+									],
+								],
+							],
+						],
+						// DeepSeek.
+						'deepseek_api_key'             => [
+							'id'          => 'deepseek_api_key',
+							'label'       => esc_html__( 'DeepSeek API Key', 'shopbuilder' ),
+							'type'        => 'password',
+							'placeholder' => esc_html__( 'ds-***********************', 'shopbuilder' ),
+							'help'        => wp_kses(
+								__(
+									'To integrate with DeepSeek, you need to obtain an API key from DeepSeek. Visit <a href="https://www.deepseek.com/api-keys" target="_blank">DeepSeek API Keys</a> to generate one.',
+									'shopbuilder'
+								),
+								[
+									'a' => [
+										'href'   => [],
+										'target' => [],
+									],
+								]
+							),
+							'dependency'  => [
+								'rules' => [
+									[
+										'item'     => 'general.ai_implementation.ai_tools',
+										'value'    => 'DeepSeek',
+										'operator' => '==',
+									],
+								],
+							],
+						],
+						'deepseek_models'              => [
+							'id'         => 'deepseek_models',
+							'label'      => esc_html__( 'DeepSeek Model', 'shopbuilder' ),
+							'type'       => 'select',
+							'value'      => 'gpt-4o',
+							'options'    => [
+								'deepseek-chat'     => __( 'DeepSeek Chat (Full Version)', 'shopbuilder' ),
+								'deepseek-reasoner' => __( 'DeepSeek Reasoner Mini (Light Version)', 'shopbuilder' ),
+							],
+							'dependency' => [
+								'rules' => [
+									[
+										'item'     => 'general.ai_implementation.ai_tools',
+										'value'    => 'DeepSeek',
+										'operator' => '==',
+									],
+								],
+							],
+						],
+						'deepseek_max_token'           => [
+							'id'          => 'deepseek_max_token',
+							'label'       => esc_html__( 'Deepshek Maximum Characters', 'shopbuilder' ),
+							'type'        => 'number',
+							'help'        => esc_html__(
+								'Set the maximum character limit for Deepshek model prompts. Adjust according to model configuration and speed requirements.',
+								'shopbuilder'
+							),
+							'value'       => 200,
+							'placeholder' => esc_html__( '200', 'shopbuilder' ),
+							'dependency'  => [
+								'rules' => [
+									[
+										'item'     => 'general.ai_implementation.ai_tools',
+										'value'    => 'DeepSeek',
+										'operator' => '==',
+									],
+								],
+							],
+						],
+						'enable_semantic_search'       => [
+							'id'         => 'enable_semantic_search',
+							'type'       => 'switch',
+							'label'      => esc_html__( 'Enable Semantic Search?', 'shopbuilder' ),
+							'help'       => esc_html__( 'Enable AI product search instead of keyword matching to get product', 'shopbuilder' ),
+							'dependency' => [
+								'rules' => [
+									[
+										'item'     => 'general.ai_implementation.ai_tools',
+										'value'    => [ 'OpenAI', 'Gemini' ],
+										'operator' => 'in',
+									],
+								],
+							],
+						],
+						'minimum_matching_percentage'  => [
+							'id'          => 'minimum_matching_percentage',
+							'label'       => esc_html__( 'Minimum Accuracy (in percentage)', 'shopbuilder' ),
+							'help'        => esc_html__( 'Set the minimum Accuracy. It is good between 40 and 60', 'shopbuilder' ),
+							'type'        => 'number',
+							'min'         => 1,
+							'max'         => 99,
+							'value'       => 40,
+							'placeholder' => esc_html__( '40', 'shopbuilder' ),
+							'dependency'  => [
+								'rules' => [
+									[
+										'item'     => 'general.ai_implementation.ai_tools',
+										'value'    => [ 'OpenAI', 'Gemini' ],
+										'operator' => 'in',
+									],
+									[
+										'item'     => 'general.ai_implementation.enable_semantic_search',
+										'value'    => 'on',
+										'operator' => '==',
+									],
+								],
+							],
+						],
+						'data_training'                => [
+							'id'         => 'data_training',
+							'type'       => 'title',
+							'label'      => esc_html__( 'Data Training', 'shopbuilder' ),
+							'dependency' => [
+								'rules' => [
+									[
+										'item'     => 'general.ai_implementation.ai_tools',
+										'value'    => [ 'OpenAI', 'Gemini' ],
+										'operator' => 'in',
+									],
+								],
+							],
+						],
+						'data_training_note_gemini'    => $this->get_data_training_note_field( 'Gemini' ),
+						'data_training_note_openai'    => $this->get_data_training_note_field( 'OpenAI' ),
+						'data_training_note_missing_openai_key' => $this->get_data_training_note_field( 'missingOpenAIKey' ),
+						'data_training_note_missing_gemneni_key' => $this->get_data_training_note_field( 'missingGeminiKey' ),
+					],
+				],
+			),
+			'notification'      => apply_filters(
 				'rtsb/settings/notification/options',
 				[
 					'id'           => 'notification',
@@ -159,6 +454,19 @@ class GeneralList extends ListModel {
 								'bottom-center' => esc_html__( 'Bottom center', 'shopbuilder' ),
 							],
 						],
+						'notification_timeOut'   => [
+							'id'          => 'notification_timeOut',
+							'label'       => esc_html__( 'Notification Time-Out (in seconds)', 'shopbuilder' ),
+							'type'        => 'number',
+							'help'        => esc_html__(
+								'Duration (in seconds) before the notification hides automatically.',
+								'shopbuilder'
+							),
+							'min'         => 1,
+							'max'         => 20,
+							'value'       => 5,
+							'placeholder' => esc_html__( '3', 'shopbuilder' ),
+						],
 						'notification_color'     => [
 							'id'    => 'notification_color',
 							'label' => esc_html__( 'Text Color', 'shopbuilder' ),
@@ -186,7 +494,7 @@ class GeneralList extends ListModel {
 					],
 				],
 			),
-			'social_share'  => apply_filters(
+			'social_share'      => apply_filters(
 				'rtsb/settings/social_share/options',
 				[
 					'id'           => 'social_share',
@@ -237,7 +545,7 @@ class GeneralList extends ListModel {
 					],
 				],
 			),
-			'guest_user'    => apply_filters(
+			'guest_user'        => apply_filters(
 				'rtsb/settings/guest_user/options',
 				[
 					'id'           => 'guest_user',
@@ -249,7 +557,7 @@ class GeneralList extends ListModel {
 					],
 				],
 			),
-			'tooltip'       => apply_filters(
+			'tooltip'           => apply_filters(
 				'rtsb/settings/tooltip/options',
 				[
 					'id'           => 'tooltip',
@@ -261,7 +569,7 @@ class GeneralList extends ListModel {
 					],
 				],
 			),
-			'billing_form'  => apply_filters(
+			'billing_form'      => apply_filters(
 				'rtsb/settings/billing_form/options',
 				[
 					'id'           => 'billing_form',
@@ -870,7 +1178,7 @@ class GeneralList extends ListModel {
 
 				]
 			),
-			'shipping_form' => apply_filters(
+			'shipping_form'     => apply_filters(
 				'rtsb/module/shipping_form/options',
 				[
 					'id'           => 'shipping_form',
@@ -1306,12 +1614,127 @@ class GeneralList extends ListModel {
 					],
 				]
 			),
+
 		];
 
 		if ( ! defined( 'ELEMENTOR_VERSION' ) ) {
 			unset( $list['optimization']['fields']['load_elementor_scripts'] );
 		}
-
 		return apply_filters( 'rtsb/core/general_settings/raw_list', $list );
+	}
+
+	/**
+	 * Get the Data Training Note field.
+	 *
+	 * @param string $tool Meta values.
+	 * @return array
+	 */
+	public function get_data_training_note_field( $tool ): array {
+		$progress     = get_option( 'rtsb_embedding_progress', [ 'processed' => 0 ] );
+		$total        = AIFns::need_product_embedding();
+		$processed    = (int) $progress['processed'];
+		$remaining    = max( $total - $processed, 0 );
+		$generate_url = add_query_arg(
+			[
+				rtsb()->nonceId => wp_create_nonce( rtsb()->nonceText ),
+				'action'        => 'rtsb_start_embedding_process',
+			],
+			admin_url( 'admin.php?page=rtsb-settings' )
+		);
+
+		if ( wp_next_scheduled( 'rtsb_embedding_cron_run' ) ) {
+			$text = esc_html__( 'Processing embeddings in the background. You can continue using the site.', 'shopbuilder' );
+		} else {
+			if ( $remaining > 0 ) {
+				// Build the correct text based on embedding progress.
+				$text = sprintf(
+					'%1$s <a class="rtsb-generate-embedding" href="%2$s">%3$s</a>',
+					esc_html__( 'Make Compatible your existing products with semantic search process.', 'shopbuilder' ),
+					esc_url( $generate_url ),
+					esc_html__( 'Generate Embeddings', 'shopbuilder' )
+				);
+			} else {
+				$text = esc_html__( '🎉 Congratulations! All your products are successfully embedded and up to date.', 'shopbuilder' );
+			}
+		}
+		$note = [
+			'OpenAI'           => [
+				'id'         => 'data_training_note_openai',
+				'type'       => 'description',
+				'text'       => $text,
+				'dependency' => [
+					'rules' => [
+						[
+							'item'     => 'general.ai_implementation.ai_tools',
+							'value'    => 'OpenAI',
+							'operator' => '==',
+						],
+						[
+							'item'     => 'general.ai_implementation.gpt_api_key',
+							'value'    => '',
+							'operator' => '!=',
+						],
+					],
+				],
+			],
+			'Gemini'           => [
+				'id'         => 'data_training_note_gemini',
+				'type'       => 'description',
+				'text'       => $text,
+				'dependency' => [
+					'rules' => [
+						[
+							'item'     => 'general.ai_implementation.ai_tools',
+							'value'    => 'Gemini',
+							'operator' => '==',
+						],
+						[
+							'item'     => 'general.ai_implementation.gemini_api_key',
+							'value'    => '',
+							'operator' => '!=',
+						],
+					],
+				],
+			],
+			'missingGeminiKey' => [
+				'id'         => 'data_training_note_missing_gemneni_key',
+				'type'       => 'description',
+				'text'       => esc_html__( 'Missing Gemini API key. Enter and save your API key to turn on the data training feature.', 'shopbuilder' ),
+				'dependency' => [
+					'rules' => [
+						[
+							'item'     => 'general.ai_implementation.ai_tools',
+							'value'    => 'Gemini',
+							'operator' => '==',
+						],
+						[
+							'item'     => 'general.ai_implementation.gemini_api_key',
+							'value'    => '',
+							'operator' => '==',
+						],
+					],
+				],
+			],
+			'missingOpenAIKey' => [
+				'id'         => 'data_training_note_missing_openai_key',
+				'type'       => 'description',
+				'text'       => esc_html__( 'Missing OpenAI API key. Enter and save your API key to turn on the data training feature.', 'shopbuilder' ),
+				'dependency' => [
+					'rules' => [
+						[
+							'item'     => 'general.ai_implementation.ai_tools',
+							'value'    => 'OpenAI',
+							'operator' => '==',
+						],
+						[
+							'item'     => 'general.ai_implementation.gpt_api_key',
+							'value'    => '',
+							'operator' => '==',
+						],
+					],
+				],
+			],
+		];
+		return $note[ $tool ] ?? [];
 	}
 }

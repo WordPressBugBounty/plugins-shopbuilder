@@ -159,9 +159,11 @@ class GalleryAdmin {
 							<li class="image<?php echo esc_html( $add_video_class ); ?>">
 								<input type="hidden" name="rtsb_vg[<?php echo absint( $variation_id ); ?>][]" value="<?php echo absint( $image_id ); ?>">
 								<img src="<?php echo esc_url( $image[0] ); ?>">
-								<a href="#" class="delete rtsb-vg-remove-image">
-									<span  class="dashicons dashicons-dismiss"></span>
-								</a>
+								<div class="rtsb-vg-action-button">
+									<span data-tip="Add Video" class="rtsb-vg-media-video-popup dashicons dashicons-video-alt3"></span>
+									<span data-tip="Edit Image" class="rtsb-vg-gallery-edit dashicons dashicons-edit"></span>
+									<a href="#" class="delete rtsb-vg-remove-image"><span class="dashicons dashicons-no"></span></a>
+								</div>
 							</li>
 							<?php
 						endforeach;

@@ -414,7 +414,6 @@ class LayoutFields {
 			'separator'   => rtsb()->has_pro() ? 'default' : 'before',
 			'selectors'   => [
 				$obj->selectors['columns']['image_width']['image'] => 'flex-basis: {{SIZE}}{{UNIT}}; max-width: {{SIZE}}{{UNIT}};',
-				// $obj->selectors['columns']['image_width']['content'] => 'flex-basis: calc(100% - {{SIZE}}{{UNIT}}); max-width: calc(100% - {{SIZE}}{{UNIT}});',
 			],
 			'condition'   => [ 'layout' => [ 'list-layout1', 'list-layout2', 'list-layout3', 'list-layout4','list-layout5','list-layout6','list-layout7' ] ],
 		];
@@ -549,7 +548,6 @@ class LayoutFields {
 			'description' => esc_html__( 'Please select the image width in %.', 'shopbuilder' ),
 			'selectors'   => [
 				$obj->selectors['columns']['image_width']['image'] => 'flex-basis: {{SIZE}}{{UNIT}}; max-width: {{SIZE}}{{UNIT}} !important;',
-				// $obj->selectors['columns']['image_width']['content'] => 'flex-basis: calc(100% - {{SIZE}}{{UNIT}}); max-width: calc(100% - {{SIZE}}{{UNIT}});',
 			],
 			'condition'   => [ 'layout' => [ 'slider-layout5' ] ],
 		];
@@ -679,7 +677,6 @@ class LayoutFields {
 				'AND' => 'Show Common Products (AND)',
 			],
 			'default'     => 'AND',
-			'description' => esc_html__( 'Select the taxonomies relationship. It is applicable if you select more than one taxonomy.', 'shopbuilder' ),
 			'label_block' => true,
 		];
 

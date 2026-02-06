@@ -11,6 +11,11 @@ use RadiusTheme\SB\Helpers\Fns;
 if ( ! defined( 'ABSPATH' ) ) {
 	exit( 'This script cannot be accessed directly.' );
 }
+/**
+ * Post Helpers class.
+ *
+ * @package RadiusTheme\SB
+ */
 class PostHelpers {
 	/**
 	 * Query section
@@ -590,9 +595,11 @@ class PostHelpers {
 		return apply_filters( 'rtsb/elementor/render/post_meta_dataset_final', $data, $meta, $raw_settings );
 	}
 	/**
-	 * Gets posts arguments.
+	 * Function to get post arg dataset.
 	 *
-	 * @return array posts data.
+	 * @param array $settings Settings array.
+	 *
+	 * @return array
 	 */
 	public static function get_post_arg_dataset( $settings ) {
 		global $post;
@@ -601,12 +608,15 @@ class PostHelpers {
 		$excerpt_limit_custom = $settings['excerpt_limit_custom'] ?? '200';
 		return [
 			'title'    => Fns::text_truncation( get_the_title( $post->ID ), $title_limit_custom ),
-			'excerpt'  => Fns::text_truncation( do_shortcode( get_post_field( 'post_content', $post->ID ) ), $excerpt_limit_custom ),
+			'excerpt'  => Fns::text_truncation( do_shortcode( get_post_field( 'post_excerpt', $post->ID ) ), $excerpt_limit_custom ),
 			'img_html' => self::render_posts_thumbnail( $post->ID, $settings ),
 		];
 	}
 	/**
-	 * Function to generate item class.
+	 * Get post thumbnail HTML
+	 *
+	 * @param int   $post_id Post ID.
+	 * @param array $settings Settings array.
 	 *
 	 * @return string
 	 */
@@ -625,9 +635,14 @@ class PostHelpers {
 		) : null;
 	}
 	/**
-	 * Prints HTML with category list information about theme categories.
+	 * Generate the formatted HTML list of categories or tags for the current post.
 	 *
-	 * @return string
+	 * Retrieves either post categories or tags based on the provided type and
+	 * returns them wrapped in a span element with a corresponding CSS class.
+	 *
+	 * @param string $type The taxonomy type to display. Accepts 'category' or 'tag'. Default 'category'.
+	 *
+	 * @return string HTML markup with the taxonomy list, or an empty string if none found.
 	 */
 	public static function rtsb_posted_taxonomy( $type = 'category' ) {
 		$categories_list = get_the_category_list( self::rtsb_list_item_separator() );
@@ -659,9 +674,15 @@ class PostHelpers {
 		return sprintf( '<span class="posted-on">%s</span>', $time_string );
 	}
 	/**
-	 * Prints HTML with meta information about theme author.
+	 * Generate formatted HTML for the post author section.
 	 *
-	 * @return string
+	 * Outputs the author name (linked to their posts archive) optionally
+	 * prefixed by a custom label (e.g., "Posted by"). Both the prefix and
+	 * author name are wrapped in appropriate markup for styling.
+	 *
+	 * @param string $prefix Optional text to display before the author name. Default empty.
+	 *
+	 * @return string HTML markup containing the author information.
 	 */
 	public static function rtsb_posted_by( $prefix = '' ) {
 		return sprintf(
@@ -671,13 +692,30 @@ class PostHelpers {
 			'<span class="byline"><a href="' . esc_url( get_author_posts_url( get_the_author_meta( 'ID' ) ) ) . '" rel="author">' . esc_html( get_the_author() ) . '</a></span>'
 		);
 	}
-
+	/**
+	 * Retrieve the formatted comments count text for the current post.
+	 *
+	 * Returns a translated string showing the number of comments,
+	 * automatically handling singular/plural forms.
+	 *
+	 * Example: "Comment: 1" or "Comments: 5".
+	 *
+	 * @return string Formatted comments count text.
+	 */
 	public static function get_post_comments_number() {
 		$comments_number = get_comments_number();
 		// translators: %s is for comments number.
 		$comments = sprintf( _n( 'Comment: %s', 'Comments: %s', $comments_number, 'shopbuilder' ), number_format_i18n( $comments_number ) );
 		return $comments;
 	}
+	/**
+	 * Get the separator used between post taxonomy list items.
+	 *
+	 * Returns an HTML span element used as a separator between categories or tags.
+	 * The output can be customized using the `rtsb_post_list_item_separator` filter.
+	 *
+	 * @return string HTML separator markup.
+	 */
 	public static function rtsb_list_item_separator() {
 		$separator = sprintf(
 			/* translators: Used between list items, there is a space after the comma. */
@@ -688,6 +726,16 @@ class PostHelpers {
 
 		return apply_filters( 'rtsb_post_list_item_separator', $separator );
 	}
+	/**
+	 * Calculate and display the estimated reading time for the current post.
+	 *
+	 * Counts the words in the post content (after removing shortcodes and HTML tags)
+	 * and estimates reading time based on 200 words per minute. Outputs a formatted
+	 * HTML span with the reading duration (e.g., "1 min read", "5 mins read",
+	 * "Less than a minute", or "2 hours read").
+	 *
+	 * @return string HTML-wrapped reading time text.
+	 */
 	public static function rtsb_reading_time() {
 		$post_content = get_post()->post_content;
 		$post_content = strip_shortcodes( $post_content );
@@ -700,7 +748,7 @@ class PostHelpers {
 		} elseif ( $reading_time > 60 ) {
 			/* translators: %s is reading time. */
 			$result = sprintf( esc_html__( '%s hours read', 'shopbuilder' ), floor( $reading_time / 60 ) );
-		} elseif ( $reading_time == 1 ) {
+		} elseif ( 1 == $reading_time ) {
 			$result = esc_html__( '1 min read', 'shopbuilder' );
 		} else {
 			$result = sprintf(
@@ -712,6 +760,25 @@ class PostHelpers {
 
 		return '<span class="meta-reading-time meta-item">' . $result . '</span> ';
 	}
+	/**
+	 * Display formatted post view count with CSS status classes.
+	 *
+	 * Retrieves the post view count stored in the `rt_post_views` meta key,
+	 * formats the number for display, and assigns a visual status class based
+	 * on popularity (e.g., "rising", "high", "very-high").
+	 *
+	 * Outputs an HTML span containing the view number and label
+	 * ("View" or "Views") along with an optional CSS class.
+	 *
+	 * - very-high: more than 1000 views
+	 * - high: more than 100 views
+	 * - rising: more than 5 views
+	 *
+	 * @param string $text     Optional custom text (currently unused).
+	 * @param int    $post_id  Optional post ID. Defaults to current post.
+	 *
+	 * @return string HTML markup for the post view count.
+	 */
 	public static function rtsb_post_views( $text = '', $post_id = 0 ) {
 
 		if ( empty( $post_id ) ) {
@@ -732,13 +799,13 @@ class PostHelpers {
 			} elseif ( $view_count > 5 ) {
 				$views_class = 'rising';
 			}
-		} elseif ( $view_count == '' ) {
+		} elseif ( '' == $view_count ) {
 			$view_count = 0;
 		} else {
 			$view_count = 0;
 		}
 
-		if ( $view_count == 1 ) {
+		if ( 1 == $view_count ) {
 			$shopbuilder_view_html = esc_html__( 'View', 'shopbuilder' );
 		} else {
 			$shopbuilder_view_html = esc_html__( 'Views', 'shopbuilder' );
@@ -867,9 +934,6 @@ class PostHelpers {
 			'toggle'    => true,
 			'selectors' => $selectors['content_hr_alignment'] ,
 			'default'   => 'start',
-			// 'condition' => [
-			// 'layout_style!' => [ 'rtsb-post-grid-layout1','rtsb-post-grid-layout2','rtsb-post-grid-layout3' ],
-			// ],
 		];
 		$fields = Fns::insert_controls( 'post_list_item_style_color_note', $fields, $extra_controls3 );
 		return $fields;
@@ -1052,7 +1116,7 @@ class PostHelpers {
 	 *
 	 * @return array
 	 */
-	public static function button_style( $obj, $type = 'primary' ) {
+	public static function button_style( $obj ) {
 		$condition     = [
 			'show_read_more_btn' => 'yes',
 		];
@@ -1519,6 +1583,25 @@ class PostHelpers {
 		$fields                                   = Fns::insert_controls( 'post_taxonomy_style_spacing_note', $fields, $extra_controls2, true );
 		return $fields;
 	}
+	/**
+	 * Get the list of available image hover effects for post widgets.
+	 *
+	 * Returns an associative array of hover effect CSS class names mapped
+	 * to their corresponding human-readable labels. The list can be modified
+	 * by third-party developers through the
+	 * `rtsb/general/widget/post_widget_image_hover_effect` filter.
+	 *
+	 * Available effects:
+	 * - None
+	 * - Scale In
+	 * - Scale Out
+	 * - Slide Up
+	 * - Slide Down
+	 * - Slide Right
+	 * - Slide Left
+	 *
+	 * @return array List of image hover effect options (class => label).
+	 */
 	public static function rtsb_post_image_hover_effect() {
 		return apply_filters(
 			'rtsb/general/widget/post_widget_image_hover_effect',
@@ -1533,7 +1616,20 @@ class PostHelpers {
 			]
 		);
 	}
-
+	/**
+	 * Get CSS selectors used for styling pagination elements in Elementor widgets.
+	 *
+	 * Returns an associative array mapping style control keys (e.g., typography,
+	 * alignment, colors, borders) to the corresponding CSS selectors used within
+	 * the widget. These selectors are primarily applied when rendering pagination
+	 * for posts, archives, and "load more" buttons inside the ShopBuilder Elementor
+	 * container.
+	 *
+	 * This helps ensure all pagination-related style controls are centralized and
+	 * consistent across widgets.
+	 *
+	 * @return array List of pagination style selectors keyed by control name.
+	 */
 	public static function post_pagination_selectors() {
 		return [
 			'typography'          => '{{WRAPPER}} .rtsb-elementor-container .rtsb-pagination ul.pagination-list li a, {{WRAPPER}} .rtsb-elementor-container .rtsb-pagination ul.pagination-list li span, {{WRAPPER}} .rtsb-elementor-container .rtsb-pagination-wrap .rtsb-load-more button,  {{WRAPPER}} .rtsb-elementor-container .rtsb-archive-pagination-wrap .rtsb-load-more button',

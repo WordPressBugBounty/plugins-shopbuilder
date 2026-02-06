@@ -27,6 +27,7 @@ class ActionHooks {
 	 * @return void
 	 */
 	public static function init_hooks() {
+		add_action( 'rtsb/before/save/options', [ __CLASS__, 'clear_cron_schedule' ], 10, 3 );
 		add_action( 'wp_head', [ __CLASS__, 'og_metatags_for_sharing' ], 1 );
 		add_action( 'woocommerce_share', [ __CLASS__, 'shopbuilder_share' ], 20 );
 		add_action( 'rtsb/wcqv/product/summary', [ __CLASS__, 'shopbuilder_share' ], 40 );
@@ -95,7 +96,42 @@ class ActionHooks {
 
 		add_action( 'switch_theme', [ __CLASS__, 'clear_cache' ] );
 	}
-
+	/**
+	 * Clear scheduled cron events when a module is deactivated.
+	 *
+	 * Checks the given block ID against predefined schedules and clears
+	 * related cron hooks if the corresponding module is turned off.
+	 *
+	 * @param string $section_id Section identifier (not used in this function).
+	 * @param string $block_id   Module/block identifier to check scheduled hooks.
+	 * @param array  $rawOptions Module options array containing 'active' status.
+	 *
+	 * @return void
+	 */
+	public static function clear_cron_schedule( $section_id, $block_id, $rawOptions ) {
+		$schedule = [
+			'abandoned_cart_recovery' => [
+				'rtsb_abandoned_cart_recovery_action',
+				'rtsb_send_abandoned_cart_emails',
+			],
+			'currency_switcher'       => [
+				'update_exchange_rates_hourly',
+			],
+		];
+		if ( ! isset( $schedule[ $block_id ] ) ) {
+			return;
+		}
+		if ( ! isset( $rawOptions['active'] ) ) {
+			return;
+		}
+		if ( 'on' === $rawOptions['active'] ) {
+			return;
+		}
+		// CLear All Custom Schedule If module disabled.
+		foreach ( $schedule[ $block_id ] as $hook ) {
+			 wp_clear_scheduled_hook( $hook );
+		}
+	}
 
 	/**
 	 * @param boolen $has_orders Order exist or not.
@@ -320,7 +356,11 @@ class ActionHooks {
 	public static function modify_wc_query_args( $settings ) {
 		if ( ( isset( $settings['tax_relation'] ) && 'OR' === $settings['tax_relation'] ) ||
 			( isset( $settings['relation'] ) && 'OR' === $settings['relation'] ) ) {
-			add_filter( 'woocommerce_product_data_store_cpt_get_products_query', [ FilterHooks::class, 'extra_query_args' ], 10, 2 );
+			add_filter( 'woocommerce_product_data_store_cpt_get_products_query', [ FilterHooks::class, 'extra_query_args_or' ], 10, 2 );
+		}
+		if ( ( isset( $settings['tax_relation'] ) && 'AND' === $settings['tax_relation'] ) ||
+			( isset( $settings['relation'] ) && 'AND' === $settings['relation'] ) ) {
+			add_filter( 'woocommerce_product_data_store_cpt_get_products_query', [ FilterHooks::class, 'extra_query_args_and' ], 10, 2 );
 		}
 
 		if ( 'yes' === get_option( 'woocommerce_hide_out_of_stock_items' ) ) {
@@ -338,7 +378,11 @@ class ActionHooks {
 	public static function reset_wc_query_args( $settings ) {
 		if ( ( isset( $settings['tax_relation'] ) && 'OR' === $settings['tax_relation'] ) ||
 			( isset( $settings['relation'] ) && 'OR' === $settings['relation'] ) ) {
-			remove_filter( 'woocommerce_product_data_store_cpt_get_products_query', [ FilterHooks::class, 'extra_query_args' ] );
+			remove_filter( 'woocommerce_product_data_store_cpt_get_products_query', [ FilterHooks::class, 'extra_query_args_or' ] );
+		}
+		if ( ( isset( $settings['tax_relation'] ) && 'AND' === $settings['tax_relation'] ) ||
+			( isset( $settings['relation'] ) && 'AND' === $settings['relation'] ) ) {
+			remove_filter( 'woocommerce_product_data_store_cpt_get_products_query', [ FilterHooks::class, 'extra_query_args_and' ] );
 		}
 
 		if ( 'yes' === get_option( 'woocommerce_hide_out_of_stock_items' ) ) {

@@ -323,7 +323,6 @@ class AssetRegistry {
 			$this->enabled_modules,
 			$this->enabled_widgets
 		);
-
 		return apply_filters( 'rtsb/optimizer/scripts', $context_scripts );
 	}
 
@@ -971,6 +970,12 @@ class AssetRegistry {
 		$enabled     = [];
 
 		foreach ( $module_list as $slug => $info ) {
+			if ( defined( 'RTWPVG_VERSION' ) && 'variation_gallery' === $slug ) {
+				continue;
+			}
+			if ( defined( 'RTWPVS_VERSION' ) && 'variation_swatches' === $slug ) {
+				continue;
+			}
 			if ( ! empty( $info['active'] ) ) {
 				$enabled[] = str_replace( '_', '-', sanitize_key( $slug ) );
 			}
@@ -996,6 +1001,12 @@ class AssetRegistry {
 		);
 
 		foreach ( $module_list as $slug => $info ) {
+			if ( defined( 'RTWPVG_VERSION' ) && 'variation_gallery' === $slug ) {
+				continue;
+			}
+			if ( defined( 'RTWPVS_VERSION' ) && 'variation_swatches' === $slug ) {
+				continue;
+			}
 			$clean_slug = str_replace( '_', '-', sanitize_key( $slug ) );
 			$is_enabled = isset( $info['active'] ) && 'on' === $info['active'];
 
@@ -1025,6 +1036,12 @@ class AssetRegistry {
 		);
 
 		foreach ( $module_list as $slug => $info ) {
+			if ( defined( 'RTWPVG_VERSION' ) && 'variation_gallery' === $slug ) {
+				continue;
+			}
+			if ( defined( 'RTWPVS_VERSION' ) && 'variation_swatches' === $slug ) {
+				continue;
+			}
 			$clean_slug = str_replace( '_', '-', sanitize_key( $slug ) );
 			$is_enabled = isset( $info['active'] ) && 'on' === $info['active'];
 
@@ -1134,15 +1151,12 @@ class AssetRegistry {
 		if ( $this->contextual_loading ) {
 			if ( 'js' === $type && ! empty( $bundled['js'] ) ) {
 				$ctx = isset( $bundled['js'][ $context ] ) ? $context : 'global';
-
 				if ( $ctx ) {
 					$assets = (array) $bundled['js'][ $ctx ];
 				}
 			}
-
 			if ( 'css' === $type && ! empty( $bundled['css'] ) ) {
 				$ctx = isset( $bundled['css'][ $context ] ) ? $context : 'global';
-
 				if ( $ctx ) {
 					$assets = (array) $bundled['css'][ $ctx ];
 				}

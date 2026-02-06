@@ -375,7 +375,7 @@ class WishlistFns {
 		$id   = $product_id;
 		$list = $this->get_wishlist_ids();
 		if ( is_array( $list ) ) {
-			return in_array( $id, $list, true );
+			return in_array( absint( $id ), $list, true );
 		} else {
 			return false;
 		}

@@ -12,6 +12,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit( 'This script cannot be accessed directly.' );
 }
 
+
+use CodesVault\Howdyqb\DB;
+use DateTime;
 use WP_Styles;
 use WC_Product;
 use Elementor\Plugin;
@@ -34,6 +37,20 @@ class Fns {
 	 * @var array
 	 */
 	private static $cache = [];
+	/**
+	 * Check if the stored license is valid.
+	 *
+	 * @return bool
+	 */
+	public static function has_valid_license() {
+		static $cached_result = null;
+		// Return cached result if already calculated in this request.
+		if ( null !== $cached_result ) {
+			return $cached_result;
+		}
+		$license_status = rtsb()->has_pro() ? rtsbpro()->get_license( 'license_status' ) : '';
+		return 'valid' === $license_status;
+	}
 
 	/**
 	 *  Verify nonce.
@@ -124,7 +141,36 @@ class Fns {
 			unset( $_SESSION[ $name ] );
 		}
 	}
-
+	/**
+	 * Gets the current timestamp in WordPress timezone.
+	 *
+	 * @return int Current timestamp.
+	 */
+	public static function currentTimestampUTC() {
+		$wp_timezone = wp_timezone();
+		$now         = new DateTime( 'now', $wp_timezone ); // Current time in WP timezone.
+		return $now->getTimestamp();
+	}
+	/**
+	 * Action.
+	 *
+	 * @param string $action action.
+	 * @return void
+	 */
+	public static function add_to_scheduled_hook_list( $action ) {
+		if ( empty( $action ) ) {
+			return;
+		}
+		$schedule   = get_option( 'rtsb_cron_schedule_free', [] );
+		$schedule[] = $action;
+		update_option( 'rtsb_cron_schedule_free', array_unique( $schedule ) );
+	}
+	/**
+	 * @return DB
+	 */
+	public static function DB() {
+		return new DB( 'wpdb' );
+	}
 	/**
 	 * Check if a plugin is installed.
 	 *
@@ -471,7 +517,7 @@ class Fns {
 
 		if ( get_post_type( get_the_ID() ) == BuilderFns::$post_type_tb ) {
 			$product_id = get_post_meta( get_the_ID(), BuilderFns::$product_template_meta, true );
-			if ( $product_id && get_post_status( $product_id ) ) {
+			if ( $product_id && 'product' === get_post_type( $product_id ) && get_post_status( $product_id ) ) {
 				return $product_id;
 			}
 		}
@@ -1740,7 +1786,7 @@ class Fns {
 		if ( ! $img_html ) {
 			$hwstring      = image_hwstring( 160, 160 );
 			$attr          = isset( $attr['src'] ) ? apply_filters( 'wp_get_attachment_image_attributes', $attr, false, $f_img_size ) : [];
-			$attr['class'] = 'default-img';
+			$attr['class'] = 'default-img ' . $hover_class;
 			$attr['src']   = esc_url( rtsb()->get_assets_uri( 'images/demo.png' ) );
 			$attr['alt']   = esc_html__( 'Default Image', 'shopbuilder' );
 			$img_html      = rtrim( "<img $hwstring" );
@@ -2433,6 +2479,14 @@ class Fns {
 			return true;
 		}
 	}
+	/**
+	 * Checks if catalog pro is active
+	 *
+	 * @return boolean
+	 */
+	public static function is_catalog_mode() {
+		return function_exists( 'rtsbpro' ) && self::is_module_active( 'catalog_mode' );
+	}
 
 	/**
 	 * Elementor Widget Active.
@@ -2486,7 +2540,7 @@ class Fns {
 		if ( isset( $sections[ $section_id ]['list'][ $block_id ]['fields'] ) && ! empty( $sections[ $section_id ]['list'][ $block_id ]['fields'] ) ) {
 			$fields = $sections[ $section_id ]['list'][ $block_id ]['fields'];
 		}
-
+		do_action( 'rtsb/before/save/options', $section_id, $block_id, $rawOptions );
 		if ( empty( $fields ) ) {
 			if ( isset( $rawOptions['active'] ) ) {
 				$changed                        = true;
@@ -3929,5 +3983,87 @@ class Fns {
 	 */
 	public static function get_currency_base_price( $price, $product = null ) {
 		return apply_filters( 'rtsb/convert/currency/price', $price, $product );
+	}
+	/**
+	 * Generate a signed URL with a payload.
+	 *
+	 * @param array  $payload   Associative data to encode.
+	 * @param string $base_url  Base URL to append ?key=... (e.g. wc_get_checkout_url()).
+	 * @param string $key       Key name to use in the URL.
+	 * @return string Signed URL with key parameter.
+	 */
+	public static function generate_signed_url( array $payload, string $base_url, $key = 'key' ) {
+		if ( empty( $key ) ) {
+			$key = 'key';
+		}
+		// Convert payload to JSON.
+		$data = wp_json_encode( $payload );
+		// Create signature.
+		$signature = wp_hash( $data );
+        // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
+		$encode_key = base64_encode( $data . '::' . $signature );
+		// Return full URL with key param.
+		return add_query_arg( [ $key => rawurlencode( $encode_key ) ], $base_url );
+	}
+
+	/**
+	 * Decode and verify a signed URL key.
+	 *
+	 * @param string $key Encoded key from URL.
+	 * @return array|false Decoded payload array on success, false on failure.
+	 */
+	public static function decode_signed_key( string $key ) {
+		if ( empty( $key ) ) {
+			return false;
+		}
+		$key = rawurldecode( wp_unslash( $key ) );
+        // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode
+		$raw = base64_decode( sanitize_text_field( $key ) );
+		if ( ! $raw ) {
+			return false;
+		}
+		$parts = explode( '::', $raw, 2 );
+		if ( count( $parts ) !== 2 ) {
+			return false;
+		}
+		list( $data_json, $signature ) = $parts;
+		// Validate signature.
+		if ( ! hash_equals( wp_hash( $data_json ), $signature ) ) {
+			return false;
+		}
+		$payload = json_decode( $data_json, true );
+		return is_array( $payload ) ? $payload : false;
+	}
+
+	/**
+	 * Get Loco Translate MO file path for a plugin.
+	 *
+	 * @param string $textdomain Plugin textdomain.
+	 * @return void|false
+	 */
+	public static function load_loco_textdomain( $textdomain ) {
+		if ( ! function_exists( 'loco_plugin_version' ) ) {
+			return false;
+		}
+		$lang = WP_LANG_DIR;
+		$path = $lang . '/plugins/' . $textdomain . '-' . get_locale() . '.mo';
+		if ( ! file_exists( $path ) && defined( 'LOCO_LANG_DIR' ) ) {
+			$lang = LOCO_LANG_DIR;
+			$path = $lang . '/plugins/' . $textdomain . '-' . get_locale() . '.mo';
+		}
+		if ( ! file_exists( $path ) ) {
+			if ( 'shopbuilder' === $textdomain ) {
+				$plugin_root = dirname( RTSB_FILE );
+			} elseif ( 'shopbuilder-pro' === $textdomain ) {
+				$plugin_root = dirname( RTSBPRO_FILE );
+			} else {
+				return false;
+			}
+			$path = $plugin_root . '/languages/' . $textdomain . '-' . get_locale() . '.mo';
+		}
+		if ( ! file_exists( $path ) ) {
+			return false;
+		}
+		load_textdomain( $textdomain, $path );
 	}
 }

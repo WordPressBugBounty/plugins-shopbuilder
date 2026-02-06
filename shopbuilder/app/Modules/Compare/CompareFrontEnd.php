@@ -34,7 +34,7 @@ class CompareFrontEnd {
 	 */
 	public function __construct() {
 		add_filter( 'body_class', [ $this, 'add_body_class' ] );
-		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue' ], 20 );
+		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue' ], 99 );
 		add_action( 'rtsb/modules/compare/frontend/display', [ $this, 'button_hook' ] );
 		add_action( 'rtsb/modules/compare/print_button', [ $this, 'print_button' ] );
 

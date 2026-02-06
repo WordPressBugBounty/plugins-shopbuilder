@@ -9,4 +9,5 @@ return array(
     'RadiusTheme\\SB\\' => array($baseDir . '/app'),
     'MatthiasMullie\\PathConverter\\' => array($vendorDir . '/matthiasmullie/path-converter/src'),
     'MatthiasMullie\\Minify\\' => array($vendorDir . '/matthiasmullie/minify/src'),
+    'CodesVault\\Howdyqb\\' => array($vendorDir . '/codesvault/howdy-qb/src'),
 );

@@ -58,7 +58,7 @@ class CacheController {
 			[
 				'id'     => 'clear_all_cache',
 				'parent' => 'shop_builder', // Set the parent to the top-level item ID.
-				'title'  => esc_html__( 'Clear All Cache', 'shopbuilder' ),
+				'title'  => esc_html__( 'Purge All Cache', 'shopbuilder' ),
 				'href'   => wp_nonce_url( add_query_arg( 'rtsb_clear_cache', 'all', add_query_arg( null, null ) ), rtsb()->nonceText ),
 			]
 		);
@@ -68,7 +68,7 @@ class CacheController {
 				[
 					'id'     => 'clear_asset_cache',
 					'parent' => 'shop_builder',
-					'title'  => esc_html__( 'Clear Asset Cache', 'shopbuilder' ),
+					'title'  => esc_html__( 'Purge Asset Cache', 'shopbuilder' ),
 					'href'   => wp_nonce_url( add_query_arg( 'rtsb_clear_cache', 'asset', add_query_arg( null, null ) ), rtsb()->nonceText ),
 				]
 			);
@@ -78,7 +78,7 @@ class CacheController {
 			[
 				'id'     => 'clear_object_cache',
 				'parent' => 'shop_builder',
-				'title'  => esc_html__( 'Clear Object Cache', 'shopbuilder' ),
+				'title'  => esc_html__( 'Purge Object Cache', 'shopbuilder' ),
 				'href'   => wp_nonce_url( add_query_arg( 'rtsb_clear_cache', 'data', add_query_arg( null, null ) ), rtsb()->nonceText ),
 			]
 		);
@@ -86,7 +86,7 @@ class CacheController {
 			[
 				'id'     => 'clear_template_cache',
 				'parent' => 'shop_builder',
-				'title'  => esc_html__( 'Clear Template Cache', 'shopbuilder' ),
+				'title'  => esc_html__( 'Purge Template Cache', 'shopbuilder' ),
 				'href'   => wp_nonce_url( add_query_arg( 'rtsb_clear_cache', 'template', add_query_arg( null, null ) ), rtsb()->nonceText ),
 			]
 		);

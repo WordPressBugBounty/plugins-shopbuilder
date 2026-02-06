@@ -42,7 +42,7 @@ class WishlistFrontEnd {
 		add_action( 'rtsb/modules/wishlist/frontend/display', [ $this, 'button_hook' ] );
 
 		add_action( 'rtsb/modules/wishlist/print_button', [ $this, 'print_button' ] );
-		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue' ], 20 );
+		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue' ], 99 ); // 99 Is Working to load after main script.
 
 		// ShortCode.
 		add_shortcode( 'rtsb_wishlist', [ $this, 'list_shortcode' ] );
@@ -256,12 +256,13 @@ class WishlistFrontEnd {
 	 * @return void
 	 */
 	public function button_hook() {
-
 		if ( ! apply_filters( 'rtsb/module/wishlist/show_button', true ) ) {
 			return;
 		}
 		global $product;
-
+		if ( ! $product instanceof WC_Product ) {
+			return;
+		}
 		do_action( 'rtsb/modules/wishlist/print_button', $product->get_id() );
 	}
 
@@ -412,18 +413,14 @@ class WishlistFrontEnd {
 		wp_enqueue_style( Fns::optimized_handle( $this->handle ) );
 
 		$enable_login_limit = Fns::get_option( 'modules', 'wishlist', 'enable_login_limit', false, 'checkbox' );
-
-		$myaccount_url = get_permalink( get_option( 'woocommerce_myaccount_page_id' ) );
-
-		$products = WishlistFns::instance()->get_wishlist_ids();
+		$products           = WishlistFns::instance()->get_wishlist_ids();
 		if ( ! is_user_logged_in() && $enable_login_limit ) {
 			$button_text = esc_html__( 'Please login', 'shopbuilder' );
-			$page_url    = $myaccount_url;
 		} else {
 			$button_text = esc_html__( 'Wishlist', 'shopbuilder' );
-			$page_url    = wc_get_account_endpoint_url( 'wishlist' );
 		}
-
+		$icon_html    = '<i class="rtsb-icon rtsb-icon-heart"></i>';
+		$page_url     = WishlistFns::instance()->get_page_url();
 		$default_atts = [
 			'products'           => $products,
 			'item_count'         => count( $products ),
@@ -431,10 +428,16 @@ class WishlistFrontEnd {
 			'button_text'        => $button_text,
 			'enable_login_limit' => $enable_login_limit,
 			'text'               => '',
+			'show_icon'          => '', // 'yes' for show.
 		];
 
 		$atts       = shortcode_atts( $default_atts, $atts, $content );
 		$count_attr = apply_filters( 'rtsb/module/wishlist/counter_args', $atts );
+		if ( 'yes' === ( $count_attr['show_icon'] ?? '' ) ) {
+			$count_attr['icon_html'] = apply_filters( 'rtsb/module/wishlist/counter/icon_html', $icon_html, $count_attr );
+		} else {
+			$count_attr['icon_html'] = '';
+		}
 
 		return Fns::load_template( 'wishlist/counter', $count_attr, true );
 	}

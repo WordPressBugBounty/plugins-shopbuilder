@@ -33,7 +33,7 @@ class QuickViewFrontEnd {
 	 * Class constructor.
 	 */
 	public function __construct() {
-		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue' ], 20 );
+		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue' ], 99 );
 
 		// Gallery Plugin Support rtwpvg_disable_enqueue_scripts.
 		add_filter( 'rtwpvg_disable_enqueue_scripts', '__return_false', 11 );
@@ -241,18 +241,18 @@ class QuickViewFrontEnd {
 		wp_enqueue_style( 'elementor-icons-shared-0' );
 
 		if ( ! class_exists( 'WooProductVariationGallery' ) && current_theme_supports( 'wc-product-gallery-slider' ) ) {
-			wp_enqueue_script( 'flexslider' );
+			wp_enqueue_script( 'wc-flexslider' );
 		}
 
 		wp_enqueue_script( 'wc-add-to-cart-variation' );
 
 		if ( version_compare( WC()->version, '3.0.0', '>=' ) ) {
 			if ( current_theme_supports( 'wc-product-gallery-zoom' ) ) {
-				wp_enqueue_script( 'zoom' );
+				wp_enqueue_script( 'wc-zoom' );
 			}
 
 			if ( current_theme_supports( 'wc-product-gallery-lightbox' ) ) {
-				wp_enqueue_script( 'photoswipe-ui-default' );
+				wp_enqueue_script( 'wc-photoswipe-ui-default' );
 				wp_enqueue_style( 'photoswipe-default-skin' );
 
 				if ( has_action( 'wp_footer', 'woocommerce_photoswipe' ) === false ) {

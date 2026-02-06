@@ -9,7 +9,6 @@ namespace RadiusTheme\SB\Controllers;
 
 use RadiusTheme\SB\Helpers\Fns;
 use RadiusTheme\SB\Helpers\BuilderFns;
-use RadiusTheme\SB\Models\GeneralList;
 use RadiusTheme\SB\Models\ElementList;
 use RadiusTheme\SB\Traits\SingletonTrait;
 use RadiusTheme\SB\Controllers\Builder\BuilderCpt;
@@ -118,7 +117,7 @@ class BuilderController {
 		$id         = Fns::wpml_object_id( $builder_id, BuilderFns::$post_type_tb, 'default' );
 		$type       = BuilderFns::builder_type( $id );
 
-		if ( $type ) {
+		if ( $type && 'popup-builder' !== $type ) {
 			$builder_type                   = ! empty( BuilderFns::builder_page_types()[ $type ] ) ? BuilderFns::builder_page_types()[ $type ] : '';
 			$builder_type                   = str_replace( [ 'My Account - ', 'Endpoint: ' ], '', $builder_type );
 			$categories['rtsb-shopbuilder'] = [

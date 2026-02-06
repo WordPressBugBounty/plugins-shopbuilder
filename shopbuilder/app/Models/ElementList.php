@@ -469,8 +469,29 @@ class ElementList extends ListModel {
 					'fields'     => [],
 				]
 			),
+			'advanced_ajax_search'      => apply_filters(
+				'rtsb/elements/advanced_ajax_search/options',
+				[
+					'id'       => 'advanced_ajax_search',
+					'title'    => esc_html__( 'Advanced Ajax Search', 'shopbuilder' ),
+					'category' => 'general',
+					'active'   => '',
+					'package'  => $this->pro_package(),
+					'fields'   => [],
+				]
+			),
+			'save_for_buy_later'        => apply_filters(
+				'rtsb/elements/save_for_buy_later/options',
+				[
+					'id'       => 'save_for_buy_later',
+					'title'    => esc_html__( 'Saved For Buy Later', 'shopbuilder' ),
+					'category' => 'general',
+					'active'   => '',
+					'package'  => $this->pro_package(),
+					'fields'   => [],
+				]
+			),
 		];
-
 		return apply_filters( 'rtsb/core/elements/general/widget_list', $list );
 	}
 
@@ -1313,6 +1334,18 @@ class ElementList extends ListModel {
 					'fields'     => [],
 				]
 			),
+			'save_for_later_preview'    => apply_filters(
+				'rtsb/elements/save_for_later_preview/options',
+				[
+					'id'         => 'save_for_later_preview',
+					'title'      => esc_html__( 'Save For Later Preview', 'shopbuilder' ),
+					'base_class' => Cart\SaveForLaterPreview::class,
+					'category'   => 'cart',
+					'active'     => 'on',
+					'package'    => $this->pro_package(),
+					'fields'     => [],
+				]
+			),
 		];
 
 		return apply_filters( 'rtsb/core/elements/cart/widget_list', $list );
@@ -1562,6 +1595,18 @@ class ElementList extends ListModel {
 	 */
 	protected function my_account_page_widget_list() {
 		$widgets = [
+			'account_avatar'                       => apply_filters(
+				'rtsb/elements/account_avatar/options',
+				[
+					'id'            => 'account_avatar',
+					'title'         => esc_html__( 'Account Avatar', 'shopbuilder' ),
+					'category'      => 'myaccount_dashboard',
+					'is_front_page' => 'all_myaccount_dashboard_inner',
+					'active'        => 'on',
+					'package'       => $this->pro_package(),
+					'fields'        => [],
+				]
+			),
 			'account_navigation_edit_shipping'     => apply_filters(
 				'rtsb/elements/account_navigation_edit_shipping/options',
 				[
@@ -1759,6 +1804,30 @@ class ElementList extends ListModel {
 				[
 					'id'            => 'account_edit_shipping_address',
 					'title'         => esc_html__( 'Edit Shipping Address', 'shopbuilder' ),
+					'category'      => 'myaccount_dashboard',
+					'is_front_page' => 'all_myaccount_dashboard_inner',
+					'active'        => 'on',
+					'package'       => $this->pro_package(),
+					'fields'        => [],
+				]
+			),
+			'account_payment_methods'              => apply_filters(
+				'rtsb/elements/account_payment_methods/options',
+				[
+					'id'            => 'account_payment_methods',
+					'title'         => esc_html__( 'Payment Methods', 'shopbuilder' ),
+					'category'      => 'myaccount_dashboard',
+					'is_front_page' => 'all_myaccount_dashboard_inner',
+					'active'        => 'on',
+					'package'       => $this->pro_package(),
+					'fields'        => [],
+				]
+			),
+			'account_add_payment_method'           => apply_filters(
+				'rtsb/elements/account_add_payment_method/options',
+				[
+					'id'            => 'account_add_payment_method',
+					'title'         => esc_html__( 'Add Payment Method', 'shopbuilder' ),
 					'category'      => 'myaccount_dashboard',
 					'is_front_page' => 'all_myaccount_dashboard_inner',
 					'active'        => 'on',

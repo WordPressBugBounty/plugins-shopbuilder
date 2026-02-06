@@ -9,6 +9,7 @@
 
 namespace RadiusTheme\SB\Elementor\Render;
 
+use RadiusTheme\SBPRO\Modules\CatalogMode\CatalogModeFns;
 use WC_Query;
 use WP_Query;
 use WC_Product;
@@ -259,8 +260,7 @@ class Render {
 
 		foreach ( $products as $_product ) {
 			$i++;
-			$GLOBALS['product'] = $_product;
-
+			$GLOBALS['product'] = $_product; // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- Global variable is intentionally used to share the current product context with hooks and templates during rendering.
 			/**
 			 * Before product template render hook.
 			 */
@@ -280,7 +280,7 @@ class Render {
 			unset( $GLOBALS['product'] );
 		}
 		if ( $isGlobalProduct ) {
-			$GLOBALS['product'] = $isGlobalProduct;
+			$GLOBALS['product'] = $isGlobalProduct; // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- Global variable is intentionally used to share the current product context with hooks and templates during rendering.
 		}
 		return $html;
 	}
@@ -387,8 +387,8 @@ class Render {
 		 *
 		 * @hooked RadiusTheme\SB\Controllers\Hooks\ActionHooks::modify_wc_query_args 10
 		 */
-		do_action( 'rtsb/elements/render/before_query', $settings, $args );
 
+		do_action( 'rtsb/elements/render/before_query', $settings, $args );
 		// Query.
 		$product_query = new WC_Product_Query( $args );
 
@@ -457,14 +457,15 @@ class Render {
 		$rand               = wp_rand();
 		$metas              = RenderHelpers::meta_dataset( $settings, $template, $widget->get_settings_for_display() );
 
-		$settings['rtsb_order']   = ! empty( $wp_query->query_vars['order'] ) ? $wp_query->query_vars['order'] : 'ASC';
-		$settings['rtsb_orderby'] = ! empty( $wp_query->query_vars['orderby'] ) ? $wp_query->query_vars['orderby'] : 'menu_order';
+		$order                    = strtoupper( $wp_query->query_vars['order'] ?? 'ASC' );
+		$settings['rtsb_orderby'] = RenderHelpers::escaping_product_orderby( $wp_query->query_vars['orderby'] ?? 'menu_order' );
+		$settings['rtsb_order']   = in_array( $order, [ 'ASC','DESC' ], true ) ? $order : 'ASC';
 
 		$pagination = $metas['pagination'];
 
 		$page_type      = BuilderFns::builder_type( get_the_ID() );
 		$is_preview     = BuilderFns::is_builder_preview() && array_key_exists( $page_type, BuilderFns::builder_page_types() );
-		$posts_per_page = apply_filters( 'loop_shop_per_page', wc_get_default_products_per_row() * wc_get_default_product_rows_per_page() );
+		$posts_per_page = apply_filters( 'loop_shop_per_page', wc_get_default_products_per_row() * wc_get_default_product_rows_per_page() ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- woocommerce default hooks used.
 		if ( $is_preview ) {
 			$main_query = clone $wp_query;
 			$main_post  = clone $post;
@@ -727,7 +728,7 @@ class Render {
 		global $product;
 
 		if ( ! $product instanceof WC_Product && $post_id ) {
-			$product = wc_get_product( $post_id );
+			$product = wc_get_product( $post_id ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- Global variable is intentionally used to share the current product context with hooks and templates during rendering.
 		}
 
 		$post_id = $product->get_id();
@@ -1006,6 +1007,21 @@ class Render {
 					);
 				}
 			}
+			if ( Fns::is_catalog_mode() && empty( $arg['add_to_cart'] ) ) {
+				if ( ! empty( $meta['add_to_cart_icon'] ) ) {
+					$cart_icon_html = Fns::icons_manager( $meta['add_to_cart_icon'], 'cart-icon' );
+				}
+				$cart_icon          = ! empty( $cart_icon_html ) ? '<span class="icon">' . $cart_icon_html . '</span>' : '';
+				$arg['add_to_cart'] = CatalogModeFns::render_elementor_widget_catalog_mode_button(
+					[
+						'id'        => $post_id,
+						'type'      => $p_type,
+						'text'      => $meta['add_to_cart_text'],
+						'icon_html' => $cart_icon,
+						'alignment' => $meta['add_to_cart_alignment'],
+					]
+				);
+			}
 		}
 
 		if ( in_array( 'quick_view', $meta['visibility'], true ) ) {
@@ -1072,7 +1088,6 @@ class Render {
 
 		return $arg;
 	}
-
 	/**
 	 * Renders add to cart button.
 	 *

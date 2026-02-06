@@ -417,7 +417,7 @@ class AddToCartSettings {
 				'type'       => 'slider',
 				'selectors'  => [
 					self::$selectors['variation_border_radius'] => 'border-radius: {{SIZE}}{{UNIT}};',
-					':root' => '--variation-border-radius:{{SIZE}}{{UNIT}};',
+					':root' => '--variation-attr-border-radius:{{SIZE}}{{UNIT}};',
 				],
 			],
 			'variation_padding'          => [

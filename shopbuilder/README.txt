@@ -1,10 +1,10 @@
-=== ShopBuilder - Elementor WooCommerce Builder Addons ===
+=== ShopBuilder - WooCommerce Builder For Elementor ===
 Contributors: techlabpro1, mamunur105, srafiz
 Donate link:
 Tags: Elementor, Woocommerce Builder, Elementor Woocommerce Builder, Woocommerce, Woocommerce Product
 Requires at least: 5.5
-Tested up to: 6.8
-Stable tag: 3.1.2
+Tested up to: 6.9
+Stable tag: 3.2.4
 Requires PHP: 7.4
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -188,6 +188,14 @@ This module enhances your WooCommerce store by allowing you to add creative and 
 [youtube https://www.youtube.com/watch?v=wA-bvHPYJWk]
 
 👉 [Demo](https://shopbuilderwp.com/product-badges-module/)
+
+**Abandoned Cart Recovery**
+
+Automatically track down unfinished orders/abandoned carts and boost your lost revenue. With this advanced module, you can start sending personalized emails and follow-up campaigns to customers. With the Abandoned Cart Recovery module, encourage your shoppers to complete their purchases. Convert your missed cart into revenue and get more sales with automation, flexibility, and accurate analytics.
+
+**Extended Cross-Sell (Pro)**
+
+Boost Online Store's sales by suggesting different product options (cross-sell, upsell, related, categories, custom). Effectively showcase related products based on your customer's selected items. Level up your business growth by smart recommendations with an interactive pop-up. Independently control the product limit and customize the overall style  (colors, buttons, and borders).
 
 **Customize My Account Module [PRO]**
 
@@ -415,6 +423,63 @@ If you like the ShopBuilder Plugin, then consider checking out our other WordPre
 * You can report security bugs through the Patchstack Vulnerability Disclosure Program. The Patchstack team help validate, triage and handle any security vulnerabilities. [Report a security vulnerability.](https://patchstack.com/database/vdp/shopbuilder)
 
 == Changelog ==
+
+= 3.2.4 ( Jan 22, 2026) =
+* Fix: Infinite loader issue fixed for General Widgets
+* Fix: Coupon widgets now apply correctly in the latest WooCommerce release
+* Add: Wishlist counter icon support added for shortcode
+* Add: Enhanced compatibility with 'Catalog Mode' modules and features.
+
+= 3.2.3 ( Dec 31, 2025) =
+* Add: Enhanced compatibility with 'Save Cart For Buy Later' modules and features.
+* Update: Template Builder Issue with Quick View widgets appearing on all template pages has been resolved.
+* Update: AI "Semantic Search" functionality improvement
+* Fix: Product not found issue resolved for wishlist module
+
+= 3.2.2 ( Dec 11, 2025) =
+* Update: Added compatibility with WordPress 6.9.
+* Update: Improved taxonomy filter functionality for Elementor Products Widget (Grid/List view).
+* Update: Gemini model update.
+* Update: Notification screen time selection filed added.
+* Fix: General Widgets "Product Grid/List" AND/OR taxonomy relation issue resolved.
+* Fix: Variation Swatch module conflict resolved with Highlights Product widgets.
+* Fix: Resolved AJAX add-to-cart issue for variable products.
+* Fix: Resolved add-to-cart issue on archive and product pages in the Variation Swatch module.
+* Fix: Vulnerability reported by Jetpack resolved.
+* Fix: Product semantic search training issue resolved.
+* Fix: Post Grid/List view excerpt issue resolved.
+
+
+= 3.2.1 ( Nov 26, 2025) =
+* Add: Enhanced compatibility with 'Popup Builder' modules and features.
+* Fix: Ai Search Issue Resolved
+* Fix: Addressed issues affecting Wishlist, Quick View, and Compare when asset optimization was enabled.
+* Fix: ImagesLoaded Undefined Issue Resolved
+
+= 3.2.0 ( Nov 13, 2025) =
+* Add: "Advanced Ajax Search" and 'Account Avatar' Widgets Icon Added
+* Feature: AI-implementation Beta version
+* Fix: Loco Translator Ajax Call issue resolve.
+
+= 3.1.5 ( Nov 04, 2025) =
+* Fix: Undefined Array key issue resolve.
+
+= 3.1.4 ( Oct 29, 2025) =
+* Add: 'Abandonment Cart Recovery' Module Added
+* Update: Variation gallery now supports easier video addition and more user-friendly editing.
+* Update: Removed deprecated notice for old WooCommerce script handler.
+* Fix: Cron Error "update_exchange_rates_hourly" Resolve
+
+= 3.1.3 ( Oct 08, 2025) =
+* Fix: Context-based asset loading for Variation Swatch and Gallery components.
+* Fix: Variation Swatch Module Compatibility With Ajax filter
+* Fix: Variation Swatch Module Compatibility With 3 Party Plugin "Advanced AJAX Product Filters for WooCommerce"
+* Fix: Product Compare Module Data Type error "Product not in compare list!"
+* Fix: Issue resolved where variation swatch term was a number.
+* Fix: Add to cart button With Google Site Kit issue resolve
+* Fix: Astra Theme Container For content area css issue resolved
+* Add: Pro version builder Compatibility for "Add Payment Method" Page
+
 
 = 3.1.2 ( Sep 05, 2025) =
 * Fix: Category widget image alignment issue.

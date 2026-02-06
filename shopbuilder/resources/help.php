@@ -58,7 +58,7 @@ $actions      = [
 		'description'  => 'Thank you for choosing <strong>ShopBuilder</strong>. If you have found our plugin useful, please consider giving us a 5-star rating on WordPress.org. It will help us to grow.',
 		'icon_class'   => 'rtsb-rating-icon',
 		'button_label' => 'Yes, You Deserve It',
-		'button_link'  => 'https://wordpress.org/support/plugin/shopbuilder/reviews/?filter=5#new-post',
+		'button_link'  => 'https://wordpress.org/support/plugin/shopbuilder/reviews/',
 	],
 ];
 ?>

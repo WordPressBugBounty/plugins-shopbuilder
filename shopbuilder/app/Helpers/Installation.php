@@ -91,8 +91,22 @@ class Installation {
 	 */
 	public static function deactivation() {
 		delete_option( 'shopbuilder_permalinks_flushed' );
+		self::clear_scheduled_events();
 	}
-
+	/**
+	 * Clear Scheduled Events
+	 *
+	 * @return void
+	 */
+	public static function clear_scheduled_events() {
+		$schedule = get_option( 'rtsb_cron_schedule_free', [] );
+		if ( empty( $schedule ) ) {
+			return;
+		}
+		foreach ( $schedule as $v ) {
+			wp_clear_scheduled_hook( $v );
+		}
+	}
 	/**
 	 * Set default options.
 	 *
@@ -127,7 +141,6 @@ class Installation {
 	 * @return int
 	 */
 	public static function create_wc_product() {
-
 		$product = new WC_Product_Simple();
 		$product->set_name( 'Confirm at least one product is created before deleting' );
 		$product->set_description( 'This is a ShopBuilder demo preview product' );
@@ -138,11 +151,7 @@ class Installation {
 		$product->set_sale_price( 49 );
 		$product->set_price( 49 );
 
-		$product->set_sku( 'SAMPLE-001' );
-
-		$product->set_manage_stock( false );
-		$product->set_stock_status( 'instock' );
-
+		$product->set_sku( '' );
 		return $product->save();
 	}
 }

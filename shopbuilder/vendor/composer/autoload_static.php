@@ -4,36 +4,62 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit76c77511981812192d9f2df81b24714a
+class ComposerStaticInitc576ef4c80eace95c341aa84f2fd27d4
 {
     public static $prefixLengthsPsr4 = array (
-        'R' => 
+        'R' =>
         array (
             'RadiusTheme\\SB\\' => 15,
         ),
-        'M' => 
+        'M' =>
         array (
             'MatthiasMullie\\PathConverter\\' => 29,
             'MatthiasMullie\\Minify\\' => 22,
         ),
+        'C' =>
+        array (
+            'CodesVault\\Howdyqb\\' => 19,
+        ),
     );
 
     public static $prefixDirsPsr4 = array (
-        'RadiusTheme\\SB\\' => 
+        'RadiusTheme\\SB\\' =>
         array (
             0 => __DIR__ . '/../..' . '/app',
         ),
-        'MatthiasMullie\\PathConverter\\' => 
+        'MatthiasMullie\\PathConverter\\' =>
         array (
             0 => __DIR__ . '/..' . '/matthiasmullie/path-converter/src',
         ),
-        'MatthiasMullie\\Minify\\' => 
+        'MatthiasMullie\\Minify\\' =>
         array (
             0 => __DIR__ . '/..' . '/matthiasmullie/minify/src',
+        ),
+        'CodesVault\\Howdyqb\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/codesvault/howdy-qb/src',
         ),
     );
 
     public static $classMap = array (
+        'CodesVault\\Howdyqb\\Api\\AlterInterface' => __DIR__ . '/..' . '/codesvault/howdy-qb/src/Api/AlterInterface.php',
+        'CodesVault\\Howdyqb\\Api\\CreateInterface' => __DIR__ . '/..' . '/codesvault/howdy-qb/src/Api/CreateInterface.php',
+        'CodesVault\\Howdyqb\\Api\\DeleteInterface' => __DIR__ . '/..' . '/codesvault/howdy-qb/src/Api/DeleteInterface.php',
+        'CodesVault\\Howdyqb\\Api\\DropInterface' => __DIR__ . '/..' . '/codesvault/howdy-qb/src/Api/DropInterface.php',
+        'CodesVault\\Howdyqb\\Api\\SelectInterface' => __DIR__ . '/..' . '/codesvault/howdy-qb/src/Api/SelectInterface.php',
+        'CodesVault\\Howdyqb\\Api\\UpdateInterface' => __DIR__ . '/..' . '/codesvault/howdy-qb/src/Api/UpdateInterface.php',
+        'CodesVault\\Howdyqb\\Connect' => __DIR__ . '/..' . '/codesvault/howdy-qb/src/Connect.php',
+        'CodesVault\\Howdyqb\\DB' => __DIR__ . '/..' . '/codesvault/howdy-qb/src/DB.php',
+        'CodesVault\\Howdyqb\\QueryFactory' => __DIR__ . '/..' . '/codesvault/howdy-qb/src/QueryFactory.php',
+        'CodesVault\\Howdyqb\\SqlGenerator' => __DIR__ . '/..' . '/codesvault/howdy-qb/src/SqlGenerator.php',
+        'CodesVault\\Howdyqb\\Statement\\Alter' => __DIR__ . '/..' . '/codesvault/howdy-qb/src/Statement/Alter.php',
+        'CodesVault\\Howdyqb\\Statement\\Create' => __DIR__ . '/..' . '/codesvault/howdy-qb/src/Statement/Create.php',
+        'CodesVault\\Howdyqb\\Statement\\Delete' => __DIR__ . '/..' . '/codesvault/howdy-qb/src/Statement/Delete.php',
+        'CodesVault\\Howdyqb\\Statement\\Drop' => __DIR__ . '/..' . '/codesvault/howdy-qb/src/Statement/Drop.php',
+        'CodesVault\\Howdyqb\\Statement\\Insert' => __DIR__ . '/..' . '/codesvault/howdy-qb/src/Statement/Insert.php',
+        'CodesVault\\Howdyqb\\Statement\\Select' => __DIR__ . '/..' . '/codesvault/howdy-qb/src/Statement/Select.php',
+        'CodesVault\\Howdyqb\\Statement\\Update' => __DIR__ . '/..' . '/codesvault/howdy-qb/src/Statement/Update.php',
+        'CodesVault\\Howdyqb\\Utilities' => __DIR__ . '/..' . '/codesvault/howdy-qb/src/Utilities.php',
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'MatthiasMullie\\Minify\\CSS' => __DIR__ . '/..' . '/matthiasmullie/minify/src/CSS.php',
         'MatthiasMullie\\Minify\\Exception' => __DIR__ . '/..' . '/matthiasmullie/minify/src/Exception.php',
@@ -46,6 +72,21 @@ class ComposerStaticInit76c77511981812192d9f2df81b24714a
         'MatthiasMullie\\PathConverter\\Converter' => __DIR__ . '/..' . '/matthiasmullie/path-converter/src/Converter.php',
         'MatthiasMullie\\PathConverter\\ConverterInterface' => __DIR__ . '/..' . '/matthiasmullie/path-converter/src/ConverterInterface.php',
         'MatthiasMullie\\PathConverter\\NoConverter' => __DIR__ . '/..' . '/matthiasmullie/path-converter/src/NoConverter.php',
+        'RadiusTheme\\SB\\AI\\AIFns' => __DIR__ . '/../..' . '/app/AI/AIFns.php',
+        'RadiusTheme\\SB\\AI\\AIServices\\AIClients\\DeepSeekClient' => __DIR__ . '/../..' . '/app/AI/AIServices/AIClients/DeepSeekClient.php',
+        'RadiusTheme\\SB\\AI\\AIServices\\AIClients\\GeminiClient' => __DIR__ . '/../..' . '/app/AI/AIServices/AIClients/GeminiClient.php',
+        'RadiusTheme\\SB\\AI\\AIServices\\AIClients\\OpenAIClient' => __DIR__ . '/../..' . '/app/AI/AIServices/AIClients/OpenAIClient.php',
+        'RadiusTheme\\SB\\AI\\AIServices\\DeepSeekAdapter' => __DIR__ . '/../..' . '/app/AI/AIServices/DeepSeekAdapter.php',
+        'RadiusTheme\\SB\\AI\\AIServices\\GeminiAdapter' => __DIR__ . '/../..' . '/app/AI/AIServices/GeminiAdapter.php',
+        'RadiusTheme\\SB\\AI\\AIServices\\Interface\\AIServiceInterface' => __DIR__ . '/../..' . '/app/AI/AIServices/Interface/AIServiceInterface.php',
+        'RadiusTheme\\SB\\AI\\AIServices\\OpenAIAdapter' => __DIR__ . '/../..' . '/app/AI/AIServices/OpenAIAdapter.php',
+        'RadiusTheme\\SB\\AI\\AIinit' => __DIR__ . '/../..' . '/app/AI/AIinit.php',
+        'RadiusTheme\\SB\\AI\\AiController' => __DIR__ . '/../..' . '/app/AI/AiController.php',
+        'RadiusTheme\\SB\\AI\\Ajax\\AjaxAI' => __DIR__ . '/../..' . '/app/AI/Ajax/AjaxAI.php',
+        'RadiusTheme\\SB\\AI\\DB\\AIDB' => __DIR__ . '/../..' . '/app/AI/DB/AIDB.php',
+        'RadiusTheme\\SB\\AI\\DB\\CreateTableForAi' => __DIR__ . '/../..' . '/app/AI/DB/CreateTableForAi.php',
+        'RadiusTheme\\SB\\AI\\Embedding\\DataEmbedding' => __DIR__ . '/../..' . '/app/AI/Embedding/DataEmbedding.php',
+        'RadiusTheme\\SB\\AI\\MetaBoxScripts' => __DIR__ . '/../..' . '/app/AI/MetaBoxScripts.php',
         'RadiusTheme\\SB\\Abstracts\\AbsSettings' => __DIR__ . '/../..' . '/app/Abstracts/AbsSettings.php',
         'RadiusTheme\\SB\\Abstracts\\AdditionalQueryCustomLayout' => __DIR__ . '/../..' . '/app/Abstracts/AdditionalQueryCustomLayout.php',
         'RadiusTheme\\SB\\Abstracts\\Api' => __DIR__ . '/../..' . '/app/Abstracts/Api.php',
@@ -58,6 +99,7 @@ class ComposerStaticInit76c77511981812192d9f2df81b24714a
         'RadiusTheme\\SB\\Controllers\\Admin\\Ajax\\DefaultTemplate' => __DIR__ . '/../..' . '/app/Controllers/Admin/Ajax/DefaultTemplate.php',
         'RadiusTheme\\SB\\Controllers\\Admin\\Ajax\\ModalTemplate' => __DIR__ . '/../..' . '/app/Controllers/Admin/Ajax/ModalTemplate.php',
         'RadiusTheme\\SB\\Controllers\\Admin\\Notice\\BFDiscount' => __DIR__ . '/../..' . '/app/Controllers/Admin/Notice/BFDiscount.php',
+        'RadiusTheme\\SB\\Controllers\\Admin\\Notice\\BlackFridayV2' => __DIR__ . '/../..' . '/app/Controllers/Admin/Notice/BlackFridayV2.php',
         'RadiusTheme\\SB\\Controllers\\Admin\\Notice\\Review' => __DIR__ . '/../..' . '/app/Controllers/Admin/Notice/Review.php',
         'RadiusTheme\\SB\\Controllers\\Admin\\Notice\\Upgrade' => __DIR__ . '/../..' . '/app/Controllers/Admin/Notice/Upgrade.php',
         'RadiusTheme\\SB\\Controllers\\Admin\\PluginRow' => __DIR__ . '/../..' . '/app/Controllers/Admin/PluginRow.php',
@@ -278,6 +320,17 @@ class ComposerStaticInit76c77511981812192d9f2df81b24714a
         'RadiusTheme\\SB\\Models\\ReSizer' => __DIR__ . '/../..' . '/app/Models/ReSizer.php',
         'RadiusTheme\\SB\\Models\\Settings' => __DIR__ . '/../..' . '/app/Models/Settings.php',
         'RadiusTheme\\SB\\Models\\TemplateSettings' => __DIR__ . '/../..' . '/app/Models/TemplateSettings.php',
+        'RadiusTheme\\SB\\Modules\\AbandonedCartRecovery\\ApiCartRecovery' => __DIR__ . '/../..' . '/app/Modules/AbandonedCartRecovery/ApiCartRecovery.php',
+        'RadiusTheme\\SB\\Modules\\AbandonedCartRecovery\\CartAbandonedTracking' => __DIR__ . '/../..' . '/app/Modules/AbandonedCartRecovery/CartAbandonedTracking.php',
+        'RadiusTheme\\SB\\Modules\\AbandonedCartRecovery\\CartActivity' => __DIR__ . '/../..' . '/app/Modules/AbandonedCartRecovery/CartActivity.php',
+        'RadiusTheme\\SB\\Modules\\AbandonedCartRecovery\\CartRecoveryAssets' => __DIR__ . '/../..' . '/app/Modules/AbandonedCartRecovery/CartRecoveryAssets.php',
+        'RadiusTheme\\SB\\Modules\\AbandonedCartRecovery\\CartRecoveryCron' => __DIR__ . '/../..' . '/app/Modules/AbandonedCartRecovery/CartRecoveryCron.php',
+        'RadiusTheme\\SB\\Modules\\AbandonedCartRecovery\\CartRecoveryDB' => __DIR__ . '/../..' . '/app/Modules/AbandonedCartRecovery/CartRecoveryDB.php',
+        'RadiusTheme\\SB\\Modules\\AbandonedCartRecovery\\CartRecoveryFns' => __DIR__ . '/../..' . '/app/Modules/AbandonedCartRecovery/CartRecoveryFns.php',
+        'RadiusTheme\\SB\\Modules\\AbandonedCartRecovery\\CartRecoveryInit' => __DIR__ . '/../..' . '/app/Modules/AbandonedCartRecovery/CartRecoveryInit.php',
+        'RadiusTheme\\SB\\Modules\\AbandonedCartRecovery\\CartRecoveryOptions' => __DIR__ . '/../..' . '/app/Modules/AbandonedCartRecovery/CartRecoveryOptions.php',
+        'RadiusTheme\\SB\\Modules\\AbandonedCartRecovery\\CartRecoveryTable' => __DIR__ . '/../..' . '/app/Modules/AbandonedCartRecovery/CartRecoveryTable.php',
+        'RadiusTheme\\SB\\Modules\\AbandonedCartRecovery\\RecoveryEmail' => __DIR__ . '/../..' . '/app/Modules/AbandonedCartRecovery/RecoveryEmail.php',
         'RadiusTheme\\SB\\Modules\\Badges\\Badges' => __DIR__ . '/../..' . '/app/Modules/Badges/Badges.php',
         'RadiusTheme\\SB\\Modules\\Badges\\BadgesFns' => __DIR__ . '/../..' . '/app/Modules/Badges/BadgesFns.php',
         'RadiusTheme\\SB\\Modules\\Badges\\BadgesFrontEnd' => __DIR__ . '/../..' . '/app/Modules/Badges/BadgesFrontEnd.php',
@@ -322,9 +375,9 @@ class ComposerStaticInit76c77511981812192d9f2df81b24714a
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit76c77511981812192d9f2df81b24714a::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit76c77511981812192d9f2df81b24714a::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInit76c77511981812192d9f2df81b24714a::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInitc576ef4c80eace95c341aa84f2fd27d4::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitc576ef4c80eace95c341aa84f2fd27d4::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInitc576ef4c80eace95c341aa84f2fd27d4::$classMap;
 
         }, null, ClassLoader::class);
     }

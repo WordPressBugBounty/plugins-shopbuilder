@@ -13,6 +13,10 @@ defined( 'ABSPATH' ) || exit;
 	<li class="image {{hasVideo}}">
 		<input type="hidden" name="rtsb_vg[{{data.product_variation_id}}][]" value="{{data.id}}">
 		<img src="{{data.url}}">
-		<a href="#" class="delete rtsb-vg-remove-image"><span class="dashicons dashicons-dismiss"></span></a>
+		<div class="rtsb-vg-action-button">
+			<span data-tip="Add Video" class="rtsb-vg-media-video-popup dashicons dashicons-video-alt3"></span>
+			<span data-tip="Edit Image" class="rtsb-vg-gallery-edit dashicons dashicons-edit"></span>
+			<a href="#" class="delete rtsb-vg-remove-image"><span class="dashicons dashicons-no"></span></a>
+		</div>
 	</li>
 </script>

@@ -49,8 +49,16 @@ class AddToCart {
 		$quantity          = empty( $_POST['quantity'] ) ? 1 : apply_filters( 'woocommerce_stock_amount', absint( $_POST['quantity'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$variation_id      = isset( $_POST['variation_id'] ) ? absint( $_POST['variation_id'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$passed_validation = apply_filters( 'woocommerce_add_to_cart_validation', true, $product_id, $quantity );
-
-		if ( $passed_validation && WC()->cart->add_to_cart( $product_id, $quantity, $variation_id ) ) {
+		// Safe fetch of the variation array.
+		$raw_variation = filter_input( INPUT_POST, 'variation', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY );
+		$variation     = [];
+		// Build variation attributes safely.
+		if ( ! empty( $raw_variation ) && is_array( $raw_variation ) ) {
+			foreach ( $raw_variation as $key => $value ) {
+				$variation[ $key ] = wc_clean( $value );
+			}
+		}
+		if ( $passed_validation && WC()->cart->add_to_cart( $product_id, $quantity, $variation_id, $variation ) ) {
 			do_action( 'woocommerce_ajax_added_to_cart', $product_id );
 			WC_AJAX::get_refreshed_fragments();
 		} else {

@@ -124,7 +124,9 @@ class CreateTemplate {
 				if ( 'default_template' === $default_template ) {
 					TemplateSettings::instance()->set_option( $option_name, $page_id );
 				} else {
-					TemplateSettings::instance()->set_option( $option_name, '' );
+					if ( ! $has_default ) {
+						TemplateSettings::instance()->set_option( $option_name, '' );
+					}
 				}
 			}
 

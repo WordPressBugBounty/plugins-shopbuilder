@@ -409,10 +409,15 @@ class ModalTemplate {
 					}
 					?>
 					<div class="set-default-layout-wrapper rtsb-tb-field-wraper" style="opacity: 0" >
-						<label>
-							<?php esc_html_e( 'Pre-built Templates ', 'shopbuilder' ); ?>
-							<span id="modallabelPrefix"></span>
-						</label>
+						<div style="display: flex; justify-content: space-between;">
+							<label>
+								<?php esc_html_e( 'Pre-built Templates ', 'shopbuilder' ); ?>
+								<span id="modallabelPrefix"></span>
+							</label>
+							<div class="rtsb-tb-button-wrapper">
+								<a class="btn" href="https://shopbuilderwp.com/themes/" target="_blank" style="opacity: 1; visibility: visible;">View Out Themes</a>
+							</div>
+						</div>
 						<div class="set-default-layout" data-has-pro="<?php echo esc_attr( rtsb()->has_pro() ); ?>"  data-rest-url="<?php echo esc_url( rtsb()->BASE_API ); ?>" data-placeholder-image-src="<?php echo esc_url( $placeholderImageSrc ); ?>">
 							<!-- Layout Will Add Via Ajax-->
 						</div>

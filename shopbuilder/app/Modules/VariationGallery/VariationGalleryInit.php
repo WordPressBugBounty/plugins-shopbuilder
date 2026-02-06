@@ -79,7 +79,7 @@ final class VariationGalleryInit {
 	 * @return void
 	 */
 	public function frontend_assets() {
-		wp_dequeue_script( 'flexslider' );
+		wp_dequeue_script( 'wc-flexslider' );
 		// Enqueue assets.
 		$this->handle = Fns::enqueue_module_assets(
 			$this->handle,
@@ -155,6 +155,9 @@ final class VariationGalleryInit {
 				'rtsbVgParams',
 				[
 					'ajaxurl'      => esc_url( $ajaxurl ),
+					'admin_url'    => esc_url( admin_url() ),
+					'pro_version'  => defined( 'RTSBPRO_VERSION' ) ? RTSBPRO_VERSION : false,
+					'nonce'        => wp_create_nonce( 'rtsb_vg_nonce' ),
 					'media_title'  => esc_html__( 'Choose an Image', 'shopbuilder' ),
 					'button_title' => esc_html__( 'Use Image', 'shopbuilder' ),
 					'add_media'    => esc_html__( 'Add Media', 'shopbuilder' ),

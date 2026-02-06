@@ -163,6 +163,10 @@ final class VariationSwatches {
 		if ( ! empty( $options['tooltip_images_padding'] ) ) {
 			$dynamic_css .= '--tooltip-image-padding:' . $options['tooltip_images_padding'] . 'px;';
 		}
+		// Tooltips.
+		if ( ! empty( $options['attribute_border_radius'] ) ) {
+			$dynamic_css .= '--variation-attr-border-radius:' . absint( $options['attribute_border_radius'] ) . 'px;';
+		}
 
 		$dynamic_css .= '}';
 		if ( ! empty( $dynamic_css ) ) {

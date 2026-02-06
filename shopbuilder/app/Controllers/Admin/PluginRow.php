@@ -49,8 +49,18 @@ class PluginRow {
 
 		$links = array_merge( $new_links, $links );
 
+		$current = time();
+		// Check if current date is within promotional period (Sept 19 - Jan 5).
+		$start_date      = strtotime( '2025-11-12 00:00:00' );
+		$end_date        = strtotime( '2025-12-30 23:59:59' );
+		$is_promo_period = $start_date <= $current && $current <= $end_date;
+		$text            = esc_html__( 'Get Pro', 'shopbuilder' );
+		if ( $is_promo_period ) {
+			$text = esc_html__( 'Get 60% off', 'shopbuilder' );
+		}
+
 		if ( ! rtsb()->has_pro() ) {
-			$links['shopbuilder_pro'] = '<a href="' . esc_url( rtsb()->pro_version_link() ) . '" target="_blank" style="color: #39b54a; font-weight: bold;">' . esc_html__( 'Go Pro', 'shopbuilder' ) . '</a>';
+			$links['shopbuilder_pro'] = '<a href="' . esc_url( rtsb()->pro_version_link() ) . '" target="_blank" style="color: #39b54a; font-weight: bold;">' . $text . '</a>';
 		}
 
 		return $links;
@@ -69,6 +79,7 @@ class PluginRow {
 		if ( RTSB_ACTIVE_FILE_NAME === $file ) {
 			$report_url         = 'https://www.radiustheme.com/contact/';
 			$row_meta['issues'] = sprintf(
+					/* translators: %1$s: Report URL, %2$s: Facing issue?, %3$s: Please open a support ticket. */
 				'%2$s <a target="_blank" href="%1$s"><span style="color: red">%3$s</span></a>',
 				esc_url( $report_url ),
 				esc_html__( 'Facing issue?', 'shopbuilder' ),
@@ -81,11 +92,7 @@ class PluginRow {
 		return (array) $links;
 	}
 
-	// Servay
-
 	/***
-	 * @param $mimes
-	 *
 	 * @return mixed
 	 */
 	public function deactivation_popup() {
@@ -101,8 +108,17 @@ class PluginRow {
 			<!-- Modal content -->
 			<div class="modal-content">
 				<div id="feedback-form-body-<?php echo esc_attr( $this->textdomain ); ?>">
+					<p style="margin: 0 0 15px 0;">
+						Having trouble? <br/>
+						For faster and more accurate support, please
+						<a target="_blank" href="https://www.radiustheme.com/contact/" style="text-decoration: none;">
+							<span style="color: red">open a support ticket</span>
+						</a>
+						— our support agent will personally review and resolve your issue.
+					</p>
+
 					<div class="feedback-input-header">
-						<?php echo esc_html__( 'If you have a moment, please share why you are deactivating ShopBuilder:', 'shopbuilder' ); ?>
+						<?php echo esc_html__( 'If you’d prefer not to open a support ticket, please take a moment to share why you’re deactivating ShopBuilder:', 'shopbuilder' ); ?>
 					</div>
 
 					<div class="feedback-input-wrapper">
@@ -155,8 +171,6 @@ class PluginRow {
 	}
 
 	/***
-	 * @param $mimes
-	 *
 	 * @return mixed
 	 */
 	public function dialog_box_style() {
@@ -212,10 +226,6 @@ class PluginRow {
 				margin: auto;
 				padding: 0;
 			}
-
-			/*#deactivation-dialog-*/<?php // echo esc_attr( $this->textdomain ); ?>/* .feedback-label {*/
-			/*	font-size: 15px;*/
-			/*}*/
 
 			div#deactivation-dialog-<?php echo esc_attr( $this->textdomain ); ?> p {
 				font-size: 15px;
@@ -407,9 +417,7 @@ class PluginRow {
 	}
 
 	/***
-	 * @param $mimes
-	 *
-	 * @return mixed
+	 * @return void
 	 */
 	public function deactivation_scripts() {
 		wp_enqueue_script( 'jquery-ui-dialog' );
@@ -478,14 +486,14 @@ class PluginRow {
 					if (!reasons && !feedback && !better_plugin) {
 						// Define flag variables
 						$('#feedback-form-body-<?php echo esc_attr( $this->textdomain ); ?> span').text('Choose The Reason');
-						$('.feedback-text-wrapper-<?php echo esc_attr( $this->textdomain ); ?> span').text('Please provide me with some advice.');
+						$('.feedback-text-wrapper-<?php echo esc_attr( $this->textdomain ); ?> span').text('Please provide more details regarding the issue so we can address it in future updates.');
 						return;
 					}
 
 					if (!reasons ) {
 						// Define flag variables
 						$('#feedback-form-body-<?php echo esc_attr( $this->textdomain ); ?> span').text('Choose The Reason');
-						$('.feedback-text-wrapper-<?php echo esc_attr( $this->textdomain ); ?> span').text('Please provide me with some advice.');
+						$('.feedback-text-wrapper-<?php echo esc_attr( $this->textdomain ); ?> span').text('Please provide more details regarding the issue so we can address it in future updates.');
 						return;
 					}
 
@@ -495,17 +503,26 @@ class PluginRow {
 						return;
 					}
 
-					if ('temporary_deactivation' === reasons && !feedback) {
+					if ('temporary_deactivation' === reasons || ! feedback ) {
 						window.location.href = href;
 						return;
 					}
 
+					if ( ! feedback.length > 0 ) {
+						window.location.href = href;
+						return;
+					}
+					var websiteUrl = '<?php echo esc_url( home_url() ); ?>';
+					if ( ! websiteUrl.length > 0 ) {
+						window.location.href = href;
+						return;
+					}
 					$.ajax({
 						url: 'https://shopbuilderwp.com/wp-json/RadiusTheme/pluginSurvey/v1/Survey/appendToSheet',
 						method: 'GET',
 						dataType: 'json',
 						data: {
-							website: '<?php echo esc_url( home_url() ); ?>',
+							website: websiteUrl,
 							reasons: reasons ? reasons : '',
 							better_plugin: better_plugin,
 							feedback: feedback,

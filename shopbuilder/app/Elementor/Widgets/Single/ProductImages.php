@@ -33,7 +33,6 @@ class ProductImages extends ElementorWidgetBase {
 		$this->rtsb_name = esc_html__( 'Product Images', 'shopbuilder' );
 		$this->rtsb_base = 'rtsb-product-image';
 		parent::__construct( $data, $args );
-		add_action( 'wp_footer', 'woocommerce_photoswipe' );
 		$this->the_hooks();
 	}
 	/**
@@ -271,11 +270,10 @@ class ProductImages extends ElementorWidgetBase {
 
 		$controllers     = $this->get_settings_for_display();
 		$show_thumbnails = ! empty( $controllers['show_thumbnails'] ) ? $controllers['show_thumbnails'] : false;
-		if ( ! $show_thumbnails ) {
+		if ( ! $show_thumbnails && 'grid' !== ( $controllers['image_layout'] ?? '' ) ) {
 			add_filter( 'rtwpvg_show_product_thumbnail_slider', '__return_false', 20 );
 			return 'bottom';
 		}
-
 		return ! empty( $controllers['image_layout'] ) ? $controllers['image_layout'] : 'bottom';
 	}
 	/**
@@ -316,6 +314,7 @@ class ProductImages extends ElementorWidgetBase {
 	 * @return void
 	 */
 	protected function render() {
+		add_action( 'wp_footer', 'woocommerce_photoswipe' );
 		global $product, $post;
 		$_product    = $product;
 		$product     = Fns::get_product();

@@ -72,14 +72,24 @@ class ProductsArchive extends LoopWithProductSlider {
 		];
 		$fields     = Fns::insert_controls( 'sec_general', $fields, $new_fields, true );
 		$new_fields = [
-			'show_pagination'  => [
+			'show_pagination'        => [
 				'label'       => esc_html__( 'Show Pagination', 'shopbuilder' ),
 				'type'        => 'switch',
 				'description' => esc_html__( 'Switch on to show pagination.', 'shopbuilder' ),
 				'default'     => 'yes',
 			],
-
-			'column_gap'       => [
+			'pagination_ajax_notice' => [
+				'type'      => 'html',
+				'raw'       => sprintf(
+					'<span style="display: block; background: #fffbf1; padding: 10px; line-height: 1.4; color: #bd3a3a;border: 1px solid #bd3a3a30;">%s</span>',
+					esc_html__( 'Please note that, if you use the \'Ajax Product Filters\' widget, only \'Ajax Load More\' pagination will appear, regardless of the above settings.', 'shopbuilder' )
+				),
+				'separator' => 'default',
+				'condition' => [
+					'show_pagination' => 'yes',
+				],
+			],
+			'column_gap'             => [
 				'mode'            => 'responsive',
 				'label'           => esc_html__( 'Grid Column gap (px)', 'shopbuilder' ),
 				'type'            => 'slider',
@@ -111,7 +121,7 @@ class ProductsArchive extends LoopWithProductSlider {
 					$this->selectors['column_gap'] => 'column-gap:{{SIZE}}{{UNIT}};',
 				],
 			],
-			'row_gap'          => [
+			'row_gap'                => [
 				'mode'       => 'responsive',
 				'label'      => esc_html__( 'Row gap (px)', 'shopbuilder' ),
 				'type'       => 'slider',
@@ -130,7 +140,7 @@ class ProductsArchive extends LoopWithProductSlider {
 					$this->selectors['row_gap'] => 'row-gap:{{SIZE}}{{UNIT}};',
 				],
 			],
-			'column_per_row'   => [
+			'column_per_row'         => [
 				'mode'            => 'responsive',
 				'label'           => esc_html__( 'Products Grid Column', 'shopbuilder' ),
 				'description'     => esc_html__( 'The control only work for grid view. This field not effect for product per page.', 'shopbuilder' ),
@@ -146,7 +156,7 @@ class ProductsArchive extends LoopWithProductSlider {
 					$this->selectors['column_per_row'] => 'width: calc(100%/{{VALUE}} - ( {{column_gap.size}}{{column_gap.unit}} / {{VALUE}} ) *  ({{VALUE}} - 1 ) ) !important;flex: 0 0 auto;max-width: initial;',
 				],
 			],
-			'list_image_width' => [
+			'list_image_width'       => [
 				'label'      => esc_html__( 'Image Width (px)', 'shopbuilder' ),
 				'type'       => 'slider',
 				'size_units' => [ 'px', '%' ],
@@ -164,7 +174,7 @@ class ProductsArchive extends LoopWithProductSlider {
 					$this->selectors['list_image_width'] => 'flex:0 0 {{SIZE}}{{UNIT}};',
 				],
 			],
-			'image_gap'        => [
+			'image_gap'              => [
 				'mode'       => 'responsive',
 				'label'      => esc_html__( 'Image Gap (px)', 'shopbuilder' ),
 				'type'       => 'slider',
@@ -273,9 +283,9 @@ class ProductsArchive extends LoopWithProductSlider {
 		}
 
 		global $wp_query;
-
-		$controllers['rtsb_order']   = ! empty( $wp_query->query_vars['order'] ) ? $wp_query->query_vars['order'] : 'ASC';
-		$controllers['rtsb_orderby'] = ! empty( $wp_query->query_vars['orderby'] ) ? $wp_query->query_vars['orderby'] : 'menu_order';
+		$order                       = strtoupper( $wp_query->query_vars['order'] ?? 'ASC' );
+		$controllers['rtsb_orderby'] = RenderHelpers::escaping_product_orderby( $wp_query->query_vars['orderby'] ?? 'menu_order' );
+		$controllers['rtsb_order']   = in_array( $order, [ 'ASC','DESC' ], true ) ? $order : 'ASC';
 
 		return [
 			'template'     => 'elementor/archive/archive-product',
@@ -337,8 +347,8 @@ class ProductsArchive extends LoopWithProductSlider {
 		Fns::load_template( $data['template'], $data );
 
 		if ( $is_preview ) {
-			$wp_query = $main_query;
-			$post     = $main_post;
+			$wp_query = $main_query; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+			$post     = $main_post; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 
 			wp_reset_query(); // phpcs:ignore WordPress.WP.DiscouragedFunctions.wp_reset_query_wp_reset_query
 			wp_reset_postdata();
@@ -373,9 +383,16 @@ class ProductsArchive extends LoopWithProductSlider {
 		Fns::print_html( $paginationData );
 	}
 
+	/**
+	 * @return void
+	 */
 	public static function pagination_wrapper_start() {
 		echo '<div class="rtsb-archive-pagination-wrap">';
 	}
+
+	/**
+	 * @return void
+	 */
 	public static function pagination_wrapper_end() {
 		echo '</div>';
 	}

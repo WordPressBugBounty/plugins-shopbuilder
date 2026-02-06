@@ -68,6 +68,8 @@ class AdminInit {
 		Notice\Upgrade::instance();
         // phpcs:ignore Squiz.PHP.CommentedOutCode.Found
 		// Notice\BFDiscount::instance();.
+        // phpcs:ignore Squiz.PHP.CommentedOutCode.Found
+		// Notice\BlackFridayV2::instance();.
 		Notice\Review::instance();
 	}
 

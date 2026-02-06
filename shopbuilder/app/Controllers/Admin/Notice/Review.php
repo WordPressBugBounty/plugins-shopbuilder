@@ -156,7 +156,7 @@ class Review {
 			$dont_disturb = add_query_arg( $args + [ 'rtsb_admin_review_spare_me' => '1' ], $this->rtsb_current_admin_url() );
 			$remind_me    = add_query_arg( $args + [ 'rtsb_admin_review_remind_me' => '1' ], $this->rtsb_current_admin_url() );
 			$rated        = add_query_arg( $args + [ 'rtsb_admin_review_rated' => '1' ], $this->rtsb_current_admin_url() );
-			$reviewurl    = 'https://wordpress.org/support/plugin/shopbuilder/reviews/?filter=5#new-post';
+			$reviewurl    = 'https://wordpress.org/support/plugin/shopbuilder/reviews/';
 			$plugin_name  = 'ShopBuilder – Elementor WooCommerce Builder Addons';
 			?>
 			<div class="notice rtsb-review-notice rtsb-review-notice--extended">
@@ -301,5 +301,4 @@ class Review {
 			<?php
 		}
 	}
-
 }

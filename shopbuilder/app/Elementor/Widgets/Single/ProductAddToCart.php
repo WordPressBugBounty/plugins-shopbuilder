@@ -10,6 +10,9 @@ namespace RadiusTheme\SB\Elementor\Widgets\Single;
 use RadiusTheme\SB\Helpers\Fns;
 use RadiusTheme\SB\Abstracts\ElementorWidgetBase;
 use RadiusTheme\SB\Elementor\Widgets\Controls\AddToCartSettings;
+use RadiusTheme\SBPRO\Elementor\Widgets\Controls\CatalogButtonSettings;
+use RadiusTheme\SBPRO\Modules\CatalogMode\CatalogModeFns;
+use RadiusTheme\SBPRO\Modules\CatalogMode\CatalogModeFrontEnd;
 
 // Do not allow directly accessing this file.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -37,7 +40,11 @@ class ProductAddToCart extends ElementorWidgetBase {
 	 * @return array
 	 */
 	public function widget_fields() {
-		return AddToCartSettings::widget_fields( $this );
+		if ( Fns::is_catalog_mode() ) {
+			return CatalogButtonSettings::settings( $this );
+		} else {
+			return AddToCartSettings::widget_fields( $this );
+		}
 	}
 	/**
 	 * Set Widget Keyword.
@@ -164,6 +171,55 @@ class ProductAddToCart extends ElementorWidgetBase {
 		<!-- Quantity Wrapper End -->
 		<?php
 	}
+	/**
+	 * Render catalog mode contact buttons
+	 *
+	 * @param int $product_id Product ID.
+	 * @return void
+	 */
+	public function catalog_mode_buttons( $product_id ) {
+		$settings        = CatalogModeFns::get_options();
+		$contact_buttons = $settings['contact_buttons'] ?? [];
+		if ( empty( $contact_buttons ) || ! is_array( $contact_buttons ) ) {
+			return;
+		}
+
+		echo '<div class="rtsb-product-add-to-cart">';
+		echo '<div class="rtsb-catalog-mode-product-page-buttons">';
+
+		foreach ( $contact_buttons as $button_type ) {
+			$this->render_contact_button( $button_type, $product_id, $settings );
+		}
+		echo '</div>';
+		echo '</div>';
+	}
+	/**
+	 * Render specific contact button
+	 *
+	 * @param string $button_type Button type.
+	 * @param int    $product_id Product ID.
+	 * @param array  $settings Plugin settings.
+	 * @return void
+	 */
+	public function render_contact_button( $button_type, $product_id, $settings ) {
+		switch ( $button_type ) {
+			case 'custom':
+				CatalogModeFrontEnd::render_custom_button( $product_id, $settings );
+				break;
+			case 'whatsapp':
+				CatalogModeFrontEnd::render_whatsapp_button( $product_id, $settings );
+				break;
+			case 'call':
+				CatalogModeFrontEnd::render_call_button( $settings );
+				break;
+			case 'email':
+				CatalogModeFrontEnd::render_email_button( $settings );
+				break;
+			case 'inquiry':
+				CatalogModeFrontEnd::render_inquiry_button( $product_id, $settings );
+				break;
+		}
+	}
 
 	/**
 	 * Override WooCommerce AJAX variation threshold.
@@ -233,8 +289,11 @@ class ProductAddToCart extends ElementorWidgetBase {
 			'controllers'  => $controllers,
 			'product_type' => $product ? $product->get_type() : '',
 		];
-
-		Fns::load_template( $data['template'], $data );
+		if ( $this->is_builder_mode() && Fns::is_catalog_mode() ) {
+			$this->catalog_mode_buttons( $product->get_id() );
+		} else {
+			Fns::load_template( $data['template'], $data );
+		}
 
 		$this->editor_cart_icon_script();
 		add_filter( 'rtsb/module/flash_sale_countdown/show_counter', '__return_true', 99 );

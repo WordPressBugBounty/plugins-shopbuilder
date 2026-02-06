@@ -26,7 +26,7 @@ do_action( 'rtsb/builder/before/header' );
 </head>
 <body <?php body_class(); ?>>
 	<?php
-		Elementor\Modules\PageTemplates\Module::body_open();
+		wp_body_open();
 		$parent_class = apply_filters( 'rtsb/builder/wrapper/parent_class', [] );
 		$type         = apply_filters( 'rtsb/builder/set/current/page/type', '' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 		do_action( 'rtsb/builder/after/header' );

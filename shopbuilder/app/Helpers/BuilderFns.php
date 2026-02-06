@@ -72,11 +72,12 @@ class BuilderFns {
 	 */
 	public static $tags_product_page_template = 'rtsb_tags_product_page_template';
 	/**
-	 * Page builder id.
+	 * Get template ID based on page type.
 	 *
-	 * @return int
+	 * @param string $type Page type (product, archive, etc.).
+	 * @return int Template ID or 0.
 	 */
-	public static function builder_page_id_by_type( $type ) {
+	public static function builder_page_id_by_type( $type ) { // phpcs:ignore Generic.Metrics.CyclomaticComplexity
 		global $post;
 
 		if ( ! array_key_exists( $type, self::builder_page_types() ) ) {
@@ -179,9 +180,9 @@ class BuilderFns {
 	}
 
 	/**
-	 * Page builder id.
+	 * Get current page builder ID via filter.
 	 *
-	 * @return init
+	 * @return int Template ID or 0.
 	 */
 	public static function builder_page_id_by_page() {
 		$type = apply_filters( 'rtsb/builder/set/current/page/type', '' );
@@ -210,11 +211,11 @@ class BuilderFns {
 	}
 
 	/**
-	 * Option name.
+	 * Get option key for template storage.
 	 *
-	 * @param string $type Builder type.
-	 *
-	 * @return string
+	 * @param string $type Template type.
+	 * @param bool   $default_lang Use default language.
+	 * @return string Option key.
 	 */
 	public static function option_name( $type, $default_lang = false ) {
 
@@ -234,9 +235,10 @@ class BuilderFns {
 	}
 
 	/**
-	 * @param $post_id
+	 * Option name to mark product template as default.
 	 *
-	 * @return string|void
+	 * @param int $post_id Template ID.
+	 * @return string|null
 	 */
 	public static function option_name_for_specific_product_set_default( $post_id ) {
 		if ( ! $post_id ) {
@@ -247,9 +249,10 @@ class BuilderFns {
 	}
 
 	/**
-	 * @param $post_id
+	 * Check if a specific product template is default.
 	 *
-	 * @return false|mixed|void|null
+	 * @param int $post_id Template ID.
+	 * @return mixed
 	 */
 	public static function get_specific_product_as_default( $post_id ) {
 		if ( ! $post_id ) {
@@ -261,9 +264,10 @@ class BuilderFns {
 	}
 
 	/**
-	 * @param $post_id
+	 * Option name for default category template.
 	 *
-	 * @return string|void
+	 * @param int $post_id Template ID.
+	 * @return string|null
 	 */
 	public static function option_name_for_specific_category_set_default( $post_id ) {
 		if ( ! $post_id ) {
@@ -274,9 +278,10 @@ class BuilderFns {
 	}
 
 	/**
-	 * @param $post_id
+	 * Check if a specific category template is default.
 	 *
-	 * @return false|mixed|void|null
+	 * @param int $post_id Template ID.
+	 * @return mixed
 	 */
 	public static function get_specific_category_as_default( $post_id ) {
 		if ( ! $post_id ) {
@@ -284,12 +289,13 @@ class BuilderFns {
 		}
 		$options = self::option_name_for_specific_category_set_default( $post_id );
 
-		return TemplateSettings::instance()->get_option( $options ); // get_option( $options );
+		return TemplateSettings::instance()->get_option( $options );
 	}
 
 	/**
-	 * @param $template_id
+	 * Get meta key by template ID for products.
 	 *
+	 * @param int $template_id Template ID.
 	 * @return string
 	 */
 	public static function option_name_by_template_id( $template_id ) {
@@ -302,9 +308,11 @@ class BuilderFns {
 	}
 
 	/**
-	 * @param $template_id
+	 * Get option name for the selected product category template.
 	 *
-	 * @return string
+	 * @param int|string $template_id Template ID for the category.
+	 *
+	 * @return string Generated option name.
 	 */
 	public static function option_name_product_page_selected_cat( $template_id ) {
 		$_suff = null;
@@ -316,9 +324,11 @@ class BuilderFns {
 	}
 
 	/**
-	 * @param $post_id
+	 * Get option name for setting a specific product category template as default.
 	 *
-	 * @return string|void
+	 * @param int|string $post_id Template or post ID.
+	 *
+	 * @return string|null Option name or null if post ID is invalid.
 	 */
 	public static function option_name_product_page_specific_cat_set_default( $post_id ) {
 		if ( ! $post_id ) {
@@ -329,9 +339,11 @@ class BuilderFns {
 	}
 
 	/**
-	 * @param $template_id
+	 * Get option name for the selected product tag template.
 	 *
-	 * @return string
+	 * @param int|string $template_id Template ID for the tag.
+	 *
+	 * @return string Generated option name.
 	 */
 	public static function option_name_product_page_selected_tag( $template_id ) {
 		$_suff = null;
@@ -342,9 +354,11 @@ class BuilderFns {
 		return self::$tags_product_page_template . $_suff;
 	}
 	/**
-	 * @param $post_id
+	 * Get option name for setting a specific product tag template as default.
 	 *
-	 * @return string|void
+	 * @param int|string $post_id Template or post ID.
+	 *
+	 * @return string|null Option name or null if post ID is not provided.
 	 */
 	public static function option_name_product_page_specific_tag_set_default( $post_id ) {
 		if ( ! $post_id ) {
@@ -354,9 +368,11 @@ class BuilderFns {
 		return 'rtsb_template_product_page_specific_tag_set_default_' . $post_id;
 	}
 	/**
-	 * @param $template_id
+	 * Get option name for the selected archive (category) template.
 	 *
-	 * @return string
+	 * @param int|string $template_id Template ID.
+	 *
+	 * @return string Generated option name.
 	 */
 	public static function archive_option_name_by_template_id( $template_id ) {
 		$_suff = null;
@@ -368,9 +384,9 @@ class BuilderFns {
 	}
 
 	/**
-	 * Template builder
+	 * Returns meta key used to store builder type.
 	 *
-	 * @var string
+	 * @return string
 	 */
 	public static function template_type_meta_key() {
 		return self::$template_meta . '_type';
@@ -404,45 +420,45 @@ class BuilderFns {
 	}
 
 	/**
-	 * Template builder
+	 * Check if current page is builder preview.
 	 *
-	 * @var boolean
+	 * @return bool
 	 */
 	public static function is_builder_preview() {
 		return is_singular( self::$post_type_tb );
 	}
 
 	/**
-	 * Template builder
+	 * Check if archive template should load.
 	 *
-	 * @var boolean
+	 * @return bool
 	 */
 	public static function is_archive() {
 		return self::is_page_builder( 'archive', is_product_taxonomy() );
 	}
 
 	/**
-	 * Template builder
+	 * Check if shop template should load.
 	 *
-	 * @var boolean
+	 * @return bool
 	 */
 	public static function is_shop() {
 		return self::is_page_builder( 'shop', is_shop() );
 	}
 
 	/**
-	 * Template builder
+	 * Check if cart template should load.
 	 *
-	 * @var boolean
+	 * @return bool
 	 */
 	public static function is_cart() {
 		return self::is_page_builder( 'cart', is_cart() );
 	}
 
 	/**
-	 * Template builder
+	 * Check if checkout template should load.
 	 *
-	 * @var boolean
+	 * @return bool
 	 */
 	public static function is_checkout() {
 		return self::is_page_builder( 'checkout', is_checkout() && ! is_wc_endpoint_url() && ! is_order_received_page() );
@@ -458,41 +474,45 @@ class BuilderFns {
 	}
 
 	/**
-	 * @param $is_quick_view
+	 * Check if quick view page template should load.
 	 *
+	 * @param bool $is_quick_view True if quick view.
 	 * @return bool
 	 */
 	public static function is_quick_views_page( $is_quick_view = false ) {
 		return rtsb()->has_pro() && self::is_page_builder( 'quick-view', $is_quick_view );
 	}
 
+
 	/**
-	 * Builder page detector.
+	 * Check if a template should replace default WooCommerce page.
 	 *
-	 * @param string  $type builder Page type.
-	 * @param boolean $is_page page status.
-	 *
-	 * @return boolean
+	 * @param string $type Page type.
+	 * @param bool   $is_page Current page status.
+	 * @param bool   $is_require_auth Require login.
+	 * @return bool
 	 */
 	public static function is_page_builder( $type, $is_page, $is_require_auth = false ) {
-		if ( self::builder_type( get_the_ID() ) === $type ) {
-			return true;
+		$current_builder_type = self::builder_type( get_the_ID() );
+		$post_type            = get_post_type( get_the_ID() );
+		if ( $post_type === self::$post_type_tb ) {
+			if ( $current_builder_type === $type ) {
+				return true;
+			} else {
+				return false;
+			}
 		}
-
 		if ( $is_require_auth && ! is_user_logged_in() ) {
 			$type = 'myaccount-auth';
 		}
-
 		$builder_id = self::builder_page_id_by_type( $type );
 		if ( ! $builder_id ) {
 			return false;
 		}
-
 		$builder_type = self::builder_type( $builder_id );
 		if ( $type === $builder_type && $is_page ) {
 			return true;
 		}
-
 		return false;
 	}
 

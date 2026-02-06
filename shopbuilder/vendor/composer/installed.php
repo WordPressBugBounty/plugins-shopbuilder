@@ -3,13 +3,22 @@
         'name' => 'radiustheme/shopbuilder',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '490e721d16ae49b1d3bb2209838bc4c514d0f8a3',
+        'reference' => 'd230b88a9f26ca949ead9245921f7a673c4cdf04',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
         'dev' => true,
     ),
     'versions' => array(
+        'codesvault/howdy-qb' => array(
+            'pretty_version' => '1.7.1',
+            'version' => '1.7.1.0',
+            'reference' => '90e4d32dbf129ffb064df48342fa11a01cc6327b',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../codesvault/howdy-qb',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
         'matthiasmullie/minify' => array(
             'pretty_version' => '1.3.75',
             'version' => '1.3.75.0',
@@ -31,7 +40,7 @@
         'radiustheme/shopbuilder' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '490e721d16ae49b1d3bb2209838bc4c514d0f8a3',
+            'reference' => 'd230b88a9f26ca949ead9245921f7a673c4cdf04',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

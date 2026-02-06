@@ -499,6 +499,7 @@ class SwatchesFns {
 						esc_attr( $color )
 					);
 				}
+				$html = '<span class="rtsb-term-span">' . $html . '</span>';
 				break;
 			case 'image':
 				$attachment_id = ! empty( $term_data['data'][ $slug ]['image'] )
