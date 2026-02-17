@@ -2487,6 +2487,14 @@ class Fns {
 	public static function is_catalog_mode() {
 		return function_exists( 'rtsbpro' ) && self::is_module_active( 'catalog_mode' );
 	}
+	/**
+	 * Checks if back in stock notifier is active
+	 *
+	 * @return boolean
+	 */
+	public static function is_back_in_stock_notifier_enable() {
+		return function_exists( 'rtsbpro' ) && self::is_module_active( 'back_in_stock_notifier' );
+	}
 
 	/**
 	 * Elementor Widget Active.

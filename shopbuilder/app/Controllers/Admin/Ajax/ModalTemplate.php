@@ -376,6 +376,10 @@ class ModalTemplate {
 						$set_default     = BuilderFns::get_specific_category_as_default( $post_id );
 						if ( ! empty( $categories_name ) && $set_default ) {
 							$template_default = $post_id;
+						} else {
+							$option_name    = BuilderFns::option_name( $template_type );
+							$is_set_default = TemplateSettings::instance()->get_option( $option_name );
+							$set_default    = $is_set_default;
 						}
 						if ( ! $set_default && $template_default === $post_id ) {
 							$template_default = '';

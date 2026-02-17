@@ -102,20 +102,9 @@ class SupportController {
 	 * @return string Modified or original template path.
 	 */
 	public function locate_template( $template, $template_name ) {
-		if ( 'checkout/review-order.php' === $template_name && BuilderFns::is_checkout() ) {
-			$id    = BuilderFns::is_builder_preview() ? get_the_ID() : BuilderFns::builder_page_id_by_type( 'checkout' );
-			$elmap = ElementorDataMap::instance();
-			if ( ! $id ) {
-				return $template;
-			}
-			$get_widget = $elmap->get_widget_data( 'rtsb-shipping-method', [], $id );
-			if ( ! empty( $get_widget ) ) {
-				$template = Fns::locate_template( 'elementor/checkout/customized-order-review' );
-			}
-		} elseif ( 'single-product/tabs/description.php' === $template_name && BuilderFns::is_product() ) {
+		if ( 'single-product/tabs/description.php' === $template_name && BuilderFns::is_product() ) {
 			$template = Fns::locate_template( 'elementor/single-product/tab-description' );
 		}
-
 		return $template;
 	}
 }

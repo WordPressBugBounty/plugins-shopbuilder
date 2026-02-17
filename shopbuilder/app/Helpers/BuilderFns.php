@@ -195,16 +195,17 @@ class BuilderFns {
 
 	/**
 	 * Page builder Page for.
+	 * No need translatable Text and textdomain.
 	 *
 	 * @return array
 	 */
 	public static function builder_page_types() {
 		$page_types = [
-			'shop'     => esc_html__( 'Shop', 'shopbuilder' ),
-			'archive'  => esc_html__( 'Category Archive', 'shopbuilder' ),
-			'product'  => esc_html__( 'Product Page', 'shopbuilder' ),
-			'cart'     => esc_html__( 'Cart', 'shopbuilder' ),
-			'checkout' => esc_html__( 'Checkout', 'shopbuilder' ),
+			'shop'     => 'Shop',
+			'archive'  => 'Category Archive',
+			'product'  => 'Product Page',
+			'cart'     => 'Cart',
+			'checkout' => 'Checkout',
 		];
 
 		return apply_filters( 'rtsb/builder/register/page/types', $page_types );
@@ -288,7 +289,6 @@ class BuilderFns {
 			return;
 		}
 		$options = self::option_name_for_specific_category_set_default( $post_id );
-
 		return TemplateSettings::instance()->get_option( $options );
 	}
 

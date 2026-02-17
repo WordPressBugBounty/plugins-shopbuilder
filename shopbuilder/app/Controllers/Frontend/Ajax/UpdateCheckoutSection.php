@@ -40,6 +40,7 @@ class UpdateCheckoutSection {
 	 * @return void
 	 */
 	public function response() {
+		WC()->cart->calculate_totals();
 		WC()->cart->calculate_shipping();
 		ob_start();
 		Fns::load_template( 'shopify-checkout/order-review-footer', [] );

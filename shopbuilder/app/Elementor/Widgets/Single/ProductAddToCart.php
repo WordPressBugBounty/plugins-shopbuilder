@@ -13,6 +13,7 @@ use RadiusTheme\SB\Elementor\Widgets\Controls\AddToCartSettings;
 use RadiusTheme\SBPRO\Elementor\Widgets\Controls\CatalogButtonSettings;
 use RadiusTheme\SBPRO\Modules\CatalogMode\CatalogModeFns;
 use RadiusTheme\SBPRO\Modules\CatalogMode\CatalogModeFrontEnd;
+use RadiusTheme\SBPRO\Modules\BackInStockNotifier\BackInStockNotifierFrontEnd;
 
 // Do not allow directly accessing this file.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -283,7 +284,9 @@ class ProductAddToCart extends ElementorWidgetBase {
 		if ( rtsb()->has_pro() && ! empty( $controllers['enable_single_ajax_add_to_cart'] ) ) {
 			wp_enqueue_script( 'wc-add-to-cart' );
 		}
-
+		if ( Fns::is_back_in_stock_notifier_enable() ) {
+			remove_filter( 'woocommerce_get_stock_html', [ BackInStockNotifierFrontEnd::instance(),'add_waitlist_to_stock_html' ], 20, 2 );
+		}
 		$data = [
 			'template'     => 'elementor/single-product/add-to-cart',
 			'controllers'  => $controllers,

@@ -76,10 +76,47 @@ class GalleryFrontEnd {
 	 * @return void
 	 */
 	public function get_default_gallery_images() {
-        // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		if ( ! wp_verify_nonce( Fns::get_nonce(), rtsb()->nonceText ) ) {
+			wp_send_json_error( esc_html__( 'Something Went Wrong', 'shopbuilder' ) );
+		}
+		$product_id = isset( $_POST['product_id'] ) ? absint( $_POST['product_id'] ) : 0;
+
+		if ( ! $product_id ) {
+			wp_send_json_error( esc_html__( 'Invalid product ID.', 'shopbuilder' ) );
+		}
+
+		$product = wc_get_product( $product_id );
+
+		if ( ! $product ) {
+			wp_send_json_error( esc_html__( 'Product not found.', 'shopbuilder' ) );
+		}
+
+		if ( ! $this->can_user_view_product( $product ) ) {
+			wp_send_json_error( esc_html__( 'You do not have permission to view this product.', 'shopbuilder' ) );
+		}
+
 		$product_id = isset( $_POST['product_id'] ) ? absint( $_POST['product_id'] ) : 0;
 		$images     = GalleryFns::get_gallery_images_and_props( $product_id );
 		wp_send_json_success( $images );
+	}
+	/**
+	 * Determines if the current user has permission to view a product.
+	 *
+	 * Checks product status and visibility settings against user capabilities.
+	 *
+	 * @param \WC_Product $product The product to check access for.
+	 * @return bool True if user can view the product, false otherwise.
+	 */
+	private function can_user_view_product( $product ) {
+		$product_id = $product->get_id();
+		$status     = get_post_status( $product->get_id() );
+		$visibility = $product->get_catalog_visibility();
+
+		if ( 'publish' === $status && 'visible' === $visibility ) {
+			return true;
+		}
+
+		return current_user_can( 'edit_post', $product_id );
 	}
 	/**
 	 * @param string $template template.

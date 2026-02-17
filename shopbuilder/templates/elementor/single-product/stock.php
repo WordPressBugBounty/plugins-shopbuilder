@@ -14,5 +14,5 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 ?>
 <div class="rtsb-product-stock">
-	<?php Fns::print_html( $content ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+	<?php Fns::print_html( $content, true ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 </div>

@@ -106,7 +106,7 @@ class AIDB {
 			// Insert new record.
 			$data['product_id'] = absint( $product_id );
 			$data['created_at'] = current_time( 'mysql' );
-			Fns::DB()::insert( AIFns::$ai_embeddings_table, [ $data ] );
+			Fns::DB()::insert( AIFns::$ai_embeddings_table, [ $data ] )->execute();
 			return true;
 		}
 	}

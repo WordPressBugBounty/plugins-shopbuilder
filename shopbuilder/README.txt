@@ -4,7 +4,7 @@ Donate link:
 Tags: Elementor, Woocommerce Builder, Elementor Woocommerce Builder, Woocommerce, Woocommerce Product
 Requires at least: 5.5
 Tested up to: 6.9
-Stable tag: 3.2.4
+Stable tag: 3.2.5
 Requires PHP: 7.4
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -423,6 +423,12 @@ If you like the ShopBuilder Plugin, then consider checking out our other WordPre
 * You can report security bugs through the Patchstack Vulnerability Disclosure Program. The Patchstack team help validate, triage and handle any security vulnerabilities. [Report a security vulnerability.](https://patchstack.com/database/vdp/shopbuilder)
 
 == Changelog ==
+
+= 3.2.5 ( Feb 17, 2026) =
+* Add: Enhanced compatibility with 'Back In Stock Notifier' modules and feature
+* Fix: Resolved console error causing infinite slider loading
+* Fix: Resolved Archive Page Builder enable/disable toggle issue
+* Fix: Restricted private product gallery image access to authorized users only
 
 = 3.2.4 ( Jan 22, 2026) =
 * Fix: Infinite loader issue fixed for General Widgets

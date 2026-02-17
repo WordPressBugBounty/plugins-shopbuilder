@@ -55,7 +55,6 @@ class BuilderController {
 	private function __construct() {
 		$this->builder_page_id = BuilderFns::builder_page_id_by_page();
 		$this->page_edit_with  = Fns::page_edit_with( $this->builder_page_id );
-
 		if ( ! is_admin() ) {
 			BuilderHooks::instance();
 		}

@@ -99,6 +99,22 @@ final class VariationGalleryInit {
 				'type'    => 'js',
 			]
 		);
+        // phpcs:ignore WordPress.PHP.StrictInArray.MissingTrueStrict
+		if ( in_array( 'sitepress-multilingual-cms/sitepress.php', get_option( 'active_plugins' ) ) ) {
+			$ajaxurl = admin_url( 'admin-ajax.php?lang=' . ICL_LANGUAGE_CODE );
+		} else {
+			$ajaxurl = admin_url( 'admin-ajax.php' );
+		}
+		wp_localize_script(
+			$this->handle,
+			'rtsbVgParams',
+			[
+				'ajaxurl'       => esc_url( $ajaxurl ),
+				'admin_url'     => esc_url( admin_url() ),
+				'pro_version'   => defined( 'RTSBPRO_VERSION' ) ? RTSBPRO_VERSION : false,
+				rtsb()->nonceId => wp_create_nonce( rtsb()->nonceText ),
+			]
+		);
 		$this->frontend_dynamic_css();
 	}
 

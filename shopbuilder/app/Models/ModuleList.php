@@ -1532,7 +1532,7 @@ class ModuleList extends ListModel {
 						'help'  => esc_html__( 'Switch on to enable Save Cart For Buy Later.', 'shopbuilder' ),
 					],
 					'package'      => $this->pro_package(),
-					'fields'       => Fns::pro_version_notice( '2.1.7', 'general', 'ShopBuilder Pro', false ),
+					'fields'       => Fns::pro_version_notice( '2.1.8', 'general', 'ShopBuilder Pro', false ),
 				]
 			),
 			'catalog_mode'                  => apply_filters(
@@ -1546,7 +1546,21 @@ class ModuleList extends ListModel {
 						'help'  => esc_html__( 'Switch on to enable Catalog Mode.', 'shopbuilder' ),
 					],
 					'package'      => $this->pro_package(),
-					'fields'       => Fns::pro_version_notice( '2.1.8', 'general', 'ShopBuilder Pro', false ),
+					'fields'       => Fns::pro_version_notice( '2.1.9', 'general', 'ShopBuilder Pro', false ),
+				]
+			),
+			'back_in_stock_notifier'        => apply_filters(
+				'rtsb/module/back_in_stock_notifier/options',
+				[
+					'id'           => 'back_in_stock_notifier',
+					'active'       => '',
+					'title'        => esc_html__( 'Back In Stock Notifier', 'shopbuilder' ),
+					'active_field' => [
+						'label' => esc_html__( 'Enable Back In Stock Notifier?', 'shopbuilder' ),
+						'help'  => esc_html__( 'Switch on to enable Back In Stock Notifier.', 'shopbuilder' ),
+					],
+					'package'      => $this->pro_package(),
+					'fields'       => Fns::pro_version_notice( '2.1.11', 'general', 'ShopBuilder Pro', false ),
 				]
 			),
 		];

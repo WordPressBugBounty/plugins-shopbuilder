@@ -276,6 +276,10 @@ class BuilderCpt {
 					if ( ! empty( $categories_name ) && $set_default ) {
 						$is_set_default = $post_id;
 						$page_type_for  = 'template-' . $post_id . '-specific-category';
+					} else {
+						$option_name    = BuilderFns::option_name( $template_type );
+						$is_set_default = TemplateSettings::instance()->get_option( $option_name );
+						$set_default    = $is_set_default;
 					}
 					if ( ! $set_default && $is_set_default === $post_id ) {
 						$is_set_default = '';

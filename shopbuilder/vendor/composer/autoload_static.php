@@ -50,6 +50,8 @@ class ComposerStaticInitc576ef4c80eace95c341aa84f2fd27d4
         'CodesVault\\Howdyqb\\Api\\UpdateInterface' => __DIR__ . '/..' . '/codesvault/howdy-qb/src/Api/UpdateInterface.php',
         'CodesVault\\Howdyqb\\Connect' => __DIR__ . '/..' . '/codesvault/howdy-qb/src/Connect.php',
         'CodesVault\\Howdyqb\\DB' => __DIR__ . '/..' . '/codesvault/howdy-qb/src/DB.php',
+        'CodesVault\\Howdyqb\\Expression\\SqlCore' => __DIR__ . '/..' . '/codesvault/howdy-qb/src/Expression/SqlCore.php',
+        'CodesVault\\Howdyqb\\Expression\\SubQuery' => __DIR__ . '/..' . '/codesvault/howdy-qb/src/Expression/SubQuery.php',
         'CodesVault\\Howdyqb\\QueryFactory' => __DIR__ . '/..' . '/codesvault/howdy-qb/src/QueryFactory.php',
         'CodesVault\\Howdyqb\\SqlGenerator' => __DIR__ . '/..' . '/codesvault/howdy-qb/src/SqlGenerator.php',
         'CodesVault\\Howdyqb\\Statement\\Alter' => __DIR__ . '/..' . '/codesvault/howdy-qb/src/Statement/Alter.php',

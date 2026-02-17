@@ -59,7 +59,7 @@ class CartRecoveryDB {
 			'meta_key'   => $key, // phpcs:ignore WordPress.DB.SlowDBQuery
 			'meta_value' => maybe_serialize( $value ), // phpcs:ignore WordPress.DB.SlowDBQuery
 		];
-		Fns::DB()::insert( $table, [ $data ] );
+		Fns::DB()::insert( $table, [ $data ] )->execute();
 	}
 
 	/**
@@ -125,7 +125,7 @@ class CartRecoveryDB {
 				// Update existing row.
 				Fns::DB()::update( CartRecoveryFns::$ca_email, $template )->where( 'id', '=', $id )->execute();
 			} else {
-				Fns::DB()::insert( CartRecoveryFns::$ca_email, [ $template ] );
+				Fns::DB()::insert( CartRecoveryFns::$ca_email, [ $template ] )->execute();
 			}
 		}
 	}
@@ -561,7 +561,7 @@ class CartRecoveryDB {
 			}
 			$meta_data      = $data['meta_data'] ?? [];
 			$sanitized_data = CartRecoveryFns::sanitize_abandonment_data( $data );
-			$result         = Fns::DB()::insert( CartRecoveryFns::$ca_abandonment, [ $sanitized_data ] );
+			$result         = Fns::DB()::insert( CartRecoveryFns::$ca_abandonment, [ $sanitized_data ] )->execute();
 			// Get abandonment ID for meta update.
 			$abandonment_id = 0;
 			$session_lookup = $sanitized_data['ca_session_id'] ?? '';
@@ -934,7 +934,7 @@ class CartRecoveryDB {
 		}
 		$result = CartRecoveryFns::prepare_email_history_data( $templates, $abandonment_id );
 		if ( ! empty( $result['history'] ) ) {
-			Fns::DB()::insert( CartRecoveryFns::$ca_email_history, $result['history'] );
+			Fns::DB()::insert( CartRecoveryFns::$ca_email_history, $result['history'] )->execute();
 			$expireTimestamp = $result['max_scheduled'] + ( 7 * DAY_IN_SECONDS );
 			$lost_time       = gmdate( 'Y-m-d H:i:s', $expireTimestamp );
 			self::update_ca_abandonment_meta( $abandonment_id, 'lost_time', $lost_time );
@@ -977,7 +977,7 @@ class CartRecoveryDB {
 			}
 		}
 		if ( ! empty( $allHistory ) ) {
-			Fns::DB()::insert( CartRecoveryFns::$ca_email_history, $allHistory );
+			Fns::DB()::insert( CartRecoveryFns::$ca_email_history, $allHistory )->execute();
 		}
 		return $ids;
 	}
