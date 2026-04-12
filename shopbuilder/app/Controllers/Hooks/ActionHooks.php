@@ -89,10 +89,11 @@ class ActionHooks {
 		add_action( 'rtsb/before/archive/default/filter/items', [ __CLASS__,'default_filter_header' ], 10 );
 		add_action( 'rtsb/before/archive/default/filter/items', [ __CLASS__,'default_filter_search' ], 15 );
 
-		// WC Query modifier.
-		if ( ! rtsb()->has_pro() ) {
-			add_action( 'woocommerce_product_query', [ __CLASS__, 'query_modifier' ], 15 );
-		}
+		// WC Query modifier. Always registered so the free `rtsb-product-filters`
+		// widget's URL params (product_cat, product_tag, product_brand, rating_filter,
+		// sale_filter) are applied to the main WooCommerce product query regardless
+		// of whether the Pro add-on is active.
+		add_action( 'woocommerce_product_query', [ __CLASS__, 'query_modifier' ], 15 );
 
 		add_action( 'switch_theme', [ __CLASS__, 'clear_cache' ] );
 	}
@@ -466,7 +467,10 @@ class ActionHooks {
 	 * @return object
 	 */
 	public static function query_modifier( $query ) {
-		$onsale_filter    = isset( $_GET['sale_filter'] ) ? sanitize_text_field( wp_unslash( $_GET['sale_filter'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+
+		// Sale filter.
+		$onsale_filter    = isset( $_GET['sale_filter'] ) ? sanitize_text_field( wp_unslash( $_GET['sale_filter'] ) ) : '';
 		$on_sale_products = wc_get_product_ids_on_sale();
 
 		if ( 'onsale' === $onsale_filter ) {
@@ -474,6 +478,61 @@ class ActionHooks {
 		} elseif ( 'regular' === $onsale_filter ) {
 			$query->set( 'post__not_in', $on_sale_products );
 		}
+
+		// Taxonomy filters (product_cat, product_tag, product_brand) from URL.
+		$tax_query = (array) $query->get( 'tax_query' );
+
+		$taxonomy_map = [
+			'product_cat'   => 'product_cat',
+			'product_tag'   => 'product_tag',
+			'product_brand' => 'product_brand',
+		];
+
+		foreach ( $taxonomy_map as $param => $taxonomy ) {
+			if ( empty( $_GET[ $param ] ) || ! taxonomy_exists( $taxonomy ) ) {
+				continue;
+			}
+
+			$raw_values = wc_clean( wp_unslash( $_GET[ $param ] ) );
+			$slugs      = array_filter( array_map( 'urldecode', explode( ',', $raw_values ) ) );
+
+			if ( empty( $slugs ) ) {
+				continue;
+			}
+
+			$tax_query[] = [
+				'taxonomy' => $taxonomy,
+				'field'    => 'slug',
+				'terms'    => $slugs,
+				'operator' => 'IN',
+			];
+		}
+
+		// Rating filter (rating_filter=4,5).
+		if ( ! empty( $_GET['rating_filter'] ) ) {
+			$raw_ratings = wc_clean( wp_unslash( $_GET['rating_filter'] ) );
+			$ratings     = array_filter( array_map( 'intval', explode( ',', $raw_ratings ) ) );
+
+			if ( ! empty( $ratings ) ) {
+				$rating_terms = [];
+				foreach ( $ratings as $rating ) {
+					$rating_terms[] = 'rated-' . $rating;
+				}
+
+				$tax_query[] = [
+					'taxonomy' => 'product_visibility',
+					'field'    => 'name',
+					'terms'    => $rating_terms,
+					'operator' => 'IN',
+				];
+			}
+		}
+
+		if ( ! empty( $tax_query ) ) {
+			$query->set( 'tax_query', $tax_query );
+		}
+
+		// phpcs:enable WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 
 		return $query;
 	}

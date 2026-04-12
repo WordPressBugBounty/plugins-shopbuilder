@@ -3,14 +3,14 @@ Contributors: techlabpro1, mamunur105, srafiz
 Donate link:
 Tags: Elementor, Woocommerce Builder, Elementor Woocommerce Builder, Woocommerce, Woocommerce Product
 Requires at least: 5.5
-Tested up to: 6.9
-Stable tag: 3.2.5
+Tested up to: 7.0
+Stable tag: 3.2.6
 Requires PHP: 7.4
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
 WooCommerce builder for Elementor includes 80+ widgets, WooCommerce templates, quick view, compare, wishlist, shop & archive page builder and more.
-
+ 
 == Description ==
 [ShopBuilder](https://shopbuilderwp.com/?utm_source=WPorg&utm_medium=click&utm_campaign=org) is a powerful WooCommerce Builder for Elementor that lets you easily create custom WooCommerce pages with a drag and drop interface. ShopBuilder also includes a powerful set of WooCommerce widgets that lets you easily add products to your pages.
 
@@ -423,6 +423,21 @@ If you like the ShopBuilder Plugin, then consider checking out our other WordPre
 * You can report security bugs through the Patchstack Vulnerability Disclosure Program. The Patchstack team help validate, triage and handle any security vulnerabilities. [Report a security vulnerability.](https://patchstack.com/database/vdp/shopbuilder)
 
 == Changelog ==
+
+= 3.2.6( April 12, 2026) =
+* Fix: Improved Cart Table Wishlist button styling
+* Fix: Resolved billing state value issue on first load
+* Fix: Fixed search results issue on archive pages
+* Fix: Resolved LiteSpeed Cache compatibility issue
+* Fix: Corrected wishlist icon update after adding to wishlist
+* Fix: Fixed incorrect value in category search field
+* Fix: Handled empty cart icon in AddToCart widget
+* Fix: Pagination Number support For Archive Page default widgets and Ajax filter
+* Fix: Abandonment Cart Recovery Cron reschedule event error for hook
+* Add: Display wishlist shortcode list in module settings
+* Update: Added image size selection control in the “Variation Swatch” module
+* Update: Updated composer dependency 'codesvault/howdy-qb'
+
 
 = 3.2.5 ( Feb 17, 2026) =
 * Add: Enhanced compatibility with 'Back In Stock Notifier' modules and feature

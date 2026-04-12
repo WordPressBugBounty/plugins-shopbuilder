@@ -99,16 +99,7 @@ class ProductsArchiveCustom extends ElementorWidgetBase {
 		$layout = Fns::insert_controls( 'cols', $layout, $this->list_layout(), true );
 
 		if ( rtsb()->has_pro() ) {
-			$pagination_fields['pagination_ajax_notice'] = [
-				'type'      => 'html',
-				'raw'       => sprintf(
-					'<span style="display: block; background: #fffbf1; padding: 10px; line-height: 1.4; color: #bd3a3a;border: 1px solid #bd3a3a30;">%s</span>',
-					esc_html__( 'Please note that, if you use the \'Ajax Product Filters\' widget, only \'Ajax Load More\' pagination will appear, regardless of the above settings.', 'shopbuilder' )
-				),
-				'separator' => 'default',
-			];
-
-			$pagination = Fns::insert_controls( 'pagination_type', $pagination, $pagination_fields, true );
+			$pagination = Fns::insert_controls( 'pagination_type', $pagination, [], true );
 		}
 
 		$new_fields['list_action_btn_tooltip_position'] = [

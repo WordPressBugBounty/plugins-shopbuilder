@@ -238,12 +238,12 @@ final class ShopBuilder {
 	}
 
 	/**
-	 * Checks if Pro version installed
+	 * Checks if Pro version installed.
 	 *
 	 * @return boolean
 	 */
 	public function has_pro() {
-		return function_exists( 'rtsbpro' );
+		return function_exists( 'rtsbpro' ); // Fns::is_pro_authorized() will add in the future for checking pro Version Compatibility.
 	}
 
 	/**

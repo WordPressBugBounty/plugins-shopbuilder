@@ -82,7 +82,7 @@ class ProductsArchive extends LoopWithProductSlider {
 				'type'      => 'html',
 				'raw'       => sprintf(
 					'<span style="display: block; background: #fffbf1; padding: 10px; line-height: 1.4; color: #bd3a3a;border: 1px solid #bd3a3a30;">%s</span>',
-					esc_html__( 'Please note that, if you use the \'Ajax Product Filters\' widget, only \'Ajax Load More\' pagination will appear, regardless of the above settings.', 'shopbuilder' )
+					esc_html__( 'Please note that, if you use the \'Ajax Product Filters\' widget, \'Ajax Load More\' pagination will be used. For other pagination types, use the \'Products - Custom Layouts\' widget.', 'shopbuilder' )
 				),
 				'separator' => 'default',
 				'condition' => [
@@ -219,9 +219,9 @@ class ProductsArchive extends LoopWithProductSlider {
 
 		if ( ! empty( $controllers['show_pagination'] ) ) {
 			if ( Fns::product_filters_has_ajax( apply_filters( 'rtsb/builder/set/current/page/type', '' ) ) ) {
+				// Keep the default WooCommerce pagination (theme pagination).
+				// Only wrap it so the Ajax Product Filters JS can target and re-render it.
 				add_action( 'woocommerce_after_shop_loop', [ __CLASS__, 'pagination_wrapper_start' ], 0 );
-				remove_action( 'woocommerce_after_shop_loop', 'woocommerce_pagination' );
-				add_action( 'woocommerce_after_shop_loop', [ __CLASS__, 'load_more_pagination' ], 10 );
 				add_action( 'woocommerce_after_shop_loop', [ __CLASS__, 'pagination_wrapper_end' ], 99 );
 			}
 		} else {

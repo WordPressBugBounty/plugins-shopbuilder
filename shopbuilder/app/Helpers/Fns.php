@@ -38,7 +38,7 @@ class Fns {
 	 */
 	private static $cache = [];
 	/**
-	 * Check if the stored license is valid.
+	 * Check if the stored license is valid. Its Only Show Pro Label.
 	 *
 	 * @return bool
 	 */
@@ -52,6 +52,37 @@ class Fns {
 		return 'valid' === $license_status;
 	}
 
+	/**
+	 * Check if license is valid or bypassed by theme,
+	 *
+	 * @return bool
+	 */
+	public static function is_pro_authorized() {
+		static $cached_result = null;
+		if ( null !== $cached_result ) {
+			return $cached_result;
+		}
+		// ❗ Step 2: If Pro not installed → no access.
+		if ( ! function_exists( 'rtsbpro' ) ) {
+			$cached_result = false;
+			return $cached_result;
+		}
+		$current_theme = wp_get_theme()->get_stylesheet(); // Child theme And Parent Theme Need Check work or not.
+		/**
+		 * Allowed themes (bypass license)
+		 *
+		 * @param array $themes
+		 */
+		$allowed_themes = apply_filters( 'rt_pro_access_allowed_themes', [] );
+		// ✅ Step 1: Theme bypass (no license check).
+		if ( in_array( $current_theme, $allowed_themes, true ) ) {
+			$cached_result = true;
+			return true;
+		}
+		// ✅ Step 3: Normal license validation
+		$license_status = rtsbpro()->get_license( 'license_status' );
+		return ( 'valid' === $license_status );
+	}
 	/**
 	 *  Verify nonce.
 	 *
@@ -1226,7 +1257,7 @@ class Fns {
 		$imgSize = [];
 
 		foreach ( $sizes as $key => $img ) {
-			$imgSize[ $key ] = ucfirst( $key ) . " ({$img['width']}*{$img['height']})";
+			$imgSize[ $key ] = esc_html( $key ) . " ({$img['width']}*{$img['height']})";
 		}
 
 		$imgSize['full']        = esc_html__( 'Full size', 'shopbuilder' );

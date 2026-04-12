@@ -2,17 +2,17 @@
     "packages": [
         {
             "name": "codesvault/howdy-qb",
-            "version": "2.1.1",
-            "version_normalized": "2.1.1.0",
+            "version": "2.2.2",
+            "version_normalized": "2.2.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/CodesVault/howdy_qb.git",
-                "reference": "07c058c8219bc59233813e5941251a4937fa02f3"
+                "reference": "676efa5798e22b002c351930e94db4177e8d6c9d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/CodesVault/howdy_qb/zipball/07c058c8219bc59233813e5941251a4937fa02f3",
-                "reference": "07c058c8219bc59233813e5941251a4937fa02f3",
+                "url": "https://api.github.com/repos/CodesVault/howdy_qb/zipball/676efa5798e22b002c351930e94db4177e8d6c9d",
+                "reference": "676efa5798e22b002c351930e94db4177e8d6c9d",
                 "shasum": ""
             },
             "require": {
@@ -28,7 +28,7 @@
                 "wp-coding-standards/wpcs": "^2.3",
                 "wp-phpunit/wp-phpunit": "^6.8"
             },
-            "time": "2026-01-04T12:30:16+00:00",
+            "time": "2026-03-18T19:05:55+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -64,8 +64,14 @@
             ],
             "support": {
                 "issues": "https://github.com/CodesVault/howdy_qb/issues",
-                "source": "https://github.com/CodesVault/howdy_qb/tree/2.1.1"
+                "source": "https://github.com/CodesVault/howdy_qb/tree/2.2.2"
             },
+            "funding": [
+                {
+                    "url": "https://wise.com/pay/me/keramot-ul-i?utm_source=quick_pay",
+                    "type": "custom"
+                }
+            ],
             "install-path": "../codesvault/howdy-qb"
         },
         {

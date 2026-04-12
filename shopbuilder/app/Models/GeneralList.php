@@ -71,8 +71,9 @@ class GeneralList extends ListModel {
 						'enable_optimization'     => [
 							'id'    => 'enable',
 							'type'  => 'switch',
+							'value' => 'on',
 							'label' => esc_html__( 'Enable Asset Optimization?', 'shopbuilder' ),
-							'help'  => esc_html__( 'Enable this option to dynamically load assets (styles, scripts) only when needed, helping to optimize your website’s performance', 'shopbuilder' ),
+							'help'  => esc_html__( 'Enable this option to dynamically load assets (styles, scripts) only when needed, helping to optimize your website\'s performance', 'shopbuilder' ),
 						],
 						'load_elementor_scripts'  => [
 							'id'         => 'enable',

@@ -508,21 +508,37 @@ class Render {
 			if ( $pagination ) {
 				if ( Fns::product_filters_has_ajax( apply_filters( 'rtsb/builder/set/current/page/type', '' ) ) ) {
 					if ( $wp_query->max_num_pages > 1 ) {
-						$this->add_attribute(
-							'rtsb_load_more_btn_attr_' . $rand,
-							[
-								'data-paged'    => '2',
-								'data-max-page' => $wp_query->max_num_pages,
-							]
-						);
+						$posts_loading_type = ! empty( $metas['posts_loading_type'] ) ? $metas['posts_loading_type'] : 'pagination';
 
-						$this->html .=
-						"<div class='rtsb-load-more rtsb-pos-r'>
-							<button {$this->get_attribute_string( 'rtsb_load_more_btn_attr_' . $rand )}>
-								<span>" . esc_html__( 'Load More', 'shopbuilder' ) . "</span>
-							</button>
-							<div class='rtsb-loadmore-loading rtsb-ball-clip-rotate'><div></div></div>
-						</div>";
+						if ( 'pagination_ajax' === $posts_loading_type ) {
+							$this->html .= Fns::custom_pagination( $wp_query->max_num_pages, $posts_per_page, true );
+						} elseif ( 'pagination' === $posts_loading_type ) {
+							$this->html .= Fns::custom_pagination( $wp_query->max_num_pages, $posts_per_page, false );
+						} elseif ( 'load_on_scroll' === $posts_loading_type ) {
+							$this->html .= "<div class='rtsb-infinite-scroll' data-trigger='1' data-paged='2' data-max-page='{$wp_query->max_num_pages}'>
+								<div class='rtsb-infinite-action'>
+									<div class='rtsb-loadmore-loading rtsb-ball-clip-rotate'><div></div></div>
+								</div>
+							</div>";
+						} else {
+							$load_more_text = ! empty( $metas['load_more_text'] ) ? $metas['load_more_text'] : esc_html__( 'Load More', 'shopbuilder' );
+
+							$this->add_attribute(
+								'rtsb_load_more_btn_attr_' . $rand,
+								[
+									'data-paged'    => '2',
+									'data-max-page' => $wp_query->max_num_pages,
+								]
+							);
+
+							$this->html .=
+							"<div class='rtsb-load-more rtsb-pos-r'>
+								<button {$this->get_attribute_string( 'rtsb_load_more_btn_attr_' . $rand )}>
+									<span>" . esc_html( $load_more_text ) . "</span>
+								</button>
+								<div class='rtsb-loadmore-loading rtsb-ball-clip-rotate'><div></div></div>
+							</div>";
+						}
 					}
 				} else {
 					$pagination_args = [
@@ -1279,6 +1295,15 @@ class Render {
 		];
 
 		if ( 'pagination' === $meta['posts_loading_type'] ) {
+			if ( $is_grid ) {
+				$html_utility .= Fns::custom_pagination(
+					$total_page,
+					'wc' === $query_type ? $per_page : $posts_per_page
+				);
+			}
+		} elseif ( 'pagination_ajax' === $meta['posts_loading_type'] && ! rtsb()->has_pro() ) {
+			// Free version fallback: render non-AJAX number pagination so filter
+			// params in the URL are preserved via get_pagenum_link().
 			if ( $is_grid ) {
 				$html_utility .= Fns::custom_pagination(
 					$total_page,

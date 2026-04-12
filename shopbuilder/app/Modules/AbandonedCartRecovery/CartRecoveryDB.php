@@ -157,10 +157,8 @@ class CartRecoveryDB {
 		$allowed_columns = [ 'id', 'title', 'email_subject', 'is_activated', 'frequency', 'menu_order', 'created_at' ];
 		$order_by        = in_array( $order_by, $allowed_columns, true ) ? $order_by : 'menu_order';
 		try {
-			$templates = Fns::DB()::select(
-				't.*',
-				'GROUP_CONCAT(CONCAT(m.meta_key, ":", m.meta_value) SEPARATOR ",") AS meta_data'
-			)
+			$templates = Fns::DB()::select()
+				->raw( 't.*, GROUP_CONCAT(CONCAT(m.meta_key, ":", m.meta_value) SEPARATOR ",") AS meta_data' )
 				->from( CartRecoveryFns::$ca_email . ' t' )
 				->leftJoin( CartRecoveryFns::$ca_email_meta . ' m', 't.id', 'm.email_template_id' )
 				->groupBy( 't.id' )
@@ -193,10 +191,8 @@ class CartRecoveryDB {
 	 */
 	public static function getTemplateById( $template_id ) {
 		try {
-			$template = Fns::DB()::select(
-				't.*',
-				'GROUP_CONCAT(CONCAT(m.meta_key, ":", m.meta_value) SEPARATOR ",") AS meta_data'
-			)
+			$template = Fns::DB()::select()
+				->raw( 't.*, GROUP_CONCAT(CONCAT(m.meta_key, ":", m.meta_value) SEPARATOR ",") AS meta_data' )
 				->from( CartRecoveryFns::$ca_email . ' t' )
 				->leftJoin( CartRecoveryFns::$ca_email_meta . ' m', 't.id', 'm.email_template_id' )
 				->where( 't.id', '=', absint( $template_id ) )
@@ -245,7 +241,8 @@ class CartRecoveryDB {
 	 */
 	public static function getCartAbandonmentCount() {
 		try {
-			$count = Fns::DB()::select( 'COUNT(*) as total' )
+			$count = Fns::DB()::select()
+				->raw( 'COUNT(*) as total' )
 				->from( CartRecoveryFns::$ca_abandonment )
 				->get();
 
@@ -266,10 +263,8 @@ class CartRecoveryDB {
 	public static function getAllCartAbandonment( int $limit = 50, int $page = 1 ): array {
 		try {
 			$offset       = ( $page - 1 ) * $limit;
-			$abandonments = Fns::DB()::select(
-				't.*',
-				'GROUP_CONCAT(CONCAT(m.meta_key, ":", m.meta_value) SEPARATOR ",") AS meta_data'
-			)
+			$abandonments = Fns::DB()::select()
+				->raw( 't.*, GROUP_CONCAT(CONCAT(m.meta_key, ":", m.meta_value) SEPARATOR ",") AS meta_data' )
 				->from( CartRecoveryFns::$ca_abandonment . ' t' )
 				->leftJoin( CartRecoveryFns::$ca_abandonment_meta . ' m', 't.id', 'm.abandonment_id' )
 				->groupBy( 't.id' )
@@ -301,11 +296,8 @@ class CartRecoveryDB {
 			return $default;
 		}
 		try {
-			$results = Fns::DB()::select(
-				"t.*, SUM(CAST(REGEXP_REPLACE(t.cart_total, '[^0-9.]', '') AS DECIMAL(10,2))) AS total,
-                        REGEXP_REPLACE(t.cart_total, '[0-9.]+', '') AS currency,
-                        JSON_ARRAYAGG(JSON_OBJECT('scheduled_time', m.scheduled_time, 'template_id', m.template_id)) AS scheduled_times"
-			)
+			$results = Fns::DB()::select()
+				->raw( "t.*, SUM(CAST(REGEXP_REPLACE(t.cart_total, '[^0-9.]', '') AS DECIMAL(10,2))) AS total, REGEXP_REPLACE(t.cart_total, '[0-9.]+', '') AS currency, JSON_ARRAYAGG(JSON_OBJECT('scheduled_time', m.scheduled_time, 'template_id', m.template_id)) AS scheduled_times" )
 				->from( CartRecoveryFns::$ca_abandonment . ' t' )
 				->innerJoin( CartRecoveryFns::$ca_email_history . ' m', 't.id', 'm.abandonment_id' )
 				->where( 'm.email_sent', '=', 1 )
@@ -360,10 +352,8 @@ class CartRecoveryDB {
 		$ids = array_column( $recoveredOrderMeta, 'abandonment_id' );
 		$ids = implode( ',', $ids );
 		try {
-			$query   = Fns::DB()::select(
-				"SUM( CAST( REGEXP_REPLACE(cart_total, '[^0-9.]', '') AS DECIMAL(10,2)) ) as total,
-			            REGEXP_REPLACE(cart_total, '[0-9.]+', '') as currency"
-			)
+			$query   = Fns::DB()::select()
+				->raw( "SUM( CAST( REGEXP_REPLACE(cart_total, '[^0-9.]', '') AS DECIMAL(10,2)) ) as total, REGEXP_REPLACE(cart_total, '[0-9.]+', '') as currency" )
 			->from( CartRecoveryFns::$ca_abandonment )
 			->whereIn( 'id', $ids )
 			->groupBy( 'currency' );
@@ -389,10 +379,8 @@ class CartRecoveryDB {
 	 */
 	public static function getSingleAbandonment( string $field, $value ): array {
 		try {
-			$abandonments = Fns::DB()::select(
-				't.*',
-				'GROUP_CONCAT(CONCAT(m.meta_key, ":", m.meta_value) SEPARATOR ",") AS meta_data'
-			)
+			$abandonments = Fns::DB()::select()
+				->raw( 't.*, GROUP_CONCAT(CONCAT(m.meta_key, ":", m.meta_value) SEPARATOR ",") AS meta_data' )
 				->from( CartRecoveryFns::$ca_abandonment . ' t' )
 				->leftJoin( CartRecoveryFns::$ca_abandonment_meta . ' m', 't.id', 'm.abandonment_id' )
 				->where( 't.' . $field, '=', $value )
@@ -611,10 +599,8 @@ class CartRecoveryDB {
 				'email'       => [],
 			];
 		}
-		$email                        = Fns::DB()::select(
-			't.*',
-			'm.*'
-		)
+		$email                        = Fns::DB()::select()
+			->raw( 't.*, m.*' )
 			->from( CartRecoveryFns::$ca_email . ' t' )
 			->leftJoin( CartRecoveryFns::$ca_email_history . ' m', 't.id', 'm.template_id' )
 			->where( 'm.abandonment_id', '=', $id )
@@ -786,7 +772,7 @@ class CartRecoveryDB {
 	 * @return mixed
 	 */
 	public static function getRecoveredOrderMeta( $startDate, $endDate ) {
-		$getMetaData = Fns::DB()->select( 'abandonment_id, meta_value' )
+		$getMetaData = Fns::DB()::select( 'abandonment_id', 'meta_value' )
 			->from( CartRecoveryFns::$ca_abandonment_meta )
 			->where( 'meta_key', '=', 'completed_time' )
 			->andWhere( 'meta_value', '>=', $startDate )
@@ -804,7 +790,7 @@ class CartRecoveryDB {
 	 * @return mixed
 	 */
 	public static function getLostOrderMeta( $startDate, $endDate ) {
-		$getMetaData = Fns::DB()->select( 'abandonment_id, meta_value' )
+		$getMetaData = Fns::DB()::select( 'abandonment_id', 'meta_value' )
 			->from( CartRecoveryFns::$ca_abandonment_meta )
 			->where( 'meta_key', '=', 'lost_time' )
 			->andWhere( 'meta_value', '>=', $startDate )

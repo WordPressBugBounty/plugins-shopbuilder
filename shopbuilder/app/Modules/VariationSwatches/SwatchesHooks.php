@@ -63,13 +63,25 @@ class SwatchesHooks {
 	 *  @param \WC_Product_Variable $variationObj variation object.
 	 */
 	public function available_variation( $variation, $product, $variationObj ) {
+		$attachment_id = $variationObj->get_image_id();
+		$default_size  = 'woocommerce_thumbnail';
+		if ( ( ! is_admin() || wp_doing_ajax() ) && ! is_product() ) {
+			$default_size = SwatchesFns::get_options( 'showcase_image_size', $default_size );
+		}
+		$thumbnail_size = apply_filters( 'woocommerce_thumbnail_size', $default_size );
+		$image_Src      = wp_get_attachment_image_src( $attachment_id, $default_size );
 		if ( isset( $variation['image']['thumb_src'] ) && ! empty( $variation['image']['thumb_src'] ) ) {
-			$attachment_id                      = $variationObj->get_image_id();
-			$thumbnail_size                     = apply_filters( 'woocommerce_thumbnail_size', 'woocommerce_thumbnail' );
 			$thumb_srcset                       = function_exists( 'wp_get_attachment_image_srcset' ) ? wp_get_attachment_image_srcset( $attachment_id, $thumbnail_size ) : false;
 			$thumb_sizes                        = function_exists( 'wp_get_attachment_image_sizes' ) ? wp_get_attachment_image_sizes( $attachment_id, $thumbnail_size ) : false;
 			$variation['image']['thumb_srcset'] = apply_filters( 'rtsb/thumb/srcset', $thumb_srcset, $variation, $product, $variationObj );
 			$variation['image']['thumb_sizes']  = apply_filters( 'rtsb/thumb/sizes', $thumb_sizes, $variation, $product, $variationObj );
+		}
+		if ( ! empty( $image_Src[0] ) ) {
+			$variation['image']['src']    = $image_Src[0];
+			$variation['image']['src_w']  = $image_Src[1] ?? '';
+			$variation['image']['src_h']  = $image_Src[2] ?? '';
+			$variation['image']['sizes']  = wp_get_attachment_image_sizes( $attachment_id, $thumbnail_size );
+			$variation['image']['srcset'] = wp_get_attachment_image_srcset( $attachment_id, $thumbnail_size );
 		}
 		if ( 'on' === SwatchesFns::get_options( 'disable_out_of_stock' ) && ( ( defined( 'DOING_AJAX' ) && DOING_AJAX ) || ! is_admin() ) ) {
 			return $variationObj->is_in_stock() ? $variation : false;
@@ -113,11 +125,9 @@ class SwatchesHooks {
 		if ( ! wp_verify_nonce( Fns::get_nonce(), rtsb()->nonceText ) ) {
 			wp_send_json_error( esc_html__( 'Something Went Wrong', 'shopbuilder' ) );
 		}
-		$product_id = ! empty( $_POST['product_id'] ) ? absint( $_POST['product_id'] ) : 0;
-		$product    = wc_get_product( $product_id );
-
+		$product_id           = ! empty( $_POST['product_id'] ) ? absint( $_POST['product_id'] ) : 0;
+		$product              = wc_get_product( $product_id );
 		$available_variations = $product->get_available_variations();
-
 		wp_send_json_success( $available_variations );
 	}
 

@@ -661,17 +661,51 @@ class ModuleList extends ListModel {
 								'tab'         => 'page',
 							],
 
+							'shortcode_list_heading'       => [
+								'id'    => 'shortcode_list_heading',
+								'type'  => 'title',
+								'label' => esc_html__( 'Available Shortcodes', 'shopbuilder' ),
+								'tab'   => 'shortcodes',
+							],
+							'shortcode_wishlist_table'     => [
+								'type'  => 'raw',
+								'label' => esc_html__( 'Wishlist Table', 'shopbuilder' ),
+								'html'  => '<code>[rtsb_wishlist]</code><p class="description">'
+									. esc_html__( 'Displays the wishlist table with all added products. Use this shortcode on the wishlist page.', 'shopbuilder' )
+									. '</p>',
+								'tab'   => 'shortcodes',
+							],
+							'shortcode_wishlist_button'    => [
+								'type'  => 'raw',
+								'label' => esc_html__( 'Wishlist Button', 'shopbuilder' ),
+								'html'  => '<code>[rtsb_wishlist_button]</code><p class="description">'
+									. esc_html__( 'Displays the "Add to Wishlist" button. Use inside a product loop or on a single product page.', 'shopbuilder' )
+									. '</p>',
+								'tab'   => 'shortcodes',
+							],
+							'shortcode_wishlist_counter'   => [
+								'type'  => 'raw',
+								'label' => esc_html__( 'Wishlist Counter', 'shopbuilder' ),
+								'html'  => '<code>[rtsb_wishlist_counter]</code><p class="description">'
+									. esc_html__( 'Displays the wishlist item count. Place it in the header or menu to show total wishlist items.', 'shopbuilder' )
+									. '</p>',
+								'tab'   => 'shortcodes',
+							],
+
 						]
 					),
 					'tabs'         => [
-						'general' => [
+						'general'    => [
 							'title' => esc_html__( 'General', 'shopbuilder' ),
 						],
-						'button'  => [
+						'button'     => [
 							'title' => esc_html__( 'Button', 'shopbuilder' ),
 						],
-						'page'    => [
+						'page'       => [
 							'title' => esc_html__( 'Page', 'shopbuilder' ),
+						],
+						'shortcodes' => [
+							'title' => esc_html__( 'Shortcodes', 'shopbuilder' ),
 						],
 					],
 				]
@@ -3940,6 +3974,25 @@ class ModuleList extends ListModel {
 					'label'      => esc_html__( 'Image Selector', 'shopbuilder' ),
 					'help'       => esc_html__( 'Archive product image selector to show variation image. You can also use multiple selectors separated by comma (.attachment-woocommerce_thumbnail, .wp-post-image) ', 'shopbuilder' ),
 					'value'      => '.wp-post-image, .attachment-woocommerce_thumbnail, .rtsb-product-image',
+					'dependency' => [
+						'rules' => [
+							[
+								'item'     => 'modules.variation_swatches.enable_showcase_swatches',
+								'value'    => 'on',
+								'operator' => '==',
+							],
+						],
+					],
+					'tab'        => 'showcase_shop',
+				],
+				'showcase_image_size'               => [
+					'id'         => 'showcase_image_size',
+					'label'      => esc_html__( 'Showcase Image Size', 'shopbuilder' ),
+					'help'       => __( 'Choose showcase variation image size.', 'shopbuilder' ) ,
+					'type'       => 'select',
+					'isPro'      => ! rtsb()->has_pro(),
+					'value'      => 'woocommerce_thumbnail',
+					'options'    => array_diff_key( Fns::get_image_sizes(), [ 'rtsb_custom' => '' ] ),
 					'dependency' => [
 						'rules' => [
 							[

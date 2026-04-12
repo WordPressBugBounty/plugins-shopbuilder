@@ -59,7 +59,7 @@ class GalleryAdmin {
 			<label for="custom_checkbox">
 				<input type="checkbox" id="rtsb_vg_disable_valiation_gallery" name="rtsb_vg_disable_valiation_gallery" value="yes" <?php checked( $value, 'yes' ); ?> />
 				<?php esc_html_e( 'Disable Variation Gallery', 'shopbuilder' ); ?>
-			</label><br/>
+			</label><hr/>
 			<span><?php esc_html_e( 'Disable variation gallery for this product', 'shopbuilder' ); ?> </span>
 		</p>
 		<?php

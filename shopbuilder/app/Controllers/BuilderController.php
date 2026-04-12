@@ -409,7 +409,7 @@ class BuilderController {
 					'hide_empty' => false,
 					'orderby'    => 'name',
 					'order'      => 'ASC',
-					'search'     => $search,
+					'name__like' => $search,
 					'number'     => '5',
 				];
 

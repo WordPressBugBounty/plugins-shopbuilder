@@ -7,7 +7,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit( 'This script cannot be accessed directly.' );
 }
 
-use PhpParser\Node\Expr\Empty_;
 use RadiusTheme\SB\Traits\SingletonTrait;
 
 /**
@@ -26,6 +25,23 @@ class GeneralCheckout extends CheckoutEditorBase {
 		parent::__construct();
 		add_filter( 'woocommerce_get_country_locale', [ $this, 'get_country_locale' ] );
 		add_filter( 'woocommerce_default_address_fields', [ $this, 'default_address_fields' ], 9999 );
+		add_filter( 'woocommerce_form_field_args', [ $this, 'customize_billing_state' ], 10, 3 ); // The hook will work for initial page load.
+	}
+	/**
+	 * Customize the billing state field arguments on the initial page load.
+	 *
+	 * @param array  $args  The field arguments.
+	 * @param string $key   The field key.
+	 * @param mixed  $value The field value.
+	 * @return array Modified field arguments.
+	 */
+	public function customize_billing_state( $args, $key, $value ) {
+		if ( 'billing_state' !== $key ) {
+			return $args;
+		}
+		$args['label']       = $this->billing_settings['billing_state']['label'] ?? esc_html__( 'State / Region', 'shopbuilder' );
+		$args['placeholder'] = $this->billing_settings['billing_state']['placeholder'] ?? esc_html__( 'State / Region', 'shopbuilder' );
+		return $args;
 	}
 	/**
 	 * @param array $fields fields.

@@ -56,6 +56,9 @@ class Cache {
 		if ( method_exists( 'LiteSpeed_Cache_API', 'purge_all' ) ) {
 			\LiteSpeed_Cache_API::purge_all();
 		}
+		if ( class_exists( '\LiteSpeed\Purge' ) ) {
+			\LiteSpeed\Purge::purge_all();
+		}
 		if ( class_exists( 'Endurance_Page_Cache' ) ) {
 			$epc = new \Endurance_Page_Cache();
 			$epc->purge_all();

@@ -279,6 +279,14 @@ class RenderHelpers {
 			}
 		}
 
+		if ( is_search() ) {
+			$search_query = get_search_query();
+
+			if ( $search_query ) {
+				$data['search_query'] = sanitize_text_field( $search_query );
+			}
+		}
+
 		return apply_filters( 'rtsb/elementor/render/meta_dataset_final', $data, $meta, $raw_settings );
 	}
 
@@ -329,6 +337,14 @@ class RenderHelpers {
 
 			if ( ! empty( $queried_obj->term_id ) ) {
 				$data['queried_term'] = esc_html( $queried_obj->term_id );
+			}
+		}
+
+		if ( is_search() ) {
+			$search_query = get_search_query();
+
+			if ( $search_query ) {
+				$data['search_query'] = sanitize_text_field( $search_query );
 			}
 		}
 
@@ -1374,10 +1390,18 @@ class RenderHelpers {
 	 */
 	public static function get_product_default_filter_list_html( $data, $input = 'checkbox', $additional_data = [], $parent = 0 ) {
 
-		$html          = '';
-		$default_tax   = [];
-		$is_attribute  = ! empty( $data['is_attribute'] );
-		$active_option = isset( $_GET[ $additional_data['taxonomy'] ] ) ? explode( ',', wc_clean( wp_unslash( $_GET[ $additional_data['taxonomy'] ] ) ) ) : []; // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		$html         = '';
+		$default_tax  = [];
+		$is_attribute = ! empty( $data['is_attribute'] );
+
+		$param_key = isset( $additional_data['taxonomy'] ) ? $additional_data['taxonomy'] : '';
+		if ( $param_key && 0 === strpos( $param_key, 'pa_' ) ) {
+			$param_key = 'filter_' . substr( $param_key, 3 );
+		}
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		$raw_values    = ( $param_key && isset( $_GET[ $param_key ] ) ) ? wc_clean( wp_unslash( $_GET[ $param_key ] ) ) : '';
+		$active_option = $raw_values ? array_map( 'urldecode', explode( ',', $raw_values ) ) : [];
 		$counter       = 0;
 
 		if ( $is_attribute ) {
@@ -1395,24 +1419,25 @@ class RenderHelpers {
 			}
 
 			if ( $is_attribute ) {
-				$tax_link      = remove_query_arg( $filter_name, $base_link );
-				$tax_link      = add_query_arg( $filter_name, $tax->slug, $tax_link );
-				$active_option = isset( $_GET[ $filter_name ] ) ? explode( ',', sanitize_text_field( wp_unslash( $_GET[ $filter_name ] ) ) ) : []; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				$tax_link = remove_query_arg( $filter_name, $base_link );
+				$tax_link = add_query_arg( $filter_name, $tax->slug, $tax_link );
 			} else {
 				$tax_link = get_term_link( $tax );
 			}
 
 			$unique_id = substr( uniqid(), -4 );
 
-			$active_tax        = in_array( $tax->slug, $active_option, true ) ? ' checked' : '';
-			$active_tax_parent = in_array( $tax->slug, $active_option, true ) ? ' active' : '';
+			$decoded_slug      = urldecode( $tax->slug );
+			$is_active         = in_array( $decoded_slug, $active_option, true ) || in_array( $tax->slug, $active_option, true );
+			$active_tax        = $is_active ? ' checked' : '';
+			$active_tax_parent = $is_active ? ' active' : '';
 			$term_children     = in_array( $tax->taxonomy, [ 'product_cat', 'product_brand' ], true ) ? get_term_children( $tax->term_id, $tax->taxonomy ) : [];
 			$taxonomy          = $tax->taxonomy;
-			$product_count     = $tax->count;
+			$product_count     = self::get_visible_term_count( $tax->taxonomy, $tax->term_id );
 
 			// Show count.
 			if ( 'archive' === apply_filters( 'rtsb/builder/set/current/page/type', '' ) && ! empty( $data['count_display'] ) && 'block' === $data['count_display'] ) {
-				$product_count = self::count_tax_data( $tax, $tax->count );
+				$product_count = self::count_tax_data( $tax, $product_count );
 			}
 
 			// Show Empty Categories.
@@ -1530,6 +1555,12 @@ class RenderHelpers {
 					'terms'    => $tax->term_id,
 					'operator' => 'IN',
 				],
+				[
+					'taxonomy' => 'product_visibility',
+					'terms'    => [ 'exclude-from-catalog' ],
+					'field'    => 'name',
+					'operator' => 'NOT IN',
+				],
 			];
 
 			$query    = new WC_Product_Query( $args );
@@ -1544,10 +1575,17 @@ class RenderHelpers {
 				'return'    => 'ids',
 				'status'    => 'publish',
 				'tax_query' => [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
+					'relation' => 'AND',
 					[
 						'taxonomy' => $taxonomy,
 						'field'    => 'term_id',
 						'terms'    => $term_id,
+					],
+					[
+						'taxonomy' => 'product_visibility',
+						'terms'    => [ 'exclude-from-catalog' ],
+						'field'    => 'name',
+						'operator' => 'NOT IN',
 					],
 				],
 			];
@@ -1568,6 +1606,55 @@ class RenderHelpers {
 
 		return $count;
 	}
+
+	/**
+	 * Get the count of visible (non-hidden) products for a given taxonomy term.
+	 *
+	 * Excludes products with WooCommerce visibility set to 'Hidden'
+	 * (products assigned the 'exclude-from-catalog' term).
+	 *
+	 * @param string $taxonomy The taxonomy name.
+	 * @param int    $term_id  The term ID.
+	 *
+	 * @return int Visible product count.
+	 */
+	public static function get_visible_term_count( $taxonomy, $term_id ) {
+		static $cache = [];
+
+		$cache_key = $taxonomy . '_' . $term_id;
+
+		if ( isset( $cache[ $cache_key ] ) ) {
+			return $cache[ $cache_key ];
+		}
+
+		$args = [
+			'limit'     => -1,
+			'return'    => 'ids',
+			'status'    => 'publish',
+			'tax_query' => [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
+				'relation' => 'AND',
+				[
+					'taxonomy' => $taxonomy,
+					'field'    => 'term_id',
+					'terms'    => $term_id,
+				],
+				[
+					'taxonomy' => 'product_visibility',
+					'terms'    => [ 'exclude-from-catalog' ],
+					'field'    => 'name',
+					'operator' => 'NOT IN',
+				],
+			],
+		];
+
+		$query = new WC_Product_Query( $args );
+		$count = count( $query->get_products() );
+
+		$cache[ $cache_key ] = $count;
+
+		return $count;
+	}
+
 	/**
 	 * Get filter HTML.
 	 *
@@ -1653,14 +1740,16 @@ class RenderHelpers {
 		$html = '<ul class="product-default-filters rtsb-terms-wrapper ' . esc_attr( $term_info['type'] ) . '-variable-wrapper' . esc_attr( $data['show_label'] ) . '">';
 
 		foreach ( $terms as $attr_term ) {
-			$count          = $attr_term->count;
+			$count          = self::get_visible_term_count( $attr_term->taxonomy, $attr_term->term_id );
 			$term_link      = remove_query_arg( $term_info['filter_name'], $term_info['base_link'] );
 			$term_link      = add_query_arg( $term_info['filter_name'], $attr_term->slug, $term_link );
 			$unique_id      = substr( uniqid(), -6 );
 			$name           = 'term-' . wc_variation_attribute_name( $term_info['attribute'] ) . '-' . $unique_id;
-			$selected_class = in_array( $attr_term->slug, $term_info['current_filter'], true ) ? ' selected' : '';
-			$selected_item  = in_array( $attr_term->slug, $term_info['current_filter'], true ) ? ' checked' : '';
-			$active_class   = in_array( $attr_term->slug, $term_info['current_filter'], true ) ? ' active' : '';
+			$decoded_slug   = urldecode( $attr_term->slug );
+			$is_selected    = in_array( $decoded_slug, $term_info['current_filter'], true ) || in_array( $attr_term->slug, $term_info['current_filter'], true );
+			$selected_class = $is_selected ? ' selected' : '';
+			$selected_item  = $is_selected ? ' checked' : '';
+			$active_class   = $is_selected ? ' active' : '';
 
 			$args = [
 				'id'             => $name,
@@ -1676,7 +1765,7 @@ class RenderHelpers {
 			];
 
 			if ( 'archive' === apply_filters( 'rtsb/builder/set/current/page/type', '' ) && ! empty( $data['count_display'] ) && 'block' === $data['count_display'] ) {
-				$count = self::count_tax_data( $args, $attr_term->count );
+				$count = self::count_tax_data( $args, $count );
 			}
 
 			$args['count'] = $count;

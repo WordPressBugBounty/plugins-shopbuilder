@@ -38,6 +38,14 @@ class CartRecoveryCron {
 				'display'  => __( 'Abandoned Time In Minutes', 'shopbuilder' ),
 			];
 		}
+		// Register the existing cron event's schedule to prevent reschedule errors.
+		$existing_event = wp_get_scheduled_event( 'rtsb_abandoned_cart_recovery_action' );
+		if ( $existing_event && ! empty( $existing_event->schedule ) && ! isset( $schedules[ $existing_event->schedule ] ) ) {
+			$schedules[ $existing_event->schedule ] = [
+				'interval' => ! empty( $existing_event->interval ) ? $existing_event->interval : absint( $cron_time ) * MINUTE_IN_SECONDS,
+				'display'  => __( 'Abandoned Time In Minutes', 'shopbuilder' ),
+			];
+		}
 		if ( ! isset( $schedules['every_minute'] ) ) {
 			$schedules['every_minute'] = [
 				'interval' => 60,
@@ -54,16 +62,24 @@ class CartRecoveryCron {
 	 */
 	public function run_cron() {
 		$recovery_action = 'rtsb_abandoned_cart_recovery_action';
-		if ( ! wp_next_scheduled( $recovery_action ) ) {
-			$time         = CartRecoveryFns::get_options( 'abandoned_time', 20 );
-			$cron_time    = apply_filters( 'rtsb/ca/abandoned/time/interval', $time );
-			$schedule_key = 'abandoned_time_in_minutes_' . $cron_time;
-			// ‘hourly’, ‘twicedaily’, and ‘daily’, abandoned_time_in_minutes.
+		$time            = CartRecoveryFns::get_options( 'abandoned_time', 20 );
+		$cron_time       = apply_filters( 'rtsb/ca/abandoned/time/interval', $time );
+		$schedule_key    = 'abandoned_time_in_minutes_' . $cron_time;
+		$existing_event  = wp_get_scheduled_event( $recovery_action );
+
+		// Clear and reschedule if the schedule key has changed.
+		if ( $existing_event && $existing_event->schedule !== $schedule_key ) {
+			wp_clear_scheduled_hook( $recovery_action );
+			$existing_event = false;
+		}
+
+		if ( ! $existing_event ) {
 			wp_schedule_event( time(), $schedule_key, $recovery_action );
 			Fns::add_to_scheduled_hook_list( $recovery_action );
 		}
+
 		/**
-		 * Ensure the cron event is scheduled
+		 * Ensure the cron event is scheduled.
 		 */
 		$abandoned_cart_emails = 'rtsb_send_abandoned_cart_emails';
 		if ( ! wp_next_scheduled( $abandoned_cart_emails ) ) {

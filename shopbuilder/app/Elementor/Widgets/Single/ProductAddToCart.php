@@ -274,7 +274,7 @@ class ProductAddToCart extends ElementorWidgetBase {
 		$_product                      = $product;
 		$product                       = Fns::get_product();
 		$controllers                   = $this->get_settings_for_display();
-		$controllers['cart_icon_html'] = Fns::icons_manager( $controllers['cart_icon'] );
+		$controllers['cart_icon_html'] = ! empty( $controllers['cart_icon'] ) ? Fns::icons_manager( $controllers['cart_icon'] ) : '';
 		$add_to_cart_visibility        = rtsb()->has_pro() && Fns::is_guest_feature_disabled( 'hide_add_to_cart', '' );
 		$controllers['visibility']     = $add_to_cart_visibility ? ' rtsb-not-visible' : ' rtsb-is-visible';
 
