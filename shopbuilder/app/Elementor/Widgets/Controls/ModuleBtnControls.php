@@ -264,7 +264,7 @@ class ModuleBtnControls {
 			$fields['wishlist_button'] = [
 				'type'        => 'switch',
 				'label'       => esc_html__( 'Show Wishlist Button?', 'shopbuilder' ),
-				'description' => esc_html__( 'Switch on to show product wishlist.', 'shopbuilder' ),
+				'description' => esc_html__( 'Switch on to show product wishlist. Ensure "Showcase Button Position" under Wishlist module\'s "Product Showcase Settings" is not set to "Custom Position".', 'shopbuilder' ),
 				'default'     => 'yes',
 			];
 		}
@@ -272,7 +272,7 @@ class ModuleBtnControls {
 			$fields['comparison_button'] = [
 				'type'        => 'switch',
 				'label'       => esc_html__( 'Show Compare Button?', 'shopbuilder' ),
-				'description' => esc_html__( 'Switch on to show product comparison.', 'shopbuilder' ),
+				'description' => esc_html__( 'Switch on to show product comparison. Ensure "Showcase Button Position" under Compare module\'s "Product Showcase Settings" is not set to "Custom Position".', 'shopbuilder' ),
 				'default'     => 'yes',
 			];
 		}
@@ -280,7 +280,7 @@ class ModuleBtnControls {
 			$fields['quick_view_button'] = [
 				'type'        => 'switch',
 				'label'       => esc_html__( 'Show Quick View Button?', 'shopbuilder' ),
-				'description' => esc_html__( 'Switch on to show product quick view.', 'shopbuilder' ),
+				'description' => esc_html__( 'Switch on to show product quick view. Ensure "Showcase Button Position" under Quick View module\'s "Product Showcase Settings" is not set to "Custom Position".', 'shopbuilder' ),
 				'default'     => 'yes',
 			];
 		}

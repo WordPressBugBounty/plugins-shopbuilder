@@ -33,6 +33,50 @@ class GalleryAdmin {
 		add_action( 'woocommerce_save_product_variation', [ $this, 'save_variation_gallery' ] );
 		add_action( 'add_meta_boxes', [ $this, 'add_metabox' ] );
 		add_action( 'save_post', [ $this, 'save_metabox' ] );
+
+		// Invalidate cached variation galleries when product data or images change.
+		add_action( 'woocommerce_update_product', [ $this, 'flush_product_gallery_cache' ] );
+		add_action( 'woocommerce_save_product_variation', [ $this, 'flush_variation_parent_cache' ] );
+		add_action( 'delete_attachment', [ $this, 'flush_attachment_gallery_cache' ] );
+	}
+
+	/**
+	 * Flush all cached gallery transients for a saved product.
+	 *
+	 * @param int $product_id Product ID.
+	 *
+	 * @return void
+	 */
+	public function flush_product_gallery_cache( $product_id ) {
+		GalleryFns::flush_product_gallery_transients( $product_id );
+	}
+
+	/**
+	 * Flush the parent product default-gallery transient when a variation is saved.
+	 *
+	 * The variation's own transient is already cleared in save_variation_gallery();
+	 * this also clears the parent product default-images cache.
+	 *
+	 * @param int $variation_id Variation ID.
+	 *
+	 * @return void
+	 */
+	public function flush_variation_parent_cache( $variation_id ) {
+		$parent_id = wp_get_post_parent_id( $variation_id );
+		if ( $parent_id ) {
+			GalleryFns::delete_transients( $parent_id, 'default-images' );
+		}
+	}
+
+	/**
+	 * Flush cached variation galleries referencing a deleted attachment.
+	 *
+	 * @param int $attachment_id Attachment ID being deleted.
+	 *
+	 * @return void
+	 */
+	public function flush_attachment_gallery_cache( $attachment_id ) {
+		GalleryFns::flush_attachment_gallery_transients( $attachment_id );
 	}
 	/**
 	 * Adds a custom meta box to the WooCommerce product edit page.

@@ -48,4 +48,7 @@ $wrapper_class = ! empty( $controllers['fields_width_100'] ) ? 'rtsb-form-fields
 			</div>
 		</div>
 	</div>
+
+	<?php do_action( 'woocommerce_checkout_after_customer_details' ); ?>
+
 <?php endif; ?>

@@ -79,6 +79,10 @@ class GalleryFns {
 		$alt_text          = trim( wp_strip_all_tags( get_post_meta( $attachment_id, '_wp_attachment_image_alt', true ) ) );
 		$alt_text          = ( empty( $alt_text ) && ( $product instanceof WC_Product ) ) ? woocommerce_get_alt_from_product_title_and_position( $product->get_title(), $main_image, $image_index ) : $alt_text;
 
+		if ( ! is_array( $full_src ) ) {
+			$full_src = [ '', '', '' ];
+		}
+
 		/**
 		 * Filters the attributes for the image markup.
 		 *
@@ -184,6 +188,237 @@ class GalleryFns {
 		Cache::set_transient_cache_key( $transient_name );
 		return apply_filters( 'rtsb/vg/get/gallery/images', $images, $product_id );
 	}
+	/**
+	 * Build (and cache) the gallery image props for a single variation.
+	 *
+	 * Assembles the image-ID list for one variation only — the per-variation logic
+	 * previously executed for every variation inside the
+	 * `woocommerce_available_variation` filter — so galleries can be fetched
+	 * on-demand over AJAX instead of being built in bulk on page load.
+	 *
+	 * The result is cached in a transient keyed by variation ID and is always a
+	 * sequential array (built with `$images[]`) so it JSON-encodes to a JS array.
+	 *
+	 * @param int $product_id   Parent (variable) product ID.
+	 * @param int $variation_id Variation ID whose gallery should be built.
+	 *
+	 * @return array Sequential array of image prop arrays.
+	 */
+	public static function get_variation_gallery( $product_id, $variation_id ) {
+		$variation_id = absint( $variation_id );
+		$product_id   = absint( $product_id );
+
+		$transient_name = self::get_transient_name( $variation_id, 'variation-images' );
+		$cached         = $transient_name ? get_transient( $transient_name ) : false;
+		if ( ! empty( $cached ) && is_array( $cached ) ) {
+			return apply_filters( 'rtsb/vg/get/variation/gallery', $cached, $product_id, $variation_id );
+		}
+
+		$variation = wc_get_product( $variation_id );
+		if ( ! $variation ) {
+			return [];
+		}
+
+		$parent_product = $product_id ? wc_get_product( $product_id ) : false;
+
+		$has_variation_gallery_images = (bool) get_post_meta( $variation_id, 'rtsb_vg_images', true );
+		if ( $has_variation_gallery_images ) {
+			$gallery_images = (array) get_post_meta( $variation_id, 'rtsb_vg_images', true );
+		} elseif ( $parent_product ) {
+			$gallery_images = (array) $parent_product->get_gallery_image_ids();
+		} else {
+			$gallery_images = (array) $variation->get_gallery_image_ids();
+		}
+
+		$variation_image_id = absint( $variation->get_image_id() );
+		if ( ! empty( $variation_image_id ) ) {
+			array_unshift( $gallery_images, $variation_image_id );
+		}
+
+		$gallery_images = array_values( array_unique( array_filter( array_map( 'absint', $gallery_images ) ) ) );
+
+		$images = [];
+		foreach ( $gallery_images as $image_id ) {
+			if ( $image_id ) {
+				// Always append so the result stays a sequential (JS) array.
+				$images[] = self::product_attachment_props( $image_id, $variation );
+			}
+		}
+
+		if ( $transient_name ) {
+			set_transient( $transient_name, $images, HOUR_IN_SECONDS * 12 );
+			Cache::set_transient_cache_key( $transient_name );
+		}
+
+		return apply_filters( 'rtsb/vg/get/variation/gallery', $images, $product_id, $variation_id );
+	}
+
+	/**
+	 * Resolve the default variation ID for a variable product.
+	 *
+	 * Returns the variation that WooCommerce's default attributes fully resolve to,
+	 * so the matching gallery can be rendered server-side on initial page load.
+	 *
+	 * @param \WC_Product $product Variable product object.
+	 *
+	 * @return int Variation ID, or 0 when no single default variation resolves.
+	 */
+	public static function get_default_variation_id( $product ) {
+		if ( ! ( $product instanceof WC_Product ) || ! $product->is_type( 'variable' ) ) {
+			return 0;
+		}
+
+		$default_attributes = $product->get_default_attributes();
+		if ( empty( $default_attributes ) ) {
+			return 0;
+		}
+
+		$match_attributes = [];
+		foreach ( $default_attributes as $key => $value ) {
+			$match_attributes[ 'attribute_' . $key ] = $value;
+		}
+
+		$data_store   = \WC_Data_Store::load( 'product' );
+		$variation_id = $data_store->find_matching_product_variation( $product, $match_attributes );
+
+		return absint( $variation_id );
+	}
+
+	/**
+	 * Get the attachment IDs to render for a product's initial gallery paint.
+	 *
+	 * When a default variation resolves, returns that variation's gallery image IDs
+	 * (and warms its transient as a side effect of get_variation_gallery()). Otherwise
+	 * falls back to the parent product's featured + gallery images.
+	 *
+	 * @param \WC_Product $product Product object.
+	 *
+	 * @return array {
+	 *     @type int[]       $image_ids Sequential attachment IDs to render.
+	 *     @type \WC_Product $context   Product/variation object to use as render context.
+	 * }
+	 */
+	public static function get_initial_gallery_render( $product ) {
+		$context   = $product;
+		$image_ids = [];
+
+		if ( $product instanceof WC_Product ) {
+			$default_variation_id = self::get_default_variation_id( $product );
+			if ( $default_variation_id ) {
+				$variation_props = self::get_variation_gallery( $product->get_id(), $default_variation_id );
+				foreach ( (array) $variation_props as $prop ) {
+					if ( ! empty( $prop['image_id'] ) ) {
+						$image_ids[] = absint( $prop['image_id'] );
+					}
+				}
+				if ( ! empty( $image_ids ) ) {
+					$variation = wc_get_product( $default_variation_id );
+					if ( $variation ) {
+						$context = $variation;
+					}
+				}
+			}
+		}
+
+		if ( empty( $image_ids ) && ( $product instanceof WC_Product ) ) {
+			$post_thumbnail_id = $product->get_image_id();
+			$attachment_ids    = $product->get_gallery_image_ids();
+			if ( $post_thumbnail_id ) {
+				$image_ids[] = absint( $post_thumbnail_id );
+			}
+			if ( is_array( $attachment_ids ) && count( $attachment_ids ) ) {
+				foreach ( $attachment_ids as $attachment_id ) {
+					$image_ids[] = absint( $attachment_id );
+				}
+			}
+		}
+
+		$image_ids = array_values( array_unique( array_filter( $image_ids ) ) );
+
+		return [
+			'image_ids' => $image_ids,
+			'context'   => $context,
+		];
+	}
+
+	/**
+	 * Flush all gallery transients (default + every variation) for a product.
+	 *
+	 * Used when a product or one of its variations is saved so stale gallery
+	 * props are not served from cache.
+	 *
+	 * @param int $product_id Parent product ID.
+	 *
+	 * @return void
+	 */
+	public static function flush_product_gallery_transients( $product_id ) {
+		$product_id = absint( $product_id );
+		if ( ! $product_id ) {
+			return;
+		}
+
+		self::delete_transients( $product_id, 'default-images' );
+
+		$product = wc_get_product( $product_id );
+		if ( ! $product || ! $product->is_type( 'variable' ) ) {
+			return;
+		}
+
+		foreach ( $product->get_children() as $variation_id ) {
+			self::delete_transients( $variation_id, 'variation-images' );
+		}
+	}
+
+	/**
+	 * Flush variation gallery transients that reference a given attachment.
+	 *
+	 * Invoked when an attachment is deleted so variations whose galleries include
+	 * the removed image rebuild their props on next request.
+	 *
+	 * @param int $attachment_id Deleted attachment ID.
+	 *
+	 * @return void
+	 */
+	public static function flush_attachment_gallery_transients( $attachment_id ) {
+		global $wpdb;
+
+		$attachment_id = absint( $attachment_id );
+		if ( ! $attachment_id ) {
+			return;
+		}
+
+		// Flush the owning product (featured/parent) galleries when determinable.
+		$parent_id = wp_get_post_parent_id( $attachment_id );
+		if ( $parent_id ) {
+			self::flush_product_gallery_transients( $parent_id );
+		}
+
+		// Flush any variation whose custom gallery meta references this attachment.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$rows = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT post_id, meta_value FROM {$wpdb->postmeta} WHERE meta_key = %s",
+				'rtsb_vg_images'
+			)
+		);
+
+		if ( empty( $rows ) ) {
+			return;
+		}
+
+		foreach ( $rows as $row ) {
+			$image_ids = maybe_unserialize( $row->meta_value );
+			if ( ! is_array( $image_ids ) ) {
+				continue;
+			}
+			$image_ids = array_map( 'absint', $image_ids );
+			// phpcs:ignore WordPress.PHP.StrictInArray.MissingTrueStrict
+			if ( in_array( $attachment_id, $image_ids, true ) ) {
+				self::delete_transients( $row->post_id, 'variation-images' );
+			}
+		}
+	}
+
 	/**
 	 * Helper: Get all images transient name for specific variation/product
 	 *

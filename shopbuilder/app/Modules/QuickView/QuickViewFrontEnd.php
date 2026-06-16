@@ -189,8 +189,13 @@ class QuickViewFrontEnd {
 			$product = wc_get_product( $product_id );
 		}
 
-		$classes     = [];
-		$button_text = Fns::get_option( 'modules', 'quick_view', 'button_text', esc_html__( 'Quick View', 'shopbuilder' ) );
+		$classes          = [];
+		$button_text      = Fns::get_option( 'modules', 'quick_view', 'button_text', esc_html__( 'Quick View', 'shopbuilder' ) );
+		$has_button_text  = ! empty( Fns::get_option( 'modules', 'quick_view', 'button_text', '' ) );
+
+		if ( $has_button_text ) {
+			$classes[] = 'has-text';
+		}
 
 		$icon_html = '<i class="rtsb-icon rtsb-icon-eye"></i>';
 		// get product type.
@@ -200,7 +205,7 @@ class QuickViewFrontEnd {
 			'product_id'      => $product->get_id(),
 			'product_type'    => $product_type,
 			'button_text'     => $button_text,
-			'has_button_text' => ! empty( Fns::get_option( 'modules', 'quick_view', 'button_text', '' ) ),
+			'has_button_text' => $has_button_text,
 			'left_text'       => apply_filters( 'rtsb/module/quick_view/button_left_text', '' ),
 			'right_text'      => apply_filters( 'rtsb/module/quick_view/button_right_text', '' ),
 		];

@@ -438,7 +438,7 @@ class CompareFns {
 	public function reached_max_limit() {
 
 		$product_ids = $this->get_compared_product_ids();
-		$max_limit   = absint( Fns::get_option( 'modules', 'compare', 'max_limit', 10, 'checkbox' ) );
+		$max_limit   = absint( Fns::get_option( 'modules', 'compare', 'max_limit', 10, 'number' ) );
 
 		// Remove if product is not exist.
 		foreach ( $product_ids as $id ) {

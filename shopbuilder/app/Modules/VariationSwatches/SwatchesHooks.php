@@ -67,6 +67,11 @@ class SwatchesHooks {
 		$default_size  = 'woocommerce_thumbnail';
 		if ( ( ! is_admin() || wp_doing_ajax() ) && ! is_product() ) {
 			$default_size = SwatchesFns::get_options( 'showcase_image_size', $default_size );
+		} elseif ( is_product() ) {
+			// On the single product page the swapped variation image replaces the
+			// main gallery image, so it must use the single (gallery) size. The
+			// thumbnail size would set a small width/height and break the layout.
+			$default_size = apply_filters( 'woocommerce_gallery_image_size', 'woocommerce_single' );
 		}
 		$thumbnail_size = apply_filters( 'woocommerce_thumbnail_size', $default_size );
 		$image_Src      = wp_get_attachment_image_src( $attachment_id, $default_size );
@@ -107,7 +112,6 @@ class SwatchesHooks {
 		}
 		if ( $product->is_type( 'variable' ) ) {
 			$classes[] = 'rtsb-vs-product';
-			$classes[] = 'rtsb-' . SwatchesFns::get_options( 'shape_style' );
 			$classes[] = 'rtsb-attribute-behavior-' . SwatchesFns::get_options( 'disabled_attribute_behavior' );
 			if ( 'on' === SwatchesFns::get_options( 'show_tooltip' ) ) {
 				$classes[] = 'rtsb-tooltip';
@@ -126,8 +130,54 @@ class SwatchesHooks {
 			wp_send_json_error( esc_html__( 'Something Went Wrong', 'shopbuilder' ) );
 		}
 		$product_id           = ! empty( $_POST['product_id'] ) ? absint( $_POST['product_id'] ) : 0;
+		$img_width            = ! empty( $_POST['img_width'] ) ? absint( $_POST['img_width'] ) : 0;
+		$img_height           = ! empty( $_POST['img_height'] ) ? absint( $_POST['img_height'] ) : 0;
 		$product              = wc_get_product( $product_id );
 		$available_variations = $product->get_available_variations();
+
+		// Regenerate each variation image at the exact size the widget rendered
+		// the main thumbnail with (sent from the DOM), so swapped variation
+		// images match the configured custom size/crop instead of the global
+		// showcase size. Degrades gracefully if dimensions are missing.
+		if ( $img_width && $img_height ) {
+			$available_variations = array_map(
+				function ( $variation ) use ( $img_width, $img_height ) {
+					$attachment_id = ! empty( $variation['image_id'] ) ? absint( $variation['image_id'] ) : 0;
+
+					if ( ! $attachment_id ) {
+						return $variation;
+					}
+
+					$full_url = wp_get_attachment_image_url( $attachment_id, 'full' );
+
+					if ( ! $full_url ) {
+						return $variation;
+					}
+
+					$resized = Fns::image_resize( $full_url, $img_width, $img_height, true, false );
+
+					// image_resize() returns a numeric array: [ src, width, height ].
+					if ( empty( $resized[0] ) ) {
+						return $variation;
+					}
+
+					$variation['image']['src'] = $resized[0];
+					// Report the box (the size the main thumbnail rendered at), not
+					// the resized file's own dimensions. A smaller/odd-ratio source
+					// would otherwise make WooCommerce's variation form shrink the
+					// image box and cause a visible jump (notably with default form
+					// values, which auto-select on load). object-fit fills the box.
+					$variation['image']['src_w']  = $img_width;
+					$variation['image']['src_h']  = $img_height;
+					$variation['image']['srcset'] = '';
+					$variation['image']['sizes']  = '';
+
+					return $variation;
+				},
+				$available_variations
+			);
+		}
+
 		wp_send_json_success( $available_variations );
 	}
 

@@ -53,6 +53,8 @@ class SupportController {
 			'woo-product-variation-gallery/woo-product-variation-gallery.php' => PluginsSupport\RtwpvgSupport::class,
 			'woo-product-variation-swatches-pro/woo-product-variation-swatches-pro.php' => PluginsSupport\RtwpvsSupport::class,
 			'products-visibility-by-user-roles/addify_product_visibility.php' => PluginsSupport\AddifyVisibilityByRoles::class,
+			'woocommerce-payments/woocommerce-payments.php' => PluginsSupport\WooPaymentsSupport::class,
+			'woocommerce-paypal-payments/woocommerce-paypal-payments.php' => PluginsSupport\PayPalPPCPSupport::class,
 		];
 		$supports      = apply_filters( 'rtsb/plugins/support', $supports );
 		foreach ( $supports as $active_path => $class ) {

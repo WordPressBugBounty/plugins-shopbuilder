@@ -154,7 +154,7 @@ class AIFns {
 		try {
 			$client = new $clientClass();
 			return self::createAIService( $ai_tools, $client );
-		} catch ( Exception $e ) {
+		} catch ( \Throwable $e ) {
 			return false;
 		}
 	}

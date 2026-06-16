@@ -70,7 +70,7 @@ final class QuickView {
 			return;
 		}
 
-		$height          = $this->options['modal_height'] ?? false;
+		$height          = ! empty( $this->options['modal_height'] ) ? absint( $this->options['modal_height'] ) : false;
 		$wrapper_padding = $this->options['modal_wrapper_padding'] ?? '0';
 		$bg_color        = $this->options['modal_bg_color'] ?? false;
 		$box_shadow      = $this->options['modal_box_shadow_color'] ?? false;
@@ -80,7 +80,7 @@ final class QuickView {
 
 		if ( $height ) { ?>
 			.rtsb-ui-modal .rtsb-modal-content{
-				height: <?php echo esc_attr( $height ); ?>;
+				height: <?php echo absint( $height ); ?>px;
 			}
 			<?php
 		}

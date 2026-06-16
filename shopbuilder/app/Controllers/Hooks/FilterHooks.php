@@ -37,6 +37,52 @@ class FilterHooks {
 		// Overriding Notice Template.
 		add_filter( 'wc_get_template', [ __CLASS__, 'get_notice_template' ], 15, 2 );
 		add_filter( 'rtsb/optimizer/theme_stylesheet_handle', [ __CLASS__, 'theme_stylesheet_handle' ], 99 );
+
+		// Flag invalid postcode in checkout update fragments.
+		add_filter( 'woocommerce_update_order_review_fragments', [ __CLASS__, 'validate_postcode_fragment' ], 100 );
+
+		// Prevent WordPress canonical redirect from sending shop pages with
+		// a single product_cat/product_tag/filter_* query param to the
+		// matching term archive (which would discard other filters).
+		add_filter( 'redirect_canonical', [ __CLASS__, 'preserve_filter_query_canonical' ], 10, 2 );
+	}
+
+	/**
+	 * Prevent WordPress canonical redirects from stripping our filter query
+	 * parameters. When a visitor submits the Product Filters form from the
+	 * shop page with ?product_cat=X, WP recognises X as a category and
+	 * redirects to /product-category/X/, which loses the multi-filter state
+	 * and breaks the active-filter bar.
+	 *
+	 * @param string $redirect_url  Proposed canonical URL.
+	 * @param string $requested_url Originally requested URL.
+	 *
+	 * @return string|false Original redirect URL, or false to abort redirect.
+	 */
+	public static function preserve_filter_query_canonical( $redirect_url, $requested_url ) {
+		unset( $requested_url );
+
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Read-only query string check.
+		if ( empty( $_GET ) ) {
+			return $redirect_url;
+		}
+
+		$tracked_keys = [ 'product_cat', 'product_tag', 'product_brand' ];
+
+		foreach ( $_GET as $key => $value ) {
+			if ( '' === $value ) {
+				continue;
+			}
+
+			$key = sanitize_key( $key );
+
+			if ( in_array( $key, $tracked_keys, true ) || 0 === strpos( $key, 'filter_' ) ) {
+				return false;
+			}
+		}
+		// phpcs:enable
+
+		return $redirect_url;
 	}
 
 	/***
@@ -566,6 +612,50 @@ class FilterHooks {
 		];
 
 		return $wp_query_args;
+	}
+
+	/**
+	 * Flags invalid postcode in checkout update fragments.
+	 *
+	 * Validates billing/shipping postcode against the selected country
+	 * and adds a hidden flag element so the JS can clear the field once.
+	 *
+	 * @param array $fragments Checkout AJAX fragments.
+	 *
+	 * @return array
+	 */
+	public static function validate_postcode_fragment( $fragments ) {
+		$customer = WC()->customer;
+
+		if ( ! $customer ) {
+			return $fragments;
+		}
+
+		$invalid_fields = [];
+
+		$billing_postcode = $customer->get_billing_postcode();
+		$billing_country  = $customer->get_billing_country();
+
+		if ( $billing_postcode && $billing_country && ! \WC_Validation::is_postcode( $billing_postcode, $billing_country ) ) {
+			$invalid_fields[] = 'billing';
+		}
+
+		$shipping_postcode = $customer->get_shipping_postcode();
+		$shipping_country  = $customer->get_shipping_country();
+
+		if ( $shipping_postcode && $shipping_country && ! \WC_Validation::is_postcode( $shipping_postcode, $shipping_country ) ) {
+			$invalid_fields[] = 'shipping';
+		}
+
+		// Always return the fragment so the placeholder stays in the DOM.
+		// When valid, an empty placeholder replaces the previous flag.
+		if ( ! empty( $invalid_fields ) ) {
+			$fragments['.rtsb-postcode-invalid'] = '<div class="rtsb-postcode-invalid" data-fields="' . esc_attr( implode( ',', $invalid_fields ) ) . '" style="display:none;"></div>';
+		} else {
+			$fragments['.rtsb-postcode-invalid'] = '<div class="rtsb-postcode-invalid" style="display:none;"></div>';
+		}
+
+		return $fragments;
 	}
 
 	/**

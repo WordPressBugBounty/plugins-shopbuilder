@@ -75,7 +75,7 @@ class BuilderCpt {
 			[ 'ID' => $post_ID ]
 		);
 		// Clear cache so changes reflect properly.
-		clean_post_cache( $post_ID );
+		 clean_post_cache( $post_ID );
 	}
 
 	/**
@@ -92,8 +92,8 @@ class BuilderCpt {
 			return;
 		}
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$selected           = isset( $_GET['type'] ) ? sanitize_key( $_GET['type'] ) : '';
-		$builder_page_types = BuilderFns::builder_page_types();
+		$selected            = isset( $_GET['type'] ) ? sanitize_key( $_GET['type'] ) : '';
+		 $builder_page_types = BuilderFns::builder_page_types();
 		?>
 		<select name="template_type" id="type">
 			<option value="all" <?php selected( 'all', $selected ); ?>><?php esc_html_e( 'Template Type ', 'shopbuilder' ); ?></option>
@@ -228,6 +228,7 @@ class BuilderCpt {
 		switch ( $column ) {
 			case 'type':
 				$the_type = ! empty( $types[ $template_type ] ) ? '<b>' . esc_html( ucwords( $types[ $template_type ] ) ) . '</b>' : '';
+				$the_type = $this->template_type_suffix( $the_type, $template_type, $post_id );
 				Fns::print_html( apply_filters( 'rtsb/columns/template/types/text', $the_type, $template_type, $post_id ) );
 				break;
 			case 'edit_with':
@@ -235,9 +236,18 @@ class BuilderCpt {
 				echo esc_html( ucfirst( $edit_by ) );
 				break;
 			case 'set_default':
-				$is_set_default = absint( BuilderFns::builder_page_id_by_type( $template_type ) );
-				$is_published   = 'publish' === get_post_status( $post_id );
-				$page_type_for  = $template_type;
+				$singleton_types = apply_filters(
+					'rtsb/builder/singleton_types',
+					array_keys( BuilderFns::builder_page_types() )
+				);
+				if ( in_array( $template_type, $singleton_types, true ) ) {
+					$is_set_default = absint( BuilderFns::builder_page_id_by_type( $template_type ) );
+				} else {
+					// Pool type: read per-post meta flag — multiple templates of the same type can be enabled simultaneously.
+					$is_set_default = 'on' === get_post_meta( $post_id, '_rtsb_tb_enabled_in_pool', true ) ? $post_id : 0;
+				}
+				$is_published  = 'publish' === get_post_status( $post_id );
+				$page_type_for = $template_type;
 				if ( 'product' === $template_type ) {
 					$product_page_for = get_post_meta( $post_id, '_is_product_page_template_for', true );
 					switch ( $product_page_for ) {
@@ -267,6 +277,14 @@ class BuilderCpt {
 								$is_set_default = $post_id;
 							}
 							break;
+						case 'product_brands':
+							$page_type_for           = 'product-page-template-' . $post_id . '-specific-brand';
+							$set_default_option_name = BuilderFns::option_name_product_page_specific_brand_set_default( $post_id );
+							$pp_brand_set_default    = TemplateSettings::instance()->get_option( $set_default_option_name );
+							if ( $pp_brand_set_default ) {
+								$is_set_default = $post_id;
+							}
+							break;
 						default:
 							break;
 					}
@@ -285,6 +303,9 @@ class BuilderCpt {
 						$is_set_default = '';
 					}
 				}
+
+				$is_set_default = apply_filters( 'rtsb/builder/columns/set_default', $is_set_default, $post_id, $template_type );
+				$page_type_for  = apply_filters( 'rtsb/builder/columns/page_type_for', $page_type_for, $post_id, $template_type );
 				?>
 				<span class="rtsb-switch-wrapper page-type-<?php echo esc_attr( $page_type_for ); ?>" <?php echo ! $is_published ? 'style="pointer-events: none;"' : null; ?> title="<?php esc_html_e( 'Only publish post can set default ', 'shopbuilder' ); ?>">
 					<label class="rtsb-switch">
@@ -299,6 +320,209 @@ class BuilderCpt {
 				<?php
 				break;
 		}
+	}
+
+	/**
+	 * Appends template sub-type suffix and selected item details to the type column text.
+	 *
+	 * For product templates: shows "Template For Selected Products/Categories/Tags"
+	 * with linked item names below.
+	 * For archive templates: shows "Template For Selected Category" with linked names.
+	 *
+	 * @param string $the_type      The current type column HTML.
+	 * @param string $template_type The template type slug.
+	 * @param int    $post_id       The builder post ID.
+	 *
+	 * @return string
+	 */
+	private function template_type_suffix( $the_type, $template_type, $post_id ) {
+		if ( 'product' === $template_type ) {
+			$the_type = $this->product_template_type_suffix( $the_type, $post_id );
+		} elseif ( 'archive' === $template_type ) {
+			$the_type = $this->archive_template_type_suffix( $the_type, $post_id );
+		}
+
+		return $the_type;
+	}
+
+	/**
+	 * Appends product template sub-type suffix with linked product/category/tag names.
+	 *
+	 * @param string $the_type The current type column HTML.
+	 * @param int    $post_id  The builder post ID.
+	 *
+	 * @return string
+	 */
+	private function product_template_type_suffix( $the_type, $post_id ) {
+		$product_page_for = get_post_meta( $post_id, '_is_product_page_template_for', true );
+		$has_pro          = rtsb()->has_pro();
+		$pro_label        = ! $has_pro ? ' <span class="rtsb-pro-label" style="color:#fff;background:#ff5722;padding:1px 6px;border-radius:3px;font-size:11px;font-weight:600;">' . esc_html__( 'Pro', 'shopbuilder' ) . '</span>' : '';
+
+		switch ( $product_page_for ) {
+			case 'specific_products':
+				$the_type .= ' - ' . esc_html__( 'Template For Selected Products', 'shopbuilder' ) . $pro_label;
+				if ( $has_pro ) {
+					$the_type .= $this->get_selected_products_html( $post_id );
+				}
+				break;
+			case 'product_cats':
+				$the_type .= ' - ' . esc_html__( 'Template For Selected Categories', 'shopbuilder' ) . $pro_label;
+				if ( $has_pro ) {
+					$the_type .= $this->get_selected_terms_html( $post_id, 'product_cat' );
+				}
+				break;
+			case 'product_tags':
+				$the_type .= ' - ' . esc_html__( 'Template For Selected Tags', 'shopbuilder' ) . $pro_label;
+				if ( $has_pro ) {
+					$the_type .= $this->get_selected_terms_html( $post_id, 'product_tag' );
+				}
+				break;
+		}
+
+		return $the_type;
+	}
+
+	/**
+	 * Appends archive template sub-type suffix with linked category names.
+	 *
+	 * @param string $the_type The current type column HTML.
+	 * @param int    $post_id  The builder post ID.
+	 *
+	 * @return string
+	 */
+	private function archive_template_type_suffix( $the_type, $post_id ) {
+		$option_name = BuilderFns::archive_option_name_by_template_id( $post_id );
+		$categories  = TemplateSettings::instance()->get_option( $option_name );
+
+		if ( ! empty( $categories ) && is_array( $categories ) ) {
+			$has_pro   = rtsb()->has_pro();
+			$pro_label = ! $has_pro ? ' <span class="rtsb-pro-label" style="color:#fff;background:#ff5722;padding:1px 6px;border-radius:3px;font-size:11px;font-weight:600;">' . esc_html__( 'Pro', 'shopbuilder' ) . '</span>' : '';
+			$the_type .= ' - ' . esc_html__( 'Template For Selected Category', 'shopbuilder' ) . $pro_label;
+			$the_type .= $this->get_selected_archive_categories_html( $categories );
+		}
+
+		return $the_type;
+	}
+
+	/**
+	 * Gets HTML list of selected archive category names with links.
+	 *
+	 * @param array $category_slugs Array of term slugs.
+	 *
+	 * @return string
+	 */
+	private function get_selected_archive_categories_html( $category_slugs ) {
+		if ( empty( $category_slugs ) || ! is_array( $category_slugs ) ) {
+			return '';
+		}
+
+		$links = [];
+
+		foreach ( $category_slugs as $cat_slug ) {
+			$term = get_term_by( 'slug', $cat_slug, 'product_cat' );
+
+			if ( is_wp_error( $term ) || ! $term ) {
+				continue;
+			}
+
+			$term_link = get_term_link( $term );
+
+			if ( is_wp_error( $term_link ) ) {
+				continue;
+			}
+
+			$links[] = '<a href="' . esc_url( $term_link ) . '" target="_blank">'
+				. esc_html( $term->name ) . '</a>';
+		}
+
+		if ( empty( $links ) ) {
+			return '';
+		}
+
+		return '<br><small>' . implode( ', ', $links ) . '</small>';
+	}
+
+	/**
+	 * Gets HTML list of selected product names with links to their detail pages.
+	 *
+	 * @param int $post_id The builder post ID.
+	 *
+	 * @return string
+	 */
+	private function get_selected_products_html( $post_id ) {
+		$option_name = BuilderFns::option_name_by_template_id( $post_id );
+		$product_ids = TemplateSettings::instance()->get_option( $option_name );
+
+		if ( empty( $product_ids ) || ! is_array( $product_ids ) ) {
+			return '';
+		}
+
+		$links = [];
+
+		foreach ( $product_ids as $product_id ) {
+			$product_id = absint( $product_id );
+			$product    = wc_get_product( $product_id );
+
+			if ( ! $product ) {
+				continue;
+			}
+
+			$links[] = '<a href="' . esc_url( get_permalink( $product_id ) ) . '" target="_blank">'
+				. esc_html( $product->get_name() ) . '</a>';
+		}
+
+		if ( empty( $links ) ) {
+			return '';
+		}
+
+		return '<br><small>' . implode( ', ', $links ) . '</small>';
+	}
+
+	/**
+	 * Gets HTML list of selected term names with links.
+	 *
+	 * @param int    $post_id  The builder post ID.
+	 * @param string $taxonomy The taxonomy slug.
+	 *
+	 * @return string
+	 */
+	private function get_selected_terms_html( $post_id, $taxonomy ) {
+		if ( 'product_cat' === $taxonomy ) {
+			$option_name = BuilderFns::option_name_product_page_selected_cat( $post_id );
+		} else {
+			$option_name = BuilderFns::option_name_product_page_selected_tag( $post_id );
+		}
+
+		$term_ids = TemplateSettings::instance()->get_option( $option_name );
+
+		if ( empty( $term_ids ) || ! is_array( $term_ids ) ) {
+			return '';
+		}
+
+		$links = [];
+
+		foreach ( $term_ids as $term_id ) {
+			$term = get_term( absint( $term_id ), $taxonomy );
+
+			if ( is_wp_error( $term ) || ! $term ) {
+				continue;
+			}
+
+			$term_link = get_term_link( $term );
+
+			if ( is_wp_error( $term_link ) ) {
+				continue;
+			}
+
+			$links[] = '<a href="' . esc_url( $term_link ) . '" target="_blank">'
+				. esc_html( $term->name ) . '</a>';
+		}
+
+		if ( empty( $links ) ) {
+			return '';
+		}
+
+		return '<br><small>' . implode( ', ', $links ) . '</small>';
 	}
 
 	/**

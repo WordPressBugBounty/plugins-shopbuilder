@@ -12,7 +12,7 @@
  *
  * @see     https://woocommerce.com/document/template-structure/
  * @package WooCommerce\Templates
- * @version 9.7.0
+ * @version 10.5.0
  */
 
 use Automattic\WooCommerce\Enums\ProductType;
@@ -32,31 +32,46 @@ $attachment_ids    = $product->get_gallery_image_ids();
 $rand              = wp_rand();
 $randThumbnail     = wp_rand();
 
+// Determine whether to render the thumbnail wrapper at all. The wrapper must be
+// present in the DOM if at least one variation has a gallery so JS can populate
+// it on variation change; otherwise, skip it to avoid the blank space.
+$has_any_gallery_images = is_array( $attachment_ids ) && count( $attachment_ids ) > 0;
+if ( ! $has_any_gallery_images && $product && $product->is_type( 'variable' ) ) {
+	foreach ( $product->get_children() as $child_id ) {
+		if ( get_post_meta( $child_id, 'rtsb_vg_images', true ) ) {
+			$has_any_gallery_images = true;
+			break;
+		}
+	}
+}
+
 $galleryStyle = 'bottom';
 if ( rtsb()->has_pro() ) {
 	$galleryStyle = GalleryFns::get_options( 'gallery_style' ) ?: $galleryStyle;
 }
-$image_zoom     = GalleryFns::get_options( 'image_zoom' ) ?: '';
-$slider_options = [
+$image_zoom      = GalleryFns::get_options( 'image_zoom' ) ?: '';
+$adaptive_height = boolval( GalleryFns::get_options( 'adaptive_height' ) );
+$slider_options  = [
 	'spaceBetween'           => 0,
 	'speed'                  => 500,
 	'loop'                   => false,
-	'autoHeight'             => false,
+	'autoHeight'             => $adaptive_height,
+	'observer'               => true,
+	'observeParents'         => true,
 	'navigation'             => [
 		'nextEl' => '.swiper-gallery-next.rtsb-random-id-' . esc_attr( $rand ),
 		'prevEl' => '.swiper-gallery-prev.rtsb-random-id-' . esc_attr( $rand ),
 	],
 	'thumbsSelectorNoSlider' => '.rtsb-thumb', // If Swiper Is not active.
 ];
-$slider_options = apply_filters( 'rtsb/vg/slider/options', $slider_options );
-$images         = [];
-if ( $post_thumbnail_id ) {
-	$images[] = $post_thumbnail_id;
-}
-if ( is_array( $attachment_ids ) && count( $attachment_ids ) ) {
-	$images = array_merge( $images, $attachment_ids );
-}
-$images          = array_unique( $images );
+$slider_options  = apply_filters( 'rtsb/vg/slider/options', $slider_options );
+
+// Render the default variation's gallery server-side when one resolves (also warms
+// its transient so the variations JSON exposes it inline — no AJAX, no empty flash);
+// otherwise fall back to the parent product's featured + gallery images.
+$initial_render  = GalleryFns::get_initial_gallery_render( $product );
+$images          = $initial_render['image_ids'];
+$gallery_context = $initial_render['context'];
 $wrapper_classes = apply_filters(
 	'woocommerce_single_product_image_gallery_classes',
 	[
@@ -77,8 +92,10 @@ $position       = apply_filters( 'rtsb/vg/thumbnails/position', $galleryStyle );
 $col            = GalleryFns::get_options( 'thumbnails_columns' ) ?: 4;
 $col            = apply_filters( 'rtsb/vg/gallery/columns', $col );
 $custom_class[] = 'rtsb-thumbnails-position-' . $position;
-$icon_right     = '<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 320 512" aria-hidden="true"><path d="M285.5 273l-194 194c-9.4 9.4-24.6 9.4-33.9 0l-22.6-22.6c-9.4-9.4-9.4-24.6 0-33.9L184.6 256 35 106.6c-9.4-9.4-9.4-24.6 0-33.9L57.6 50c9.4-9.4 24.6-9.4 33.9 0l194 194c9.4 9.4 9.4 24.6 0 34z"/></svg>';
-$icon_left      = '<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 320 512" aria-hidden="true"><path d="M34.5 239l194-194c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9L135.4 256l150.6 149.4c9.4 9.4 9.4 24.6 0 33.9l-22.6 22.6c-9.4 9.4-24.6 9.4-33.9 0l-194-194c-9.4-9.4-9.4-24.6 0-34z"/></svg>';
+$custom_class[] = 'rtsb-vg-product-type-' . $product->get_type();
+
+$icon_right = '<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 320 512" aria-hidden="true"><path d="M285.5 273l-194 194c-9.4 9.4-24.6 9.4-33.9 0l-22.6-22.6c-9.4-9.4-9.4-24.6 0-33.9L184.6 256 35 106.6c-9.4-9.4-9.4-24.6 0-33.9L57.6 50c9.4-9.4 24.6-9.4 33.9 0l194 194c9.4 9.4 9.4 24.6 0 34z"/></svg>';
+$icon_left  = '<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 320 512" aria-hidden="true"><path d="M34.5 239l194-194c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9L135.4 256l150.6 149.4c9.4 9.4 9.4 24.6 0 33.9l-22.6 22.6c-9.4 9.4-24.6 9.4-33.9 0l-194-194c-9.4-9.4-9.4-24.6 0-34z"/></svg>';
 ?>
 <div class="<?php echo esc_attr( implode( ' ', array_map( 'sanitize_html_class', $wrapper_classes ) ) ); ?>">
 	<div class="rtsb-vg-main-slider-wrapper <?php echo esc_attr( implode( ' ', array_map( 'sanitize_html_class', $custom_class ) ) ); ?>" data-image-zoom="<?php echo esc_attr( boolval( $image_zoom ) ); ?>" >
@@ -93,8 +110,11 @@ $icon_left      = '<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1
 				?>
 				<a href="#" class="rtsb-vg-trigger rtsb-vg-trigger-position-<?php echo esc_attr( $lightBoxPosition ); ?> rtsb-vg-image-trigger">
 					<?php ob_start(); ?>
-						<svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-							<path d="M12.9 14.32a8 8 0 1 1 1.41-1.41l4.39 4.39a1 1 0 0 1-1.41 1.41l-4.39-4.39ZM14 8a6 6 0 1 0-12 0 6 6 0 0 0 12 0Z"/>
+						<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+							<circle cx="11" cy="11" r="7"/>
+							<line x1="20" y1="20" x2="16.65" y2="16.65"/>
+							<line x1="11" y1="8.5" x2="11" y2="13.5"/>
+							<line x1="8.5" y1="11" x2="13.5" y2="11"/>
 						</svg>
 					<?php
 					$icon_html = ob_get_clean();
@@ -107,7 +127,7 @@ $icon_left      = '<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1
 				<div class="swiper-wrapper">
 					<?php foreach ( $images as $key => $attachment_id ) { ?>
 						<div class="swiper-slide rtsb-vs-main-image-<?php echo esc_attr( $attachment_id ); ?>">
-							<?php Fns::print_html( GalleryFns::get_main_attachment_html( $attachment_id, $product ), true ); ?>
+							<?php Fns::print_html( GalleryFns::get_main_attachment_html( $attachment_id, $gallery_context ), true ); ?>
 						</div>
 					<?php } ?>
 				</div>
@@ -118,7 +138,8 @@ $icon_left      = '<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1
 				</div>
 			<?php } ?>
 		</div>
-		<?php
+		<?php if ( $has_any_gallery_images ) { ?>
+			<?php
 			$options = apply_filters(
 				'rtsb/vg/thumbnails/slider/options',
 				[],
@@ -128,12 +149,12 @@ $icon_left      = '<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1
 				]
 			);
 			?>
-			<div class=" rtsb-vs-thumb-slider rtsb-vs-thumb-column-<?php echo esc_attr( $col ); ?>" data-options=<?php echo esc_js( wp_json_encode( $options ) ); ?> >
+			<div class=" rtsb-vg-thumb-slider rtsb-vs-thumb-column-<?php echo esc_attr( $col ); ?>" data-options=<?php echo esc_js( wp_json_encode( $options ) ); ?> >
 				<div class="swiper-wrapper">
-					<?php if ( is_array( $attachment_ids ) && count( $attachment_ids ) ) { ?>
+					<?php if ( is_array( $images ) && count( $images ) > 1 ) { ?>
 						<?php foreach ( $images as $key => $attachment_id ) { ?>
 							<div class="swiper-slide rtsb-thumb rtsb-vs-thumb-item-<?php echo esc_attr( $attachment_id ); ?>" data-index="<?php echo esc_attr( $key ); ?>" >
-								<?php Fns::print_html( GalleryFns::get_thumbnail_attachment_html( $attachment_id, $product ), true ); ?>
+								<?php Fns::print_html( GalleryFns::get_thumbnail_attachment_html( $attachment_id, $gallery_context ), true ); ?>
 							</div>
 						<?php } ?>
 					<?php } ?>
@@ -151,6 +172,7 @@ $icon_left      = '<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1
 				);
 				?>
 			</div>
+		<?php } ?>
 
 
 	</div>

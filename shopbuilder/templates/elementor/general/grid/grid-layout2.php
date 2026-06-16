@@ -112,20 +112,27 @@ $swatch_price_class = $has_attributes && in_array( 'swatches', $items, true ) &&
 			 * Product Price.
 			 */
 			if ( in_array( 'price', $items, true ) ) {
-				?>
-				<div class="product-price<?php echo esc_attr( $swatch_price_class ); ?>">
-					<div class="price-wrapper">
+				$has_price_html   = '' !== trim( (string) $product->get_price_html() );
+				$has_price_swatch = in_array( 'swatches', $items, true ) && 'price' === $swatch_position;
+
+				if ( $has_price_html || $has_price_swatch ) {
+					?>
+					<div class="product-price<?php echo esc_attr( $swatch_price_class ); ?>">
+						<?php if ( $has_price_html ) : ?>
+							<div class="price-wrapper">
+								<?php
+								woocommerce_template_single_price();
+								?>
+							</div>
+						<?php endif; ?>
 						<?php
-						woocommerce_template_single_price();
+						if ( $has_price_swatch ) {
+							Fns::get_product_swatches( $swatch_type );
+						}
 						?>
 					</div>
 					<?php
-					if ( in_array( 'swatches', $items, true ) && 'price' === $swatch_position ) {
-						Fns::get_product_swatches( $swatch_type );
-					}
-					?>
-				</div>
-				<?php
+				}
 			}
 
 			/**

@@ -380,6 +380,7 @@ class AssetsController {
 				'ajaxUrl'               => esc_url( self::$ajaxurl ),
 				'aiActivated'           => ! empty( $ai_data ),
 				'homeurl'               => home_url(),
+				'shopUrl'               => function_exists( 'wc_get_page_permalink' ) ? esc_url( wc_get_page_permalink( 'shop' ) ) : home_url( '/' ),
 				'wcCartUrl'             => wc_get_cart_url(),
 				'addedToCartText'       => esc_html__( 'Product Added', 'shopbuilder' ),
 				'singleCartToastrText'  => esc_html__( 'Successfully Added', 'shopbuilder' ),
@@ -549,10 +550,14 @@ class AssetsController {
 					'rtsb-templatebuilder',
 					'rtsbParams',
 					[
-						'ajaxurl'       => esc_url( self::$ajaxurl ),
-						'homeurl'       => home_url(),
-						rtsb()->nonceId => wp_create_nonce( rtsb()->nonceText ),
-						'hasPro'        => rtsb()->has_pro() ? 'yes' : 'no',
+						'ajaxurl'        => esc_url( self::$ajaxurl ),
+						'homeurl'        => home_url(),
+						rtsb()->nonceId  => wp_create_nonce( rtsb()->nonceText ),
+						'hasPro'         => rtsb()->has_pro() ? 'yes' : 'no',
+						'singletonTypes' => apply_filters(
+							'rtsb/builder/singleton_types',
+							array_keys( \RadiusTheme\SB\Helpers\BuilderFns::builder_page_types() )
+						),
 					]
 				);
 			}

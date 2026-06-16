@@ -463,9 +463,13 @@ class Render {
 
 		$pagination = $metas['pagination'];
 
-		$page_type      = BuilderFns::builder_type( get_the_ID() );
-		$is_preview     = BuilderFns::is_builder_preview() && array_key_exists( $page_type, BuilderFns::builder_page_types() );
-		$posts_per_page = apply_filters( 'loop_shop_per_page', wc_get_default_products_per_row() * wc_get_default_product_rows_per_page() ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- woocommerce default hooks used.
+		$page_type       = BuilderFns::builder_type( get_the_ID() );
+		$is_preview      = BuilderFns::is_builder_preview() && array_key_exists( $page_type, BuilderFns::builder_page_types() );
+		$raw_settings    = $widget->get_settings_for_display();
+		$widget_per_page = ! empty( $raw_settings['posts_per_page'] ) ? absint( $raw_settings['posts_per_page'] ) : 0;
+		$wc_per_page     = wc_get_default_products_per_row() * wc_get_default_product_rows_per_page();
+		$posts_per_page  = $widget_per_page ? $widget_per_page : apply_filters( 'loop_shop_per_page', $wc_per_page ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- woocommerce default hooks used.
+		$restore_query   = false;
 		if ( $is_preview ) {
 			$main_query = clone $wp_query;
 			$main_post  = clone $post;
@@ -488,10 +492,28 @@ class Render {
 
 			wc_set_loop_prop( 'total', $wp_query->found_posts );
 			wc_set_loop_prop( 'total_pages', $wp_query->max_num_pages );
+		} elseif ( ! is_admin() && ( is_shop() || is_product_taxonomy() ) && absint( $wp_query->get( 'posts_per_page' ) ) !== $posts_per_page ) {
+			// Apply widget's posts_per_page to the main query on the live frontend.
+			$main_query = clone $wp_query;
+			$main_post  = clone $post;
+
+			$query_vars                   = $wp_query->query_vars;
+			$query_vars['posts_per_page'] = $posts_per_page;
+
+			$wp_query = new WP_Query( $query_vars ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+
+			wc_set_loop_prop( 'total', $wp_query->found_posts );
+			wc_set_loop_prop( 'total_pages', $wp_query->max_num_pages );
+
+			$restore_query = true;
 		}
 
 		if ( Fns::product_has_applied_filters( 'shop' ) || Fns::product_has_applied_filters( 'archive' ) || 'rtsb_builder' === get_post_type( get_the_ID() ) ) {
-			echo '<div class="rtsb-active-filters-wrapper"></div>';
+			$rtsb_active_filters_html = Fns::get_active_filters_html();
+			$rtsb_wrapper_style       = '' !== $rtsb_active_filters_html ? ' style="' . esc_attr( 'display:block;' ) . '"' : '';
+			echo '<div class="rtsb-active-filters-wrapper"' . $rtsb_wrapper_style . '>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Style value is escaped above.
+			Fns::print_html( $rtsb_active_filters_html, true );
+			echo '</div>';
 		}
 
 		// column_per_row.
@@ -503,7 +525,7 @@ class Render {
 			}
 
 			// Pagination.
-			$this->html .= '<div class="rtsb-archive-pagination-wrap">';
+			$this->html .= '<div class="rtsb-archive-pagination-wrap" data-per-page="' . absint( $posts_per_page ) . '">';
 
 			if ( $pagination ) {
 				if ( Fns::product_filters_has_ajax( apply_filters( 'rtsb/builder/set/current/page/type', '' ) ) ) {
@@ -557,7 +579,7 @@ class Render {
 			$this->no_products_msg( $metas );
 		}
 
-		if ( $is_preview ) {
+		if ( $is_preview || ! empty( $restore_query ) ) {
 			// phpcs:disable
 			$wp_query = $main_query;
 			$post     = $main_post;
@@ -566,6 +588,9 @@ class Render {
 			wp_reset_postdata();
 			// phpcs:enable
 		}
+
+		// Ensure the container's data-rtsb-ajax uses the same posts_per_page as the initial render.
+		$settings['pagination_per_page'] = $posts_per_page;
 
 		// Container.
 		$this->container( $this->html, $settings, 'rtsb-products-container', $template );
@@ -622,6 +647,11 @@ class Render {
 	 * @return string
 	 */
 	public function category_view( $template, $settings, $is_single = false ) {
+		// Reset the shared singleton's html buffer so leftover markup from a
+		// previously rendered widget (e.g. a products grid that ran earlier
+		// in the same request) doesn't get folded into the categories
+		// container by container() below.
+		$this->html         = '';
 		$this->get_settings = $settings;
 
 		$metas    = RenderHelpers::meta_dataset( $settings, $template, $this->get_settings_for_display() );
@@ -653,7 +683,7 @@ class Render {
 			// Row.
 			$this->row( $this->category_loop( $taxonomy_query, $metas, $template, $is_single ), $metas );
 		} else {
-			$this->html .= '<p>' . esc_html__( 'No categories found', 'shopbuilder' ) . '</p>';
+			$this->html = '<p>' . esc_html__( 'No categories found', 'shopbuilder' ) . '</p>';
 		}
 
 		// Container.
@@ -1170,8 +1200,7 @@ class Render {
 
 			$content .= '<a ' . $this->get_attribute_string( 'rtsb_add_to_cart_button_' . $id . $rand ) . '>';
 			$content .= $icon_html;
-			$content .= '<span class="text ' . ( ! empty( $success ) ? 'has-success-text' : 'no-success-text' ) . '" data-success="' . esc_html( $success ) . '" data-cart-text="' . ( ! empty( $text ) ? esc_attr( $text ) : $tooltip_mapping['simple'] ) . '" data-variable-text="' . esc_attr( $text_btn ) . '">' . esc_html( $text_btn ) . '</span>';
-			$content .= '<span></span>';
+			$content .= '<span class="button-text text ' . ( ! empty( $success ) ? 'has-success-text' : 'no-success-text' ) . '" data-success="' . esc_html( $success ) . '" data-cart-text="' . ( ! empty( $text ) ? esc_attr( $text ) : $tooltip_mapping['simple'] ) . '" data-variable-text="' . esc_attr( $text_btn ) . '">' . esc_html( $text_btn ) . '</span>';
 		} elseif ( 'external' === $type ) {
 			if ( ! empty( $ext_link ) ) {
 				$cart_attr['target'] = '_blank';
@@ -1183,7 +1212,7 @@ class Render {
 
 			$content .= '<a ' . $this->get_attribute_string( 'rtsb_add_to_cart_button_' . $id . $rand ) . '>';
 			$content .= $icon_html;
-			$content .= '<span class="text">' . ( ! empty( $btn_txt ) ? esc_html( $btn_txt ) : esc_html__( 'Buy Product', 'shopbuilder' ) ) . '</span>';
+			$content .= '<span class="button-text text">' . ( ! empty( $btn_txt ) ? esc_html( $btn_txt ) : esc_html__( 'Buy Product', 'shopbuilder' ) ) . '</span>';
 		} else {
 			$cart_attr['href']      = $cart_attr['href'] . '?add-to-cart=' . absint( $id );
 			$cart_attr['class']    .= ' rtsb-add-to-cart-btn';
@@ -1194,8 +1223,7 @@ class Render {
 
 			$content .= '<a ' . $this->get_attribute_string( 'rtsb_add_to_cart_button_' . $id . $rand ) . '>';
 			$content .= $icon_html;
-			$content .= '<span class="text ' . ( ! empty( $success ) ? 'has-success-text' : 'no-success-text' ) . '" data-success="' . esc_html( $success ) . '">' . esc_html( $text ) . '</span>';
-			$content .= '<span></span>';
+			$content .= '<span class="button-text text ' . ( ! empty( $success ) ? 'has-success-text' : 'no-success-text' ) . '" data-success="' . esc_html( $success ) . '">' . esc_html( $text ) . '</span>';
 		}
 
 		$content .= '</a>';

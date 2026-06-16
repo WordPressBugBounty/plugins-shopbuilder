@@ -40,6 +40,8 @@ class ShopifyCheckout {
 		$shopify_checkout_options = $this->options;
 		add_filter( 'template_include', [ $this, 'custom_checkout_template' ], 99 );
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_public_scripts' ], 99 );
+		add_action( 'wp_enqueue_scripts', [ $this, 'disable_elementor_assets' ], 100 );
+		add_action( 'wp_print_scripts', [ $this, 'disable_elementor_assets' ], 100 );
 		do_action( 'rtsb/loaded/shopify/checkout' );
 	}
 	/**
@@ -50,16 +52,64 @@ class ShopifyCheckout {
 		if ( defined( 'RTSBPRO_VERSION' ) && version_compare( RTSBPRO_VERSION, '1.8.0', '<' ) ) {
 			return $template;
 		}
-		$is_checkout_page = is_checkout() && ! is_order_received_page() && ! is_checkout_pay_page();
-		if ( ! $is_checkout_page ) {
+		if ( ! $this->is_shopify_checkout_page() ) {
 			return $template;
 		}
 		$shopify_template = 'shopify-checkout/checkout';
 		$custom_template  = Fns::locate_template( $shopify_template );
-		if ( is_checkout() && file_exists( $custom_template ) ) {
+		if ( file_exists( $custom_template ) ) {
 			return $custom_template;
 		}
 		return $template;
+	}
+
+	/**
+	 * Determine if the current request will render the Shopify-style checkout template.
+	 *
+	 * @return bool True when on the WooCommerce checkout page (not order-received, not pay page).
+	 */
+	public function is_shopify_checkout_page() {
+		if ( ! function_exists( 'is_checkout' ) ) {
+			return false;
+		}
+		return is_checkout() && ! is_order_received_page() && ! is_checkout_pay_page();
+	}
+
+	/**
+	 * Dequeue/deregister Elementor frontend scripts on the Shopify checkout page.
+	 *
+	 * The Shopify-style checkout overrides the page template, so Elementor does
+	 * not localize `elementorFrontendConfig`. Any Elementor frontend script that
+	 * still loads (via theme header/footer or other plugins) throws
+	 * "elementorFrontendConfig is not defined". Strip those handles here so the
+	 * Shopify checkout stays fully independent of Elementor JS.
+	 *
+	 * Filterable via `rtsb/shopify_checkout/disable_elementor` (bool) and
+	 * `rtsb/shopify_checkout/dequeue_handles` (array of script handles).
+	 *
+	 * @return void
+	 */
+	public function disable_elementor_assets() {
+		if ( ! $this->is_shopify_checkout_page() ) {
+			return;
+		}
+		if ( ! apply_filters( 'rtsb/shopify_checkout/disable_elementor', true ) ) {
+			return;
+		}
+		$handles = apply_filters(
+			'rtsb/shopify_checkout/dequeue_handles',
+			[
+				'elementor-frontend',
+				'elementor-frontend-modules',
+				'elementor-pro-frontend',
+				'elementor-sticky',
+				'elementor-waypoints',
+			]
+		);
+		foreach ( $handles as $handle ) {
+			wp_dequeue_script( $handle );
+			wp_deregister_script( $handle );
+		}
 	}
 
 	/**
@@ -72,6 +122,27 @@ class ShopifyCheckout {
 			'shopify-checkout',
 			[
 				'type' => 'css',
+			]
+		);
+
+		// The Shopify-style checkout template always renders `.rtsb-sticky-element`,
+		// which the frontend bundle initialises via `theiaStickySidebar()`. Ensure
+		// the vendor handle is enqueued whenever it is registered (Pro is active),
+		// regardless of multi-step mode, so `$().theiaStickySidebar is not a function`
+		// can never occur on the Shopify checkout page.
+		if ( $this->is_shopify_checkout_page() && wp_script_is( 'rtsb-sticky-sidebar', 'registered' ) ) {
+			wp_enqueue_script( 'rtsb-sticky-sidebar' );
+		}
+
+		// Flag for frontend JS modules to skip Elementor-dependent code paths.
+		$is_shopify_checkout = $this->is_shopify_checkout_page();
+		$disable_elementor   = $is_shopify_checkout && apply_filters( 'rtsb/shopify_checkout/disable_elementor', true );
+		wp_localize_script(
+			Fns::optimized_handle( 'rtsb-public' ),
+			'rtsbShopifyCheckoutMeta',
+			[
+				'isShopifyCheckout' => $is_shopify_checkout,
+				'disableElementor'  => $disable_elementor,
 			]
 		);
 
@@ -97,6 +168,15 @@ class ShopifyCheckout {
             'header_cart_icon_hover_color'          => [ 'selector' => "$cart_icon:hover", 'property' => 'color' ],
             'header_cart_icon_font_size'            => [ 'selector' => $cart_icon, 'property' => 'font-size', 'unit' => 'px' ],
             'shopify_cart_icon_height'              => [ 'selector' => "$cart_icon :is(svg, img)", 'property' => 'height', 'unit' => 'px' ],
+            'cart_button_height'                    => [ 'selector' => $cart_icon, 'property' => 'height', 'unit' => 'px' ],
+            'cart_button_width'                     => [ 'selector' => $cart_icon, 'property' => 'width', 'unit' => 'px' ],
+            'cart_button_padding'                   => [ 'selector' => $cart_icon, 'property' => 'padding', 'unit' => 'px' ],
+            'cart_button_border_style'              => [ 'selector' => $cart_icon, 'property' => 'border-style' ],
+            'cart_button_border_width'              => [ 'selector' => $cart_icon, 'property' => 'border-width', 'unit' => 'px' ],
+            'cart_button_border_color'              => [ 'selector' => $cart_icon, 'property' => 'border-color' ],
+            'cart_button_border_radius'             => [ 'selector' => $cart_icon, 'property' => 'border-radius', 'unit' => 'px' ],
+            'cart_button_bg_color'                  => [ 'selector' => $cart_icon, 'property' => 'background-color' ],
+            'cart_button_hover_bg_color'            => [ 'selector' => "$cart_icon:hover", 'property' => 'background-color' ],
             'step_menu_color'                       => [ 'selector' => $step_menu_selector, 'property' => 'color' ],
             'step_menu_hover_color'                 => [ 'selector' => "$step_menu_selector:hover, $step_menu_active_selector", 'property' => 'color' ],
             'step_menu_font_size'                   => [ 'selector' => $step_menu_selector, 'property' => 'font-size', 'unit' => 'px' ],

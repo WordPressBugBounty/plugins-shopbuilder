@@ -64,6 +64,19 @@ class CreateTemplate {
 			wp_send_json( $return );
 		}
 
+		// Nonce verified above.
+		$can_save = apply_filters( 'rtsb/builder/create_template/can_save', true, $page_type, $_POST ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+
+		if ( true !== $can_save ) {
+			wp_send_json(
+				[
+					'success' => false,
+					'post_id' => $page_id,
+					'message' => is_string( $can_save ) ? $can_save : esc_html__( 'Template cannot be saved.', 'shopbuilder' ),
+				]
+			);
+		}
+
 		add_filter(
 			'pre_option_elementor_unfiltered_files_upload',
 			function () {
@@ -115,17 +128,30 @@ class CreateTemplate {
 				update_post_meta( $page_id, '_is_product_page_template_for', $template_for );
 			}
 
-			$has_default = TemplateSettings::instance()->get_option( $option_name );
+			$has_default     = TemplateSettings::instance()->get_option( $option_name );
+			$singleton_types = apply_filters(
+				'rtsb/builder/singleton_types',
+				array_keys( BuilderFns::builder_page_types() )
+			);
+			$is_pool_type    = ! in_array( $page_type, $singleton_types, true );
 			if ( ( 'product' === $page_type && 'all_products' !== $template_for ) || ( 'archive' === $page_type && count( $selected_category ) ) ) {
 				if ( ! $has_default ) {
 					TemplateSettings::instance()->set_option( $option_name, '' );
 				}
 			} else {
 				if ( 'default_template' === $default_template ) {
-					TemplateSettings::instance()->set_option( $option_name, $page_id );
+					if ( $is_pool_type ) {
+						update_post_meta( $page_id, '_rtsb_tb_enabled_in_pool', 'on' );
+					} else {
+						TemplateSettings::instance()->set_option( $option_name, $page_id );
+					}
 				} else {
-					if ( ! $has_default ) {
-						TemplateSettings::instance()->set_option( $option_name, '' );
+					if ( $is_pool_type ) {
+						delete_post_meta( $page_id, '_rtsb_tb_enabled_in_pool' );
+					} else {
+						if ( ! $has_default ) {
+							TemplateSettings::instance()->set_option( $option_name, '' );
+						}
 					}
 				}
 			}

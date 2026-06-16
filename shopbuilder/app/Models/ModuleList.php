@@ -8,6 +8,7 @@
 namespace RadiusTheme\SB\Models;
 
 use RadiusTheme\SB\Helpers\Fns;
+use RadiusTheme\SB\Helpers\SvgIcons;
 use RadiusTheme\SB\Models\Base\ListModel;
 use RadiusTheme\SB\Modules\Badges\Badges;
 use RadiusTheme\SB\Modules\CheckoutEditor\CheckoutFns;
@@ -68,7 +69,6 @@ class ModuleList extends ListModel {
 				'package'      => 'free',
 				'active'       => 'on',
 				'base_class'   => VariationSwatches::class,
-				'category'     => 'general',
 				'active_field' => [
 					'label' => esc_html__( 'Enable Variation Swatches Module?', 'shopbuilder' ),
 					'help'  => esc_html__( 'Switch on to enable variation swatches module.', 'shopbuilder' ),
@@ -96,7 +96,6 @@ class ModuleList extends ListModel {
 				[
 					'id'                => 'variation_swatches',
 					'external'          => true,
-					'category'          => 'general',
 					'title'             => esc_html__( 'Variation Swatches', 'shopbuilder' ),
 					'pluginSlug'        => 'woo-product-variation-swatches',
 					'pluginIsInstalled' => Fns::check_plugin_installed( 'woo-product-variation-swatches/woo-product-variation-swatches.php' ),
@@ -128,7 +127,6 @@ class ModuleList extends ListModel {
 				'package'      => 'free',
 				'active'       => 'on',
 				'base_class'   => VariationGalleryInit::class,
-				'category'     => 'general',
 				'active_field' => [
 					'label' => esc_html__( 'Enable Variation Gallery Module?', 'shopbuilder' ),
 					'help'  => esc_html__( 'Switch on to enable variation gallery module.', 'shopbuilder' ),
@@ -152,7 +150,6 @@ class ModuleList extends ListModel {
 				[
 					'id'                => 'variation_gallery',
 					'external'          => true,
-					'category'          => 'general',
 					'title'             => esc_html__( 'Variation Gallery', 'shopbuilder' ),
 					'pluginSlug'        => 'woo-product-variation-gallery',
 					'pluginIsInstalled' => Fns::check_plugin_installed( 'woo-product-variation-gallery/woo-product-variation-gallery.php' ),
@@ -182,7 +179,6 @@ class ModuleList extends ListModel {
 					'id'           => 'quick_view',
 					'title'        => esc_html__( 'Quick View', 'shopbuilder' ),
 					'base_class'   => QuickView::class,
-					'category'     => 'general',
 					'active'       => 'on',
 					'package'      => 'free',
 					'active_field' => [
@@ -204,12 +200,12 @@ class ModuleList extends ListModel {
 								'id'      => 'loop_btn_position',
 								'type'    => 'select',
 								'value'   => 'custom',
-								'label'   => esc_html__( 'Shop Page Button Position', 'shopbuilder' ),
-								'help'    => esc_html__( 'You can manage quick view button position in shop page.', 'shopbuilder' ),
+								'label'   => esc_html__( 'Showcase Button Position', 'shopbuilder' ),
+								'help'    => esc_html__( 'Manage quick view button position in product showcases (Shop, Related, Upsells, Cross-sells, etc.).', 'shopbuilder' ),
 								'tab'     => 'general',
 								'options' => [
-									'before_add_to_cart' => esc_html__( 'Before Add To Cart', 'shopbuilder' ),
-									'after_add_to_cart'  => esc_html__( 'After Add To Cart', 'shopbuilder' ),
+									'before_add_to_cart' => esc_html__( 'Above Add To Cart', 'shopbuilder' ),
+									'after_add_to_cart'  => esc_html__( 'Below Add To Cart', 'shopbuilder' ),
 									'shortcode'          => esc_html__( 'Use Shortcode', 'shopbuilder' ),
 									'custom'             => esc_html__( 'Custom Position', 'shopbuilder' ),
 								],
@@ -295,9 +291,9 @@ class ModuleList extends ListModel {
 
 							'modal_height'                => [
 								'id'    => 'modal_height',
-								'label' => esc_html__( 'Modal Height', 'shopbuilder' ),
-								'help'  => esc_html__( 'Quick view button modal height. Example: 450px', 'shopbuilder' ),
-								'type'  => 'text',
+								'label' => esc_html__( 'Modal Height (in px)', 'shopbuilder' ),
+								'help'  => esc_html__( 'Quick view button modal height. Example: 450', 'shopbuilder' ),
+								'type'  => 'number',
 								'value' => '',
 								'tab'   => 'style',
 							],
@@ -348,7 +344,6 @@ class ModuleList extends ListModel {
 					'package'      => 'free',
 					'active'       => 'on',
 					'base_class'   => Wishlist::class,
-					'category'     => 'general',
 					'active_field' => [
 						'label' => esc_html__( 'Enable Wishlist?', 'shopbuilder' ),
 						'help'  => esc_html__( 'Switch on to enable wishlist module.', 'shopbuilder' ),
@@ -382,25 +377,25 @@ class ModuleList extends ListModel {
 							'wishlist_shop_wrapper_heading' => [
 								'id'    => 'wishlist_shop_wrapper_heading',
 								'type'  => 'title',
-								'label' => esc_html__( 'Shop Page Settings', 'shopbuilder' ),
+								'label' => esc_html__( 'Product Showcase Settings', 'shopbuilder' ),
 								'tab'   => 'button',
 							],
 							'show_btn_on_loop'             => [
 								'id'    => 'show_btn_on_loop',
 								'value' => 'on',
 								'type'  => 'switch',
-								'label' => esc_html__( 'Show in Shop Page', 'shopbuilder' ),
+								'label' => esc_html__( 'Show in Product Showcase', 'shopbuilder' ),
 								'tab'   => 'button',
 							],
 							'loop_btn_position'            => [
 								'id'         => 'loop_btn_position',
 								'type'       => 'select',
 								'value'      => 'custom',
-								'label'      => esc_html__( 'Shop Page Button Position', 'shopbuilder' ),
-								'help'       => esc_html__( 'You can manage wishlist button position in shop page.', 'shopbuilder' ),
+								'label'      => esc_html__( 'Showcase Button Position', 'shopbuilder' ),
+								'help'       => esc_html__( 'Manage wishlist button position in product showcases (Shop, Related, Upsells, Cross-sells, etc.).', 'shopbuilder' ),
 								'options'    => [
-									'before_add_to_cart' => esc_html__( 'Before Add To Cart', 'shopbuilder' ),
-									'after_add_to_cart'  => esc_html__( 'After Add To Cart', 'shopbuilder' ),
+									'before_add_to_cart' => esc_html__( 'Above Add To Cart', 'shopbuilder' ),
+									'after_add_to_cart'  => esc_html__( 'Below Add To Cart', 'shopbuilder' ),
 									'shortcode'          => esc_html__( 'Use Shortcode', 'shopbuilder' ),
 									'custom'             => esc_html__( 'Custom Position', 'shopbuilder' ),
 								],
@@ -509,8 +504,8 @@ class ModuleList extends ListModel {
 								'type'       => 'select',
 								'value'      => 'custom',
 								'options'    => [
-									'before_add_to_cart' => esc_html__( 'Before Add To Cart', 'shopbuilder' ),
-									'after_add_to_cart'  => esc_html__( 'After Add To Cart', 'shopbuilder' ),
+									'before_add_to_cart' => esc_html__( 'Above Add To Cart', 'shopbuilder' ),
+									'after_add_to_cart'  => esc_html__( 'Below Add To Cart', 'shopbuilder' ),
 									'after_thumbnail'    => esc_html__( 'After Image', 'shopbuilder' ),
 									'after_summary'      => esc_html__( 'After Summary', 'shopbuilder' ),
 									'shortcode'          => esc_html__( 'Use Shortcode', 'shopbuilder' ),
@@ -715,7 +710,6 @@ class ModuleList extends ListModel {
 				[
 					'id'           => 'compare',
 					'base_class'   => Compare::class,
-					'category'     => 'general',
 					'title'        => esc_html__( 'Product Compare', 'shopbuilder' ),
 					'package'      => 'free',
 					'active'       => 'on',
@@ -729,25 +723,25 @@ class ModuleList extends ListModel {
 							'compare_shop_wrapper_heading' => [
 								'id'    => 'compare_shop_wrapper_heading',
 								'type'  => 'title',
-								'label' => esc_html__( 'Shop Page Settings', 'shopbuilder' ),
+								'label' => esc_html__( 'Product Showcase Settings', 'shopbuilder' ),
 								'tab'   => 'button',
 							],
 							'show_btn_on_loop'             => [
 								'id'    => 'show_btn_on_loop',
 								'value' => 'on',
 								'type'  => 'switch',
-								'label' => esc_html__( 'Show in Shop Page', 'shopbuilder' ),
+								'label' => esc_html__( 'Show in Product Showcase', 'shopbuilder' ),
 								'tab'   => 'button',
 							],
 							'loop_btn_position'            => [
 								'id'         => 'loop_btn_position',
 								'type'       => 'select',
 								'value'      => 'custom',
-								'label'      => esc_html__( 'Shop Page Button Position', 'shopbuilder' ),
-								'help'       => esc_html__( 'You can manage wishlist button position in shop page.', 'shopbuilder' ),
+								'label'      => esc_html__( 'Showcase Button Position', 'shopbuilder' ),
+								'help'       => esc_html__( 'Manage compare button position in product showcases (Shop, Related, Upsells, Cross-sells, etc.).', 'shopbuilder' ),
 								'options'    => [
-									'before_add_to_cart' => esc_html__( 'Before Add To Cart', 'shopbuilder' ),
-									'after_add_to_cart'  => esc_html__( 'After Add To Cart', 'shopbuilder' ),
+									'before_add_to_cart' => esc_html__( 'Above Add To Cart', 'shopbuilder' ),
+									'after_add_to_cart'  => esc_html__( 'Below Add To Cart', 'shopbuilder' ),
 									'shortcode'          => esc_html__( 'Use Shortcode', 'shopbuilder' ),
 									'custom'             => esc_html__( 'Custom Position', 'shopbuilder' ),
 								],
@@ -856,8 +850,8 @@ class ModuleList extends ListModel {
 								'type'       => 'select',
 								'value'      => 'custom',
 								'options'    => [
-									'before_add_to_cart' => esc_html__( 'Before Add To Cart', 'shopbuilder' ),
-									'after_add_to_cart'  => esc_html__( 'After Add To Cart', 'shopbuilder' ),
+									'before_add_to_cart' => esc_html__( 'Above Add To Cart', 'shopbuilder' ),
+									'after_add_to_cart'  => esc_html__( 'Below Add To Cart', 'shopbuilder' ),
 									'after_thumbnail'    => esc_html__( 'After Image', 'shopbuilder' ),
 									'after_summary'      => esc_html__( 'After Summary', 'shopbuilder' ),
 									'shortcode'          => esc_html__( 'Use Shortcode', 'shopbuilder' ),
@@ -1597,8 +1591,181 @@ class ModuleList extends ListModel {
 					'fields'       => Fns::pro_version_notice( '2.1.11', 'general', 'ShopBuilder Pro', false ),
 				]
 			),
+			'mega_menu'                     => apply_filters(
+				'rtsb/module/mega_menu/options',
+				[
+					'id'           => 'mega_menu',
+					'active'       => '',
+					'title'        => esc_html__( 'Mega Menu', 'shopbuilder' ),
+					'active_field' => [
+						'label' => esc_html__( 'Enable Mega Menu?', 'shopbuilder' ),
+						'help'  => esc_html__( 'Switch on to enable Mega Menu module.', 'shopbuilder' ),
+					],
+					'package'      => $this->pro_package(),
+					'fields'       => Fns::pro_version_notice( '2.1.12', 'general', 'ShopBuilder Pro', false ),
+				]
+			),
 		];
+		// Inject icons, descriptions and links per module.
+		$meta = self::module_meta();
+		foreach ( $list as $key => &$item ) {
+			if ( isset( $meta[ $key ] ) ) {
+				$item['icon']        = SvgIcons::get( $meta[ $key ]['icon'] ?? 'default' );
+				$item['description'] = $meta[ $key ]['desc'] ?? '';
+			} else {
+				$item['icon']        = SvgIcons::get( 'default' );
+				$item['description'] = '';
+			}
+			$item['links'] = [
+				'doc'   => '',
+				'video' => '',
+			];
+		}
+		unset( $item );
+
 		return apply_filters( 'rtsb/core/modules/raw_list', $list );
+	}
+
+	/**
+	 * Module icon and description metadata.
+	 *
+	 * @return array<string, array{icon: string, desc: string}>
+	 */
+	private static function module_meta() {
+		return [
+			'variation_swatches'            => [
+				'icon' => 'dots',
+				'desc' => 'Replace dropdowns with color, image, label, or radio swatches.',
+			],
+			'variation_gallery'             => [
+				'icon' => 'image',
+				'desc' => 'Show a unique product gallery for every variation.',
+			],
+			'quick_view'                    => [
+				'icon' => 'eye',
+				'desc' => 'Open a popup product preview from grids without a full page load.',
+			],
+			'wishlist'                      => [
+				'icon' => 'heart',
+				'desc' => 'Let customers save products to a wishlist they can revisit or share.',
+			],
+			'compare'                       => [
+				'icon' => 'flip_box',
+				'desc' => 'Side-by-side product attribute comparison with sticky header.',
+			],
+			'product_badges'                => [
+				'icon' => 'onsale',
+				'desc' => 'Sale, new, featured, low-stock, and custom badges with rules.',
+			],
+			'checkout_fields_editor'        => [
+				'icon' => 'form',
+				'desc' => 'Add, edit, reorder, or remove billing, shipping, and checkout fields.',
+			],
+			'shopify_checkout'              => [
+				'icon' => 'cart',
+				'desc' => 'Single-page Shopify-style checkout with autofill and express pay.',
+			],
+			'mini_cart'                     => [
+				'icon' => 'cart',
+				'desc' => 'Sliding cart drawer with AJAX add-to-cart and quantity edits.',
+			],
+			'product_size_chart'            => [
+				'icon' => 'ruler',
+				'desc' => 'Per-category size guides with units, conversion, and modal preview.',
+			],
+			'customize_my_account'          => [
+				'icon' => 'user',
+				'desc' => 'Build the customer dashboard with custom tabs, fields, and layouts.',
+			],
+			'pre_order'                     => [
+				'icon' => 'countdown',
+				'desc' => 'Accept orders before launch with deposit and scheduled release.',
+			],
+			'currency_switcher'             => [
+				'icon' => 'currency',
+				'desc' => 'Geo-detected switcher with live exchange rates and pricing rules.',
+			],
+			'product_add_ons'               => [
+				'icon' => 'grid',
+				'desc' => 'Optional extras like gift wrap and warranties with conditional pricing.',
+			],
+			'sales_notification'            => [
+				'icon' => 'notification',
+				'desc' => 'Real-time sales popups to create social proof and urgency.',
+			],
+			'flash_sale_countdown'          => [
+				'icon' => 'flash',
+				'desc' => 'Scheduled flash sale countdown timers with auto-pricing.',
+			],
+			'quick_checkout'                => [
+				'icon' => 'checkout',
+				'desc' => 'One-click checkout from product pages, skipping the cart.',
+			],
+			'multi_step_checkout'           => [
+				'icon' => 'multi_step',
+				'desc' => 'Break checkout into guided steps with progress indicator.',
+			],
+			'back_order'                    => [
+				'icon' => 'document',
+				'desc' => 'Allow orders on out-of-stock products with availability dates.',
+			],
+			'sticky_add_to_cart'            => [
+				'icon' => 'button',
+				'desc' => 'Sticky add-to-cart bar that follows the user on product pages.',
+			],
+			'smart_coupons'                 => [
+				'icon' => 'discount',
+				'desc' => 'Advanced coupon rules, URL coupons, and auto-apply conditions.',
+			],
+			'bulk_discounts'                => [
+				'icon' => 'pricing',
+				'desc' => 'Tiered quantity-based pricing tables for bulk purchases.',
+			],
+			'bogo_bxgy_free_gift_discounts' => [
+				'icon' => 'star',
+				'desc' => 'Buy-one-get-one, buy-X-get-Y, and free gift promotions.',
+			],
+			'partial_pay'                   => [
+				'icon' => 'payment',
+				'desc' => 'Allow customers to pay in installments or deposits.',
+			],
+			'gift_card'                     => [
+				'icon' => 'coupon',
+				'desc' => 'Digital gift cards with email delivery and balance management.',
+			],
+			'pdf_invoice'                   => [
+				'icon' => 'note',
+				'desc' => 'Auto-generated PDF invoices and packing slips for orders.',
+			],
+			'extended_cross_sell'           => [
+				'icon' => 'grid',
+				'desc' => 'Extended cross-sell recommendations across cart and checkout.',
+			],
+			'abandoned_cart_recovery'       => [
+				'icon' => 'cart',
+				'desc' => 'Automated email nudges, discount triggers, and recovery analytics.',
+			],
+			'popup_builder'                 => [
+				'icon' => 'popup',
+				'desc' => 'Create promotional popups with triggers, targeting, and templates.',
+			],
+			'save_for_buy_later'            => [
+				'icon' => 'heart',
+				'desc' => 'Save cart items for later purchase with one-click restore.',
+			],
+			'catalog_mode'                  => [
+				'icon' => 'list',
+				'desc' => 'Hide prices and add-to-cart buttons for catalog-only browsing.',
+			],
+			'back_in_stock_notifier'        => [
+				'icon' => 'notification',
+				'desc' => 'Email notifications when out-of-stock products become available.',
+			],
+			'mega_menu'                     => [
+				'icon' => 'grid',
+				'desc' => 'Multi-column mega menus with widgets, images, and icons.',
+			],
+		];
 	}
 	/**
 	 * Get All Menu
@@ -2884,6 +3051,177 @@ class ModuleList extends ListModel {
 					],
 				],
 			],
+			'cart_button_styles_settings'           => [
+				'id'         => 'cart_button_styles_settings',
+				'type'       => 'title',
+				'tab'        => 'styles',
+				'label'      => esc_html__( 'Cart Button Style', 'shopbuilder' ),
+				'dependency' => [
+					'rules' => [
+						[
+							'item'     => 'modules.shopify_checkout.cart_icon_source',
+							'value'    => 'select_icon',
+							'operator' => '==',
+						],
+					],
+				],
+			],
+			'cart_button_height'                    => [
+				'id'         => 'cart_button_height',
+				'label'      => esc_html__( 'Button Height (px)', 'shopbuilder' ),
+				'type'       => 'slider',
+				'min'        => 10,
+				'max'        => 200,
+				'unit'       => 'px',
+				'tab'        => 'styles',
+				'dependency' => [
+					'rules' => [
+						[
+							'item'     => 'modules.shopify_checkout.cart_icon_source',
+							'value'    => 'select_icon',
+							'operator' => '==',
+						],
+					],
+				],
+			],
+			'cart_button_width'                     => [
+				'id'         => 'cart_button_width',
+				'label'      => esc_html__( 'Button Width (px)', 'shopbuilder' ),
+				'type'       => 'slider',
+				'min'        => 10,
+				'max'        => 200,
+				'unit'       => 'px',
+				'tab'        => 'styles',
+				'dependency' => [
+					'rules' => [
+						[
+							'item'     => 'modules.shopify_checkout.cart_icon_source',
+							'value'    => 'select_icon',
+							'operator' => '==',
+						],
+					],
+				],
+			],
+			'cart_button_padding'                   => [
+				'id'         => 'cart_button_padding',
+				'label'      => esc_html__( 'Padding (px)', 'shopbuilder' ),
+				'type'       => 'slider',
+				'min'        => 0,
+				'max'        => 50,
+				'unit'       => 'px',
+				'tab'        => 'styles',
+				'dependency' => [
+					'rules' => [
+						[
+							'item'     => 'modules.shopify_checkout.cart_icon_source',
+							'value'    => 'select_icon',
+							'operator' => '==',
+						],
+					],
+				],
+			],
+			'cart_button_border_style'              => [
+				'id'         => 'cart_button_border_style',
+				'label'      => esc_html__( 'Border Style', 'shopbuilder' ),
+				'type'       => 'select',
+				'options'    => [
+					'none'   => esc_html__( 'None', 'shopbuilder' ),
+					'solid'  => esc_html__( 'Solid', 'shopbuilder' ),
+					'dashed' => esc_html__( 'Dashed', 'shopbuilder' ),
+					'dotted' => esc_html__( 'Dotted', 'shopbuilder' ),
+				],
+				'tab'        => 'styles',
+				'dependency' => [
+					'rules' => [
+						[
+							'item'     => 'modules.shopify_checkout.cart_icon_source',
+							'value'    => 'select_icon',
+							'operator' => '==',
+						],
+					],
+				],
+			],
+			'cart_button_border_width'              => [
+				'id'         => 'cart_button_border_width',
+				'label'      => esc_html__( 'Border Width (px)', 'shopbuilder' ),
+				'type'       => 'slider',
+				'min'        => 0,
+				'max'        => 10,
+				'unit'       => 'px',
+				'tab'        => 'styles',
+				'dependency' => [
+					'rules' => [
+						[
+							'item'     => 'modules.shopify_checkout.cart_icon_source',
+							'value'    => 'select_icon',
+							'operator' => '==',
+						],
+					],
+				],
+			],
+			'cart_button_border_color'              => [
+				'id'         => 'cart_button_border_color',
+				'label'      => esc_html__( 'Border Color', 'shopbuilder' ),
+				'tab'        => 'styles',
+				'type'       => 'color',
+				'dependency' => [
+					'rules' => [
+						[
+							'item'     => 'modules.shopify_checkout.cart_icon_source',
+							'value'    => 'select_icon',
+							'operator' => '==',
+						],
+					],
+				],
+			],
+			'cart_button_border_radius'             => [
+				'id'         => 'cart_button_border_radius',
+				'label'      => esc_html__( 'Border Radius (px)', 'shopbuilder' ),
+				'type'       => 'slider',
+				'min'        => 0,
+				'max'        => 100,
+				'unit'       => 'px',
+				'tab'        => 'styles',
+				'dependency' => [
+					'rules' => [
+						[
+							'item'     => 'modules.shopify_checkout.cart_icon_source',
+							'value'    => 'select_icon',
+							'operator' => '==',
+						],
+					],
+				],
+			],
+			'cart_button_bg_color'                  => [
+				'id'         => 'cart_button_bg_color',
+				'label'      => esc_html__( 'Background Color', 'shopbuilder' ),
+				'tab'        => 'styles',
+				'type'       => 'color',
+				'dependency' => [
+					'rules' => [
+						[
+							'item'     => 'modules.shopify_checkout.cart_icon_source',
+							'value'    => 'select_icon',
+							'operator' => '==',
+						],
+					],
+				],
+			],
+			'cart_button_hover_bg_color'            => [
+				'id'         => 'cart_button_hover_bg_color',
+				'label'      => esc_html__( 'Hover Background Color', 'shopbuilder' ),
+				'tab'        => 'styles',
+				'type'       => 'color',
+				'dependency' => [
+					'rules' => [
+						[
+							'item'     => 'modules.shopify_checkout.cart_icon_source',
+							'value'    => 'select_icon',
+							'operator' => '==',
+						],
+					],
+				],
+			],
 			'footer_menu_styles_settings'           => [
 				'id'    => 'footer_menu_styles_settings',
 				'type'  => 'title',
@@ -3105,8 +3443,8 @@ class ModuleList extends ListModel {
 						'above_image'          => esc_html__( 'Floating Above Image', 'shopbuilder' ),
 						'before_product_title' => esc_html__( 'Before Product Title', 'shopbuilder' ),
 						'after_product_title'  => esc_html__( 'After Product Title', 'shopbuilder' ),
-						'before_add_to_cart'   => esc_html__( 'Before Add To Cart', 'shopbuilder' ),
-						'after_add_to_cart'    => esc_html__( 'After Add To Cart', 'shopbuilder' ),
+						'before_add_to_cart'   => esc_html__( 'Above Add To Cart', 'shopbuilder' ),
+						'after_add_to_cart'    => esc_html__( 'Below Add To Cart', 'shopbuilder' ),
 						'custom'               => esc_html__( 'Custom Position', 'shopbuilder' ),
 					],
 					'tab'     => 'group',
@@ -3187,8 +3525,8 @@ class ModuleList extends ListModel {
 					'help'    => esc_html__( 'Choose the group badges position in product page.', 'shopbuilder' ),
 					'options' => [
 						'above_image'        => esc_html__( 'Floating Above Image', 'shopbuilder' ),
-						'before_add_to_cart' => esc_html__( 'Before Add To Cart', 'shopbuilder' ),
-						'after_add_to_cart'  => esc_html__( 'After Add To Cart', 'shopbuilder' ),
+						'before_add_to_cart' => esc_html__( 'Above Add To Cart', 'shopbuilder' ),
+						'after_add_to_cart'  => esc_html__( 'Below Add To Cart', 'shopbuilder' ),
 						'after_summary'      => esc_html__( 'After Summary', 'shopbuilder' ),
 						'after_short_desc'   => esc_html__( 'After Short Description', 'shopbuilder' ),
 						'shortcode'          => esc_html__( 'Use Shortcode', 'shopbuilder' ),
@@ -3796,24 +4134,6 @@ class ModuleList extends ListModel {
 					'help'  => esc_html__( 'Enable / Disable plugin default tooltip on each product attribute.', 'shopbuilder' ),
 					'tab'   => 'general',
 				],
-				'shape_style'                       => [
-					'id'      => 'shape_style',
-					'label'   => esc_html__( 'Default Shape Style', 'shopbuilder' ),
-					'help'    => esc_html__( 'Attribute Shape Style. Note: This option will not be applied to radio and button attributes.', 'shopbuilder' ),
-					'type'    => 'image_select',
-					'value'   => 'rounded',
-					'options' => [
-						'rounded' => [
-							'label' => esc_html__( 'Rounded Shape', 'shopbuilder' ),
-							'url'   => esc_url( rtsb()->get_assets_uri( 'images/variation-swatch/rounded-shape.svg' ) ),
-						],
-						'squared' => [
-							'label' => esc_html__( 'Squared Shape', 'shopbuilder' ),
-							'url'   => esc_url( rtsb()->get_assets_uri( 'images/variation-swatch/squared-shape.svg' ) ),
-						],
-					],
-					'tab'     => 'general',
-				],
 				'shape_style_checkmark'             => [
 					'id'      => 'shape_style_checkmark',
 					'type'    => 'switch',
@@ -4015,8 +4335,8 @@ class ModuleList extends ListModel {
 						'rtsb_showcase_swatches_positions',
 						[
 							'custom_hook'        => esc_html__( 'Custom Hook', 'shopbuilder' ),
-							'before_add_to_cart' => esc_html__( 'Before Add To Cart', 'shopbuilder' ),
-							'after_add_to_cart'  => esc_html__( 'After Add To Cart', 'shopbuilder' ),
+							'before_add_to_cart' => esc_html__( 'Above Add To Cart', 'shopbuilder' ),
+							'after_add_to_cart'  => esc_html__( 'Below Add To Cart', 'shopbuilder' ),
 						]
 					),
 					'dependency' => [
@@ -4249,7 +4569,7 @@ class ModuleList extends ListModel {
 					'id'    => 'attribute_border_radius',
 					'label' => esc_html__( 'Attribute Border Radius', 'shopbuilder' ),
 					'isPro' => ! rtsb()->has_pro(),
-					'help'  => esc_html__( 'Set the border radius (in px) for attribute items to control how rounded the corners appear.', 'shopbuilder' ),
+					'help'  => esc_html__( 'Set the border radius (in px) for attribute items. Use a small value for squared corners or a large value (e.g. 100+) for fully rounded / circular swatches.', 'shopbuilder' ),
 					'type'  => 'slider',
 					'min'   => 0,
 					'max'   => 200,
@@ -4313,6 +4633,17 @@ class ModuleList extends ListModel {
 					'value' => 16,
 					'tab'   => 'style',
 				],
+				'details_page_radio_size'           => [
+					'id'    => 'details_page_radio_size',
+					'label' => esc_html__( 'Radio Attribute Size', 'shopbuilder' ),
+					'help'  => esc_html__( 'Set the size (in px) for radio-button variation attributes. Independent from the Variation Item Width/Height settings.', 'shopbuilder' ),
+					'type'  => 'slider',
+					'min'   => 10,
+					'max'   => 80,
+					'unit'  => 'px',
+					'value' => 25,
+					'tab'   => 'style',
+				],
 				'showcase_attribute_size'           => [
 					'id'    => 'showcase_attribute_size',
 					'type'  => 'title',
@@ -4352,10 +4683,35 @@ class ModuleList extends ListModel {
 					'value' => 16,
 					'tab'   => 'style',
 				],
+				'showcase_radio_size'               => [
+					'id'    => 'showcase_radio_size',
+					'label' => esc_html__( 'Radio Attribute Size', 'shopbuilder' ),
+					'help'  => esc_html__( 'Set the size (in px) for radio-button variation attributes in shop/showcase contexts.', 'shopbuilder' ),
+					'type'  => 'slider',
+					'min'   => 10,
+					'max'   => 80,
+					'unit'  => 'px',
+					'value' => 25,
+					'tab'   => 'style',
+				],
 				'tooltip_style'                     => [
 					'id'    => 'tooltip_style',
 					'type'  => 'title',
 					'label' => esc_html__( 'Tooltip Style', 'shopbuilder' ),
+					'tab'   => 'style',
+				],
+				'tooltip_text_color'                => [
+					'id'    => 'tooltip_text_color',
+					'label' => esc_html__( 'Tooltip Text Color', 'shopbuilder' ),
+					'type'  => 'color',
+					'value' => '#ffffff',
+					'tab'   => 'style',
+				],
+				'tooltip_bg_color'                  => [
+					'id'    => 'tooltip_bg_color',
+					'label' => esc_html__( 'Tooltip Background Color', 'shopbuilder' ),
+					'type'  => 'color',
+					'value' => '#333333',
 					'tab'   => 'style',
 				],
 				'tooltip_images_padding'            => [
@@ -4368,27 +4724,14 @@ class ModuleList extends ListModel {
 					'value' => 3,
 					'tab'   => 'style',
 				],
-				'tooltip_bg_color'                  => [
-					'id'    => 'tooltip_bg_color',
-					'label' => esc_html__( 'Tooltip Background Color', 'shopbuilder' ),
-					'type'  => 'color',
-					'value' => '#333333',
-					'tab'   => 'style',
-				],
 				'tooltip_image_bg_color'            => [
-					'id'    => 'tooltip_bg_color',
+					'id'    => 'tooltip_image_bg_color',
 					'label' => esc_html__( 'Tooltip Image Background Color', 'shopbuilder' ),
 					'type'  => 'color',
 					'value' => '#333333',
 					'tab'   => 'style',
 				],
-				'tooltip_text_color'                => [
-					'id'    => 'tooltip_text_color',
-					'label' => esc_html__( 'Tooltip Text Color', 'shopbuilder' ),
-					'type'  => 'color',
-					'value' => '#ffffff',
-					'tab'   => 'style',
-				],
+
 			]
 		); // @phpstan-ignore-line
 	}
@@ -4399,21 +4742,27 @@ class ModuleList extends ListModel {
 		return apply_filters(
 			'rtsb/module/variation_gallery/fields',
 			[
-				'image_zoom'                   => [
+				'main_image_controls_title'        => [
+					'id'    => 'main_image_controls_title',
+					'type'  => 'title',
+					'label' => esc_html__( 'Main Image Controls', 'shopbuilder' ),
+					'tab'   => 'general',
+				],
+				'image_zoom'                       => [
 					'id'      => 'image_zoom',
 					'type'    => 'switch',
 					'default' => false,
 					'label'   => esc_html__( 'Zoom Gallery image', 'shopbuilder' ),
 					'tab'     => 'general',
 				],
-				'lightBox'                     => [
+				'lightBox'                         => [
 					'id'      => 'lightBox',
 					'type'    => 'switch',
 					'default' => false,
 					'label'   => esc_html__( 'Enable Images lightBox', 'shopbuilder' ),
 					'tab'     => 'general',
 				],
-				'lightBox_button_position'     => [
+				'lightBox_button_position'         => [
 					'id'      => 'lightBox_button_position',
 					'type'    => 'select',
 					'value'   => 'top-right',
@@ -4427,47 +4776,12 @@ class ModuleList extends ListModel {
 					],
 					'tab'     => 'general',
 				],
-				'thumbnails_columns'           => [
-					'id'    => 'thumbnails_columns',
-					'type'  => 'slider',
-					'label' => esc_html__( 'Thumbnails Items per row / slider view', 'shopbuilder' ),
-					'help'  => esc_html__( 'Product Thumbnails Item Image. Default value is: 4. Limit: 2-8. The field required for slider.', 'shopbuilder' ),
-					'min'   => 2,
-					'max'   => 8,
-					'unit'  => '',
-					'value' => 4,
-					'tab'   => 'general',
-				],
-				'thumbnails_gap'               => [
-					'id'    => 'thumbnails_gap',
-					'type'  => 'slider',
-					'label' => esc_html__( 'Thumbnails Gap', 'shopbuilder' ),
-					'help'  => esc_html__( 'Product Thumbnails Gap In Pixel. Default value is: 0. Limit: 0-50.', 'shopbuilder' ),
-					'min'   => 0,
-					'max'   => 50,
-					'unit'  => 'px',
-					'value' => 0,
-					'tab'   => 'general',
-				],
-				'gallery_style'                => [
-					'id'      => 'gallery_style',
-					'type'    => 'select',
-					'value'   => 'bottom',
-					'label'   => esc_html__( 'Gallery Style', 'shopbuilder' ),
-					'isPro'   => ! rtsb()->has_pro(),
-					'options' => [
-						'bottom' => esc_html__( 'Thumbnail Position Bottom', 'shopbuilder' ),
-						'left'   => esc_html__( 'Thumbnail Position Left', 'shopbuilder' ),
-						'right'  => esc_html__( 'Thumbnail Position Right', 'shopbuilder' ),
-						'grid'   => esc_html__( 'Grid View Images', 'shopbuilder' ),
-					],
-					'tab'     => 'general',
-				],
-				'adaptive_height'              => [
+
+				'adaptive_height'                  => [
 					'id'         => 'adaptive_height',
 					'type'       => 'switch',
 					'default'    => false,
-					'label'      => esc_html__( 'Main Slider Adaptive Height', 'shopbuilder' ),
+					'label'      => esc_html__( 'Main Images Slider Adaptive Height', 'shopbuilder' ),
 					'tab'        => 'general',
 					'dependency' => [
 						'rules' => [
@@ -4479,7 +4793,7 @@ class ModuleList extends ListModel {
 						],
 					],
 				],
-				'main_slider_alignment'        => [
+				'main_slider_alignment'            => [
 					'id'         => 'main_slider_alignment',
 					'type'       => 'switch',
 					'value'      => 'center',
@@ -4496,12 +4810,11 @@ class ModuleList extends ListModel {
 						],
 					],
 				],
-
-				'main_image_transition_effect' => [
+				'main_image_transition_effect'     => [
 					'id'         => 'main_image_transition_effect',
 					'type'       => 'select',
 					'value'      => 'slide',
-					'label'      => esc_html__( 'Main Image Transition Effect', 'shopbuilder' ),
+					'label'      => esc_html__( 'Transition Effect For Main Image Carousel', 'shopbuilder' ),
 					'isPro'      => ! rtsb()->has_pro(),
 					'options'    => [
 						'slide' => esc_html__( 'Slide', 'shopbuilder' ),
@@ -4518,47 +4831,89 @@ class ModuleList extends ListModel {
 						],
 					],
 				],
-				'thumb_image_section_width'    => [
-					'id'         => 'thumb_image_section_width',
-					'type'       => 'slider',
-					'label'      => esc_html__( 'Thumbnail Image Section Width', 'shopbuilder' ),
-					'help'       => esc_html__( 'Product Thumbnails Section Width In Pixel.', 'shopbuilder' ),
-					'min'        => 150,
-					'max'        => 1000,
-					'unit'       => 'px',
-					'value'      => 150,
-					'tab'        => 'general',
-					'dependency' => [
+				'preloader'                        => [
+					'id'      => 'preloader',
+					'type'    => 'switch',
+					'default' => false,
+					'label'   => esc_html__( 'Preloader', 'shopbuilder' ),
+					'help'    => esc_html__( 'Show a loading animation while the gallery images are being loaded.', 'shopbuilder' ),
+					'tab'     => 'general',
+				],
+				'preloader_image'                  => [
+					'id'          => 'preloader_image',
+					'type'        => 'fileupload',
+					'label'       => esc_html__( 'Preloader Image', 'shopbuilder' ),
+					'help'        => esc_html__( 'Upload a custom preloader image to replace the default loading animation. Recommended size: 60x60 pixels.', 'shopbuilder' ),
+					'tab'         => 'general',
+					// Preserve the { id, source } media array on save (the default text
+					// sanitizer would flatten it to an empty string and drop the upload).
+					'sanitize_fn' => [ Fns::class, 'sanitize_fileupload_value' ],
+					'dependency'  => [
 						'rules' => [
 							[
-								'item'     => 'modules.variation_gallery.gallery_style',
-								'value'    => [ 'left', 'right' ],
-								'operator' => 'in',
+								'item'     => 'modules.variation_gallery.preloader',
+								'value'    => 'on',
+								'operator' => '==',
 							],
 						],
 					],
 				],
-				'image_section_height'         => [
-					'id'         => 'image_section_height',
-					'type'       => 'slider',
-					'label'      => esc_html__( 'Slider Height/Image Section Height', 'shopbuilder' ),
-					'help'       => esc_html__( 'Product Thumbnails And Main Image Section Height In Pixel.', 'shopbuilder' ),
-					'min'        => 400,
-					'max'        => 2000,
-					'unit'       => 'px',
-					'value'      => 500,
-					'tab'        => 'general',
-					'dependency' => [
-						'rules' => [
-							[
-								'item'     => 'modules.variation_gallery.gallery_style',
-								'value'    => [ 'left', 'right' ],
-								'operator' => 'in',
-							],
-						],
+				'gallery_change_effect'            => [
+					'id'      => 'gallery_change_effect',
+					'type'    => 'select',
+					'value'   => 'blur',
+					'label'   => esc_html__( 'Gallery Change Effect', 'shopbuilder' ),
+					'help'    => esc_html__( 'Choose the visual effect applied to the gallery when switching between variations.', 'shopbuilder' ),
+					'options' => [
+						'blur' => esc_html__( 'Blur', 'shopbuilder' ),
+						'fade' => esc_html__( 'Fade', 'shopbuilder' ),
+						'gray' => esc_html__( 'Gray', 'shopbuilder' ),
 					],
+					'tab'     => 'general',
 				],
-				'main_image_border_color'      => [
+				'gallery_thumbnail_controls_title' => [
+					'id'    => 'gallery_thumbnail_controls_title',
+					'type'  => 'title',
+					'label' => esc_html__( 'Gallery / Thumbnail Item Controls', 'shopbuilder' ),
+					'tab'   => 'general',
+				],
+				'gallery_style'                    => [
+					'id'      => 'gallery_style',
+					'type'    => 'select',
+					'value'   => 'bottom',
+					'label'   => esc_html__( 'Thumbnail Position/Gallery Style', 'shopbuilder' ),
+					'isPro'   => ! rtsb()->has_pro(),
+					'options' => [
+						'bottom' => esc_html__( 'Thumbnail Position Bottom', 'shopbuilder' ),
+						'left'   => esc_html__( 'Thumbnail Position Left', 'shopbuilder' ),
+						'right'  => esc_html__( 'Thumbnail Position Right', 'shopbuilder' ),
+						'grid'   => esc_html__( 'Grid View Images', 'shopbuilder' ),
+					],
+					'tab'     => 'general',
+				],
+				'thumbnails_columns'               => [
+					'id'    => 'thumbnails_columns',
+					'type'  => 'slider',
+					'label' => esc_html__( 'Thumbnail Items', 'shopbuilder' ),
+					'help'  => esc_html__( 'Add slides per view, or items per row if the slider is not activated.', 'shopbuilder' ),
+					'min'   => 2,
+					'max'   => 8,
+					'unit'  => '',
+					'value' => 4,
+					'tab'   => 'general',
+				],
+				'thumbnails_gap'                   => [
+					'id'    => 'thumbnails_gap',
+					'type'  => 'slider',
+					'label' => esc_html__( 'Thumbnails Gap', 'shopbuilder' ),
+					'help'  => esc_html__( 'Product Thumbnails Gap In Pixel. Default value is: 0. Limit: 0-50.', 'shopbuilder' ),
+					'min'   => 0,
+					'max'   => 50,
+					'unit'  => 'px',
+					'value' => 10,
+					'tab'   => 'general',
+				],
+				'main_image_border_color'          => [
 					'id'         => 'main_image_border_color',
 					'label'      => esc_html__( 'Main Image Border Color', 'shopbuilder' ),
 					'tab'        => 'styles',
@@ -4573,13 +4928,20 @@ class ModuleList extends ListModel {
 						],
 					],
 				],
-				'thumbnail_item_border_color'  => [
+				'thumbnail_item_border_color'      => [
 					'id'    => 'thumbnail_item_border_color',
 					'label' => esc_html__( 'Thumbnail item Border Color', 'shopbuilder' ),
 					'tab'   => 'styles',
 					'type'  => 'color',
 				],
-				'thumbnail_item_inner_padding' => [
+				'thumbnail_active_border_color'    => [
+					'id'    => 'thumbnail_active_border_color',
+					'label' => esc_html__( 'Active Thumbnail Border Color', 'shopbuilder' ),
+					'help'  => esc_html__( 'Border color of the currently selected thumbnail.', 'shopbuilder' ),
+					'tab'   => 'styles',
+					'type'  => 'color',
+				],
+				'thumbnail_item_inner_padding'     => [
 					'id'    => 'thumbnail_item_inner_padding',
 					'type'  => 'slider',
 					'label' => esc_html__( 'Thumbnail Item Inner Padding', 'shopbuilder' ),
@@ -4589,7 +4951,7 @@ class ModuleList extends ListModel {
 					'value' => 10,
 					'tab'   => 'styles',
 				],
-				'thumbnail_item_border_radius' => [
+				'thumbnail_item_border_radius'     => [
 					'id'    => 'thumbnail_item_border_radius',
 					'type'  => 'slider',
 					'label' => esc_html__( 'Thumbnail Item Border Radius', 'shopbuilder' ),

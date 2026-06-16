@@ -81,7 +81,8 @@ class CartRecoveryInit {
 	 */
 	public function cron_hooks() {
 		$cron = CartRecoveryCron::instance();
-		add_filter( 'cron_schedules', [ $cron, 'abandoned_cart_cron' ] ); // phpcs:ignore WordPress.WP.CronInterval.ChangeDetected
+		// Note: the 'cron_schedules' filter is registered globally in ActionHooks::init_hooks()
+		// so custom schedules exist regardless of this module's active state.
 		$cron->run_cron(); // Run cron on init hook.
 		add_action( 'rtsb_abandoned_cart_recovery_action', [ $cron, 'detect_abandoned_cart_recovery' ] );
 		add_action( 'rtsb_send_abandoned_cart_emails', [ $cron, 'process_abandoned_cart_emails' ] );

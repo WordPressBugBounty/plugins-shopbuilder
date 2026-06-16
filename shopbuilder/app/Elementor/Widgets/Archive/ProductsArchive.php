@@ -34,7 +34,7 @@ class ProductsArchive extends LoopWithProductSlider {
 		$this->has_slider     = false;
 		$this->has_title      = false;
 		$this->has_pagination = true;
-		$this->rtsb_name      = esc_html__( 'Products - Default Layout', 'shopbuilder' );
+		$this->rtsb_name      = esc_html__( 'Product Archive (Default)', 'shopbuilder' );
 		$this->rtsb_base      = 'rtsb-products-archive';
 		parent::__construct( $data, $args );
 	}
@@ -45,12 +45,16 @@ class ProductsArchive extends LoopWithProductSlider {
 	 * @return array
 	 */
 	public function general_section() {
-		$fields     = parent::general_section();
+		$fields = parent::general_section();
+
+		// Remove posts_per_page from parent — not applicable for default archive widget.
+		unset( $fields['posts_per_page'] );
+
 		$new_fields = [
 			'important_note' => [
 				'type'      => 'html',
 				'separator' => 'after',
-				'raw'       => '<p class="rtsb-el-notice" > Some of the controls will not work if your theme overwrites the default markup. In this case, you need to add some support.</p><p class="rtsb-el-notice" >You can manage product per page from woocommerce <a target="_blank" href="' . site_url( '/wp-admin/customize.php?return=%2Fwp-admin%2Fthemes.php' ) . '"> Customizer (Product Catalog) </a></p>',
+				'raw'       => '<p class="rtsb-el-notice">' . esc_html__( 'Some of the controls will not work if your theme overwrites the default markup. In this case, you need to add some support.', 'shopbuilder' ) . '</p>',
 			],
 			'view_mode'      => [
 				'label'       => esc_html__( 'Default View', 'shopbuilder' ),
@@ -87,6 +91,22 @@ class ProductsArchive extends LoopWithProductSlider {
 				'separator' => 'default',
 				'condition' => [
 					'show_pagination' => 'yes',
+				],
+			],
+			'column_per_row'         => [
+				'mode'            => 'responsive',
+				'label'           => esc_html__( 'Products Grid Column', 'shopbuilder' ),
+				'description'     => esc_html__( 'The control only work for grid view. This field not effect for product per page.', 'shopbuilder' ),
+				'type'            => 'number',
+				'min'             => 2,
+				'max'             => 10,
+				'step'            => 1,
+				'default'         => wc_get_default_products_per_row(),
+				'desktop_default' => wc_get_default_products_per_row(),
+				'tablet_default'  => 2,
+				'mobile_default'  => 1,
+				'selectors'       => [
+					$this->selectors['column_per_row'] => 'width: calc(100%/{{VALUE}} - ( {{column_gap.size}}{{column_gap.unit}} / {{VALUE}} ) *  ({{VALUE}} - 1 ) ) !important;flex: 0 0 auto;max-width: initial;',
 				],
 			],
 			'column_gap'             => [
@@ -140,22 +160,6 @@ class ProductsArchive extends LoopWithProductSlider {
 					$this->selectors['row_gap'] => 'row-gap:{{SIZE}}{{UNIT}};',
 				],
 			],
-			'column_per_row'         => [
-				'mode'            => 'responsive',
-				'label'           => esc_html__( 'Products Grid Column', 'shopbuilder' ),
-				'description'     => esc_html__( 'The control only work for grid view. This field not effect for product per page.', 'shopbuilder' ),
-				'type'            => 'number',
-				'min'             => 1,
-				'max'             => 30,
-				'step'            => 1,
-				'default'         => wc_get_default_products_per_row(),
-				'desktop_default' => wc_get_default_products_per_row(),
-				'tablet_default'  => 2,
-				'mobile_default'  => 1,
-				'selectors'       => [
-					$this->selectors['column_per_row'] => 'width: calc(100%/{{VALUE}} - ( {{column_gap.size}}{{column_gap.unit}} / {{VALUE}} ) *  ({{VALUE}} - 1 ) ) !important;flex: 0 0 auto;max-width: initial;',
-				],
-			],
 			'list_image_width'       => [
 				'label'      => esc_html__( 'Image Width (px)', 'shopbuilder' ),
 				'type'       => 'slider',
@@ -201,6 +205,7 @@ class ProductsArchive extends LoopWithProductSlider {
 	public function apply_hooks() {
 		parent::apply_hooks();
 		$controllers = $this->get_settings_for_display();
+
 		add_filter(
 			'woocommerce_pagination_args',
 			function ( $args ) use ( $controllers ) {
@@ -245,6 +250,7 @@ class ProductsArchive extends LoopWithProductSlider {
 			);
 		}
 	}
+
 	/**
 	 * Widget Selector
 	 *
@@ -313,15 +319,17 @@ class ProductsArchive extends LoopWithProductSlider {
 
 		$this->action_button_icon_modify();
 
-		$page_type      = BuilderFns::builder_type( get_the_ID() );
-		$is_preview     = BuilderFns::is_builder_preview() && array_key_exists( $page_type, BuilderFns::builder_page_types() );
-		$posts_per_page = apply_filters( 'loop_shop_per_page', wc_get_default_products_per_row() * wc_get_default_product_rows_per_page() );
+		$controllers = $this->get_settings_for_display();
+		$page_type   = BuilderFns::builder_type( get_the_ID() );
+		$is_preview  = BuilderFns::is_builder_preview() && array_key_exists( $page_type, BuilderFns::builder_page_types() );
 
 		if ( $is_preview ) {
 			global $wp_query, $post;
 
 			$main_query = clone $wp_query;
 			$main_post  = clone $post;
+
+			$posts_per_page = wc_get_default_products_per_row() * wc_get_default_product_rows_per_page();
 
 			$ordering      = ( new WC_Query() )->get_catalog_ordering_args();
 			$wp_query_args = [
@@ -342,6 +350,7 @@ class ProductsArchive extends LoopWithProductSlider {
 
 			wc_set_loop_prop( 'total', $wp_query->found_posts );
 			wc_set_loop_prop( 'total_pages', $wp_query->max_num_pages );
+			wc_set_loop_prop( 'per_page', $posts_per_page );
 		}
 
 		Fns::load_template( $data['template'], $data );

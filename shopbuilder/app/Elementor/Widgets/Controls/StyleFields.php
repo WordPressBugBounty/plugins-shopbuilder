@@ -491,16 +491,18 @@ class StyleFields {
 			'show_price' => [ 'yes' ],
 		];
 		$selectors     = [
-			'typography'            => $css_selectors['typography'],
-			'sale_typography'       => $css_selectors['sale_typography'],
-			'alignment'             => [ $css_selectors['alignment'] => 'text-align: {{VALUE}};' ],
-			'color'                 => [ $css_selectors['color'] => 'color: {{VALUE}};' ],
-			'regular_color'         => [ $css_selectors['regular_color'] => 'color: {{VALUE}};' ],
-			'crossed_regular_color' => [ $css_selectors['crossed_regular_color'] => 'color: {{VALUE}};' ],
-			'border'                => $css_selectors['border'],
-			'border_hover_color'    => [ $css_selectors['border_hover_color'] => 'border-color: {{VALUE}};' ],
-			'padding'               => [ $css_selectors['padding'] => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};' ],
-			'margin'                => [ $css_selectors['margin'] => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};' ],
+			'typography'              => $css_selectors['typography'],
+			'sale_typography'         => $css_selectors['sale_typography'],
+			'regular_text_decoration' => $css_selectors['regular_text_decoration'],
+			'sale_text_decoration'    => $css_selectors['sale_text_decoration'],
+			'alignment'               => [ $css_selectors['alignment'] => 'text-align: {{VALUE}};' ],
+			'color'                   => [ $css_selectors['color'] => 'color: {{VALUE}};' ],
+			'regular_color'           => [ $css_selectors['regular_color'] => 'color: {{VALUE}};' ],
+			'crossed_regular_color'   => [ $css_selectors['crossed_regular_color'] => 'color: {{VALUE}};' ],
+			'border'                  => $css_selectors['border'],
+			'border_hover_color'      => [ $css_selectors['border_hover_color'] => 'border-color: {{VALUE}};' ],
+			'padding'                 => [ $css_selectors['padding'] => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};' ],
+			'margin'                  => [ $css_selectors['margin'] => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};' ],
 		];
 
 		$fields = ControlHelper::general_elementor_style( 'product_price', $title, $obj, $condition, $selectors );
@@ -522,11 +524,29 @@ class StyleFields {
 		$fields['product_price_bg_color']['label']           = esc_html__( 'Regular Price Color', 'shopbuilder' );
 		$fields['product_price_bg_color']['selectors']       = $selectors['regular_color'];
 
+		// Scope text-decoration narrowly so "Regular Price" decoration does not bleed onto
+		// the sale price via the shared `.price-wrapper` parent (cascades visually across all
+		// inline text). Other typography props keep the original wider selector.
+		$fields['rtsb_el_product_price_typography']['fields_options'] = [
+			'text_decoration' => [
+				'selectors' => [
+					$selectors['regular_text_decoration'] => 'text-decoration: {{VALUE}};',
+				],
+			],
+		];
+
 		$extra_controls['rtsb_el_product_sale_price_typography'] = [
-			'mode'     => 'group',
-			'type'     => 'typography',
-			'label'    => esc_html__( 'Sale Price Typography', 'shopbuilder' ),
-			'selector' => $selectors['sale_typography'],
+			'mode'           => 'group',
+			'type'           => 'typography',
+			'label'          => esc_html__( 'Sale Price Typography', 'shopbuilder' ),
+			'selector'       => $selectors['sale_typography'],
+			'fields_options' => [
+				'text_decoration' => [
+					'selectors' => [
+						$selectors['sale_text_decoration'] => 'text-decoration: {{VALUE}};',
+					],
+				],
+			],
 		];
 
 		$fields = Fns::insert_controls( 'rtsb_el_product_price_typography', $fields, $extra_controls );
@@ -834,6 +854,17 @@ class StyleFields {
 
 		$fields = ControlHelper::general_elementor_style( 'product_categories', $title, $obj, $condition, $selectors );
 
+		// Force text-decoration with !important so the widget setting beats the framework-wide
+		// `.rtsb-elementor-container a { text-decoration: none !important; }` reset. That reset
+		// is intentionally kept to shield category links from theme link styles.
+		$fields['rtsb_el_product_categories_typography']['fields_options'] = [
+			'text_decoration' => [
+				'selectors' => [
+					$css_selectors['typography'] => 'text-decoration: {{VALUE}} !important;',
+				],
+			],
+		];
+
 		$fields['product_categories_alignment']['options'] = [
 			'flex-start' => [
 				'title' => esc_html__( 'Left', 'shopbuilder' ),
@@ -903,6 +934,17 @@ class StyleFields {
 		];
 
 		$fields = ControlHelper::general_elementor_style( 'product_brands', $title, $obj, $condition, $selectors );
+
+		// Force text-decoration with !important so the widget setting beats the framework-wide
+		// `.rtsb-elementor-container a { text-decoration: none !important; }` reset. That reset
+		// is intentionally kept to shield brand markup from theme link styles.
+		$fields['rtsb_el_product_brands_typography']['fields_options'] = [
+			'text_decoration' => [
+				'selectors' => [
+					$css_selectors['typography'] => 'text-decoration: {{VALUE}} !important;',
+				],
+			],
+		];
 
 		$fields['product_brands_alignment']['options'] = [
 			'flex-start' => [
@@ -1528,7 +1570,7 @@ class StyleFields {
 		$extra_controls['compare_width'] = [
 			'type'       => 'slider',
 			'mode'       => 'responsive',
-			'label'      => esc_html__( 'Width', 'shopbuilder' ),
+			'label'      => esc_html__( 'Min Width', 'shopbuilder' ),
 			'size_units' => [ 'px' ],
 			'range'      => [
 				'px' => [
@@ -1606,10 +1648,10 @@ class StyleFields {
 
 		$extra_controls = [];
 
-		$extra_controls['wishlist_width'] = [
+		$extra_controls['wishlist_width']  = [
 			'type'       => 'slider',
 			'mode'       => 'responsive',
-			'label'      => esc_html__( 'Width', 'shopbuilder' ),
+			'label'      => esc_html__( 'Min Width', 'shopbuilder' ),
 			'size_units' => [ 'px' ],
 			'range'      => [
 				'px' => [
@@ -1619,7 +1661,6 @@ class StyleFields {
 			],
 			'selectors'  => $selectors['width'],
 		];
-
 		$extra_controls['wishlist_height'] = [
 			'type'       => 'slider',
 			'mode'       => 'responsive',
@@ -1690,7 +1731,7 @@ class StyleFields {
 		$extra_controls['quick_view_width'] = [
 			'type'       => 'slider',
 			'mode'       => 'responsive',
-			'label'      => esc_html__( 'Width', 'shopbuilder' ),
+			'label'      => esc_html__( 'Min Width', 'shopbuilder' ),
 			'size_units' => [ 'px' ],
 			'range'      => [
 				'px' => [
@@ -2527,7 +2568,7 @@ class StyleFields {
 				$selectors['icon_size']['font_size'] => 'font-size: {{SIZE}}{{UNIT}} !important;',
 				$selectors['icon_size']['width']     => 'width: {{SIZE}}{{UNIT}} !important;',
 			],
-			'width'              => [ $selectors['width'] => 'width: {{SIZE}}{{UNIT}} !important;' ],
+			'width'              => [ $selectors['width'] => 'min-width: {{SIZE}}{{UNIT}} !important;' ],
 			'height'             => [ $selectors['height'] => 'height: {{SIZE}}{{UNIT}} !important;' ],
 			'color'              => [ $selectors['color'] => 'color: {{VALUE}};' ],
 			'bg_color'           => [ $selectors['bg_color'] => 'background-color: {{VALUE}} !important;' ],

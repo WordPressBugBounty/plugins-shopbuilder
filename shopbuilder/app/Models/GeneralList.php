@@ -4,6 +4,7 @@ namespace RadiusTheme\SB\Models;
 
 use RadiusTheme\SB\AI\AIFns;
 use RadiusTheme\SB\Helpers\Fns;
+use RadiusTheme\SB\Helpers\SvgIcons;
 use RadiusTheme\SB\Models\Base\ListModel;
 use RadiusTheme\SB\Traits\SingletonTrait;
 
@@ -55,10 +56,15 @@ class GeneralList extends ListModel {
 				'rtsb/settings/optimization/options',
 				[
 					'id'           => 'optimization',
+					'icon'         => SvgIcons::get( 'optimization' ),
 					'category'     => 'general',
 					'title'        => esc_html__( 'Advanced Optimizations', 'shopbuilder' ),
 					'package'      => $this->pro_version_checker(),
 					'badge'        => 'new',
+					'links'        => [
+						'doc'   => '',
+						'video' => '',
+					],
 					'active_field' => [
 						'disable' => true,
 					],
@@ -134,10 +140,15 @@ class GeneralList extends ListModel {
 				'rtsb/settings/ai_implementation/options',
 				[
 					'id'           => 'ai_implementation',
+					'icon'         => SvgIcons::get( 'ai_implementation' ),
 					'category'     => 'general',
 					'title'        => esc_html__( 'AI-implementation', 'shopbuilder' ),
 					'package'      => 'free',
 					'badge'        => 'beta',
+					'links'        => [
+						'doc'   => '',
+						'video' => '',
+					],
 					'active_field' => [
 						'disable' => true,
 					],
@@ -428,9 +439,14 @@ class GeneralList extends ListModel {
 				'rtsb/settings/notification/options',
 				[
 					'id'           => 'notification',
+					'icon'         => SvgIcons::get( 'notification' ),
 					'category'     => 'general',
 					'title'        => esc_html__( 'Notification Settings', 'shopbuilder' ),
 					'package'      => 'free',
+					'links'        => [
+						'doc'   => '',
+						'video' => '',
+					],
 					'active_field' => [
 						'disable' => true,
 					],
@@ -499,9 +515,14 @@ class GeneralList extends ListModel {
 				'rtsb/settings/social_share/options',
 				[
 					'id'           => 'social_share',
+					'icon'         => SvgIcons::get( 'social_share' ),
 					'category'     => 'general',
 					'title'        => esc_html__( 'Social Share Settings', 'shopbuilder' ),
 					'package'      => 'free',
+					'links'        => [
+						'doc'   => '',
+						'video' => '',
+					],
 					'active_field' => [
 						'disable' => true,
 					],
@@ -550,9 +571,14 @@ class GeneralList extends ListModel {
 				'rtsb/settings/guest_user/options',
 				[
 					'id'           => 'guest_user',
+					'icon'         => SvgIcons::get( 'guest_user' ),
 					'category'     => 'general',
 					'title'        => esc_html__( 'Guest User Controls', 'shopbuilder' ),
 					'package'      => $this->pro_package(),
+					'links'        => [
+						'doc'   => '',
+						'video' => '',
+					],
 					'active_field' => [
 						'disable' => true,
 					],
@@ -562,9 +588,14 @@ class GeneralList extends ListModel {
 				'rtsb/settings/tooltip/options',
 				[
 					'id'           => 'tooltip',
+					'icon'         => SvgIcons::get( 'tooltip' ),
 					'category'     => 'general',
 					'title'        => esc_html__( 'Tooltip Settings', 'shopbuilder' ),
 					'package'      => $this->pro_package(),
+					'links'        => [
+						'doc'   => '',
+						'video' => '',
+					],
 					'active_field' => [
 						'disable' => true,
 					],
@@ -574,19 +605,25 @@ class GeneralList extends ListModel {
 				'rtsb/settings/billing_form/options',
 				[
 					'id'           => 'billing_form',
+					'icon'         => SvgIcons::get( 'billing_form' ),
 					'category'     => 'checkout',
 					'title'        => esc_html__( 'Billing Form Settings', 'shopbuilder' ),
 					'package'      => 'free',
+					'links'        => [
+						'doc'   => '',
+						'video' => '',
+					],
 					'active_field' => [
 						'label' => esc_html__( 'Customize Billing Form Fields?', 'shopbuilder' ),
 						'help'  => esc_html__( 'Switch on to customize billing form fields.', 'shopbuilder' ),
 					],
 					'fields'       => [
 						'checkout_billing_info'          => [
-							'id'          => 'checkout_billing_info',
-							'type'        => 'title',
-							'label'       => __( 'The below form fields customization will be disabled when the <strong><u>Checkout Fields Editor</u></strong> module is activated.', 'shopbuilder' ),
-							'customClass' => 'checkout-notice',
+							'id'            => 'checkout_billing_info',
+							'type'          => 'deprecated',
+							'label'         => __( '<strong>Deprecated:</strong> Billing Form Settings is deprecated. Please use the <strong><u>Checkout Fields Editor</u></strong> module to customize checkout fields. These settings will be disabled when the <strong><u>Checkout Fields Editor</u></strong> module is active.', 'shopbuilder' ),
+							'customClass'   => 'checkout-notice',
+							'before_active' => true,
 						],
 						'billing_first_name_heading'     => [
 							'id'    => 'billing_first_name_heading',
@@ -1183,19 +1220,25 @@ class GeneralList extends ListModel {
 				'rtsb/module/shipping_form/options',
 				[
 					'id'           => 'shipping_form',
+					'icon'         => SvgIcons::get( 'shipping_form' ),
 					'category'     => 'checkout',
 					'title'        => esc_html__( 'Shipping Form Settings', 'shopbuilder' ),
 					'package'      => 'free',
+					'links'        => [
+						'doc'   => '',
+						'video' => '',
+					],
 					'active_field' => [
 						'label' => esc_html__( 'Customize Shipping form Fields?', 'shopbuilder' ),
 						'help'  => esc_html__( 'Switch on to customize shipping form fields.', 'shopbuilder' ),
 					],
 					'fields'       => [
 						'checkout_shipping_info'          => [
-							'id'          => 'checkout_shipping_info',
-							'type'        => 'title',
-							'label'       => __( 'The below form fields customization will be disabled when the <strong><u>Checkout Fields Editor</u></strong> module is activated.', 'shopbuilder' ),
-							'customClass' => 'checkout-notice',
+							'id'            => 'checkout_shipping_info',
+							'type'          => 'deprecated',
+							'label'         => __( '<strong>Deprecated:</strong> Shipping Form Settings is deprecated. Please use the <strong><u>Checkout Fields Editor</u></strong> module to customize checkout fields. These settings will be disabled when the <strong><u>Checkout Fields Editor</u></strong> module is active.', 'shopbuilder' ),
+							'customClass'   => 'checkout-notice',
+							'before_active' => true,
 						],
 						'shipping_first_name_heading'     => [
 							'id'    => 'shipping_first_name_heading',

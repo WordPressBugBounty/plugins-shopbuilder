@@ -11,6 +11,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 $wrapper_class = ! empty( $controllers['fields_width_100'] ) ? 'rtsb-form-fields-width-100' : '';
 ?>
+<?php do_action( 'woocommerce_checkout_before_customer_details' ); ?>
+
 <div class="rtsb-form-billing <?php echo esc_attr( $wrapper_class ); ?>">
 	<?php
 		wc_get_template(
@@ -21,4 +23,9 @@ $wrapper_class = ! empty( $controllers['fields_width_100'] ) ? 'rtsb-form-fields
 		);
 		?>
 </div>
+
+<?php
+if ( ! WC()->cart->needs_shipping_address() ) {
+	do_action( 'woocommerce_checkout_after_customer_details' );
+}
 

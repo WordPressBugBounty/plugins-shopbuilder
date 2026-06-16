@@ -149,6 +149,9 @@ final class VariationSwatches {
 		if ( ! empty( $options['details_page_attribute_font_size'] ) ) {
 			$dynamic_css .= '--details-page-attr-font-size:' . $options['details_page_attribute_font_size'] . 'px;';
 		}
+		if ( ! empty( $options['details_page_radio_size'] ) ) {
+			$dynamic_css .= '--details-page-radio-size:' . $options['details_page_radio_size'] . 'px;';
+		}
 		// Showcase.
 		if ( ! empty( $options['showcase_attribute_width'] ) ) {
 			$dynamic_css .= '--showcase-attr-width:' . $options['showcase_attribute_width'] . 'px;';
@@ -159,12 +162,15 @@ final class VariationSwatches {
 		if ( ! empty( $options['showcase_attribute_font_size'] ) ) {
 			$dynamic_css .= '--showcase-attr-font-size:' . $options['showcase_attribute_font_size'] . 'px;';
 		}
+		if ( ! empty( $options['showcase_radio_size'] ) ) {
+			$dynamic_css .= '--showcase-radio-size:' . $options['showcase_radio_size'] . 'px;';
+		}
 		// Tooltips.
 		if ( ! empty( $options['tooltip_images_padding'] ) ) {
 			$dynamic_css .= '--tooltip-image-padding:' . $options['tooltip_images_padding'] . 'px;';
 		}
-		// Tooltips.
-		if ( ! empty( $options['attribute_border_radius'] ) ) {
+		// Attribute border radius (use isset so a saved value of 0 still emits the variable).
+		if ( isset( $options['attribute_border_radius'] ) && '' !== $options['attribute_border_radius'] ) {
 			$dynamic_css .= '--variation-attr-border-radius:' . absint( $options['attribute_border_radius'] ) . 'px;';
 		}
 

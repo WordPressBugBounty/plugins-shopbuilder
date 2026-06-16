@@ -13,6 +13,15 @@ use RadiusTheme\SB\Helpers\Fns;
 if ( ! defined( 'ABSPATH' ) ) {
 	exit( 'This script cannot be accessed directly.' );
 }
+
+/**
+ * Class PostQueryArgs
+ *
+ * Builds post query arguments for product queries.
+ *
+ * @package RadiusTheme\SB
+ * Builds query arguments for fetching posts in ShopBuilder widgets.
+ */
 class PostQueryArgs {
 	/**
 	 * Query Args.
@@ -124,13 +133,16 @@ class PostQueryArgs {
 			if ( $posts_per_page > $limit ) {
 				$posts_per_page = $limit;
 			}
-
 			$this->args['posts_per_page'] = $posts_per_page;
 
-			if ( is_front_page() ) {
-				$paged = ( get_query_var( 'page' ) ) ? get_query_var( 'page' ) : 1;
-			} else {
-				$paged = ( get_query_var( 'paged' ) ) ? get_query_var( 'paged' ) : 1;
+			// Prefer `paged` (archive pagination), fall back to `page` (paginated singular posts).
+			// Handles the case where the shop/archive is set as the front page.
+			$paged = get_query_var( 'paged' );
+			if ( ! $paged ) {
+				$paged = get_query_var( 'page' );
+			}
+			if ( ! $paged ) {
+				$paged = 1;
 			}
 
 			$offset              = $posts_per_page * ( (int) $paged - 1 );

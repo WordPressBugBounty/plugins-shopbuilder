@@ -345,7 +345,7 @@ abstract class ElementorWidgetBase extends Widget_Base {
 	 * @return void
 	 */
 	public function editor_slider_script() {
-		if ( \Elementor\Plugin::$instance->editor->is_edit_mode() ) {
+		if ( ! empty( \Elementor\Plugin::$instance->editor ) && \Elementor\Plugin::$instance->editor->is_edit_mode() ) {
 			$selector = $this->get_unique_selector() . ' .rtsb-carousel-slider';
 			?>
 			<script>
@@ -437,9 +437,11 @@ abstract class ElementorWidgetBase extends Widget_Base {
 				}
 
 				if (!'<?php echo esc_attr( Fns::is_optimization_enabled() ); ?>') {
-					if (typeof rtsbFilters === 'function') {
-						rtsbFilters();
-					}
+					<?php if ( 'rtsb-ajax-product-filters' === $this->rtsb_base ) { ?>
+						if (typeof rtsbFilters === 'function') {
+							rtsbFilters();
+						}
+					<?php } ?>
 
 					setTimeout( function (){
 						window.rtsbCountdownApply();
@@ -449,7 +451,9 @@ abstract class ElementorWidgetBase extends Widget_Base {
 						window.waitForRTSB((RTSB) => {
 							RTSB.modules.get('countdownPro')?.refresh();
 							RTSB.modules.get('elementorInitPro')?.refresh();
-							RTSB.modules.get('ajaxProductFiltersPro')?.refresh();
+							<?php if ( 'rtsb-ajax-product-filters' === $this->rtsb_base ) { ?>
+								RTSB.modules.get('ajaxProductFiltersPro')?.refresh();
+							<?php } ?>
 						});
 					}
 				}

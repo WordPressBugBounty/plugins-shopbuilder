@@ -12,6 +12,7 @@ use RadiusTheme\SB\Elementor\Widgets\Cart;
 use RadiusTheme\SB\Elementor\Widgets\Checkout;
 use RadiusTheme\SB\Elementor\Widgets\General;
 use RadiusTheme\SB\Elementor\Widgets\Single;
+use RadiusTheme\SB\Helpers\SvgIcons;
 use RadiusTheme\SB\Models\Base\ListModel;
 use RadiusTheme\SB\Traits\SingletonTrait;
 use RadiusTheme\SBPRO\Elementor\Widgets\Checkout as CheckoutPro;
@@ -92,7 +93,182 @@ class ElementList extends ListModel {
 				+ $this->my_account_page_widget_list()
 				+ $this->myaccount_auth_page_widget_list();
 
+		// Inject SVG icons per element.
+		$icon_map = self::element_icon_map();
+		foreach ( $list as $key => &$item ) {
+			$item['icon'] = SvgIcons::get( $icon_map[ $key ] ?? 'default' );
+		}
+		unset( $item );
+
 		return apply_filters( 'rtsb/core/elements/raw_list', $list );
+	}
+
+	/**
+	 * Maps element IDs to SvgIcons keys.
+	 *
+	 * @return array<string, string>
+	 */
+	private static function element_icon_map() {
+		return [
+			// General.
+			'products_grid'                        => 'grid',
+			'products_list'                        => 'list',
+			'products_slider'                      => 'slider',
+			'highlighted_product'                  => 'star',
+			'products_single_cateogory'            => 'category',
+			'product_cateogories'                  => 'category',
+			'product_lookbook'                     => 'image',
+			'category_showcase_tabs'               => 'tabs',
+			'rtsb_wishlist'                        => 'heart',
+			'social_share'                         => 'share',
+			'wc_breadcrumbs'                       => 'breadcrumb',
+			'product_notice'                       => 'notification',
+			'advanced_heading'                     => 'heading',
+			'dropcaps'                             => 'text',
+			'shopbuilder_button'                   => 'button',
+			'shopbuilder_cta'                      => 'cta',
+			'shopbuilder_info_box'                 => 'info_box',
+			'shopbuilder_flip_box'                 => 'flip_box',
+			'shopbuilder_pricing_table'            => 'pricing',
+			'image_hotspots'                       => 'hotspot',
+			'coupon_list'                          => 'coupon',
+			'hero_slider'                          => 'slider',
+			'shopbuilder_counter'                  => 'counter',
+			'shopbuilder_countdown'                => 'countdown',
+			'shopbuilder_progress_bar'             => 'progress',
+			'image_accordion'                      => 'accordion',
+			'shopbuilder_faq'                      => 'faq',
+			'logo_slider_and_grid'                 => 'logo',
+			'testimonial'                          => 'testimonial',
+			'team_member'                          => 'user',
+			'post_grid'                            => 'grid',
+			'post_list'                            => 'list',
+			'advanced_ajax_search'                 => 'search',
+			'save_for_buy_later'                   => 'heart',
+
+			// Single product.
+			'product_title'                        => 'heading',
+			'product_description'                  => 'document',
+			'product_short_description'            => 'document',
+			'product_images'                       => 'product_page',
+			'product_onsale'                       => 'onsale',
+			'product_additional_info'              => 'info_box',
+			'product_price'                        => 'counter',
+			'product_meta'                         => 'tag',
+			'product_categories'                   => 'category',
+			'product_rating'                       => 'star',
+			'product_tags'                         => 'tag',
+			'product_sku'                          => 'tag',
+			'product_stock'                        => 'chart',
+			'actions_button'                       => 'button',
+			'product_add_to_cart'                  => 'cart',
+			'product_share'                        => 'share',
+			'product_sales_count'                  => 'counter',
+			'product_stock_counter'                => 'chart',
+			'flash_sale_countdown'                 => 'countdown',
+			'product_size_chart'                   => 'chart',
+			'product_quick_checkout'               => 'checkout',
+			'product_tabs'                         => 'tabs',
+			'advance_product_tabs'                 => 'tabs',
+			'product_qr_code'                      => 'qr',
+			'product_reviews'                      => 'star',
+			'upsells_product'                      => 'onsale',
+			'upsells_product_custom'               => 'onsale',
+			'upsells_products_slider_custom'       => 'onsale',
+			'related_product'                      => 'grid',
+			'related_product_custom'               => 'grid',
+			'related_products_slider_custom'       => 'slider',
+
+			// Quick view.
+			'qv_product_title'                     => 'heading',
+			'qv_product_description'               => 'document',
+			'qv_product_short_description'         => 'document',
+			'qv_product_images'                    => 'product_page',
+			'qv_product_badges'                    => 'onsale',
+			'qv_product_additional_info'           => 'info_box',
+			'qv_product_price'                     => 'counter',
+			'qv_product_meta'                      => 'tag',
+			'qv_product_categories'                => 'category',
+			'qv_product_rating'                    => 'star',
+			'qv_product_tags'                      => 'tag',
+			'qv_product_sku'                       => 'tag',
+			'qv_product_stock'                     => 'chart',
+			'qv_actions_button'                    => 'button',
+			'qv_product_add_to_cart'               => 'cart',
+			'qv_product_sales_count'               => 'counter',
+			'qv_social_share'                      => 'share',
+			'qv_product_quick_checkout'            => 'checkout',
+			'qv_product_size_chart'                => 'chart',
+
+			// Shop / Archive.
+			'archive_title'                        => 'heading',
+			'archive_description'                  => 'document',
+			'products_archive_catalog'             => 'grid',
+			'products_archive_catalog_custom'      => 'grid',
+			'ajax_product_filters'                 => 'filter',
+			'product_filters'                      => 'filter',
+			'archive_result_count'                 => 'counter',
+			'archive_products_ordering'            => 'progress',
+			'archive_product_mode'                 => 'grid',
+
+			// Cart.
+			'cart_table'                           => 'cart',
+			'cart_totals'                          => 'counter',
+			'cart_coupon_form'                     => 'coupon',
+			'cross_sells'                          => 'grid',
+			'cross_sells_custom'                   => 'grid',
+			'cross_sells_custom_slider'            => 'slider',
+			'save_for_later_preview'               => 'heart',
+
+			// Checkout.
+			'billing_form'                         => 'form',
+			'shipping_form'                        => 'address',
+			'order_notes'                          => 'note',
+			'order_review'                         => 'checkout',
+			'checkout_payment'                     => 'payment',
+			'coupon_form'                          => 'coupon',
+			'checkout_login_form'                  => 'lock',
+			'shipping_method'                      => 'address',
+			'multi_step_checkout_widget'           => 'multi_step',
+
+			// Thank you / Order received.
+			'order_received_text'                  => 'document',
+			'order_details_summary'                => 'checkout',
+			'order_details_table'                  => 'document',
+			'downloadable_products'                => 'download',
+			'order_billing_address'                => 'address',
+			'order_shipping_address'               => 'address',
+			'order_custom_fields_data'             => 'document',
+
+			// My Account.
+			'order_pay_form'                       => 'payment',
+			'account_avatar'                       => 'user',
+			'account_navigation_edit_shipping'     => 'address',
+			'account_dashboard'                    => 'user',
+			'account_orders'                       => 'document',
+			'account_downloads'                    => 'download',
+			'account_billing_address'              => 'address',
+			'account_shipping_address'             => 'address',
+			'account_address_description'          => 'document',
+			'account_details'                      => 'user',
+			'account_order_status'                 => 'chart',
+			'account_order_details_download'       => 'download',
+			'account_order_details_note'           => 'note',
+			'account_order_details_table'          => 'document',
+			'account_order_details_order_again'    => 'cart',
+			'account_order_details_order_shipping' => 'address',
+			'account_order_details_order_billing'  => 'address',
+			'account_edit_billing_address'         => 'form',
+			'account_edit_shipping_address'        => 'form',
+			'account_payment_methods'              => 'payment',
+			'account_add_payment_method'           => 'payment',
+
+			// Others / Auth.
+			'account_login'                        => 'lock',
+			'account_login_form'                   => 'lock',
+			'account_registration_form'            => 'user',
+			'account_lost_password'                => 'lock',
+		];
 	}
 
 	/**
@@ -178,6 +354,17 @@ class ElementList extends ListModel {
 				[
 					'id'       => 'product_lookbook',
 					'title'    => esc_html__( 'Product LookBook', 'shopbuilder' ),
+					'category' => 'general',
+					'active'   => '',
+					'package'  => $this->pro_package(),
+					'fields'   => [],
+				]
+			),
+			'category_showcase_tabs'    => apply_filters(
+				'rtsb/elements/category_showcase_tabs/options',
+				[
+					'id'       => 'category_showcase_tabs',
+					'title'    => esc_html__( 'Category Showcase Tabs', 'shopbuilder' ),
 					'category' => 'general',
 					'active'   => '',
 					'package'  => $this->pro_package(),
@@ -1207,7 +1394,7 @@ class ElementList extends ListModel {
 				[
 					'id'         => 'product_filters',
 					'title'      => esc_html__( 'Product Filters', 'shopbuilder' ),
-					'base_class' => Archive\ProductFilters::class,
+					'base_class' => Archive\ProductFilters\ProductFilters::class,
 					'category'   => 'shop',
 					'active'     => 'on',
 					'package'    => 'free',
@@ -1466,7 +1653,6 @@ class ElementList extends ListModel {
 					'fields'     => [],
 				]
 			),
-
 		];
 
 		return apply_filters( 'rtsb/core/elements/checkout/widget_list', $list );

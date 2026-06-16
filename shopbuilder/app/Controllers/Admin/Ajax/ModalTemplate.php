@@ -173,9 +173,16 @@ class ModalTemplate {
 						$builder_page_types = [
 							'all_products'      => esc_html__( 'All Products', 'shopbuilder' ),
 							'product_cats'      => esc_html__( 'Product Categories', 'shopbuilder' ),
+							'product_brands'    => esc_html__( 'Product Brands', 'shopbuilder' ),
 							'product_tags'      => esc_html__( 'Product Tags', 'shopbuilder' ),
 							'specific_products' => esc_html__( 'Selected Products', 'shopbuilder' ),
 						];
+						// Only expose the brand option when the `product_brand` taxonomy is
+						// registered (WC 9.4+ native, or a brand plugin). Hides gracefully
+						// on sites without brand support.
+						if ( ! taxonomy_exists( 'product_brand' ) ) {
+							unset( $builder_page_types['product_brands'] );
+						}
 						foreach ( $builder_page_types as $key => $value ) {
 							?>
 							<option <?php echo esc_attr( $key === $product_page_for ? 'selected="selected"' : '' ); ?> value="<?php echo esc_attr( $key ); ?>"> <?php echo esc_html( $value ); ?> </option>
@@ -282,6 +289,62 @@ class ModalTemplate {
 				</div>
 
 
+				<!-- Product Page for Selected Product Brands -->
+				<?php if ( taxonomy_exists( 'product_brand' ) ) : ?>
+				<div class="rtsb-product-brands-page-field rtsb-tb-field-wraper <?php echo esc_attr( ! rtsb()->has_pro() ? 'pro-disable' : '' ); ?>" style="display:none;">
+					<?php
+					$default_items_link = '';
+					$default_items      = '';
+					$brands_name        = apply_filters( 'rtsb/template/builder/selected/brands', [], $post_id, $template_type );
+					if ( ! empty( $brands_name ) && is_array( $brands_name ) ) {
+						foreach ( $brands_name as $b_name ) {
+							$brand = get_term_by( 'slug', $b_name, 'product_brand' );
+							if ( empty( $brand ) || is_wp_error( $brand ) ) {
+								continue;
+							}
+							$title_brand = $brand->name;
+							$link        = get_term_link( $brand );
+							if ( ! is_wp_error( $link ) ) {
+								$default_items_link .= '<a target="_blank" href="' . esc_url( $link ) . '">' . esc_html( $title_brand ) . '</a>';
+							}
+							$default_items .= '<option selected="selected" value="' . esc_attr( $b_name ) . '">' . esc_html( $title_brand ) . '</option>';
+						}
+					}
+					?>
+					<label for="rtsb_page_for_the_product_brands">
+						<?php esc_html_e( 'Select Product Brands', 'shopbuilder' ); ?>
+						<?php if ( ! rtsb()->has_pro() ) { ?>
+							<div class="card-label">
+								<span class="rtsb-btn-import pro-btn">
+									<?php echo esc_html( 'PRO' ); ?>
+								</span>
+							</div>
+						<?php } ?>
+					</label>
+					<select class="rtsb-field" id="rtsb_page_for_the_product_brands" name="rtsb_page_for_the_product_brands" multiple="multiple">
+						<?php Fns::print_html( $default_items, true ); ?>
+					</select>
+					<p style="margin:0;">Select a Product Brand to apply this template. You can select multiple Brands. Keep it blank to apply to all.
+						<?php
+						if ( ! empty( $default_items_link ) ) {
+							?>
+							<span style="display: flex; gap: 3px 7px; flex-wrap: wrap; margin-top: 10px;"> <?php Fns::print_html( 'View Brand Archive Pages: ' . $default_items_link ); ?> </span>
+							<?php
+						}
+						?>
+					</p>
+				</div>
+
+					<?php if ( ! rtsb()->has_pro() ) { ?>
+						<div class="rtsb-product-brands-page-field rtsb-tb-field-wraper" style="display:none;">
+							<label for="product_page_for">  </label>
+							<span class="elementor-pro-notice"><a target="_blank" href="<?php echo esc_url( rtsb()->pro_version_link() ); ?>">Upgrade to PRO</a> to unlock Brand Base Product Page.</span>
+						</div>
+					<?php } ?>
+				<?php endif; ?>
+
+				<?php do_action( 'rtsb/builder/modal/extra_fields', $post_id, $template_type, $product_page_for ); ?>
+
 				<!-- Product Page for Selected Product -->
 				<div class="rtsb-page-for-the-products rtsb-tb-field-wraper <?php echo esc_attr( ! rtsb()->has_pro() ? 'pro-disable' : '' ); ?>" style="display:none;">
 					<?php
@@ -350,6 +413,14 @@ class ModalTemplate {
 				<div class="rtsb-template-setdefaults rtsb-tb-field-wraper">
 					<label for="default_template"> <?php esc_html_e( 'Set as Active Template', 'shopbuilder' ); ?></label>
 					<?php
+					$singleton_types = apply_filters(
+						'rtsb/builder/singleton_types',
+						array_keys( BuilderFns::builder_page_types() )
+					);
+					$is_pool_type    = $template_type && ! in_array( $template_type, $singleton_types, true );
+					if ( $post_id && $is_pool_type ) {
+						$template_default = 'on' === get_post_meta( $post_id, '_rtsb_tb_enabled_in_pool', true ) ? $post_id : 0;
+					}
 					if ( $post_id && 'product' === $template_type ) {
 						if ( 'specific_products' === $product_page_for ) {
 							$set_default = BuilderFns::get_specific_product_as_default( $post_id );
@@ -365,6 +436,8 @@ class ModalTemplate {
 								$set_default_option_name = BuilderFns::option_name_product_page_specific_cat_set_default( $post_id );
 							} elseif ( 'product_tags' === $product_page_for ) {
 								$set_default_option_name = BuilderFns::option_name_product_page_specific_tag_set_default( $post_id );
+							} elseif ( 'product_brands' === $product_page_for ) {
+								$set_default_option_name = BuilderFns::option_name_product_page_specific_brand_set_default( $post_id );
 							}
 							$default_id = ! empty( $set_default_option_name ) && TemplateSettings::instance()->get_option( $set_default_option_name );
 							if ( $default_id ) {
@@ -386,6 +459,7 @@ class ModalTemplate {
 						}
 					}
 
+					$template_default = apply_filters( 'rtsb/builder/modal/template_default', $template_default, $post_id, $template_type );
 					?>
 					<span class="rtsb-switch-wrapper"
 						  title="<?php esc_html_e( 'Switch on to set as active template', 'shopbuilder' ); ?>">
@@ -583,12 +657,15 @@ class ModalTemplate {
 			];
 			wp_send_json( $return );
 		}
+		/** @noinspection SqlNoDataSourceInspection */
+		/** @noinspection SqlResolve */
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$query     = $wpdb->prepare(
-			"SELECT ID, post_title 
-                    FROM $wpdb->posts 
-                    WHERE post_type = 'product' 
-                    AND post_status = 'publish' 
-                    AND post_title LIKE %s 
+			"SELECT ID, post_title
+                    FROM $wpdb->posts
+                    WHERE post_type = 'product'
+                    AND post_status = 'publish'
+                    AND post_title LIKE %s
                     LIMIT %d",
 			'%' . $search . '%',
 			10

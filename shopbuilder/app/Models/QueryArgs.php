@@ -246,10 +246,14 @@ class QueryArgs {
 			$this->args['paginate'] = true;
 			$this->args['limit']    = $posts_per_page;
 
-			if ( is_front_page() ) {
-				$paged = ( get_query_var( 'page' ) ) ? get_query_var( 'page' ) : 1;
-			} else {
-				$paged = ( get_query_var( 'paged' ) ) ? get_query_var( 'paged' ) : 1;
+			// Prefer `paged` (archive pagination), fall back to `page` (paginated singular posts).
+			// Handles the case where the shop/archive is set as the front page.
+			$paged = get_query_var( 'paged' );
+			if ( ! $paged ) {
+				$paged = get_query_var( 'page' );
+			}
+			if ( ! $paged ) {
+				$paged = 1;
 			}
 
 			$offset             = $posts_per_page * ( (int) $paged - 1 );

@@ -14,6 +14,7 @@ use RadiusTheme\SB\Helpers\BuilderFns;
 use RadiusTheme\SB\Models\TemplateSettings;
 use RadiusTheme\SB\Elementor\Render\Render;
 use RadiusTheme\SB\Elementor\Helper\RenderHelpers;
+use RadiusTheme\SB\Modules\AbandonedCartRecovery\CartRecoveryCron;
 
 defined( 'ABSPATH' ) || exit();
 
@@ -28,6 +29,10 @@ class ActionHooks {
 	 */
 	public static function init_hooks() {
 		add_action( 'rtsb/before/save/options', [ __CLASS__, 'clear_cron_schedule' ], 10, 3 );
+		// Always register custom cron schedules so already-scheduled rtsb_* events
+		// can reschedule even when the Abandoned Cart Recovery module is inactive,
+		// preventing the "invalid_schedule" (Event schedule does not exist) error.
+		add_filter( 'cron_schedules', [ CartRecoveryCron::instance(), 'abandoned_cart_cron' ] ); // phpcs:ignore WordPress.WP.CronInterval.ChangeDetected
 		add_action( 'wp_head', [ __CLASS__, 'og_metatags_for_sharing' ], 1 );
 		add_action( 'woocommerce_share', [ __CLASS__, 'shopbuilder_share' ], 20 );
 		add_action( 'rtsb/wcqv/product/summary', [ __CLASS__, 'shopbuilder_share' ], 40 );
@@ -81,6 +86,7 @@ class ActionHooks {
 		remove_action( 'woocommerce_before_checkout_form', 'woocommerce_checkout_coupon_form', 10 );
 		add_action( 'woocommerce_before_checkout_form', [ __CLASS__, 'woocommerce_checkout_login_form' ], 10 );
 		add_action( 'woocommerce_before_checkout_form', [ __CLASS__, 'woocommerce_checkout_coupon_form' ], 10 );
+		add_action( 'woocommerce_after_checkout_form', [ __CLASS__, 'postcode_validation_placeholder' ] );
 		// My Account Order Page.
 		add_action( 'woocommerce_before_account_orders', [ __CLASS__, 'before_account_orders' ], 10 );
 		add_action( 'woocommerce_after_account_orders', [ __CLASS__, 'after_account_orders' ], 10 );
@@ -156,6 +162,19 @@ class ActionHooks {
 		}
 	}
 
+
+	/**
+	 * Render postcode validation placeholder for fragment replacement.
+	 *
+	 * WooCommerce fragment replacement only targets existing DOM elements.
+	 * This placeholder ensures the server-side validation flag can be
+	 * injected via the update_order_review AJAX response.
+	 *
+	 * @return void
+	 */
+	public static function postcode_validation_placeholder() {
+		echo '<div class="rtsb-postcode-invalid" style="display:none;"></div>';
+	}
 
 	/**
 	 * @return void

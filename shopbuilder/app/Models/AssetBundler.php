@@ -86,6 +86,22 @@ class AssetBundler {
 		if ( ! file_exists( $this->upload_dir ) ) {
 			wp_mkdir_p( $this->upload_dir );
 		}
+
+		if ( ! wp_is_writable( $this->upload_dir ) ) {
+			global $wp_filesystem;
+
+			if ( ! function_exists( 'WP_Filesystem' ) ) {
+				require_once ABSPATH . 'wp-admin/includes/file.php';
+			}
+
+			if ( ! $wp_filesystem ) {
+				WP_Filesystem();
+			}
+
+			if ( $wp_filesystem ) {
+				$wp_filesystem->chmod( $this->upload_dir, FS_CHMOD_DIR );
+			}
+		}
 	}
 
 	/**
@@ -117,13 +133,23 @@ class AssetBundler {
 		$cache_path = $this->get_cache_file_path();
 
 		if ( ! $this->is_cached() ) {
+			if ( ! wp_is_writable( $this->upload_dir ) ) {
+				return '';
+			}
+
 			$minifier = ( 'css' === $this->type ) ? new CSS() : new JS();
 
 			foreach ( $this->source_files as $file ) {
 				$this->safely_add_file_to_minifier( $file, $minifier );
 			}
 
-			$minifier->minify( $cache_path );
+			try {
+				$minifier->minify( $cache_path );
+			} catch ( \Exception $e ) {
+				error_log( '[ShopBuilder Minify] ' . $e->getMessage() ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+
+				return '';
+			}
 		}
 
 		return $this->get_url();

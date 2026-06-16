@@ -66,7 +66,22 @@ class DefaultTemplate {
 		}
 
 		if ( $is_can_set_default ) {
-			TemplateSettings::instance()->set_option( $option_name, $default_page_id );
+			$singleton_types = apply_filters(
+				'rtsb/builder/singleton_types',
+				array_keys( BuilderFns::builder_page_types() )
+			);
+
+			if ( in_array( $page_type, $singleton_types, true ) ) {
+				// Singleton path: one enabled template per type — overwrite the type-wide option.
+				TemplateSettings::instance()->set_option( $option_name, $default_page_id );
+			} elseif ( $page_id ) {
+				// Pool path: multi-enabled type — flip per-post meta flag, don't touch the type-wide option.
+				if ( ! empty( $default_page_id ) ) {
+					update_post_meta( $page_id, '_rtsb_tb_enabled_in_pool', 'on' );
+				} else {
+					delete_post_meta( $page_id, '_rtsb_tb_enabled_in_pool' );
+				}
+			}
 		}
 
 		do_action( 'rtsb/set/builder/default/template', $_POST, $page_id );

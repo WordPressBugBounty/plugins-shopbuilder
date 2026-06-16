@@ -17,13 +17,15 @@ $wrapper_classes = ! empty( $controllers['table_horizontal_scroll_on_mobile'] ) 
 ?>
 <div class="rtsb-checkout-order-review<?php echo esc_attr( $wrapper_classes ); ?>">
 	<?php
-    do_action( 'woocommerce_checkout_before_order_review_heading' );
+	do_action( 'woocommerce_checkout_before_order_review_heading' );
 	if ( ! empty( $controllers['show_title'] ) ) {
 		?>
 		<h3 id="order_review_heading"><?php esc_html_e( 'Your order', 'shopbuilder' ); ?></h3>
 		<?php
 	}
 	?>
+
+	<?php do_action( 'woocommerce_checkout_before_order_review' ); ?>
 
 	<?php
 	$addons = 'on' === ( Fns::get_options( 'modules', 'product_add_ons' )['active'] ?? '' );

@@ -45,10 +45,13 @@ class SwatchesFns {
 	 * @return array
 	 */
 	public static function get_wc_attributes( $empty = '' ) {
-		$list  = [];
-		$lists = (array) wp_list_pluck( wc_get_attribute_taxonomies(), 'attribute_label', 'attribute_name' );
-		foreach ( $lists as $name => $label ) {
-			$list[ wc_attribute_taxonomy_name( $name ) ] = $label . " ( {$name} )";
+		$list = [];
+		// Guard WooCommerce functions: activation/cache rebuild can run while WooCommerce is inactive.
+		if ( function_exists( 'wc_get_attribute_taxonomies' ) && function_exists( 'wc_attribute_taxonomy_name' ) ) {
+			$lists = (array) wp_list_pluck( wc_get_attribute_taxonomies(), 'attribute_label', 'attribute_name' );
+			foreach ( $lists as $name => $label ) {
+				$list[ wc_attribute_taxonomy_name( $name ) ] = $label . " ( {$name} )";
+			}
 		}
 		if ( $empty ) {
 			$list = [ '' => $empty ] + $list;
@@ -207,6 +210,17 @@ class SwatchesFns {
 			} else {
 				$text_tooltip = trim( apply_filters( 'rtsb/variable/item/text/tooltip', $term->name, $term, $args ) );
 			}
+			$text_tooltip = apply_filters(
+				'rtsb/tooltip/text',
+				sprintf(
+					'<span class="%s">%s</span>',
+					'text-tooltip-wrapper',
+					$text_tooltip
+				),
+				$text_tooltip,
+				$term,
+				$args
+			);
 		}
 
 		return [ $image_tooltip, $text_tooltip ];
@@ -502,9 +516,26 @@ class SwatchesFns {
 				$html = '<span class="rtsb-term-span">' . $html . '</span>';
 				break;
 			case 'image':
-				$attachment_id = ! empty( $term_data['data'][ $slug ]['image'] )
-					? absint( $term_data['data'][ $slug ]['image'] )
-					: absint( get_term_meta( $term_id, 'rtsb_vs_product_attribute_image', true ) );
+				// Per-product override (PRO) always wins.
+				if ( ! empty( $term_data['data'][ $slug ]['image'] ) ) {
+					$attachment_id = absint( $term_data['data'][ $slug ]['image'] );
+				} else {
+					// Legacy per-term meta (rtsb_vs_product_attribute_image)
+					// only applies when the attribute's CURRENT global swatch
+					// type is still "image". If the admin changed the
+					// attribute type to "select" and is relying on the
+					// "Default Dropdown Convert" setting to render images,
+					// the legacy meta is stale; ignore it so the
+					// variation-image fallback below takes over.
+					$taxonomy             = ( isset( $args['term'] ) && $args['term'] instanceof \WP_Term )
+						? $args['term']->taxonomy
+						: '';
+					$is_legacy_image_attr = $term_id && $taxonomy
+						&& self::wc_product_has_attribute_type( 'image', $taxonomy );
+					$attachment_id        = $is_legacy_image_attr
+						? absint( get_term_meta( $term_id, 'rtsb_vs_product_attribute_image', true ) )
+						: 0;
+				}
 
 				$image_size = self::get_options( 'attribute_image_size' );
 				$image_url  = wp_get_attachment_image_url( $attachment_id, apply_filters( 'rtsb/product/attribute/image/size', $image_size ) );

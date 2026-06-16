@@ -88,6 +88,21 @@ class GeneralCheckout extends CheckoutEditorBase {
 				$fields['postcode'] = wp_parse_args( $this->shipping_settings['shipping_postcode'], $fields['postcode'] );
 			}
 		}
+		// Inject priority from saved settings order so WC's address-i18n.js does not re-sort locale-managed fields with core defaults.
+		$billing_keys  = array_keys( $this->billing_settings );
+		$shipping_keys = array_keys( $this->shipping_settings );
+		foreach ( [ 'address_1', 'address_2', 'city', 'state', 'postcode' ] as $key ) {
+			if ( empty( $fields[ $key ] ) ) {
+				continue;
+			}
+			$billing_index  = array_search( 'billing_' . $key, $billing_keys, true );
+			$shipping_index = array_search( 'shipping_' . $key, $shipping_keys, true );
+			if ( false !== $billing_index ) {
+				$fields[ $key ]['priority'] = ( absint( $billing_index ) + 1 ) * 10;
+			} elseif ( false !== $shipping_index ) {
+				$fields[ $key ]['priority'] = ( absint( $shipping_index ) + 1 ) * 10;
+			}
+		}
 		return $fields;
 	}
 

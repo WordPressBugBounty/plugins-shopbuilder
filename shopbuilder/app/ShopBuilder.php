@@ -17,6 +17,7 @@ use RadiusTheme\SB\Controllers\Shortcodes;
 use RadiusTheme\SB\Controllers\Dependencies;
 use RadiusTheme\SB\Controllers\CacheController;
 use RadiusTheme\SB\Controllers\Admin\AdminInit;
+use RadiusTheme\SB\Controllers\Admin\PluginRow;
 use RadiusTheme\SB\Controllers\AssetsController;
 use RadiusTheme\SB\Controllers\BuilderController;
 use RadiusTheme\SB\Controllers\SupportController;
@@ -172,36 +173,47 @@ final class ShopBuilder {
 	 * @return void
 	 */
 	public function init() {
+		// Plugin row links (Settings/Demo/Documentation/Get Pro) must register
+		// regardless of dependency state so users can always reach Settings or
+		// docs even when WooCommerce/Elementor is inactive.
+		if ( is_admin() ) {
+			PluginRow::instance();
+		}
+
 		if ( ! Dependencies::instance()->check() ) {
 			return;
 		}
 
-		do_action( 'rtsb/before/loaded' );
-		CacheController::instance();
-		// Include File.
-		AssetsController::instance();
-		ModuleManager::instance();
+		try {
+			do_action( 'rtsb/before/loaded' );
+			CacheController::instance();
+			// Include File.
+			AssetsController::instance();
+			ModuleManager::instance();
 
-		// Ajax.
-		AddToCart::instance();
-		AjaxLogin::instance();
-		UpdateCheckoutSection::instance();
+			// Ajax.
+			AddToCart::instance();
+			AjaxLogin::instance();
+			UpdateCheckoutSection::instance();
 
-		BuilderController::instance();
-		FilterHooks::init_hooks();
-		ActionHooks::init_hooks();
+			BuilderController::instance();
+			FilterHooks::init_hooks();
+			ActionHooks::init_hooks();
 
-		Installation::init();
-		Migration::init();
-		AIinit::instance();
+			Installation::init();
+			Migration::init();
+			AIinit::instance();
 
-		if ( is_admin() ) {
-			AdminInit::instance();
+			if ( is_admin() ) {
+				AdminInit::instance();
+			}
+
+			Shortcodes::instance();
+
+			do_action( 'rtsb/after/loaded' );
+		} catch ( \Throwable $e ) {
+			error_log( 'ShopBuilder init error: ' . $e->getMessage() ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 		}
-
-		Shortcodes::instance();
-
-		do_action( 'rtsb/after/loaded' );
 	}
 
 	/**

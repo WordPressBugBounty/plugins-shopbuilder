@@ -77,15 +77,85 @@ class ProductImages extends ElementorWidgetBase {
 	public function init_scripts() {
 		?>
 		<script type="text/javascript">
+			// Initialize the gallery's Swiper sliders. In the Elementor editor the
+			// widget renders/re-renders after the slider script's one-time init has
+			// already run, so the main + thumbnail Swipers need to be (re)initialized
+			// here — otherwise the thumbnails stack and the gallery looks broken.
+			window.rtsbInitGallerySliders = window.rtsbInitGallerySliders || function ($scope) {
+				var $ctx = ($scope && $scope.length) ? $scope : jQuery(document);
+				// Elementor's AJAX re-render can run outside edit-mode detection, which
+				// leaves the gallery wrapper in the hidden `rtsb-content-loading` (opacity:0)
+				// state. Reveal it so the editor never shows a blank/hidden gallery.
+				$ctx.find('.rtsb-content-loading').removeClass('rtsb-content-loading');
+				// Hide the thumbnail column when the current view has no thumbnails (the
+				// runtime variation JS that normally does this doesn't run in the editor).
+				$ctx.find('.rtsb-vg-main-slider-wrapper').each(function () {
+					var $wrap = jQuery(this);
+					if ($wrap.find('.rtsb-vg-thumb-slider .swiper-slide').length < 1) {
+						$wrap.addClass('rtsb-vg-thumbs-hidden');
+					}
+				});
+				$ctx.find('.rtsb-carousel-slider').each(function () {
+					var $slider = jQuery(this);
+					if (typeof $slider.rtsb_slider !== 'function') {
+						return;
+					}
+					// The runtime height-sync (syncThumbHeight) only runs on WooCommerce's
+					// wc_variation_form event, which doesn't fire in the editor — so the
+					// vertical thumbnail Swiper has no definite height and grows unbounded.
+					// Replicate the sync here once the slider has loaded.
+					$slider.off('rtsb_slider_loaded.rtsbEditor').on('rtsb_slider_loaded.rtsbEditor', function () {
+						setTimeout(function () {
+							window.rtsbEditorSyncThumbHeight($slider);
+						}, 400);
+					});
+					$slider.rtsb_slider();
+				});
+			};
+			// Size the thumbnail column (and its slots) to the main image height, the
+			// same way the frontend module does, so the editor preview isn't unbounded.
+			window.rtsbEditorSyncThumbHeight = window.rtsbEditorSyncThumbHeight || function ($slider) {
+				var $wrap = $slider.closest('.rtsb-vg-main-slider-wrapper');
+				if (!$wrap.length || !$wrap.is('.rtsb-thumbnails-position-left, .rtsb-thumbnails-position-right')) {
+					return;
+				}
+				var $thumb = $wrap.find('.rtsb-vg-thumb-slider').first();
+				if (!$thumb.length) {
+					return;
+				}
+				var mainH = Math.round($slider.outerHeight() || 0);
+				if (mainH <= 0) {
+					return;
+				}
+				var opts = $thumb.data('options') || {};
+				var perView = parseInt(opts.slidesPerView, 10) || 4;
+				var gap = parseInt(opts.spaceBetween, 10) || 0;
+				var slotH = Math.floor((mainH - gap * (perView - 1)) / perView);
+				$thumb.css('height', mainH + 'px');
+				if (slotH > 0) {
+					$thumb.find('.swiper-slide').css('height', slotH + 'px');
+				}
+				var thumbEl = $thumb.get(0);
+				if (thumbEl && thumbEl.swiper) {
+					thumbEl.swiper.update();
+				}
+			};
 			if (!'<?php echo esc_attr( Fns::is_optimization_enabled() ); ?>') {
 				setTimeout(function() {
-					window.rtsbVariationGallery();
-				}, 4000);
+					window.rtsbInitGallerySliders();
+					if (typeof window.rtsbVariationGallery === 'function') {
+						window.rtsbVariationGallery();
+					}
+				}, 600);
 			} else {
 				if (typeof elementorFrontend !== 'undefined') {
 					elementorFrontend.hooks.addAction(
 						'frontend/element_ready/<?php echo esc_attr( $this->rtsb_base ); ?>.default',
-						() => {
+						( $scope ) => {
+							// Init the gallery slider immediately — it only needs jQuery and
+							// the rtsb_slider plugin, not the RTSB module system, so it must
+							// not be gated behind waitForRTSB (which may not resolve here).
+							window.rtsbInitGallerySliders($scope);
 							window.waitForRTSB((RTSB) => {
 								RTSB.modules.get('variationGallery')?.refresh();
 							});
@@ -103,13 +173,13 @@ class ProductImages extends ElementorWidgetBase {
 					jQuery(this).trigger('wc-product-gallery-before-init', [this, wc_single_product_params]);
 					jQuery(that).wc_product_gallery(wc_single_product_params);
 					jQuery(that).trigger('wc-product-gallery-after-init', [this, wc_single_product_params]);
-				}, 1000);
+				}, 600);
 
 			});
 			<?php if ( function_exists( 'rtwpvg' ) ) { ?>
 			setTimeout(function () {
 				jQuery('.rtwpvg-wrapper, .rtwpvg-grid-wrapper').rtWpVGallery();
-			}, 1000);
+			}, 600);
 			<?php } ?>
 
 

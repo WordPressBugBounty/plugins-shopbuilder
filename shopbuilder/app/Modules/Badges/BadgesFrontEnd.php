@@ -390,6 +390,10 @@ class BadgesFrontEnd {
 		// Single Page Badges Position.
 		$product_hook_priority = ( $this->options['product_page_group_hook_priority'] ?? null );
 
+		if ( '' === $product_hook_priority ) {
+			$product_hook_priority = null;
+		}
+
 		$positions = apply_filters(
 			'rtsb/module/product_page_badges/positions',
 			[
@@ -427,6 +431,10 @@ class BadgesFrontEnd {
 		}
 
 		$loop_hook_priority = ( $this->options['group_position_hook_priority'] ?? null );
+
+		if ( '' === $loop_hook_priority ) {
+			$loop_hook_priority = null;
+		}
 
 		// Shop Page/ Any Product Query loop.
 		$positions = apply_filters(

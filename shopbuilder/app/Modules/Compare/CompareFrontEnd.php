@@ -275,14 +275,20 @@ class CompareFrontEnd {
 
 		// get product type.
 		$product_type = $product->get_type();
-		$params       = [
+		$show_button_text = ! empty( Fns::get_option( 'modules', 'compare', 'button_text', '' ) );
+
+		if ( $show_button_text ) {
+			$classes[] = 'has-text';
+		}
+
+		$params = [
 			'exists'            => $exists,
 			'classes'           => $classes,
 			'product_id'        => $product->get_id(),
 			'parent_product_id' => $product_parent ?: $product->get_id(),
 			'product_type'      => $product_type,
 			'button_text'       => $button_text,
-			'show_button_text'  => ! empty( Fns::get_option( 'modules', 'compare', 'button_text', '' ) ),
+			'show_button_text'  => $show_button_text,
 			'left_text'         => apply_filters( 'rtsb/module/compare/button_left_text', '' ),
 			'right_text'        => apply_filters( 'rtsb/module/compare/button_right_text', '' ),
 		];

@@ -11,6 +11,8 @@ defined( 'ABSPATH' ) || exit();
 
 use RadiusTheme\SB\Helpers\Fns;
 use RadiusTheme\SB\Helpers\BuilderFns;
+use RadiusTheme\SB\Helpers\ElementorDataMap;
+use RadiusTheme\SB\Models\TemplateSettings;
 use RadiusTheme\SB\Traits\SingletonTrait;
 
 /**
@@ -32,6 +34,13 @@ class BuilderHooks {
 	private $page_edit_with = '';
 
 	/**
+	 * Internal cache.
+	 *
+	 * @var array
+	 */
+	private static $cache = [];
+
+	/**
 	 * Singleton.
 	 */
 	use SingletonTrait;
@@ -44,6 +53,101 @@ class BuilderHooks {
 		add_action( 'template_redirect', [ $this, 'frontend_init' ] );
 		add_filter( 'rtsb/builder/set/current/page/type', [ $this, 'builder_page_type' ] );
 		add_filter( 'body_class', [ $this, 'product_page_body_class' ] );
+		add_action( 'pre_get_posts', [ $this, 'override_archive_posts_per_page' ] );
+	}
+
+	/**
+	 * Override posts_per_page for shop/archive pages based on widget setting.
+	 *
+	 * @param \WP_Query $query The WP_Query instance.
+	 *
+	 * @return void
+	 */
+	public function override_archive_posts_per_page( $query ) {
+		if ( is_admin() || ! $query->is_main_query() ) {
+			return;
+		}
+
+		if ( ! ( is_shop() || is_product_taxonomy() ) ) {
+			return;
+		}
+
+		$type            = is_shop() ? 'shop' : 'archive';
+		$option_name     = BuilderFns::option_name( $type );
+		$builder_page_id = TemplateSettings::instance()->get_option( $option_name );
+
+		if ( empty( $builder_page_id ) ) {
+			$option_name     = BuilderFns::option_name( $type, true );
+			$builder_page_id = TemplateSettings::instance()->get_option( $option_name );
+		}
+
+		// Fallback: use shop template for archive pages when no archive template exists.
+		if ( empty( $builder_page_id ) && 'archive' === $type ) {
+			$option_name     = BuilderFns::option_name( 'shop' );
+			$builder_page_id = TemplateSettings::instance()->get_option( $option_name );
+
+			if ( empty( $builder_page_id ) ) {
+				$option_name     = BuilderFns::option_name( 'shop', true );
+				$builder_page_id = TemplateSettings::instance()->get_option( $option_name );
+			}
+		}
+
+		if ( empty( $builder_page_id ) ) {
+			return;
+		}
+
+		$per_page = $this->get_archive_widget_per_page( $builder_page_id );
+
+		if ( $per_page ) {
+			$query->set( 'posts_per_page', $per_page );
+		}
+	}
+
+	/**
+	 * Get posts_per_page from the ProductsArchive widget in Elementor data.
+	 *
+	 * @param int $post_id Builder page ID.
+	 *
+	 * @return int|false The per page value or false if not set.
+	 */
+	private function get_archive_widget_per_page( $post_id ) {
+		$cache_key = 'rtsb_archive_per_page_' . $post_id;
+
+		if ( isset( self::$cache[ $cache_key ] ) ) {
+			return self::$cache[ $cache_key ];
+		}
+
+		// Check default layout widget first.
+		$widgets = ElementorDataMap::instance()->get_widget_data( 'rtsb-products-archive', null, $post_id );
+
+		if ( ! empty( $widgets ) ) {
+			$widget   = reset( $widgets );
+			$per_page = isset( $widget['settings']['posts_per_page'] ) && '' !== $widget['settings']['posts_per_page']
+				? absint( $widget['settings']['posts_per_page'] )
+				: false;
+
+			self::$cache[ $cache_key ] = $per_page;
+
+			return $per_page;
+		}
+
+		// Check custom layout widget.
+		$widgets = ElementorDataMap::instance()->get_widget_data( 'rtsb-products-archive-custom', null, $post_id );
+
+		if ( ! empty( $widgets ) ) {
+			$widget   = reset( $widgets );
+			$per_page = isset( $widget['settings']['posts_per_page'] ) && '' !== $widget['settings']['posts_per_page']
+				? absint( $widget['settings']['posts_per_page'] )
+				: false;
+
+			self::$cache[ $cache_key ] = $per_page;
+
+			return $per_page;
+		}
+
+		self::$cache[ $cache_key ] = false;
+
+		return false;
 	}
 
 	/**
@@ -53,7 +157,11 @@ class BuilderHooks {
 	 * @return array.
 	 */
 	public function product_page_body_class( $classes ) {
-		$classes[] = 'rtsb-shopbuilder-plugin rtsb_theme_' . rtsb()->current_theme;
+		$classes[] = 'rtsb-shopbuilder-plugin rtsb-shopbuilder-v-' . RTSB_VERSION . ' rtsb_theme_' . rtsb()->current_theme;
+
+		if ( defined( 'RTSBPRO_VERSION' ) ) {
+			$classes[] = 'rtsb-shopbuilder-pro-v-' . RTSBPRO_VERSION;
+		}
 		if ( Fns::is_woocommerce() || BuilderFns::is_builder_preview() ) {
 			$classes[] = 'woocommerce-page';
 		}
@@ -159,7 +267,12 @@ class BuilderHooks {
 	 * @return void
 	 */
 	public function el_body_class() {
+		if ( ! class_exists( '\Elementor\Plugin' ) || empty( \Elementor\Plugin::$instance->frontend ) ) {
+			return;
+		}
+
 		$page_template = get_post_meta( $this->builder_page_id, '_wp_page_template', true );
+
 		if ( 'elementor_canvas' === $page_template ) {
 			\Elementor\Plugin::$instance->frontend->add_body_class( 'elementor-template-canvas' );
 		} elseif ( 'elementor_header_footer' === $page_template ) {

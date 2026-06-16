@@ -87,6 +87,11 @@ class LayoutFields {
 		unset( $fields['action_btn_preset'] );
 		unset( $fields['action_btn_position'] );
 
+		// List layouts squash horizontal image+text when narrowed; warn before users pick the wider counts.
+		if ( isset( $fields['cols'] ) ) {
+			$fields['cols']['description'] = esc_html__( 'Please select the number of columns to show per row. Note: more than 3 columns may break the List layout on smaller screens; higher counts (4-8) are intended for wider screens only.', 'shopbuilder' );
+		}
+
 		$fields['layout_section_end'] = $obj->end_section();
 
 		return apply_filters( 'rtsb/elements/elementor/list_layout_control', $fields, $obj );

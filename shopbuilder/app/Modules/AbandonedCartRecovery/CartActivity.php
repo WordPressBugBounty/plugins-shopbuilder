@@ -228,6 +228,8 @@ class CartActivity {
 				CartRecoveryDB::update_ca_abandonment_meta( $abandonment['id'], 'completed_time', $time );
 				CartRecoveryDB::delete_unnecessery_email_history_for_abandonment( $abandonment['id'] );
 				CartRecoveryDB::delete_abandonment_meta( $abandonment['id'], 'lost_time' );
+				// Reset tracking session so a returning customer starts a fresh abandonment record.
+				Fns::removeSession( 'rtsb_ca_session_id' );
 			}
 			$notifyToAdmin = 'on' === CartRecoveryFns::get_options( 'notify_recovery_to_admin', 'on' );
 			if ( ! empty( $abandonment['id'] ) && $notifyToAdmin ) {
@@ -516,9 +518,15 @@ class CartActivity {
 		$session_checkout_details = CartRecoveryDB::getCaAbandonmentBySessionId( $session_id );
 		if ( empty( $session_checkout_details ) ) {
 			$session_checkout_details = CartRecoveryDB::getCaAbandonmentByEmail( $user_email );
-			if ( ! empty( $session_checkout_details['ca_session_id'] ) ) {
+			if (
+				! empty( $session_checkout_details['ca_session_id'] )
+				&& in_array( $session_checkout_details['order_status'], [ 'normal', 'abandoned' ], true )
+			) {
 				$session_id = $session_checkout_details['ca_session_id'];
 				Fns::setSession( 'rtsb_ca_session_id', $session_id );
+			} else {
+				// Prior cart for this email is already completed/lost: start a fresh record.
+				$session_checkout_details = [];
 			}
 		}
 
@@ -568,7 +576,8 @@ class CartActivity {
 					);
 				}
 				$status = CartRecoveryDB::updateCaAbandonmentBySessionId( $session_id, $checkout_details );
-			} elseif ( empty( $session_checkout_details['order_status'] ) ) {
+			} else {
+				// No trackable record (none, or previous one already completed/lost): start fresh.
 				$status = CartRecoveryDB::insertCaAbandonment( $checkout_details );
 			}
 		} else {

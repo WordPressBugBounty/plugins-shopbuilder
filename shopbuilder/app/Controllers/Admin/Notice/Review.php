@@ -41,19 +41,23 @@ class Review {
 			return;
 		}
 
-		$now = strtotime( 'now' );
-
 		$install_date = ExtraSettings::instance()->get_option( 'rtsb_plugin_activation_time', false );
-		$showing_date = strtotime( '+15 days', $install_date );
-		$remind_time  = get_option( 'rtsb_admin_review_remind_me' );
 
-		if ( ! $remind_time ) {
-			$remind_time = $install_date;
+		// Bail until the activation time is recorded, otherwise the notice would show immediately.
+		if ( ! $install_date ) {
+			return;
 		}
 
-		$remind_due = strtotime( '+20 days', $remind_time );
+		$now         = strtotime( 'now' );
+		$remind_time = get_option( 'rtsb_admin_review_remind_me' );
 
-		if ( ! $now > $showing_date || $now < $remind_due ) {
+		if ( $remind_time ) {
+			// User asked to be reminded later: show again 20 days after that click.
+			if ( $now < strtotime( '+20 days', $remind_time ) ) {
+				return;
+			}
+		} elseif ( $now < strtotime( '+15 days', $install_date ) ) {
+			// First time: show 15 days after installation.
 			return;
 		}
 
@@ -156,7 +160,7 @@ class Review {
 			$dont_disturb = add_query_arg( $args + [ 'rtsb_admin_review_spare_me' => '1' ], $this->rtsb_current_admin_url() );
 			$remind_me    = add_query_arg( $args + [ 'rtsb_admin_review_remind_me' => '1' ], $this->rtsb_current_admin_url() );
 			$rated        = add_query_arg( $args + [ 'rtsb_admin_review_rated' => '1' ], $this->rtsb_current_admin_url() );
-			$reviewurl    = 'https://wordpress.org/support/plugin/shopbuilder/reviews/';
+			$reviewurl    = 'https://wordpress.org/support/plugin/shopbuilder/reviews/#new-post';
 			$plugin_name  = 'ShopBuilder – Elementor WooCommerce Builder Addons';
 			?>
 			<div class="notice rtsb-review-notice rtsb-review-notice--extended">
@@ -165,13 +169,11 @@ class Review {
 					<p>Thank you for choosing <strong>ShopBuilder</strong>. If you have found our plugin useful and makes you smile, please consider giving us a 5-star rating on WordPress.org. It will help us to grow.</p>
 					<div class="rtsb-review-notice_actions">
 						<a href="<?php echo esc_url( $reviewurl ); ?>"
-						   class="rtsb-review-button rtsb-review-button--cta" target="_blank"><span>⭐ Yes, You Deserve It!</span></a>
+						   class="rtsb-review-button rtsb-going-to-review rtsb-review-button--cta" target="_blank"><span>⭐ Yes, You Deserve It!</span></a>
 						<a href="<?php echo esc_url( $rated ); ?>"
 						   class="rtsb-review-button rtsb-review-button--cta rtsb-review-button--outline"><span>😀 Already Rated!</span></a>
 						<a href="<?php echo esc_url( $remind_me ); ?>"
 						   class="rtsb-review-button rtsb-review-button--cta rtsb-review-button--outline"><span>🔔 Remind Me Later</span></a>
-						<a href="<?php echo esc_url( $dont_disturb ); ?>"
-						   class="rtsb-review-button rtsb-review-button--cta rtsb-review-button--error rtsb-review-button--outline"><span>😐 No Thanks </span></a>
 					</div>
 				</div>
 			</div>
@@ -243,13 +245,14 @@ class Review {
 					border: 0;
 					border-radius: 3px;;
 					background: var(--e-button-context-color);
-					color: #fff;
 					vertical-align: middle;
 					text-align: center;
-					text-decoration: none;
+					text-decoration: none !important;
 					white-space: nowrap;
 				}
-
+				.rtsb-going-to-review {
+					color: #fff !important;
+				}
 				.rtsb-review-button:active {
 					background: var(--e-button-context-color-dark);
 					color: #fff;

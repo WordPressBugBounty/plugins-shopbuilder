@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitc576ef4c80eace95c341aa84f2fd27d4
+class ComposerStaticInite5a5e1d9cd8d9857ac4413d5a593bb36
 {
     public static $prefixLengthsPsr4 = array (
         'R' =>
@@ -106,6 +106,7 @@ class ComposerStaticInitc576ef4c80eace95c341aa84f2fd27d4
         'RadiusTheme\\SB\\Controllers\\Admin\\Ajax\\ModalTemplate' => __DIR__ . '/../..' . '/app/Controllers/Admin/Ajax/ModalTemplate.php',
         'RadiusTheme\\SB\\Controllers\\Admin\\Notice\\BFDiscount' => __DIR__ . '/../..' . '/app/Controllers/Admin/Notice/BFDiscount.php',
         'RadiusTheme\\SB\\Controllers\\Admin\\Notice\\BlackFridayV2' => __DIR__ . '/../..' . '/app/Controllers/Admin/Notice/BlackFridayV2.php',
+        'RadiusTheme\\SB\\Controllers\\Admin\\Notice\\CachePermission' => __DIR__ . '/../..' . '/app/Controllers/Admin/Notice/CachePermission.php',
         'RadiusTheme\\SB\\Controllers\\Admin\\Notice\\Review' => __DIR__ . '/../..' . '/app/Controllers/Admin/Notice/Review.php',
         'RadiusTheme\\SB\\Controllers\\Admin\\Notice\\Upgrade' => __DIR__ . '/../..' . '/app/Controllers/Admin/Notice/Upgrade.php',
         'RadiusTheme\\SB\\Controllers\\Admin\\PluginRow' => __DIR__ . '/../..' . '/app/Controllers/Admin/PluginRow.php',
@@ -122,9 +123,11 @@ class ComposerStaticInitc576ef4c80eace95c341aa84f2fd27d4
         'RadiusTheme\\SB\\Controllers\\Hooks\\BuilderHooks' => __DIR__ . '/../..' . '/app/Controllers/Hooks/BuilderHooks.php',
         'RadiusTheme\\SB\\Controllers\\Hooks\\FilterHooks' => __DIR__ . '/../..' . '/app/Controllers/Hooks/FilterHooks.php',
         'RadiusTheme\\SB\\Controllers\\PluginsSupport\\AddifyVisibilityByRoles' => __DIR__ . '/../..' . '/app/Controllers/PluginsSupport/AddifyVisibilityByRoles.php',
+        'RadiusTheme\\SB\\Controllers\\PluginsSupport\\PayPalPPCPSupport' => __DIR__ . '/../..' . '/app/Controllers/PluginsSupport/PayPalPPCPSupport.php',
         'RadiusTheme\\SB\\Controllers\\PluginsSupport\\RtwpvgSupport' => __DIR__ . '/../..' . '/app/Controllers/PluginsSupport/RtwpvgSupport.php',
         'RadiusTheme\\SB\\Controllers\\PluginsSupport\\RtwpvsSupport' => __DIR__ . '/../..' . '/app/Controllers/PluginsSupport/RtwpvsSupport.php',
         'RadiusTheme\\SB\\Controllers\\PluginsSupport\\WooAddressBook' => __DIR__ . '/../..' . '/app/Controllers/PluginsSupport/WooAddressBook.php',
+        'RadiusTheme\\SB\\Controllers\\PluginsSupport\\WooPaymentsSupport' => __DIR__ . '/../..' . '/app/Controllers/PluginsSupport/WooPaymentsSupport.php',
         'RadiusTheme\\SB\\Controllers\\Shortcodes' => __DIR__ . '/../..' . '/app/Controllers/Shortcodes.php',
         'RadiusTheme\\SB\\Controllers\\SupportController' => __DIR__ . '/../..' . '/app/Controllers/SupportController.php',
         'RadiusTheme\\SB\\Controllers\\ThemesSupport\\Astra\\ThemeSupport' => __DIR__ . '/../..' . '/app/Controllers/ThemesSupport/Astra/ThemeSupport.php',
@@ -146,7 +149,9 @@ class ComposerStaticInitc576ef4c80eace95c341aa84f2fd27d4
         'RadiusTheme\\SB\\Elementor\\Widgets\\Archive\\ArchiveProductMode' => __DIR__ . '/../..' . '/app/Elementor/Widgets/Archive/ArchiveProductMode.php',
         'RadiusTheme\\SB\\Elementor\\Widgets\\Archive\\ArchiveResultCount' => __DIR__ . '/../..' . '/app/Elementor/Widgets/Archive/ArchiveResultCount.php',
         'RadiusTheme\\SB\\Elementor\\Widgets\\Archive\\ArchiveTitle' => __DIR__ . '/../..' . '/app/Elementor/Widgets/Archive/ArchiveTitle.php',
-        'RadiusTheme\\SB\\Elementor\\Widgets\\Archive\\ProductFilters' => __DIR__ . '/../..' . '/app/Elementor/Widgets/Archive/ProductFilters.php',
+        'RadiusTheme\\SB\\Elementor\\Widgets\\Archive\\ProductFilters\\Controls' => __DIR__ . '/../..' . '/app/Elementor/Widgets/Archive/ProductFilters/Controls.php',
+        'RadiusTheme\\SB\\Elementor\\Widgets\\Archive\\ProductFilters\\ProductFilters' => __DIR__ . '/../..' . '/app/Elementor/Widgets/Archive/ProductFilters/ProductFilters.php',
+        'RadiusTheme\\SB\\Elementor\\Widgets\\Archive\\ProductFilters\\Selectors' => __DIR__ . '/../..' . '/app/Elementor/Widgets/Archive/ProductFilters/Selectors.php',
         'RadiusTheme\\SB\\Elementor\\Widgets\\Archive\\ProductsArchive' => __DIR__ . '/../..' . '/app/Elementor/Widgets/Archive/ProductsArchive.php',
         'RadiusTheme\\SB\\Elementor\\Widgets\\Archive\\ProductsArchiveCustom' => __DIR__ . '/../..' . '/app/Elementor/Widgets/Archive/ProductsArchiveCustom.php',
         'RadiusTheme\\SB\\Elementor\\Widgets\\Archive\\ProductsOrdering' => __DIR__ . '/../..' . '/app/Elementor/Widgets/Archive/ProductsOrdering.php',
@@ -187,7 +192,6 @@ class ComposerStaticInitc576ef4c80eace95c341aa84f2fd27d4
         'RadiusTheme\\SB\\Elementor\\Widgets\\Controls\\OrderReviewSettings' => __DIR__ . '/../..' . '/app/Elementor/Widgets/Controls/OrderReviewSettings.php',
         'RadiusTheme\\SB\\Elementor\\Widgets\\Controls\\OrderReviewTableSettings' => __DIR__ . '/../..' . '/app/Elementor/Widgets/Controls/OrderReviewTableSettings.php',
         'RadiusTheme\\SB\\Elementor\\Widgets\\Controls\\PriceSettings' => __DIR__ . '/../..' . '/app/Elementor/Widgets/Controls/PriceSettings.php',
-        'RadiusTheme\\SB\\Elementor\\Widgets\\Controls\\ProductFilterSettings' => __DIR__ . '/../..' . '/app/Elementor/Widgets/Controls/ProductFilterSettings.php',
         'RadiusTheme\\SB\\Elementor\\Widgets\\Controls\\ProductFlashSale' => __DIR__ . '/../..' . '/app/Elementor/Widgets/Controls/ProductFlashSale.php',
         'RadiusTheme\\SB\\Elementor\\Widgets\\Controls\\ProductImagesSettings' => __DIR__ . '/../..' . '/app/Elementor/Widgets/Controls/ProductImagesSettings.php',
         'RadiusTheme\\SB\\Elementor\\Widgets\\Controls\\ProductShareSettings' => __DIR__ . '/../..' . '/app/Elementor/Widgets/Controls/ProductShareSettings.php',
@@ -314,6 +318,7 @@ class ComposerStaticInitc576ef4c80eace95c341aa84f2fd27d4
         'RadiusTheme\\SB\\Helpers\\Fns' => __DIR__ . '/../..' . '/app/Helpers/Fns.php',
         'RadiusTheme\\SB\\Helpers\\Installation' => __DIR__ . '/../..' . '/app/Helpers/Installation.php',
         'RadiusTheme\\SB\\Helpers\\Migration' => __DIR__ . '/../..' . '/app/Helpers/Migration.php',
+        'RadiusTheme\\SB\\Helpers\\SvgIcons' => __DIR__ . '/../..' . '/app/Helpers/SvgIcons.php',
         'RadiusTheme\\SB\\Models\\AssetBundler' => __DIR__ . '/../..' . '/app/Models/AssetBundler.php',
         'RadiusTheme\\SB\\Models\\Base\\ListModel' => __DIR__ . '/../..' . '/app/Models/Base/ListModel.php',
         'RadiusTheme\\SB\\Models\\DataModel' => __DIR__ . '/../..' . '/app/Models/DataModel.php',
@@ -381,9 +386,9 @@ class ComposerStaticInitc576ef4c80eace95c341aa84f2fd27d4
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInitc576ef4c80eace95c341aa84f2fd27d4::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInitc576ef4c80eace95c341aa84f2fd27d4::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInitc576ef4c80eace95c341aa84f2fd27d4::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInite5a5e1d9cd8d9857ac4413d5a593bb36::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInite5a5e1d9cd8d9857ac4413d5a593bb36::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInite5a5e1d9cd8d9857ac4413d5a593bb36::$classMap;
 
         }, null, ClassLoader::class);
     }

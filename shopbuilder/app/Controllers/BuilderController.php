@@ -188,43 +188,48 @@ class BuilderController {
 			}
 
 			if ( ! empty( $element['category'] ) ) {
-				$widget = false;
-				$import = apply_filters( 'rtsb_import_status', false );
-				switch ( $element['category'] ) {
-					case 'product':
-						if ( BuilderFns::is_product() || $import ) {
+				try {
+					$widget = false;
+					$import = apply_filters( 'rtsb_import_status', false );
+					switch ( $element['category'] ) {
+						case 'product':
+							if ( BuilderFns::is_product() || $import ) {
+								$widget = new $element['base_class']();
+							}
+							break;
+						case 'shop':
+							if ( BuilderFns::is_archive() || BuilderFns::is_shop() || $import ) {
+								$widget = new $element['base_class']();
+							}
+							break;
+						case 'archive':
+							if ( BuilderFns::is_archive() || $import ) {
+								$widget = new $element['base_class']();
+							}
+							break;
+						case 'cart':
+							if ( BuilderFns::is_cart() || $import ) {
+								$widget = new $element['base_class']();
+							}
+							break;
+						case 'checkout':
+							if ( BuilderFns::is_checkout() || $import ) {
+								$widget = new $element['base_class']();
+							}
+							break;
+						case 'general':
 							$widget = new $element['base_class']();
-						}
-						break;
-					case 'shop':
-						if ( BuilderFns::is_archive() || BuilderFns::is_shop() || $import ) {
-							$widget = new $element['base_class']();
-						}
-						break;
-					case 'archive':
-						if ( BuilderFns::is_archive() || $import ) {
-							$widget = new $element['base_class']();
-						}
-						break;
-					case 'cart':
-						if ( BuilderFns::is_cart() || $import ) {
-							$widget = new $element['base_class']();
-						}
-						break;
-					case 'checkout':
-						if ( BuilderFns::is_checkout() || $import ) {
-							$widget = new $element['base_class']();
-						}
-						break;
-					case 'general':
-						$widget = new $element['base_class']();
-						break;
-					default:
-				}
-				$widget = apply_filters( 'rtsb/element/list/init/widgets', $widget, $element );
+							break;
+						default:
+					}
+					$widget = apply_filters( 'rtsb/element/list/init/widgets', $widget, $element );
 
-				if ( $widget && is_object( $widget ) ) {
-					$widgets_manager->register( $widget );
+					if ( $widget && is_object( $widget ) ) {
+						$widgets_manager->register( $widget );
+					}
+				} catch ( \Throwable $e ) {
+					error_log( 'ShopBuilder widget error (' . $element['base_class'] . '): ' . $e->getMessage() ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+					continue;
 				}
 			}
 		}
@@ -337,6 +342,27 @@ class BuilderController {
 			if ( ! apply_filters( 'rtsb/multi/step/checkout/widget', true ) ) {
 				return;
 			}
+
+			$checkout = WC()->checkout();
+
+			// Temporarily remove callbacks that Elementor checkout
+			// handles via separate widgets to prevent duplicates.
+			remove_action( 'woocommerce_before_checkout_form', [ Hooks\ActionHooks::class, 'woocommerce_checkout_login_form' ], 10 );
+			remove_action( 'woocommerce_before_checkout_form', [ Hooks\ActionHooks::class, 'woocommerce_checkout_coupon_form' ], 10 );
+			remove_action( 'woocommerce_before_checkout_form', [ Fns::class, 'woocommerce_output_all_notices' ], 10 );
+
+			do_action( 'woocommerce_before_checkout_form', $checkout );
+
+			// Restore callbacks for non-Elementor contexts.
+			add_action( 'woocommerce_before_checkout_form', [ Hooks\ActionHooks::class, 'woocommerce_checkout_login_form' ], 10 );
+			add_action( 'woocommerce_before_checkout_form', [ Hooks\ActionHooks::class, 'woocommerce_checkout_coupon_form' ], 10 );
+			add_action( 'woocommerce_before_checkout_form', [ Fns::class, 'woocommerce_output_all_notices' ], 10 );
+
+			// If checkout registration is disabled and not logged in, the user cannot checkout.
+			if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_required() && ! is_user_logged_in() ) {
+				echo esc_html( apply_filters( 'woocommerce_checkout_must_be_logged_in_message', __( 'You must be logged in to checkout.', 'shopbuilder' ) ) );
+				return;
+			}
 			?>
 			<!--
 			woocommerce-checkout added for fix issue with payment method ( Revolut Pay )
@@ -370,6 +396,7 @@ class BuilderController {
 			?>
 			</form>
 			<?php
+			do_action( 'woocommerce_after_checkout_form', WC()->checkout() );
 		}
 		?>
 		</div>

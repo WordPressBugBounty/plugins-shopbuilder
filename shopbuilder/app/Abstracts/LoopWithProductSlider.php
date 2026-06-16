@@ -99,7 +99,6 @@ abstract class LoopWithProductSlider extends ElementorWidgetBase {
 			unset( $fields['order'] );
 		}
 		if ( 'rtsb-products-archive' === $this->rtsb_base ) {
-			unset( $fields['posts_per_page'] );
 			unset( $fields['columns'] );
 			unset( $fields['orderby'] );
 			unset( $fields['order'] );

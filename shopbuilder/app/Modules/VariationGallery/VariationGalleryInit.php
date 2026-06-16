@@ -105,14 +105,33 @@ final class VariationGalleryInit {
 		} else {
 			$ajaxurl = admin_url( 'admin-ajax.php' );
 		}
+		// The fileupload control stores [ 'id' => attachment ID, 'source' => URL ],
+		// but it can come back from the options store as a JSON string, so decode it
+		// before reading the URL; a raw JSON string must never be used as the URL.
+		$preloader_image = GalleryFns::get_options( 'preloader_image' );
+		if ( is_string( $preloader_image ) && '' !== trim( $preloader_image ) ) {
+			$decoded = json_decode( wp_unslash( $preloader_image ), true );
+			if ( is_array( $decoded ) ) {
+				$preloader_image = $decoded;
+			}
+		}
+		$preloader_image_url = '';
+		if ( is_array( $preloader_image ) && ! empty( $preloader_image['source'] ) ) {
+			$preloader_image_url = $preloader_image['source'];
+		} elseif ( is_string( $preloader_image ) && filter_var( $preloader_image, FILTER_VALIDATE_URL ) ) {
+			$preloader_image_url = $preloader_image;
+		}
 		wp_localize_script(
 			$this->handle,
 			'rtsbVgParams',
 			[
-				'ajaxurl'       => esc_url( $ajaxurl ),
-				'admin_url'     => esc_url( admin_url() ),
-				'pro_version'   => defined( 'RTSBPRO_VERSION' ) ? RTSBPRO_VERSION : false,
-				rtsb()->nonceId => wp_create_nonce( rtsb()->nonceText ),
+				'ajaxurl'        => esc_url( $ajaxurl ),
+				'admin_url'      => esc_url( admin_url() ),
+				'pro_version'    => defined( 'RTSBPRO_VERSION' ) ? RTSBPRO_VERSION : false,
+				'preloader'      => GalleryFns::get_options( 'preloader' ) ? 'on' : '',
+				'preloaderImage' => $preloader_image_url ? esc_url( $preloader_image_url ) : '',
+				'changeEffect'   => GalleryFns::get_options( 'gallery_change_effect', 'blur' ),
+				rtsb()->nonceId  => wp_create_nonce( rtsb()->nonceText ),
 			]
 		);
 		$this->frontend_dynamic_css();
@@ -130,15 +149,10 @@ final class VariationGalleryInit {
 		$dynamic_css .= '--vg-grid-column:' . absint( $col ) . ';';
 		$dynamic_css .= '--vg-main-slider-border-color:' . ( ! empty( $options['main_image_border_color'] ) ? $options['main_image_border_color'] : 'transparent' ) . ';';
 		$dynamic_css .= '--vg-thumb-border-color:' . ( ! empty( $options['thumbnail_item_border_color'] ) ? $options['thumbnail_item_border_color'] : '#eee' ) . ';';
-		$dynamic_css .= '--vg-thumb-item-inner-padding:' . ( ! empty( $options['thumbnail_item_inner_padding'] ) ? $options['thumbnail_item_inner_padding'] : '8' ) . 'px;';
+		$dynamic_css .= '--vg-thumb-active-border-color:' . ( ! empty( $options['thumbnail_active_border_color'] ) ? $options['thumbnail_active_border_color'] : '#444' ) . ';';
+		$dynamic_css .= '--vg-thumb-item-inner-padding:' . ( isset( $options['thumbnail_item_inner_padding'] ) && '' !== $options['thumbnail_item_inner_padding'] ? absint( $options['thumbnail_item_inner_padding'] ) : '8' ) . 'px;';
 		$dynamic_css .= '--vg-thumb-border-radius:' . ( ! empty( $options['thumbnail_item_border_radius'] ) ? absint( $options['thumbnail_item_border_radius'] ) : '3' ) . 'px;';
-		$dynamic_css .= '--vg-thumb-gap:' . ( ! empty( $options['thumbnails_gap'] ) ? absint( $options['thumbnails_gap'] ) : '10' ) . 'px;';
-		if ( ! empty( $options['main_image_section_width'] ) && absint( $options['image_section_height'] ) ) {
-			$dynamic_css .= '--vg-image-slider-height:' . absint( $options['image_section_height'] ) . 'px;';
-		}
-		if ( ! empty( $options['thumb_image_section_width'] ) && absint( $options['thumb_image_section_width'] ) ) {
-			$dynamic_css .= '--vg-thumb-slider-width:' . absint( $options['thumb_image_section_width'] ) . 'px;';
-		}
+		$dynamic_css .= '--vg-thumb-gap:' . ( isset( $options['thumbnails_gap'] ) && '' !== $options['thumbnails_gap'] ? absint( $options['thumbnails_gap'] ) : '10' ) . 'px;';
 		$dynamic_css .= '}';
 		if ( ! empty( $dynamic_css ) ) {
 			$dynamic_css = apply_filters( 'rtsb/variation/gallery/dynamic/css', $dynamic_css, $options );

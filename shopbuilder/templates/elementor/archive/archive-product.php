@@ -16,7 +16,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( Fns::product_has_applied_filters( 'shop' ) || Fns::product_has_applied_filters( 'archive' ) || 'rtsb_builder' === get_post_type( get_the_ID() ) ) {
-	echo '<div class="rtsb-active-filters-wrapper"></div>';
+	$rtsb_active_filters_html = Fns::get_active_filters_html();
+	$rtsb_wrapper_style       = '' !== $rtsb_active_filters_html ? ' style="' . esc_attr( 'display:block;' ) . '"' : '';
+	echo '<div class="rtsb-active-filters-wrapper"' . $rtsb_wrapper_style . '>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Style value is escaped above.
+	Fns::print_html( $rtsb_active_filters_html, true );
+	echo '</div>';
 }
 
 $parent_class .= ! empty( $controllers['show_pagination'] ) ? ' rtsb-has-pagination' : ' rtsb-no-pagination';

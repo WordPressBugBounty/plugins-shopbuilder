@@ -71,6 +71,7 @@ class AdminInit {
         // phpcs:ignore Squiz.PHP.CommentedOutCode.Found
 		// Notice\BlackFridayV2::instance();.
 		Notice\Review::instance();
+		Notice\CachePermission::instance();
 	}
 
 	/**
@@ -81,7 +82,7 @@ class AdminInit {
 	public function init() {
 		add_action( 'admin_menu', [ $this, 'add_menu' ], 25 );
 		add_action( 'in_admin_header', [ $this, 'in_admin_header_functionality' ], 1000 );
-		PluginRow::instance();
+		// PluginRow registered earlier in ShopBuilder::init() so it survives dependency failures.
 	}
 
 	/**

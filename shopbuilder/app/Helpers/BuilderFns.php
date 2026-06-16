@@ -72,6 +72,14 @@ class BuilderFns {
 	 */
 	public static $tags_product_page_template = 'rtsb_tags_product_page_template';
 	/**
+	 * Term-meta key used on `product_brand` terms to point at the
+	 * Product-Page template that targets that brand. Mirrors
+	 * $categories_product_page_template / $tags_product_page_template.
+	 *
+	 * @var string
+	 */
+	public static $brands_product_page_template = 'rtsb_brands_product_page_template';
+	/**
 	 * Get template ID based on page type.
 	 *
 	 * @param string $type Page type (product, archive, etc.).
@@ -134,6 +142,23 @@ class BuilderFns {
 						}
 					}
 				}
+				// Brand check (between Category and Tag). Requires the `product_brand`
+				// taxonomy (WooCommerce 9.4+ native, or a brand plugin that registers it).
+				$brands = taxonomy_exists( 'product_brand' ) ? get_the_terms( get_the_ID(), 'product_brand' ) : false;
+				if ( ! is_wp_error( $brands ) && ! empty( $brands ) ) {
+					foreach ( $brands as $brand_term ) {
+						$template_id = get_term_meta( $brand_term->term_id, self::$brands_product_page_template, true );
+						if ( empty( $template_id ) || 'publish' !== get_post_status( $template_id ) ) {
+							continue;
+						}
+						$set_default_option_name = self::option_name_product_page_specific_brand_set_default( $template_id );
+						if ( TemplateSettings::instance()->get_option( $set_default_option_name ) ) {
+							$post_id = $template_id;
+							set_transient( $cache_key_product, $post_id, 12 * HOUR_IN_SECONDS ); // Cache duration: 12 hours.
+							break 2;
+						}
+					}
+				}
 				$tags = get_the_terms( get_the_ID(), 'product_tag' );
 				if ( ! is_wp_error( $tags ) && ! empty( $tags ) ) {
 					foreach ( $tags as $term ) {
@@ -170,10 +195,30 @@ class BuilderFns {
 				break;
 
 			default:
+				$post_id = (int) apply_filters( 'rtsb/builder/page/id/by/type/resolve', $post_id, $type );
+				break;
 		}
 		if ( 'publish' === get_post_status( $post_id ) && self::builder_type( $post_id ) === $type ) {
 			self::$cache[ $cache_key ] = $post_id;
 			return $post_id;
+		}
+
+		// Fallback: use shop template for archive pages when no archive template exists.
+		// Filterable so other archive-like types (e.g. brand / tag archives) can opt in.
+		$fallback_to_shop = apply_filters( 'rtsb/builder/archive/fallback_to_shop', 'archive' === $type, $type );
+		if ( $fallback_to_shop ) {
+			$shop_options = self::option_name( 'shop' );
+			$shop_post_id = TemplateSettings::instance()->get_option( $shop_options );
+
+			if ( empty( $shop_post_id ) ) {
+				$shop_options = self::option_name( 'shop', true );
+				$shop_post_id = TemplateSettings::instance()->get_option( $shop_options );
+			}
+
+			if ( $shop_post_id && 'publish' === get_post_status( $shop_post_id ) && 'shop' === self::builder_type( $shop_post_id ) ) {
+				self::$cache[ $cache_key ] = $shop_post_id;
+				return $shop_post_id;
+			}
 		}
 
 		return 0;
@@ -201,7 +246,7 @@ class BuilderFns {
 	 */
 	public static function builder_page_types() {
 		$page_types = [
-			'shop'     => 'Shop',
+			'shop'     => 'Shop/Archive',
 			'archive'  => 'Category Archive',
 			'product'  => 'Product Page',
 			'cart'     => 'Cart',
@@ -368,6 +413,35 @@ class BuilderFns {
 		return 'rtsb_template_product_page_specific_tag_set_default_' . $post_id;
 	}
 	/**
+	 * Get option name for the selected product brand template.
+	 *
+	 * @param int|string $template_id Template ID for the brand.
+	 *
+	 * @return string Generated option name.
+	 */
+	public static function option_name_product_page_selected_brand( $template_id ) {
+		$_suff = null;
+		if ( $template_id ) {
+			$_suff = '_' . $template_id;
+		}
+
+		return self::$brands_product_page_template . $_suff;
+	}
+	/**
+	 * Get option name for setting a specific product brand template as default.
+	 *
+	 * @param int|string $post_id Template or post ID.
+	 *
+	 * @return string|null Option name or null if post ID is not provided.
+	 */
+	public static function option_name_product_page_specific_brand_set_default( $post_id ) {
+		if ( ! $post_id ) {
+			return;
+		}
+
+		return 'rtsb_template_product_page_specific_brand_set_default_' . $post_id;
+	}
+	/**
 	 * Get option name for the selected archive (category) template.
 	 *
 	 * @param int|string $template_id Template ID.
@@ -513,6 +587,12 @@ class BuilderFns {
 		if ( $type === $builder_type && $is_page ) {
 			return true;
 		}
+
+		// Allow shop template as fallback for archive pages.
+		if ( 'archive' === $type && 'shop' === $builder_type && $is_page ) {
+			return true;
+		}
+
 		return false;
 	}
 
@@ -526,6 +606,21 @@ class BuilderFns {
 	 */
 	public static function get_builder_content( $template_id, $with_css = false ) {
 		// Don't Use cache: tickets ID -> 75376.
-		return \Elementor\Plugin::instance()->frontend->get_builder_content_for_display( $template_id, $with_css );
+		if ( ! defined( 'ELEMENTOR_VERSION' ) || ! class_exists( '\Elementor\Plugin' ) ) {
+			return '';
+		}
+
+		try {
+			$plugin = \Elementor\Plugin::instance();
+
+			if ( ! $plugin || ! isset( $plugin->frontend ) ) {
+				return '';
+			}
+
+			return $plugin->frontend->get_builder_content_for_display( $template_id, $with_css );
+		} catch ( \Throwable $e ) {
+			error_log( 'ShopBuilder content render error: ' . $e->getMessage() ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+			return '';
+		}
 	}
 }

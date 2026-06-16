@@ -2095,13 +2095,14 @@ class Fns {
 
 		global $paged;
 
-		if ( is_front_page() ) {
-			$paged = ( get_query_var( 'page' ) ) ? get_query_var( 'page' ) : 1; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-		} else {
-			$paged = ( get_query_var( 'paged' ) ) ? get_query_var( 'paged' ) : 1; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+		// Prefer `paged` (archive pagination), fall back to `page` (paginated singular posts).
+		// This handles the case where the shop/archive is set as the front page — `is_front_page()`
+		// alone would force `page` and miss the archive `paged` value.
+		$paged = get_query_var( 'paged' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+		if ( ! $paged ) {
+			$paged = get_query_var( 'page' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 		}
-
-		if ( empty( $paged ) ) {
+		if ( ! $paged ) {
 			$paged = 1; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 		}
 
@@ -2542,6 +2543,28 @@ class Fns {
 		}
 	}
 
+	/**
+	 * Sanitize a media (fileupload) control value into an { id, source } array.
+	 *
+	 * The control value is posted as an array (or a JSON string). Using it as a
+	 * `sanitize_fn` avoids it being flattened to an empty string by the default
+	 * sanitize_text_field() path in set_options().
+	 *
+	 * @param mixed $raw_value Raw posted value.
+	 *
+	 * @return array|string
+	 */
+	public static function sanitize_fileupload_value( $raw_value ) {
+		$decoded = is_string( $raw_value ) && '' !== $raw_value ? json_decode( wp_unslash( $raw_value ), true ) : $raw_value;
+		if ( ! is_array( $decoded ) ) {
+			return '';
+		}
+		return [
+			'id'     => isset( $decoded['id'] ) ? absint( $decoded['id'] ) : 0,
+			'source' => isset( $decoded['source'] ) ? esc_url_raw( $decoded['source'] ) : '',
+		];
+	}
+
 	/***
 	 * Save Settings data
 	 *
@@ -2793,6 +2816,231 @@ class Fns {
 	}
 
 	/**
+	 * Build the active filter chips HTML from the current request query string.
+	 *
+	 * Mirrors the markup produced by the JS `displayAppliedFilter()` method so
+	 * the chips are visible on initial page load (before AJAX hydration).
+	 *
+	 * @return string HTML for the active filter chips, or empty string if none.
+	 */
+	public static function get_active_filters_html() {
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Read-only query string parsing for display.
+		if ( empty( $_GET ) ) {
+			return '';
+		}
+
+		$skip_keys = [
+			'displayview',
+			'orderby',
+			'paged',
+			'page',
+			'product-page',
+			'rtsb_archive_page',
+			'rtsb_grid_columns',
+			'min_price',
+			'max_price',
+			'_pjax',
+		];
+
+		// When the "Product Categories" widget is already showing the active
+		// category navigation, suppress the duplicate product_cat chip group.
+		if ( self::is_product_categories_widget_active() ) {
+			$skip_keys[] = 'product_cat';
+		}
+
+		$groups = [];
+
+		foreach ( $_GET as $raw_key => $raw_value ) {
+			$key = sanitize_key( $raw_key );
+
+			if ( '' === $key || in_array( $key, $skip_keys, true ) ) {
+				continue;
+			}
+
+			if ( 0 === strpos( $key, 'query_type_' ) ) {
+				continue;
+			}
+
+			if ( is_array( $raw_value ) ) {
+				continue;
+			}
+
+			$value = sanitize_text_field( wp_unslash( $raw_value ) );
+
+			if ( '' === $value ) {
+				continue;
+			}
+
+			$taxonomy = $key;
+			if ( 0 === strpos( $taxonomy, 'filter_' ) ) {
+				$taxonomy = 'pa_' . substr( $taxonomy, 7 );
+			}
+
+			$items = [];
+			foreach ( explode( ',', $value ) as $slug ) {
+				$slug = trim( $slug );
+				if ( '' === $slug ) {
+					continue;
+				}
+				$items[] = [
+					'slug' => $slug,
+					'name' => self::get_active_filter_term_label( $taxonomy, $slug, $key ),
+				];
+			}
+
+			if ( empty( $items ) ) {
+				continue;
+			}
+
+			$groups[ $key ] = [
+				'label' => self::get_active_filter_group_label( $taxonomy, $key ),
+				'items' => $items,
+				'class' => $key,
+			];
+		}
+
+		// Price range as a single combined chip.
+		if ( isset( $_GET['min_price'] ) || isset( $_GET['max_price'] ) ) {
+			$min = isset( $_GET['min_price'] ) ? sanitize_text_field( wp_unslash( $_GET['min_price'] ) ) : '';
+			$max = isset( $_GET['max_price'] ) ? sanitize_text_field( wp_unslash( $_GET['max_price'] ) ) : '';
+
+			if ( '' !== $min || '' !== $max ) {
+				$symbol                 = function_exists( 'get_woocommerce_currency_symbol' ) ? get_woocommerce_currency_symbol() : '';
+				$groups['price_filter'] = [
+					'label' => esc_html__( 'Price', 'shopbuilder' ),
+					'class' => 'price_filter',
+					'items' => [
+						[
+							'slug'        => $min . ',' . $max,
+							'name'        => $symbol . $min . ' - ' . $symbol . $max,
+							'extra_class' => ' remove-price',
+						],
+					],
+				];
+			}
+		}
+
+		if ( empty( $groups ) ) {
+			return '';
+		}
+
+		$html = '<div class="rtsb-active-filters">';
+
+		foreach ( $groups as $key => $group ) {
+			$html .= '<div class="active-filter ' . esc_attr( $group['class'] ) . '">';
+
+			if ( ! empty( $group['label'] ) ) {
+				$html .= '<div class="filter-name">' . esc_html( $group['label'] ) . ': </div>';
+			}
+
+			$html .= '<div class="filter-item-container">';
+
+			foreach ( $group['items'] as $item ) {
+				$extra = isset( $item['extra_class'] ) ? $item['extra_class'] : '';
+				$html .= '<div class="filter-item">' . esc_html( $item['name'] );
+				$html .= '<span class="remove-filter' . esc_attr( $extra ) . '"';
+				$html .= ' title="' . esc_attr( sprintf( /* translators: %s: filter term name */ __( 'Remove %s', 'shopbuilder' ), $item['name'] ) ) . '"';
+				$html .= ' data-filter-name="' . esc_attr( $key ) . '"';
+				$html .= ' data-filter-value="' . esc_attr( $item['slug'] ) . '">';
+				$html .= '<i class="rtsb-icon rtsb-icon-delete"></i></span>';
+				$html .= '</div>';
+			}
+
+			$html .= '</div></div>';
+		}
+
+		$html .= '<a href="#" class="rtsb-clear-filters"><span class="icon-wrap"><i class="eicon-trash-o"></i></span><span>' . esc_html__( 'Reset Filters', 'shopbuilder' ) . '</span></a>';
+		$html .= '</div>';
+
+		return $html;
+		// phpcs:enable
+	}
+
+	/**
+	 * Determine whether the "Product Categories" Elementor widget is present
+	 * on the current shop/archive layout. Used to avoid duplicating the
+	 * product_cat chip group when the widget already shows the active term.
+	 *
+	 * @return bool
+	 */
+	private static function is_product_categories_widget_active() {
+		$elmap = ElementorDataMap::instance();
+
+		foreach ( [ 'shop', 'archive' ] as $page ) {
+			$id = BuilderFns::is_builder_preview() ? get_the_ID() : BuilderFns::builder_page_id_by_type( $page );
+
+			if ( ! $id ) {
+				continue;
+			}
+
+			$widgets = $elmap->get_widget_data( 'rtsb-product-categories-general', [], $id );
+
+			if ( ! empty( $widgets ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Resolve the display label for an active filter group (taxonomy heading).
+	 *
+	 * @param string $taxonomy Resolved taxonomy slug (e.g. product_cat, pa_color).
+	 * @param string $raw_key  Original URL key (e.g. product_cat, filter_color).
+	 *
+	 * @return string
+	 */
+	private static function get_active_filter_group_label( $taxonomy, $raw_key ) {
+		if ( 's' === $raw_key || 'search' === $raw_key ) {
+			return esc_html__( 'Search', 'shopbuilder' );
+		}
+		if ( 'rating_filter' === $raw_key ) {
+			return esc_html__( 'Ratings', 'shopbuilder' );
+		}
+		if ( 'sale_filter' === $raw_key ) {
+			return esc_html__( 'Sale Filter', 'shopbuilder' );
+		}
+
+		if ( 0 === strpos( $taxonomy, 'pa_' ) && function_exists( 'wc_attribute_label' ) ) {
+			return wc_attribute_label( $taxonomy );
+		}
+
+		if ( taxonomy_exists( $taxonomy ) ) {
+			$tax_obj = get_taxonomy( $taxonomy );
+			if ( $tax_obj && ! empty( $tax_obj->labels->name ) ) {
+				return $tax_obj->labels->name;
+			}
+		}
+
+		return ucwords( str_replace( [ '_', '-' ], ' ', $raw_key ) );
+	}
+
+	/**
+	 * Resolve a term slug to its display name; fall back to a humanised slug.
+	 *
+	 * @param string $taxonomy Resolved taxonomy slug.
+	 * @param string $slug     Raw slug from query string.
+	 * @param string $raw_key  Original URL key.
+	 *
+	 * @return string
+	 */
+	private static function get_active_filter_term_label( $taxonomy, $slug, $raw_key ) {
+		if ( 's' === $raw_key || 'search' === $raw_key || 'rating_filter' === $raw_key ) {
+			return rawurldecode( $slug );
+		}
+
+		if ( taxonomy_exists( $taxonomy ) ) {
+			$term = get_term_by( 'slug', $slug, $taxonomy );
+			if ( $term && ! is_wp_error( $term ) ) {
+				return $term->name;
+			}
+		}
+
+		return ucwords( str_replace( [ '-', '_' ], ' ', rawurldecode( $slug ) ) );
+	}
+
+	/**
 	 * Check if product has applied filter.
 	 *
 	 * @param string $page Page name.
@@ -2813,6 +3061,13 @@ class Fns {
 		foreach ( $elmap->get_widget_data( 'rtsb-ajax-product-filters', [], $id ) as $data ) {
 			$ajax[] = ! isset( $data['settings']['active_filter'] );
 
+		}
+
+		// Also account for the free, non-AJAX "Product Filters" widget so that
+		// the active filter chips wrapper renders for it on initial page load.
+		foreach ( $elmap->get_widget_data( 'rtsb-product-filters', [], $id ) as $data ) {
+			$ajax[] = true;
+			unset( $data );
 		}
 
 		return ! empty( $ajax[0] );
@@ -3568,11 +3823,14 @@ class Fns {
 	}
 
 	/**
-	 * Check if optimization settings are enabled.
+	 * Check if optimization setting is turned on in the database.
+	 *
+	 * This only checks the user's setting value, without validating
+	 * whether the cache directory is writable.
 	 *
 	 * @return bool
 	 */
-	public static function is_optimization_enabled() {
+	public static function is_optimization_setting_on() {
 		$has_pro = rtsb()->has_pro();
 		$pro_ver = defined( 'RTSBPRO_VERSION' ) ? RTSBPRO_VERSION : 0;
 
@@ -3583,6 +3841,26 @@ class Fns {
 		$generalList = GeneralList::instance()->get_data();
 
 		return 'on' === ( $generalList['optimization']['enable_optimization'] ?? '' );
+	}
+
+	/**
+	 * Check if optimization is enabled and the cache directory is writable.
+	 *
+	 * @return bool
+	 */
+	public static function is_optimization_enabled() {
+		if ( ! self::is_optimization_setting_on() ) {
+			return false;
+		}
+
+		$upload    = wp_upload_dir();
+		$cache_dir = trailingslashit( $upload['basedir'] ) . 'shopbuilder_uploads/cache/';
+
+		if ( ! wp_is_writable( $cache_dir ) ) {
+			return false;
+		}
+
+		return true;
 	}
 
 	/**

@@ -12,7 +12,6 @@ namespace RadiusTheme\SB\Elementor\Helper;
 use Elementor\Plugin;
 use RadiusTheme\SB\Helpers\Cache;
 use RadiusTheme\SB\Helpers\Fns;
-use RadiusTheme\SB\Helpers\BuilderFns;
 use WC_Product_Query;
 use WP_Term;
 
@@ -138,7 +137,7 @@ class RenderHelpers {
 				// Pagination.
 				'pagination'               => ! empty( $meta['show_pagination'] ),
 				'posts_loading_type'       => self::get_data( $meta, 'pagination_type', 'pagination' ),
-				'posts_per_page'           => self::get_data( $meta, 'pagination_per_page', '' ),
+				'posts_per_page'           => self::get_data( $meta, 'pagination_per_page', '' ) ?: ( ! empty( $meta['posts_per_page'] ) ? absint( $meta['posts_per_page'] ) : '' ),
 
 				// Image.
 				'f_img'                    => ! empty( $meta['show_featured_image'] ),
@@ -264,9 +263,11 @@ class RenderHelpers {
 		$queried_obj = get_queried_object();
 
 		if ( is_shop() || is_product_taxonomy() ) {
-			$data['posts_per_page'] = self::get_products_per_page();
-			$data['order_by']       = self::get_data( $data, 'rtsb_orderby', $data['order_by'] );
-			$data['order']          = self::get_data( $data, 'rtsb_order', $data['order'] );
+			if ( empty( $data['posts_per_page'] ) ) {
+				$data['posts_per_page'] = self::get_products_per_page();
+			}
+			$data['order_by'] = self::get_data( $data, 'rtsb_orderby', $data['order_by'] );
+			$data['order']    = self::get_data( $data, 'rtsb_order', $data['order'] );
 		}
 
 		if ( ! is_shop() && is_product_taxonomy() ) {
@@ -312,6 +313,10 @@ class RenderHelpers {
 				'quick_view_button'     => ! empty( $meta['quick_view_button'] ),
 				'show_rating'           => ! empty( $meta['show_rating'] ),
 				'show_pagination'       => ! empty( $meta['show_pagination'] ),
+				// The base Product Archive widget has no pagination-type control: with filters it
+				// uses Ajax Load More (see the widget's pagination notice). Custom-layout widgets
+				// pass their own pagination_type and use a different dataset.
+				'posts_loading_type'    => self::get_data( $meta, 'pagination_type', 'load_more' ),
 				'cart_icon'             => self::get_data( $meta, 'cart_icon', [] ),
 				'wishlist_icon'         => self::get_data( $meta, 'wishlist_icon', [] ),
 				'wishlist_icon_added'   => self::get_data( $meta, 'wishlist_icon_added', [] ),
@@ -330,7 +335,11 @@ class RenderHelpers {
 
 		$queried_obj = get_queried_object();
 
-		if ( ! is_shop() && BuilderFns::is_archive() ) {
+		// Use WooCommerce's own taxonomy check (covers product_cat, product_tag
+		// and product_brand) so the queried term is recorded on every product
+		// taxonomy archive — Ajax load-more / filters scope to it. Mirrors the
+		// custom-layout dataset in self::meta_dataset().
+		if ( ! is_shop() && is_product_taxonomy() ) {
 			if ( ! empty( $queried_obj->taxonomy ) ) {
 				$data['queried_tax'] = esc_html( $queried_obj->taxonomy );
 			}
@@ -550,7 +559,7 @@ class RenderHelpers {
 		$animation = $metas['hover_animation'];
 
 		if ( ! $is_cat ) {
-			$cart_txt_class = $metas['show_cart_text'] ? ' has-cart-text' : ' no-cart-text';
+			$cart_txt_class = $metas['show_cart_text'] ? ' show-cart-text' : ' no-cart-text';
 			$animation     .= ' gallery-hover-' . ( ! empty( $settings['gallery_hover_animation'] ) ? $settings['gallery_hover_animation'] : 'fade' );
 		}
 
@@ -579,9 +588,9 @@ class RenderHelpers {
 
 		if ( ! $is_cat ) {
 			$action_btn_classes = [
-				'show_compare_text'        => 'has-compare-text',
-				'show_quick_view_text'     => 'has-quick-view-text',
-				'show_wishlist_text'       => 'has-wishlist-text',
+				'show_compare_text'        => 'show-compare-text',
+				'show_quick_view_text'     => 'show-quick-view-text',
+				'show_wishlist_text'       => 'show-wishlist-text',
 				'show_compare_icon'        => 'no-compare-icon',
 				'show_quick_view_icon'     => 'no-quick-view-icon',
 				'show_wishlist_icon'       => 'no-wishlist-icon',
@@ -707,9 +716,10 @@ class RenderHelpers {
 		} elseif ( $is_cat ) {
 			return '';
 		} else {
-			$ajax_pagination = ! empty( $settings['show_pagination'] ) && 'pagination' !== $settings['pagination_type'];
-			$page            = Fns::product_filters_has_ajax( apply_filters( 'rtsb/builder/set/current/page/type', '' ) );
-			$condition       = rtsb()->has_pro() && $ajax && ( $ajax_pagination || $has_filters || $page );
+			$ajax_pagination    = ! empty( $settings['show_pagination'] ) && 'pagination' !== $settings['pagination_type'];
+			$page               = Fns::product_filters_has_ajax( apply_filters( 'rtsb/builder/set/current/page/type', '' ) );
+			$is_shop_or_archive = is_shop() || is_product_taxonomy();
+			$condition          = rtsb()->has_pro() && $ajax && ( $ajax_pagination || $has_filters || $page || $is_shop_or_archive );
 
 			return $condition ? self::pagination_data( $settings, $template ) : '';
 		}
@@ -1301,20 +1311,35 @@ class RenderHelpers {
 			'hierarchical'    => true,
 		];
 
-		$cache_key      = 'rtsb_get_terms_filter_products' . $taxonomy;
+		// Archive-scope only when the URL path itself is a term archive
+		// (e.g. /product-category/clothing/). On the shop page WordPress can
+		// resolve ?product_cat=X to a queried term, but in that case we want
+		// the full hierarchy to remain visible for additional filtering.
+		$is_term_archive_url = self::request_path_is_term_archive( $taxonomy );
+
+		$cache_key      = $is_term_archive_url
+			? 'rtsb_get_terms_filter_products_archive_' . $taxonomy
+			: 'rtsb_get_terms_filter_products_full_' . $taxonomy;
 		$taxonomy_terms = wp_cache_get( $cache_key, 'shopbuilder' );
 
 		if ( false === $taxonomy_terms ) {
-			$queried_object = get_queried_object();
+			$archive_term = $is_term_archive_url ? self::resolve_archive_term_from_path( $taxonomy ) : null;
 
-			if ( 'archive' === apply_filters( 'rtsb/builder/set/current/page/type', '' ) && $queried_object instanceof WP_Term && $queried_object->taxonomy === $taxonomy ) {
-				$term_id           = $queried_object->term_id;
-				$taxonomy          = $queried_object->taxonomy;
+			if ( $archive_term instanceof WP_Term ) {
+				$term_id           = $archive_term->term_id;
 				$archive_cache_key = 'rtsb_get_terms_filter_products_' . $taxonomy . $term_id;
 				$taxonomy_terms    = wp_cache_get( $archive_cache_key, 'shopbuilder' );
 				if ( false === $taxonomy_terms ) {
-					$taxonomy_terms = [ $queried_object ];
-					$child_args     = [
+					// Treat the URL-derived term as the root of the visible
+					// hierarchy so the recursive renderer in
+					// get_product_default_filter_list_html() (which starts
+					// with $parent = 0) picks it up on child-category
+					// archives. Clone first to avoid mutating WP's term
+					// object.
+					$current_term         = clone $archive_term;
+					$current_term->parent = 0;
+					$taxonomy_terms       = [ $current_term ];
+					$child_args           = [
 						'taxonomy'   => $taxonomy,
 						'child_of'   => $term_id,
 						'hide_empty' => false,
@@ -1338,6 +1363,135 @@ class RenderHelpers {
 		}
 
 		return $taxonomy_terms;
+	}
+
+	/**
+	 * Resolve the archive term from the request URL path. Avoids relying on
+	 * get_queried_object() which can return an unexpected term when
+	 * ?product_cat=a,b,c is also present in the request.
+	 *
+	 * @param string $taxonomy Taxonomy slug.
+	 *
+	 * @return \WP_Term|null
+	 */
+	private static function resolve_archive_term_from_path( $taxonomy ) {
+		$rewrite_slugs = self::get_taxonomy_archive_slugs( $taxonomy );
+
+		if ( empty( $rewrite_slugs ) ) {
+			return null;
+		}
+
+		// phpcs:disable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Path only used for slug extraction.
+		$request_uri = isset( $_SERVER['REQUEST_URI'] ) ? wp_unslash( $_SERVER['REQUEST_URI'] ) : '';
+		// phpcs:enable
+		$path = (string) wp_parse_url( $request_uri, PHP_URL_PATH );
+
+		if ( '' === $path ) {
+			return null;
+		}
+
+		foreach ( $rewrite_slugs as $base ) {
+			$base   = trim( $base, '/' );
+			$needle = '/' . $base . '/';
+
+			$pos = strpos( $path, $needle );
+			if ( false === $pos ) {
+				continue;
+			}
+
+			$remainder = substr( $path, $pos + strlen( $needle ) );
+			$segments  = array_values(
+				array_filter(
+					explode( '/', $remainder ),
+					static function ( $segment ) {
+						return '' !== $segment;
+					}
+				)
+			);
+
+			if ( empty( $segments ) ) {
+				continue;
+			}
+
+			$slug = sanitize_title( end( $segments ) );
+			$term = get_term_by( 'slug', $slug, $taxonomy );
+
+			if ( $term instanceof WP_Term ) {
+				return $term;
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Decide whether the current REQUEST_URI path represents a real term
+	 * archive page for the given taxonomy. URL-based so it ignores cases
+	 * where WordPress merely resolves a query string into a queried term
+	 * on the shop page.
+	 *
+	 * @param string $taxonomy Taxonomy slug.
+	 *
+	 * @return bool
+	 */
+	private static function request_path_is_term_archive( $taxonomy ) {
+		$rewrite_slugs = self::get_taxonomy_archive_slugs( $taxonomy );
+
+		if ( empty( $rewrite_slugs ) ) {
+			return false;
+		}
+
+		// phpcs:disable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Path only used in match.
+		$request_uri = isset( $_SERVER['REQUEST_URI'] ) ? wp_unslash( $_SERVER['REQUEST_URI'] ) : '';
+		// phpcs:enable
+		$path = (string) wp_parse_url( $request_uri, PHP_URL_PATH );
+
+		if ( '' === $path ) {
+			return false;
+		}
+
+		foreach ( $rewrite_slugs as $slug ) {
+			if ( '' === $slug ) {
+				continue;
+			}
+			if ( false !== strpos( $path, '/' . trim( $slug, '/' ) . '/' ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Resolve the URL slug(s) used by a taxonomy archive (e.g. product_cat
+	 * maps to "product-category"). Falls back to common WooCommerce defaults
+	 * when the taxonomy object is unavailable.
+	 *
+	 * @param string $taxonomy Taxonomy slug.
+	 *
+	 * @return array<string>
+	 */
+	private static function get_taxonomy_archive_slugs( $taxonomy ) {
+		$slugs = [];
+
+		if ( taxonomy_exists( $taxonomy ) ) {
+			$tax_obj = get_taxonomy( $taxonomy );
+			if ( $tax_obj && ! empty( $tax_obj->rewrite['slug'] ) ) {
+				$slugs[] = $tax_obj->rewrite['slug'];
+			}
+		}
+
+		$defaults = [
+			'product_cat'   => 'product-category',
+			'product_tag'   => 'product-tag',
+			'product_brand' => 'product-brand',
+		];
+
+		if ( isset( $defaults[ $taxonomy ] ) ) {
+			$slugs[] = $defaults[ $taxonomy ];
+		}
+
+		return array_unique( array_filter( $slugs ) );
 	}
 	/**
 	 * Generates an error message block.
@@ -1822,7 +1976,7 @@ class RenderHelpers {
 
 				$attachment_id = absint( get_term_meta( $args['term_id'], 'product_attribute_image', true ) );
 				$image_size    = rtwpvs()->get_option( 'attribute_image_size' );
-				$image_url     = wp_get_attachment_image_url( $attachment_id, apply_filters( 'rtwpvs_product_attribute_image_size', $image_size ) );
+				$image_url     = wp_get_attachment_image_url( $attachment_id, apply_filters( 'rtsb_product_attribute_image_size', $image_size ) );
 
 				$html .= sprintf(
 					// phpcs:ignore Generic.Strings.UnnecessaryStringConcat.Found
@@ -1865,7 +2019,8 @@ class RenderHelpers {
 
 		ob_start();
 
-		$active     = ! empty( $_SERVER['QUERY_STRING'] ) ? ' active' : '';
+		$is_editor  = ! empty( \Elementor\Plugin::$instance->editor ) && \Elementor\Plugin::$instance->editor->is_edit_mode();
+		$active     = ( $is_editor || ! empty( $_SERVER['QUERY_STRING'] ) ) ? ' active' : '';
 		$reset      = ! empty( $settings['reset_btn'] );
 		$apply_text = ! empty( $settings['apply_filters_btn_text'] ) ? $settings['apply_filters_btn_text'] : esc_html__( 'Apply Filters', 'shopbuilder' );
 		$apply_icon = ! empty( $settings['apply_filters_btn_icon'] ) ? $settings['apply_filters_btn_icon'] : [];

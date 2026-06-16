@@ -37,7 +37,7 @@ class ProductsArchiveCustom extends ElementorWidgetBase {
 	 * @param mixed $args default arg.
 	 */
 	public function __construct( $data = [], $args = null ) {
-		$this->rtsb_name = esc_html__( 'Products - Custom Layouts', 'shopbuilder' );
+		$this->rtsb_name = esc_html__( 'Product Archive (Custom)', 'shopbuilder' );
 		$this->rtsb_base = 'rtsb-products-archive-custom';
 		$this->pro_tab   = 'layout';
 		parent::__construct( $data, $args );
@@ -71,13 +71,19 @@ class ProductsArchiveCustom extends ElementorWidgetBase {
 			$layout['full_product_height'],
 		);
 
+		// Add products per page at the top of the layout section.
+		$per_page_field['posts_per_page'] = [
+			'type'        => 'number',
+			'label'       => esc_html__( 'Products Per Page', 'shopbuilder' ),
+			'min'         => 1,
+			'max'         => 500,
+			'default'     => RenderHelpers::get_products_per_page(),
+			'description' => esc_html__( 'Set the number of products to display per page.', 'shopbuilder' ),
+		];
+		$layout                           = Fns::insert_controls( 'layout_section', $layout, $per_page_field, true );
+
 		$new_fields = [
-			'important_note' => [
-				'type'      => 'html',
-				'separator' => 'after',
-				'raw'       => '<p class="rtsb-el-notice" >You can manage product per page from woocommerce <a target="_blank" href="' . site_url( '/wp-admin/customize.php?return=%2Fwp-admin%2Fthemes.php' ) . '"> Customizer (Product Catalog) </a></p>',
-			],
-			'view_mode'      => [
+			'view_mode' => [
 				'label'     => esc_html__( 'Default View', 'shopbuilder' ),
 				'type'      => 'choose',
 				'options'   => [
