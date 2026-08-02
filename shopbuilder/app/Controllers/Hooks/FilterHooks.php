@@ -67,22 +67,48 @@ class FilterHooks {
 			return $redirect_url;
 		}
 
-		$tracked_keys = [ 'product_cat', 'product_tag', 'product_brand' ];
+		$tracked_keys   = [ 'product_cat', 'product_tag', 'product_brand' ];
+		$active_filters = [];
 
 		foreach ( $_GET as $key => $value ) {
+			$value = is_array( $value ) ? implode( ',', $value ) : (string) $value;
 			if ( '' === $value ) {
 				continue;
 			}
 
 			$key = sanitize_key( $key );
 
-			if ( in_array( $key, $tracked_keys, true ) || 0 === strpos( $key, 'filter_' ) ) {
-				return false;
+			if (
+				in_array( $key, $tracked_keys, true )
+				|| 0 === strpos( $key, 'filter_' )
+				|| in_array( $key, [ 'min_price', 'max_price', 'rating_filter', 'sale_filter' ], true )
+			) {
+				$active_filters[ $key ] = $value;
 			}
 		}
 		// phpcs:enable
 
-		return $redirect_url;
+		// No filter params at all - leave canonical behaviour untouched.
+		if ( empty( $active_filters ) ) {
+			return $redirect_url;
+		}
+
+		// A single, single-valued taxonomy param (e.g. ?product_cat=child) is
+		// plain category/tag/brand navigation, not a multi-filter state. Let
+		// WordPress redirect it to the pretty archive URL (/product-category/child/)
+		// instead of pinning it to the shop page.
+		if ( 1 === count( $active_filters ) ) {
+			foreach ( $active_filters as $only_key => $only_value ) {
+				if ( in_array( $only_key, $tracked_keys, true ) && false === strpos( $only_value, ',' ) ) {
+					return $redirect_url;
+				}
+			}
+		}
+
+		// Otherwise it is a real multi-filter combination that cannot be
+		// represented by a single canonical URL - keep it on the shop URL so the
+		// active filters are preserved.
+		return false;
 	}
 
 	/***

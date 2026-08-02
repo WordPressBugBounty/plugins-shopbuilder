@@ -184,8 +184,8 @@ class PostHelpers {
 		];
 		$fields['show_short_desc']     = [
 			'type'        => 'switch',
-			'label'       => esc_html__( 'Show Short Description?', 'shopbuilder' ),
-			'description' => esc_html__( 'Switch on to show post short description.', 'shopbuilder' ),
+			'label'       => esc_html__( 'Show Excerpt?', 'shopbuilder' ),
+			'description' => esc_html__( 'Switch on to show post excerpt.', 'shopbuilder' ),
 			'label_on'    => esc_html__( 'On', 'shopbuilder' ),
 			'label_off'   => esc_html__( 'Off', 'shopbuilder' ),
 			'default'     => 'yes',
@@ -456,7 +456,7 @@ class PostHelpers {
 		];
 
 		$fields['post_excerpt_section'] = $obj->start_section(
-			esc_html__( 'Short Description', 'shopbuilder' ),
+			esc_html__( 'Excerpt', 'shopbuilder' ),
 			'settings',
 			[],
 			$condition
@@ -464,8 +464,8 @@ class PostHelpers {
 
 		$fields['excerpt_limit'] = [
 			'type'        => 'select2',
-			'label'       => esc_html__( 'Short Description Limit', 'shopbuilder' ),
-			'description' => esc_html__( 'Please select the post short description limit.', 'shopbuilder' ),
+			'label'       => esc_html__( 'Excerpt Limit', 'shopbuilder' ),
+			'description' => esc_html__( 'Please select the post excerpt limit.', 'shopbuilder' ),
 			'options'     => [
 				'default' => esc_html__( 'Default', 'shopbuilder' ),
 				'1-line'  => esc_html__( 'Show in 1 line', 'shopbuilder' ),
@@ -481,7 +481,7 @@ class PostHelpers {
 			'type'        => 'number',
 			'label'       => esc_html__( 'Custom Character Limit', 'shopbuilder' ),
 			'default'     => 200,
-			'description' => esc_html__( 'Please enter the post short description character limit.', 'shopbuilder' ),
+			'description' => esc_html__( 'Please enter the post excerpt character limit.', 'shopbuilder' ),
 			'condition'   => [ 'excerpt_limit' => [ 'custom' ] ],
 		];
 
@@ -1144,6 +1144,16 @@ class PostHelpers {
 		];
 
 		$fields = ControlHelper::general_elementor_style( 'readmore_button_style', $title, $obj, $condition, $selectors );
+
+		// Redirect the text-decoration sub-field to `.text-wrap` (an unshielded span that wraps the label); the shield-blocked `<a>` can't reach text inside its inline-flex child.
+		$fields['rtsb_el_readmore_button_style_typography']['fields_options'] = [
+			'text_decoration' => [
+				'selectors' => [
+					$css_selectors['text_decoration'] => 'text-decoration: {{VALUE}};',
+				],
+			],
+		];
+
 		unset(
 			$fields['readmore_button_style_alignment'],
 		);
@@ -1555,6 +1565,15 @@ class PostHelpers {
 		];
 
 		$fields = ControlHelper::general_elementor_style( 'post_taxonomy_style', $title, $obj, [], $selectors, $conditions );
+
+		// Force text-decoration with !important to beat the `.rtsb-elementor-container a { text-decoration: none !important; }` framework shield (see _el-global.scss).
+		$fields['rtsb_el_post_taxonomy_style_typography']['fields_options'] = [
+			'text_decoration' => [
+				'selectors' => [
+					$css_selectors['typography'] => 'text-decoration: {{VALUE}} !important;',
+				],
+			],
+		];
 
 		unset(
 			$fields['post_taxonomy_style_alignment'],

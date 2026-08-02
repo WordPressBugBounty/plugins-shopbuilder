@@ -50,6 +50,7 @@ class CartRecoveryAssets {
 				'rtsb/cart/recovery/js/object',
 				[
 					'is_checkout'   => is_checkout(),
+					'is_excluded'   => CartRecoveryFns::is_tracking_excluded_for_current_user(),
 					'ajax_url'      => WC()->ajax_url(),
 					'hasPro'        => rtsb()->has_pro(),
 					'session_id'    => Fns::getSession( 'rtsb_ca_session_id' ) ?? md5( uniqid( wp_rand(), true ) ),

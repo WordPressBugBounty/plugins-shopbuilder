@@ -34,6 +34,7 @@ class NoticeSettings {
 	/**
 	 * Widget Field
 	 *
+	 * @param object $widget object.
 	 * @return array
 	 */
 	public static function widget_fields( $widget ) {
@@ -289,7 +290,7 @@ class NoticeSettings {
 					],
 				],
 				'selectors'   => [
-					self::$selectors['notice_gap_multiple'] => 'gap: {{SIZE}}{{UNIT}} !important;',
+					self::$selectors['notice_gap_multiple'] => 'display: flex; flex-direction: column; gap: {{SIZE}}{{UNIT}} !important;',
 				],
 			],
 			'notice_icon_gap'                => [

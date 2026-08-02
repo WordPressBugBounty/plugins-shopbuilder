@@ -72,7 +72,7 @@ class GeneralList extends ListModel {
 						'optimization_intro'      => [
 							'id'   => 'optimization_intro',
 							'type' => 'description',
-							'text' => __( 'Optimize your website for maximum performance from these advanced options. <br /> <span style="color: #dc3545; display: block; margin-top: 10px;">⚠️ Note: After enabling or disabling any of these settings, clear the ShopBuilder cache to ensure changes are applied correctly.</span>', 'shopbuilder' ),
+							'text' => __( 'Optimize your website for maximum performance from these advanced options. <br /> <span style="color: #dc3545; display: block; margin-top: 10px;">⚠️ Note: After enabling or disabling any of these settings, clear the ShopBuilder cache to ensure changes are applied correctly.</span> <span style="color: #16a34a; display: block; margin-top: 10px;">✅ Recommended: Keep Asset Optimization enabled on live/production sites for faster loading. Turn it off only while troubleshooting or verifying a recent change.</span>', 'shopbuilder' ),
 						],
 						'enable_optimization'     => [
 							'id'    => 'enable',

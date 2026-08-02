@@ -35,7 +35,9 @@ class BuilderCpt {
 		add_action( 'manage_' . BuilderFns::$post_type_tb . '_posts_custom_column', [ $this, 'custom_columns' ], 10, 2 );
 		add_filter( 'manage_edit-' . BuilderFns::$post_type_tb . '_sortable_columns', [ $this, 'register_sortable_columns' ] );
 		add_action( 'pre_get_posts', [ $this, 'sortable_columns_query' ] );
-		add_filter( 'template_include', [ $this, 'builder_template' ], 99 );
+		// Priority 99999 ensures ShopBuilder wins over Elementor Pro Theme Builder,
+		// which also filters `template_include` at 99.
+		add_filter( 'template_include', [ $this, 'builder_template' ], 99999 );
 		add_filter( 'template_redirect', [ $this, 'restrict_preview_access' ], 99 );
 
 		add_filter( 'parse_query', [ $this, 'query_filter' ] );

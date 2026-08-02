@@ -535,7 +535,14 @@ class GeneralAddons extends Render {
 
 		$html .= ! empty( $settings['slider_pagi'] ) ? '<div class="swiper-pagination rtsb-pos-s ' . esc_attr( $pagination_type ) . '"></div>' : '';
 
-		return $html;
+		/**
+		 * Filters the slider navigation + pagination markup.
+		 *
+		 * @param string        $html     Slider buttons (arrows + pagination) HTML.
+		 * @param array         $settings Widget settings.
+		 * @param GeneralAddons $instance Current render instance (exposes unique_name, id, etc.).
+		 */
+		return apply_filters( 'rtsb/general/slider_buttons/html', $html, $settings, $this );
 	}
 	/**
 	 * Preloader.

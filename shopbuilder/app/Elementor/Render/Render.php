@@ -126,6 +126,12 @@ class Render {
 			$container_attributes['data-rtsb-ajax'] = $pagination_attributes;
 		}
 
+		// Opt-out of the scroll-to-top behaviour on Ajax filter/pagination when
+		// the "Enable Scroll To Top?" switch is turned off.
+		if ( isset( $settings['enable_ajax_scroll'] ) && empty( $settings['enable_ajax_scroll'] ) ) {
+			$container_attributes['data-rtsb-disable-scroll'] = '1';
+		}
+
 		// Adding render attributes.
 		$this->add_attribute( 'rtsb_container_attr_' . $rand, $container_attributes );
 
@@ -508,7 +514,7 @@ class Render {
 			$restore_query = true;
 		}
 
-		if ( Fns::product_has_applied_filters( 'shop' ) || Fns::product_has_applied_filters( 'archive' ) || 'rtsb_builder' === get_post_type( get_the_ID() ) ) {
+		if ( rtsb()->has_pro() && ( Fns::product_has_applied_filters( 'shop' ) || Fns::product_has_applied_filters( 'archive' ) || 'rtsb_builder' === get_post_type( get_the_ID() ) ) ) {
 			$rtsb_active_filters_html = Fns::get_active_filters_html();
 			$rtsb_wrapper_style       = '' !== $rtsb_active_filters_html ? ' style="' . esc_attr( 'display:block;' ) . '"' : '';
 			echo '<div class="rtsb-active-filters-wrapper"' . $rtsb_wrapper_style . '>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Style value is escaped above.

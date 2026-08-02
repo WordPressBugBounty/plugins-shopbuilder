@@ -49,8 +49,8 @@ class Selectors {
 				'flex_width'    => '{{WRAPPER}} .rtsb-team-member .rtsb-team-layout4 .rtsb-team-img',
 				'height'        => '{{WRAPPER}} .rtsb-team-member .rtsb-team-layout1 .rtsb-team-img img,{{WRAPPER}} .rtsb-team-member .rtsb-team-layout1 .rtsb-team-img,{{WRAPPER}} .rtsb-team-member .rtsb-team-layout2 .rtsb-team-img img,{{WRAPPER}} .rtsb-team-member .rtsb-team-layout2 .rtsb-team-img,{{WRAPPER}} .rtsb-team-member .rtsb-team-layout3 .rtsb-team-img,{{WRAPPER}} .rtsb-team-member .rtsb-team-layout4 .rtsb-team-img,{{WRAPPER}} .rtsb-team-member .rtsb-team-layout4 .rtsb-team-img img',
 				'max_width'     => '{{WRAPPER}} .rtsb-team-member .rtsb-team-img',
-				'border'        => '{{WRAPPER}} .rtsb-team-member .rtsb-team-layout1 .rtsb-team-img,{{WRAPPER}} .rtsb-team-member .rtsb-team-layout2 .rtsb-team-img,{{WRAPPER}} .rtsb-team-member .rtsb-team-layout3 .rtsb-team-img',
-				'border_radius' => '{{WRAPPER}} .rtsb-team-member .rtsb-team-layout1 .rtsb-team-img img,{{WRAPPER}} .rtsb-team-member .rtsb-team-layout1 .rtsb-team-img,{{WRAPPER}} .rtsb-team-member .rtsb-team-layout2 .rtsb-team-img img,{{WRAPPER}} .rtsb-team-member .rtsb-team-layout2 .rtsb-team-img,{{WRAPPER}} .rtsb-team-member .rtsb-team-layout3 .rtsb-team-img',
+				'border'        => '{{WRAPPER}} .rtsb-team-member .rtsb-team-layout1 .rtsb-team-img,{{WRAPPER}} .rtsb-team-member .rtsb-team-layout2 .rtsb-team-img,{{WRAPPER}} .rtsb-team-member .rtsb-team-layout3 .rtsb-team-img,{{WRAPPER}} .rtsb-team-member .rtsb-team-layout4 .rtsb-team-img',
+				'border_radius' => '{{WRAPPER}} .rtsb-team-member .rtsb-team-layout1 .rtsb-team-img img,{{WRAPPER}} .rtsb-team-member .rtsb-team-layout1 .rtsb-team-img,{{WRAPPER}} .rtsb-team-member .rtsb-team-layout2 .rtsb-team-img img,{{WRAPPER}} .rtsb-team-member .rtsb-team-layout2 .rtsb-team-img,{{WRAPPER}} .rtsb-team-member .rtsb-team-layout3 .rtsb-team-img,{{WRAPPER}} .rtsb-team-member .rtsb-team-layout4 .rtsb-team-img img,{{WRAPPER}} .rtsb-team-member .rtsb-team-layout4 .rtsb-team-img',
 				'margin'        => '{{WRAPPER}} .rtsb-team-member .rtsb-team-img',
 				'alignment'     => '{{WRAPPER}} .rtsb-team-member .rtsb-team-inner',
 			],
@@ -110,7 +110,7 @@ class Selectors {
 				'border_hover_color'  => '{{WRAPPER}} .rtsb-elementor-container .rtsb-carousel-slider .swiper-arrow:hover, {{WRAPPER}} .rtsb-elementor-container .rtsb-carousel-slider .swiper-pagination-bullet:hover',
 				'active_border_color' => '{{WRAPPER}} .rtsb-elementor-container .rtsb-carousel-slider .swiper-pagination-bullet-active',
 				'border_radius'       => '{{WRAPPER}} .rtsb-elementor-container .rtsb-carousel-slider .swiper-arrow, {{WRAPPER}} .rtsb-elementor-container .rtsb-carousel-slider .swiper-pagination-bullet',
-				'wrapper_padding'     => '{{WRAPPER}} .rtsb-elementor-container .rtsb-carousel-slider .swiper-nav, {{WRAPPER}} .rtsb-elementor-container .rtsb-carousel-slider .swiper-pagination',
+				'wrapper_padding'     => '{{WRAPPER}} .rtsb-elementor-container .rtsb-carousel-slider .swiper-nav',
 			],
 		];
 	}

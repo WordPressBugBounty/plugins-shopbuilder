@@ -857,7 +857,8 @@ class Controls {
 	/**
 	 * Button style section
 	 *
-	 * @param object $obj Reference object.
+	 * @param object $obj  Reference object.
+	 * @param string $type Button type.
 	 *
 	 * @return array
 	 */
@@ -1148,6 +1149,20 @@ class Controls {
 		];
 
 		$fields = ControlHelper::general_elementor_style( 'pricing_table_price_style', $title, $obj, [], $selectors );
+
+		// The price number lives in `.rtsb-price` inside `.rtsb-orginal-price`/`.rtsb-sale-price`
+		// (display:inline-flex), and an ancestor's text-decoration cannot reach an inline-flex
+		// descendant, so a decoration on `.rtsb-price-wrap` lands beside the number. Point it at
+		// the actual price text spans so the decoration draws across the number (+ currency).
+		$td = $css_selectors['typography'];
+
+		$fields['rtsb_el_pricing_table_price_style_typography']['fields_options'] = [
+			'text_decoration' => [
+				'selectors' => [
+					$td . ' .rtsb-price,' . $td . ' .rtsb-currency' => 'text-decoration: {{VALUE}};',
+				],
+			],
+		];
 
 		unset(
 			$fields['pricing_table_price_style_alignment'],

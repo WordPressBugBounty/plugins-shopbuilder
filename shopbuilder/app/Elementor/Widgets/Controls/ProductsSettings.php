@@ -208,7 +208,6 @@ class ProductsSettings {
 				'type'     => 'typography',
 				'label'    => esc_html__( 'Typography', 'shopbuilder' ),
 				'selector' => $this->selectors['section_heading_typography'],
-				'exclude'  => [ 'font_family', 'text_decoration', 'font_style' ], // phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_exclude
 			],
 			'section_heading_color'      => [
 				'label'     => esc_html__( 'Color', 'shopbuilder' ),
@@ -392,7 +391,7 @@ class ProductsSettings {
 			],
 
 			'product_reguler_price_color' => [
-				'label'     => esc_html__( 'Reguler Price Color', 'shopbuilder' ),
+				'label'     => esc_html__( 'Regular Price Color', 'shopbuilder' ),
 				'type'      => 'color',
 
 				'selectors' => [
@@ -772,24 +771,6 @@ class ProductsSettings {
 				'type'       => 'border',
 				'selector'   => $this->selectors['pagination_border'],
 				'size_units' => [ 'px' ],
-				// 'fields_options' => [
-				// 'border' => [
-				// 'default' => 'solid',
-				// ],
-				// 'width'  => [
-				// 'default' => [
-				// 'top'      => '0',
-				// 'right'    => '0',
-				// 'bottom'   => '0',
-				// 'left'     => '0',
-				// 'isLinked' => true,
-				// ],
-				// ],
-				// 'color'  => [
-				// 'default' => '',
-				// 'alpha'   => false,
-				// ],
-				// ],
 			],
 			'pagination_normal_end'         => [
 				'mode' => 'tab_end',
@@ -832,14 +813,6 @@ class ProductsSettings {
 			'pagination_border_radius'      => [
 				'label'      => esc_html__( 'Border Radius (px)', 'shopbuilder' ),
 				'type'       => 'dimensions',
-				// 'default'    => [
-				// 'top'      => '5',
-				// 'right'    => '5',
-				// 'bottom'   => '5',
-				// 'left'     => '5',
-				// 'unit'     => 'px',
-				// 'isLinked' => true,
-				// ],
 				'size_units' => [ 'px' ],
 				'selectors'  => [
 					$this->selectors['pagination_border_radius'] => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',

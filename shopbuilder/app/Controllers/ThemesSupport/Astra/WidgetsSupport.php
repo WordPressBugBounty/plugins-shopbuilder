@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Main ProductDescription class.
  *
@@ -43,6 +42,8 @@ class WidgetsSupport {
 	/**
 	 * Get class instance.
 	 *
+	 * @param object $widgets Widgets reference object.
+	 *
 	 * @return object Instance.
 	 */
 	public static function instance( $widgets ) {
@@ -55,11 +56,13 @@ class WidgetsSupport {
 	}
 
 	/**
-	 * @param $html
+	 * Remove Astra flash sale cards buttons HTML.
+	 *
+	 * @param string $html Cards buttons HTML.
 	 *
 	 * @return string
 	 */
-	public function astra_flash_sale_html_remove( $html ) {
+	public function astra_flash_sale_html_remove( $html ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
 		return '';
 	}
 
@@ -104,7 +107,7 @@ class WidgetsSupport {
 		}
 		$this->widgets->apply_hooks_set_default();
 
-		// Variation Swatch fix
+		// Variation Swatch fix.
 		if ( class_exists( 'WooProductVariationSwatches' ) ) {
 			$swatches_position = rtwpvs()->get_option( 'archive_swatches_position' );
 			if ( 'before_title_and_price' == $swatches_position && class_exists( ShopPage::class ) ) {
@@ -131,6 +134,60 @@ class WidgetsSupport {
 		add_filter( 'rtsb/module/wishlist/show_button', '__return_false' );
 		add_filter( 'rtsb/module/quick_view/show_button', '__return_false' );
 		add_filter( 'rtsb/module/compare/show_button', '__return_false' );
+
+		$this->maybe_fix_flash_sale_badge_overlap();
+	}
+
+	/**
+	 * Astra-only: stop the Product Badges group badge from hiding Astra's flash-sale badge.
+	 *
+	 * On Astra Modern shop style the flash-sale badge ( `.ast-onsale-card` ) is anchored top-left. When the
+	 * Product Badges module renders its group badge above the image at that same top-left corner, the group
+	 * badge sits over the flash-sale badge and hides it. ONLY in that exact situation we shift the flash-sale
+	 * badge to the opposite (top-right) corner so both stay visible. Every other case bails out, so existing
+	 * behaviour is untouched.
+	 *
+	 * @return void
+	 */
+	private function maybe_fix_flash_sale_badge_overlap() {
+		$badge_opts = \RadiusTheme\SB\Helpers\Fns::get_options( 'modules', 'product_badges' );
+
+		// Product Badges module is off — there is no group badge to overlap.
+		if ( 'on' !== ( $badge_opts['active'] ?? '' ) ) {
+			return;
+		}
+		// "Hide Theme Badges" is on — the module already removes the flash-sale badge, nothing to reposition.
+		if ( ! empty( $badge_opts['hide_woocommerce_badge'] ) ) {
+			return;
+		}
+		// Group badge is not rendered on the image, so it cannot overlap the flash-sale badge.
+		if ( 'above_image' !== ( $badge_opts['loop_group_position'] ?? '' ) ) {
+			return;
+		}
+		// Only the top-left corner clashes with Astra's (top-left) flash-sale badge.
+		if ( 'top-left' !== ( $badge_opts['group_badge_position'] ?? '' ) ) {
+			return;
+		}
+
+		add_action( 'woocommerce_before_shop_loop_item', [ $this, 'flash_sale_badge_position_style' ], 1 );
+	}
+
+	/**
+	 * Print, once per request, the CSS that moves Astra's flash-sale badge to the top-right corner.
+	 *
+	 * The sibling selector only matches products that actually carry a group badge ( `.rtsb-badge-container` ),
+	 * and `.ast-onsale-card` exists only on Astra, so the rule cannot affect other themes or non-badged products.
+	 *
+	 * @return void
+	 */
+	public function flash_sale_badge_position_style() {
+		static $printed = false;
+		if ( $printed ) {
+			return;
+		}
+		$printed = true;
+
+		echo '<style id="rtsb-astra-flash-sale-pos">.rtsb-badge-container ~ .ast-onsale-card{left:auto !important;right:20px !important;}</style>';
 	}
 
 	/**
@@ -249,6 +306,56 @@ class WidgetsSupport {
 	}
 
 	/**
+	 * Product Images widget: make the "Show Flash Sale?" toggle authoritative on Astra.
+	 *
+	 * Astra registers its own `woocommerce_sale_flash` filter that rewrites and relocates the
+	 * badge markup, so the widget's template gate (OFF) and its `.onsale` position/style controls
+	 * (ON) are both overridden. We hook the same filter at a late priority so the toggle wins:
+	 * OFF removes the badge from every source, ON restores WooCommerce's default `.onsale` markup
+	 * the widget's selectors are built around.
+	 *
+	 * Method name derives from the widget base "rtsb-product-image" (see ElementorWidgetBase::theme_support).
+	 *
+	 * @return void
+	 */
+	public function render_rtsb_product_image() {
+		$controllers = $this->widgets->get_settings_for_display();
+
+		if ( empty( $controllers['sale_flash_badge'] ) ) {
+			add_filter( 'woocommerce_sale_flash', '__return_empty_string', 99 );
+		} else {
+			add_filter( 'woocommerce_sale_flash', [ $this, 'default_sale_flash_markup' ], 99 );
+		}
+	}
+
+	/**
+	 * Reset the Product Images sale-flash overrides after the widget renders.
+	 *
+	 * @return void
+	 */
+	public function render_reset_rtsb_product_image() {
+		$controllers = $this->widgets->get_settings_for_display();
+
+		if ( empty( $controllers['sale_flash_badge'] ) ) {
+			remove_filter( 'woocommerce_sale_flash', '__return_empty_string', 99 );
+		} else {
+			remove_filter( 'woocommerce_sale_flash', [ $this, 'default_sale_flash_markup' ], 99 );
+		}
+	}
+
+	/**
+	 * Force WooCommerce's default sale-flash markup so the Product Images widget's
+	 * own `.onsale` position and style controls apply on Astra.
+	 *
+	 * @param string $html Existing sale-flash markup (from Astra or WooCommerce).
+	 *
+	 * @return string
+	 */
+	public function default_sale_flash_markup( $html ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
+		return '<span class="onsale">' . esc_html__( 'Sale!', 'shopbuilder' ) . '</span>';
+	}
+
+	/**
 	 * The function name comes from the widget base name "rtsb-products-archive". This is for theme support prefix with widget_controls.
 	 *
 	 * @return void
@@ -259,6 +366,8 @@ class WidgetsSupport {
 
 	/**
 	 * Widget Field.
+	 *
+	 * @param array $fields Widget fields.
 	 *
 	 * @return array
 	 */
@@ -290,6 +399,8 @@ class WidgetsSupport {
 
 	/**
 	 * Widget Field.
+	 *
+	 * @param array $fields Widget fields.
 	 *
 	 * @return array
 	 */
@@ -349,6 +460,8 @@ class WidgetsSupport {
 	}
 	/**
 	 * Widget Field.
+	 *
+	 * @param array $fields Widget fields.
 	 *
 	 * @return array
 	 */

@@ -375,7 +375,7 @@ class ApiCartRecovery {
 					'email_body'     => isset( $template['email_body'] ) ? wp_kses_post( $template['email_body'] ) : '',
 					'is_activated'   => isset( $template['is_activated'] ) && 'on' === $template['is_activated'] ? 'on' : 0,
 					'frequency'      => isset( $template['frequency'] ) ? absint( $template['frequency'] ) : 0,
-					'frequency_unit' => isset( $template['frequency_unit'] ) ? sanitize_text_field( $template['frequency_unit'] ) : 'days', // default, or map from input if needed.
+					'frequency_unit' => isset( $template['frequency_unit'] ) ? strtoupper( sanitize_text_field( $template['frequency_unit'] ) ) : 'DAY', // Normalized to match the scheduler's MINUTE|HOUR|DAY switch.
 					'menu_order'     => isset( $template['menu_order'] ) ? absint( $template['menu_order'] ) : 0,
 					'other_fields'   => maybe_serialize( $other_fields ),
 				];

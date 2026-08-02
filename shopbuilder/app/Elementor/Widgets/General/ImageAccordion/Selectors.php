@@ -51,6 +51,10 @@ class Selectors {
 			],
 			'link_style'      => [
 				'typography'     => '{{WRAPPER}} .rtsb-image-accordion-wrapper .item .content .inner .link-list li .link',
+				'icon_size'      => [
+					'font_size' => '{{WRAPPER}} .rtsb-image-accordion-wrapper .item .content .inner .link-list li .link i',
+					'svg'       => '{{WRAPPER}} .rtsb-image-accordion-wrapper .item .content .inner .link-list li .link svg',
+				],
 				'border'         => '{{WRAPPER}} .rtsb-image-accordion-wrapper .item .content .inner .link-list li .link',
 				'border_radius'  => '{{WRAPPER}} .rtsb-image-accordion-wrapper .item .content .inner .link-list li .link',
 				'color'          => '{{WRAPPER}} .rtsb-image-accordion-wrapper .item .content .inner .link-list li .link',

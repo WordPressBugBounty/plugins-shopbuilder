@@ -389,6 +389,91 @@ class Controls {
 			'selector' => $selectors['box_shadow'],
 		];
 		$fields                                        = Fns::insert_controls( 'logo_item_style_border_note', $fields, $extra_controls2 );
+
+		// Layout 2 (Two-tone split card) has two separate background targets, so the
+		// default full-wrapper "Background Color" is hidden for Layout 2 and replaced
+		// with a "Logo Background" (logo image wrapper) and a "Brand Name Background"
+		// (footer strip). Padding / Border-radius keep targeting the full wrapper.
+		$fields['logo_item_style_bg_color']['condition'] = [ 'layout_style!' => [ 'rtsb-logo-layout2' ] ];
+
+		$layout2_bg_controls = [
+			'logo_item_style_logo_bg'       => [
+				'type'      => 'color',
+				'label'     => esc_html__( 'Logo Background', 'shopbuilder' ),
+				'condition' => [ 'layout_style' => 'rtsb-logo-layout2' ],
+				'selectors' => [ $css_selectors['logo_bg'] => 'background-color: {{VALUE}};' ],
+				'separator' => 'default',
+			],
+			'logo_item_style_brand_name_bg' => [
+				'type'      => 'color',
+				'label'     => esc_html__( 'Brand Name Background', 'shopbuilder' ),
+				'condition' => [ 'layout_style' => 'rtsb-logo-layout2' ],
+				'selectors' => [ $css_selectors['brand_name_bg'] => 'background-color: {{VALUE}};' ],
+				'separator' => 'default',
+			],
+		];
+		$fields              = Fns::insert_controls( 'logo_item_style_bg_color', $fields, $layout2_bg_controls, true );
+
+		// Layout 2 brand-name (footer) hover + border controls (separate, conditional).
+		// The green hover stays as the default until these are set.
+		$brand_name_extra = [
+			'logo_item_style_brand_name_hover_bg'     => [
+				'type'      => 'color',
+				'label'     => esc_html__( 'Brand Name Hover Background Color', 'shopbuilder' ),
+				'condition' => [ 'layout_style' => 'rtsb-logo-layout2' ],
+				'selectors' => [ $css_selectors['brand_name_hover'] => 'background-color: {{VALUE}};' ],
+				'separator' => 'default',
+			],
+			'logo_item_style_brand_name_hover_color'  => [
+				'type'      => 'color',
+				'label'     => esc_html__( 'Brand Name Hover Text Color', 'shopbuilder' ),
+				'condition' => [ 'layout_style' => 'rtsb-logo-layout2' ],
+				'selectors' => [ $css_selectors['brand_name_hover'] => 'color: {{VALUE}};' ],
+				'separator' => 'default',
+			],
+			'logo_item_style_brand_name_border'       => [
+				'mode'           => 'group',
+				'type'           => 'border',
+				'label'          => esc_html__( 'Brand Name Border', 'shopbuilder' ),
+				'condition'      => [ 'layout_style' => 'rtsb-logo-layout2' ],
+				'selector'       => $css_selectors['brand_name_bg'],
+				'fields_options' => [
+					'color' => [
+						'label' => esc_html__( 'Border Color', 'shopbuilder' ),
+					],
+				],
+				'separator'      => 'default',
+			],
+			'logo_item_style_brand_name_hover_border' => [
+				'type'      => 'color',
+				'label'     => esc_html__( 'Brand Name Hover Border Color', 'shopbuilder' ),
+				'condition' => [ 'layout_style' => 'rtsb-logo-layout2' ],
+				'selectors' => [ $css_selectors['brand_name_hover'] => 'border-color: {{VALUE}};' ],
+				'separator' => 'default',
+			],
+		];
+		$fields           = Fns::insert_controls( 'logo_item_style_brand_name_bg', $fields, $brand_name_extra, true );
+
+		// Layout 2 padding targets the logo wrapper and the brand-name footer
+		// together (not the full wrapper). Layout 1 keeps padding on the full wrapper.
+		$fields['logo_item_style_padding']['condition'] = [ 'layout_style!' => [ 'rtsb-logo-layout2' ] ];
+
+		$layout2_padding = [
+			'logo_item_style_l2_padding' => [
+				'type'       => 'dimensions',
+				'mode'       => 'responsive',
+				'label'      => esc_html__( 'Padding', 'shopbuilder' ),
+				'size_units' => [ 'px', '%', 'em' ],
+				'condition'  => [ 'layout_style' => 'rtsb-logo-layout2' ],
+				'selectors'  => [
+					$css_selectors['logo_bg']       => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					$css_selectors['brand_name_bg'] => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				],
+				'separator'  => 'default',
+			],
+		];
+		$fields          = Fns::insert_controls( 'logo_item_style_padding', $fields, $layout2_padding, true );
+
 		return $fields;
 	}
 	/**

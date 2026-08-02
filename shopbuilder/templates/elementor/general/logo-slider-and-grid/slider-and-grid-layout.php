@@ -41,13 +41,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 			} else {
 				Fns::print_html( $instance->render_logo_image( $logo ) );
 			}
-			if ( $has_logo_name ) {
+			// Layout 2 renders the brand name as a sibling of the logo wrapper (below);
+			// every other layout keeps it nested here (markup unchanged).
+			if ( $has_logo_name && 'rtsb-logo-layout2' !== ( $layout ?? '' ) ) {
 				?>
 				<h4 class="rtsb-brand-name"><?php Fns::print_html( $logo_brand_name ); ?></h4>
 				<?php
 			}
 			?>
 		</div>
+		<?php
+		if ( $has_logo_name && 'rtsb-logo-layout2' === ( $layout ?? '' ) ) {
+			?>
+			<h4 class="rtsb-brand-name"><?php Fns::print_html( $logo_brand_name ); ?></h4>
+			<?php
+		}
+		?>
 	</div>
 </div>
 

@@ -109,7 +109,7 @@ class BuilderFns {
 
 		switch ( $type ) {
 			case 'product':
-				if ( 'product' !== $post->post_type ) {
+				if ( ! $post instanceof \WP_Post || 'product' !== $post->post_type ) {
 					break;
 				}
 				$cache_key_product = 'template_for_product_page_' . get_the_ID();

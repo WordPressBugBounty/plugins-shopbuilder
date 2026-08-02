@@ -368,6 +368,14 @@ class BadgesFrontEnd {
 			return;
 		}
 
+		// Ensure badge data is prepared for the current product. On the normal front end
+		// `the_post` / `rtsb_before_product_template_render` populate it, but those don't
+		// fire for the Product Badges Elementor widget (or Elementor editor), leaving
+		// `all_badges` empty. Cached per product id, so this is idempotent and cheap.
+		if ( empty( $this->all_badges ) ) {
+			$this->wc_setup_product_badge_data();
+		}
+
 		$group_classes = [ 'rtsb-group-custom-position' ];
 
 		$group_position = ( $this->options['group_badge_position'] ?? 'top-left' );

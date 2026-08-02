@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 
-use CodesVault\Howdyqb\DB;
+use RadiusTheme\SB\Dependencies\CodesVault\Howdyqb\DB;
 use DateTime;
 use WP_Styles;
 use WC_Product;
@@ -1357,6 +1357,15 @@ class Fns {
 	 * @return array
 	 */
 	public static function get_all_attributes() {
+		// Memoize per request: this runs once per product widget while Elementor
+		// builds the editor control config, firing a get_terms() query per
+		// attribute taxonomy each time. Caching avoids the repeated N queries.
+		static $cached = null;
+
+		if ( null !== $cached ) {
+			return $cached;
+		}
+
 		$terms    = [];
 		$termList = [];
 
@@ -1377,6 +1386,8 @@ class Fns {
 				}
 			}
 		}
+
+		$cached = $terms;
 
 		return $terms;
 	}
@@ -1978,18 +1989,16 @@ class Fns {
 			return '';
 		}
 
-		$badge_text = '';
+		if ( 'text' === $type ) {
+			return $text;
+		}
+
 		$percentage = self::calculate_sale_percentage( $product );
 
-		if ( $percentage > 0 ) {
-			$badge_text = '-' . round( $percentage ) . '%';
-		}
-
-		if ( 'text' === $type ) {
-			$badge_text = $text;
-		}
-
-		return $badge_text;
+		// The product is on sale (checked above). When a percentage can be derived show
+		// it; otherwise (e.g. some variable products where variation prices aren't
+		// primed) fall back to the sale text so an on-sale product always shows a badge.
+		return $percentage > 0 ? '-' . round( $percentage ) . '%' : $text;
 	}
 
 	/**
@@ -2026,18 +2035,16 @@ class Fns {
 			return '';
 		}
 
-		$badge_text = '';
+		if ( 'text' === $type ) {
+			return $text;
+		}
+
 		$percentage = self::calculate_sale_percentage( $product );
 
-		if ( $percentage > 0 ) {
-			$badge_text = '-' . round( $percentage ) . '%';
-		}
-
-		if ( 'text' === $type ) {
-			$badge_text = $text;
-		}
-
-		return $badge_text;
+		// The product is on sale (checked above). When a percentage can be derived show
+		// it; otherwise (e.g. some variable products where variation prices aren't
+		// primed) fall back to the sale text so an on-sale product always shows a badge.
+		return $percentage > 0 ? '-' . round( $percentage ) . '%' : $text;
 	}
 
 	/**

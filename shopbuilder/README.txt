@@ -4,7 +4,7 @@ Donate link:
 Tags: Elementor, Woocommerce Builder, Elementor Woocommerce Builder, Woocommerce, Woocommerce Product
 Requires at least: 5.5
 Tested up to: 7.0
-Stable tag: 3.3.0
+Stable tag: 3.4.0
 Requires PHP: 7.4
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -16,7 +16,7 @@ WooCommerce builder for Elementor includes 80+ widgets, WooCommerce templates, q
 
 Elementor WooCommerce Builder Addons is an add-on plugin that integrates with both Elementor and WooCommerce, providing additional design options and functionality specifically for WooCommerce stores. By using this plugin, users can easily create custom-designed product pages, checkout pages, and other e-commerce-related pages.
 
-👉 [ShopBuilder Modules](https://shopbuilderwp.com/modules/?utm_source=WPorg&utm_medium=click&utm_campaign=org) | [ShopBuilder Templates](https://shopbuilderwp.com/templates/?utm_source=WPorg&utm_medium=click&utm_campaign=org) | [Documentation](https://shopbuilderwp.com/docs/) | [Get Pro]( https://www.radiustheme.com/downloads/woocommerce-bundle/?utm_source=WPorg&utm_medium=click&utm_campaign=org ) | [Try Admin Demo]( https://radiustheme.net/sandbox/shopbuilder/ ) 👈
+👉 [ShopBuilder Modules](https://shopbuilderwp.com/modules/?utm_source=WPorg&utm_medium=click&utm_campaign=org) | [ShopBuilder Templates](https://shopbuilderwp.com/templates/?utm_source=WPorg&utm_medium=click&utm_campaign=org) | [Documentation](https://shopbuilderwp.com/docs/) | [Get Pro]( https://www.radiustheme.com/downloads/woocommerce-bundle/?utm_source=WPorg&utm_medium=click&utm_campaign=org ) 👈
 
 With ShopBuilder, you can craft captivating and highly functional online shopping experiences.
 
@@ -424,7 +424,17 @@ If you like the ShopBuilder Plugin, then consider checking out our other WordPre
 
 == Changelog ==
 
-= 3.3.0 ( Jun 16, 2026) =
+= 3.4.0 (Aug 02, 2026) =
+* New: Scoped all bundled Composer dependencies with PHP-Scoper to prevent conflicts with other plugins
+* Fix: Product Images widget lightbox icon now renders in the Elementor editor instead of the default magnifier
+* Fix: Add to Cart no longer shows the "Product Added" notice twice on a single click
+* Update: Product Badges widget controls rearranged
+* Update: Variation Gallery now updates smoothly without flickering when switching variations
+* Update: Variation Gallery skips re-rendering when the selected variation's images are already loaded, just sliding to the correct image
+* Add: "No Effect" option for the Variation Gallery Change Effect setting
+* Fix: Variation Gallery now falls back to the parent product's featured image when a variation has no image of its own
+
+= 3.3.0 (Jun 16, 2026) =
 * Update: Added module/widgets icons to the settings page
 * Update: Template Builder modal now opens instantly with a loader in the preview area
 * Fix: Template Builder no longer stuck loading when the pre-built templates server is unreachable

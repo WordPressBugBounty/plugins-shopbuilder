@@ -896,6 +896,36 @@ class SettingsFields {
 			'conditions' => $conditions,
 		];
 
+		// Variation swatch (showcase) images render at their own size, so the custom
+		// image size above does not apply to them. Self-gate on the `show_swatches`
+		// control rather than a hardcoded widget/type allow-list: that control is the
+		// codebase's universal marker for swatch-capable widgets — defined in the
+		// product-loop visibility section (SettingsFields::content_visibility) and also
+		// injected by RtwpvsSupport when the RTWPVS plugin is active. An Elementor
+		// condition that references an absent control stays unmet, so the note never
+		// surfaces on the category image size or any non-swatch widget.
+		$swatch_note_conditions = $conditions;
+
+		$swatch_note_conditions['terms'][] = [
+			'relation' => 'or',
+			'terms'    => [
+				[
+					'name'     => 'show_swatches',
+					'operator' => '==',
+					'value'    => 'yes',
+				],
+			],
+		];
+
+		$fields['image_custom_dimension_swatch_note'] = [
+			'type'       => 'html',
+			'raw'        => sprintf(
+				'<span style="display: block; background: #fffbf1; padding: 10px; font-weight: 500; line-height: 1.4; color: #bd3a3a;border: 1px solid #bd3a3a;">%s</span>',
+				esc_html__( 'Note: this does not apply to variation swatch images.', 'shopbuilder' )
+			),
+			'conditions' => $swatch_note_conditions,
+		];
+
 		return $fields;
 	}
 
@@ -1437,7 +1467,7 @@ class SettingsFields {
 					'circle' => esc_html__( 'Circle', 'shopbuilder' ),
 				],
 				'label_block' => true,
-				'default'     => 'circle',
+				'default'     => 'square',
 			];
 		}
 		$fields['swatch_margin'] = [
@@ -1534,11 +1564,12 @@ class SettingsFields {
 			'label'       => esc_html__( 'Group Badge Alignment', 'shopbuilder' ),
 			'description' => esc_html__( 'Please choose the group badge alignment.', 'shopbuilder' ),
 			'condition'   => [ 'enable_badges_module' => [ 'yes' ] ],
-			'default'     => 'start',
+			'default'     => '',
 			'separator'   => rtsb()->has_pro() ? 'default' : 'before',
 			'label_block' => true,
 			'selectors'   => [
-				$obj->selectors['badges_module']['alignment'] => 'align-items: {{VALUE}} !important;',
+				$obj->selectors['badges_module']['alignment']      => 'display: flex !important; width: 100% !important; justify-content: {{VALUE}} !important; align-items: {{VALUE}} !important;',
+				$obj->selectors['badges_module']['alignment_wrap'] => 'width: 100% !important; left: 0 !important; right: 0 !important;',
 			],
 		];
 

@@ -223,6 +223,23 @@ class ProductAddToCart extends ElementorWidgetBase {
 	}
 
 	/**
+	 * Show an editor-only notice when the add to cart button is hidden
+	 * because the product is out of stock.
+	 *
+	 * @param \WC_Product|null $product Current product.
+	 * @return void
+	 */
+	public function out_of_stock_editor_notice( $product ) {
+		if ( ! $product instanceof \WC_Product || $product->is_in_stock() ) {
+			return;
+		}
+		$this->editor_notice(
+			esc_html__( 'The add to cart button and quantity are hidden because this product is out of stock.', 'shopbuilder' ),
+			'rtsb-add-to-cart-editor-notice'
+		);
+	}
+
+	/**
 	 * Override WooCommerce AJAX variation threshold.
 	 *
 	 * @return int
@@ -296,6 +313,7 @@ class ProductAddToCart extends ElementorWidgetBase {
 			$this->catalog_mode_buttons( $product->get_id() );
 		} else {
 			Fns::load_template( $data['template'], $data );
+			$this->out_of_stock_editor_notice( $product );
 		}
 
 		$this->editor_cart_icon_script();

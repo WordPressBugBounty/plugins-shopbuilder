@@ -617,6 +617,17 @@ class Controls {
 
 		$fields = ControlHelper::general_elementor_style( 'counter_count_style', $title, $obj, [], $selectors );
 
+		// Typography text-decoration set on the inline-flex `.rtsb-counter-number-wrap` does not reach the
+		// flex items / Odometer digit spans, so it lands on nothing. Re-target the leaf text elements
+		// (prefix/suffix + the Odometer `.odometer-value` digits and `.odometer-formatting-mark` commas).
+		$fields['rtsb_el_counter_count_style_typography']['fields_options'] = [
+			'text_decoration' => [
+				'selectors' => [
+					$css_selectors['decoration'] => 'text-decoration: {{VALUE}};',
+				],
+			],
+		];
+
 		unset(
 			$fields['counter_count_style_alignment'],
 			$fields['counter_count_style_border_note'],

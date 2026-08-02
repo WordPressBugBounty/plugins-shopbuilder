@@ -50,6 +50,18 @@ $additional_args = [
 	'total_count' => 'sale_filter' === $tax_type ? 2 : count( $is_attribute ? RenderHelpers::get_product_filters_attribute_terms( $tax_type ) : $tax_data ),
 	'tax_data'    => $tax_data,
 ];
+
+// Build the term list first so the whole filter block (including its title)
+// can be skipped when it has no items to show - e.g. every term is empty in
+// the current category archive and "Show Empty Terms" is off.
+$rtsb_filter_list_html = '';
+if ( ! empty( $tax_data ) && ! is_wp_error( $tax_data ) && 'sale_filter' !== $tax_type ) {
+	$rtsb_filter_list_html = RenderHelpers::get_product_default_filter_list_html( $data, $input, $additional_data );
+}
+
+if ( 'sale_filter' !== $tax_type && '' === trim( (string) $rtsb_filter_list_html ) ) {
+	return;
+}
 ?>
 <div class="rtsb-product-default-filters rtsb-categories <?php echo 'sale_filter' === $tax_type ? 'rtsb-sale-filter' : ''; ?>">
 	<?php
@@ -63,14 +75,10 @@ $additional_args = [
 	 */
 	echo '<div class="default-filter-content">';
 
-	if ( ! empty( $tax_data ) && ! is_wp_error( $tax_data ) && 'sale_filter' !== $tax_type ) {
-		Fns::print_html( RenderHelpers::get_product_default_filter_list_html( $data, $input, $additional_data ), true );
+	if ( 'sale_filter' === $tax_type ) {
+		Fns::print_html( RenderHelpers::get_default_filter_html( $tax_type, $sale_options, $additional_data ), true );
 	} else {
-		if ( 'sale_filter' === $tax_type ) {
-			 Fns::print_html( RenderHelpers::get_default_filter_html( $tax_type, $sale_options, $additional_data ), true );
-		} else {
-			echo '<p class="no-filter">' . esc_html__( 'Nothing found.', 'shopbuilder' ) . '</p>';
-		}
+		Fns::print_html( $rtsb_filter_list_html, true );
 	}
 
 	echo '</div>';

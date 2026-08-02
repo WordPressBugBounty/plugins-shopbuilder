@@ -95,7 +95,11 @@ class ProductImagesSettings {
 			],
 		];
 
-		if ( ( function_exists( 'rtwpvg' ) && rtwpvg()->active_pro() ) || rtsb()->has_pro() ) {
+		// The Image Layout (bottom/left/right/grid) is rendered by the Variation Gallery
+		// pipeline. Without it, WooCommerce's default gallery ignores the selection, so
+		// only expose the control when a Variation Gallery renderer is active — the
+		// standalone WPVG Pro plugin or ShopBuilder's Variation Gallery module.
+		if ( ( function_exists( 'rtwpvg' ) && rtwpvg()->active_pro() ) || Fns::is_module_active( 'variation_gallery' ) ) {
 			$image_layout                           = [
 				'image_layout' => [
 					'type'        => 'rtsb-image-selector',

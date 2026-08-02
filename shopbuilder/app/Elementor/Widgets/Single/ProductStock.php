@@ -75,7 +75,9 @@ class ProductStock extends ElementorWidgetBase {
 
 		$icon = apply_filters( 'rtsb/elementor/product_stock_icons', $icon, $controllers, $obj );
 
-		return $icon . $availability;
+		// Wrap the availability text in its own element so the Typography control (e.g. text-decoration)
+		// targets only the text and never paints onto the sibling icon. See ControlSelectors stock_text_typography.
+		return $icon . '<span class="rtsb-stock-text">' . $availability . '</span>';
 	}
 	/**
 	 * Render Function
@@ -97,7 +99,7 @@ class ProductStock extends ElementorWidgetBase {
 		if ( ! empty( $availability['availability'] ) ) {
 			$data['content'] = wc_get_stock_html( $product );
 		} else {
-			$data['content'] = '<p class="stock in-stock"><i aria-hidden="true" class="rtsb-icon rtsb-icon-check-alt"></i>' . esc_html__( 'In stock', 'shopbuilder' ) . '</p>';
+			$data['content'] = '<p class="stock in-stock"><i aria-hidden="true" class="rtsb-icon rtsb-icon-check-alt"></i><span class="rtsb-stock-text">' . esc_html__( 'In stock', 'shopbuilder' ) . '</span></p>';
 		}
 		Fns::load_template( $data['template'], $data );
 		$this->theme_support( 'render_reset' );

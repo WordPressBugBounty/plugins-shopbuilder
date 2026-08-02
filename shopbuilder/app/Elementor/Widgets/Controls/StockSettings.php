@@ -22,6 +22,8 @@ class StockSettings {
 	/**
 	 * Widget Field
 	 *
+	 * @param object $widget widget object.
+	 *
 	 * @return array
 	 */
 	public static function widget_fields( $widget ) {
@@ -133,7 +135,7 @@ class StockSettings {
 					],
 				],
 				'selectors' => [
-					$widget->selectors['stock_alignment'] => 'text-align: {{VALUE}};',
+					$widget->selectors['stock_alignment'] => 'text-align: {{VALUE}}; justify-content: {{VALUE}};',
 				],
 			],
 			'stock_padding'             => [

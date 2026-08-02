@@ -68,6 +68,20 @@ class CartRecoveryFns {
 		return $options;
 	}
 	/**
+	 * Check whether the current user's role is excluded from abandonment tracking.
+	 *
+	 * @return bool True when the current user has a role listed in the
+	 *              "Exclude User Roles from Tracking" setting.
+	 */
+	public static function is_tracking_excluded_for_current_user() {
+		$disabled_roles = self::get_options( 'disable_tracking_roles', [] );
+		if ( empty( $disabled_roles ) ) {
+			return false;
+		}
+		$roles = (array) wp_get_current_user()->roles;
+		return ! empty( array_intersect( $roles, (array) $disabled_roles ) );
+	}
+	/**
 	 * @param int $abandonment_id abandonment id.
 	 * @return void
 	 */
@@ -297,7 +311,8 @@ class CartRecoveryFns {
 	 * @return int Scheduled timestamp or 0.
 	 */
 	public static function calculate_schedule_timestamp( $currentTime, $frequency, $frequency_unit ) {
-		$frequency = absint( $frequency );
+		$frequency      = absint( $frequency );
+		$frequency_unit = strtoupper( (string) $frequency_unit );
 		switch ( $frequency_unit ) {
 			case 'MINUTE':
 				return $currentTime + ( $frequency * MINUTE_IN_SECONDS );

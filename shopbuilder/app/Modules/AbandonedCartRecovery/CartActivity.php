@@ -459,6 +459,15 @@ class CartActivity {
 		if ( array_intersect( $current_user->roles, $disabled_roles ) ) {
 			return;
 		}
+		// On admin-ajax requests WooCommerce does not auto-initialize the cart from the
+		// customer session, so the totals would read 0 and the record would be deleted
+		// instead of saved. Load the cart for this context first (plugin convention).
+		if ( function_exists( 'wc_load_cart' ) && ( null === WC()->cart || WC()->cart->is_empty() ) ) {
+			wc_load_cart();
+		}
+		if ( null === WC()->cart ) {
+			return;
+		}
 		$cart_total  = WC()->cart->total;
 		$items_count = WC()->cart->get_cart_contents_count(); // Total items including quantities.
 

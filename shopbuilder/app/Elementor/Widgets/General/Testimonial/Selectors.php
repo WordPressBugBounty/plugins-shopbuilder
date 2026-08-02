@@ -46,7 +46,7 @@ class Selectors {
 			],
 			'image_style'            => [
 				'width'         => '{{WRAPPER}} .rtsb-testimonial .rtsb-testimonial-author-img img',
-				'max_width'     => '{{WRAPPER}} .rtsb-testimonial .rtsb-testimonial-author-img',
+				'max_width'     => '{{WRAPPER}} .rtsb-testimonial .rtsb-testimonial-author-img img',
 				'border'        => '{{WRAPPER}} .rtsb-testimonial .rtsb-testimonial-author-img img,{{WRAPPER}} .rtsb-testimonial .rtsb-testimonial-layout1 .rtsb-testimonial-author-img:after',
 				'border_radius' => '{{WRAPPER}} .rtsb-testimonial .rtsb-testimonial-author-img img,{{WRAPPER}} .rtsb-testimonial .rtsb-testimonial-layout1 .rtsb-testimonial-author-img:after',
 			],

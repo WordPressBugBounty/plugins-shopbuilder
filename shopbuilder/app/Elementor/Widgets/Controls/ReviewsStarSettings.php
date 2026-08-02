@@ -28,6 +28,8 @@ class ReviewsStarSettings {
 	/**
 	 * Widget Field
 	 *
+	 * @param object $widget Widget object.
+	 *
 	 * @return array
 	 */
 	public static function widget_fields( $widget ) {
@@ -71,7 +73,7 @@ class ReviewsStarSettings {
 			],
 			'review_star_icon_specing'       => [
 				'mode'       => 'responsive',
-				'label'      => esc_html__( 'Star icon specing (px)', 'shopbuilder' ),
+				'label'      => esc_html__( 'Star icon spacing (px)', 'shopbuilder' ),
 				'type'       => 'slider',
 				'size_units' => [ 'px' ],
 				'range'      => [
@@ -102,5 +104,4 @@ class ReviewsStarSettings {
 		];
 		return $fields;
 	}
-
 }

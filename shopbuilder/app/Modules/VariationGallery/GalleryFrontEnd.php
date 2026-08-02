@@ -51,24 +51,87 @@ class GalleryFrontEnd {
 	public function available_variation_gallery( $available_variation, $variationProductObject, $variation ) {
 		$variation_id = absint( $variation->get_id() );
 
-		// On single product pages galleries are fetched on-demand over AJAX (see
-		// get_variation_gallery()), so we intentionally do NOT embed per-variation image
-		// props in the variation JSON — that keeps the page lean and ensures each
-		// variation's gallery is fetched only when it is selected. WooCommerce already
-		// includes `variation_id`, which is all the frontend needs to request it.
-		//
-		// In other contexts (e.g. the archive/shop variation image swap) the inline
-		// data is still consumed, so expose an already-cached gallery if one exists.
-		// This is a cheap get_transient() — no prop building.
-		if ( ! is_product() && ! BuilderFns::is_product() ) {
-			$transient_name = GalleryFns::get_transient_name( $variation_id, 'variation-images' );
-			$images         = $transient_name ? get_transient( $transient_name ) : false;
-			if ( ! empty( $images ) && is_array( $images ) ) {
-				$available_variation['variation_gallery_images'] = array_values( $images );
+		if ( $this->is_single_product_context() ) {
+			// On single product pages the Variation Gallery replaces the WooCommerce
+			// product gallery (see override_templates()) and controls the image swap
+			// itself.
+			//
+			// We strip WooCommerce core's own variation `image` data so its variation
+			// form does not ALSO try to swap `.wp-post-image`. Otherwise the two handlers
+			// fight over the same element — causing flicker, stuck navigation, and the
+			// gallery getting stuck on the featured Product Image (WC core's fallback
+			// when a variation has no image of its own).
+			if ( apply_filters( 'rtsb/vg/disable_wc_variation_image', true, $available_variation, $variation ) ) {
+				unset( $available_variation['image'], $available_variation['image_id'] );
 			}
+
+			// Inline the gallery for small products so variation swaps are instant with no
+			// per-click AJAX (the frontend renders variation_gallery_images directly). For
+			// large products we omit it and fall back to the lazy AJAX path
+			// (get_variation_gallery()) to keep the page lean. WooCommerce itself only
+			// embeds variations inline below woocommerce_ajax_variation_threshold, so
+			// inlining above the threshold would bloat the page with no benefit.
+			$children  = ( $variationProductObject instanceof \WC_Product ) ? $variationProductObject->get_children() : [];
+			$threshold = absint( apply_filters( 'rtsb/vg/inline_gallery_threshold', 20 ) );
+
+			if ( $threshold && count( $children ) <= $threshold ) {
+				$available_variation['variation_gallery_images'] = GalleryFns::get_variation_gallery( $variation->get_parent_id(), $variation_id );
+			}
+
+			return apply_filters( 'rtsb/vg/available/variation/gallery', $available_variation, $variation, $variation_id );
+		}
+
+		// Other contexts (e.g. the archive/shop variation image swap, handled by the
+		// Variation Swatches showcase which still needs WC's `image`) consume the
+		// inline data, so expose an already-cached gallery if one exists. This is a
+		// cheap get_transient() — no prop building.
+		$transient_name = GalleryFns::get_transient_name( $variation_id, 'variation-images' );
+		$images         = $transient_name ? get_transient( $transient_name ) : false;
+		if ( ! empty( $images ) && is_array( $images ) ) {
+			$available_variation['variation_gallery_images'] = array_values( $images );
 		}
 
 		return apply_filters( 'rtsb/vg/available/variation/gallery', $available_variation, $variation, $variation_id );
+	}
+
+	/**
+	 * Whether the current request is rendering a single product page (where this
+	 * module owns the gallery), as opposed to an archive/shop context.
+	 *
+	 * On page render `is_product()` / BuilderFns::is_product() are reliable. During
+	 * WooCommerce's `get_variation` AJAX (used when the variation threshold is low,
+	 * e.g. with Variation Swatches active) those conditionals are false, so we fall
+	 * back to the referring URL to tell single-product requests apart from
+	 * archive/shop requests. Result is cached for the duration of the request.
+	 *
+	 * @return bool
+	 */
+	private function is_single_product_context() {
+		static $is_single = null;
+
+		if ( null !== $is_single ) {
+			return $is_single;
+		}
+
+		if ( is_product() || BuilderFns::is_product() ) {
+			$is_single = true;
+
+			return $is_single;
+		}
+
+		$is_single = false;
+
+		if ( wp_doing_ajax() ) {
+			$referer = wp_get_referer();
+			if ( $referer ) {
+				$referer_id = url_to_postid( $referer );
+				if ( $referer_id && 'product' === get_post_type( $referer_id ) ) {
+					$is_single = true;
+				}
+			}
+		}
+
+		return $is_single;
 	}
 	/**
 	 * @return void
@@ -141,21 +204,22 @@ class GalleryFrontEnd {
 	/**
 	 * Determines if the current user has permission to view a product.
 	 *
-	 * Checks product status and visibility settings against user capabilities.
+	 * Guests may only access products with a `publish` status. Logged-in users
+	 * are checked against the `read_post` meta capability, which resolves to the
+	 * correct primitive capability for the product's status (published, private,
+	 * draft, etc.) and ownership, preventing exposure of unpublished products.
 	 *
 	 * @param \WC_Product $product The product to check access for.
 	 * @return bool True if user can view the product, false otherwise.
 	 */
 	private function can_user_view_product( $product ) {
 		$product_id = $product->get_id();
-		$status     = get_post_status( $product->get_id() );
-		$visibility = $product->get_catalog_visibility();
 
-		if ( 'publish' === $status && 'visible' === $visibility ) {
-			return true;
+		if ( ! is_user_logged_in() ) {
+			return 'publish' === get_post_status( $product_id );
 		}
 
-		return current_user_can( 'edit_post', $product_id );
+		return current_user_can( 'read_post', $product_id );
 	}
 	/**
 	 * @param string $template template.

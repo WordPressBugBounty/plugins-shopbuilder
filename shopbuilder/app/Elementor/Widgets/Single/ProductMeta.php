@@ -59,9 +59,7 @@ class ProductMeta extends ElementorWidgetBase {
 		return [ 'SKU', 'Category', 'Tag' ] + parent::get_keywords();
 	}
 	/**
-	 * Widget Field.
-	 *
-	 * @param array $controllers Control.
+	 * Registers the brand row on the product meta for the editor preview.
 	 *
 	 * @return void
 	 */
@@ -69,21 +67,59 @@ class ProductMeta extends ElementorWidgetBase {
 		add_action( 'woocommerce_product_meta_end', [ $this, 'show_brand' ], 99 );
 	}
 	/**
-	 * Displays brand.
+	 * Displays the brand row in the editor preview (WooCommerce core's brand hook bails
+	 * there because the request is not a singular product). The label is wrapped in a
+	 * `.rtsb-meta-label` element so it can be styled independently of the value.
 	 */
 	public function show_brand() {
 		$product = Fns::get_product();
 		if ( ! $product instanceof WC_Product ) {
 			$product = wc_get_product();
 		}
-		$terms       = get_the_terms( $product->get_id(), 'product_brand' );
-		$brand_count = is_array( $terms ) ? count( $terms ) : 0;
+		if ( ! $product instanceof WC_Product || ! function_exists( 'wc_get_brands' ) ) {
+			return;
+		}
+		$terms = get_the_terms( $product->get_id(), 'product_brand' );
+		if ( empty( $terms ) || is_wp_error( $terms ) ) {
+			return;
+		}
+		echo wc_get_brands( $product->get_id(), ', ', $this->brand_meta_before( count( $terms ) ), '</span>' ); // phpcs:ignore WordPress.Security.EscapeOutput
+	}
 
+	/**
+	 * Wraps WooCommerce core's brand meta output so its label sits in a `.rtsb-meta-label`
+	 * element, matching the SKU/Category/Tag rows. Hooked onto `woocommerce_product_brands_output`
+	 * (WC 9.8+) only while this widget renders, so it never affects brand output elsewhere.
+	 *
+	 * @param string $brand_output Default brand HTML from WooCommerce.
+	 * @param mixed  $terms        Brand term objects, or empty when none.
+	 * @param int    $post_id      Product ID.
+	 *
+	 * @return string
+	 */
+	public function wrap_brand_label( $brand_output, $terms, $post_id ) {
+		if ( empty( $terms ) || is_wp_error( $terms ) || ! function_exists( 'wc_get_brands' ) ) {
+			return $brand_output;
+		}
+		return wc_get_brands( $post_id, ', ', $this->brand_meta_before( count( $terms ) ), '</span>' );
+	}
+
+	/**
+	 * Builds the opening markup of the brand row with its label wrapped in `.rtsb-meta-label`.
+	 *
+	 * @param int $count Number of brand terms (for the singular/plural label).
+	 *
+	 * @return string
+	 */
+	private function brand_meta_before( $count ) {
 		$taxonomy = get_taxonomy( 'product_brand' );
-		$labels   = $taxonomy->labels;
-
-		/* translators: %s - Label name */
-		echo wc_get_brands( $product->get_id(), ', ', ' <span class="posted_in">' . sprintf( _n( '%s: ', '%s: ', $brand_count, 'shopbuilder' ), $labels->singular_name, $labels->name ), '</span>' ); // phpcs:ignore WordPress.Security.EscapeOutput
+		if ( ! $taxonomy ) {
+			return '<span class="posted_in"><span class="rtsb-meta-label">' . esc_html__( 'Brand:', 'shopbuilder' ) . '</span> ';
+		}
+		$labels = $taxonomy->labels;
+		/* translators: %s - Brand label name */
+		$label = sprintf( _n( '%s:', '%s:', $count, 'shopbuilder' ), $labels->singular_name, $labels->name );
+		return '<span class="posted_in"><span class="rtsb-meta-label">' . esc_html( $label ) . '</span> ';
 	}
 	/**
 	 * Render Function
@@ -118,7 +154,9 @@ class ProductMeta extends ElementorWidgetBase {
 			'controllers' => $controllers,
 			'classes'     => $classes,
 		];
+		add_filter( 'woocommerce_product_brands_output', [ $this, 'wrap_brand_label' ], 10, 3 );
 		Fns::load_template( $data['template'], $data );
+		remove_filter( 'woocommerce_product_brands_output', [ $this, 'wrap_brand_label' ], 10 );
 		$this->theme_support( 'render_reset' );
 		$product = $_product; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 	}

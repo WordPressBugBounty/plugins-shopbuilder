@@ -26,11 +26,14 @@ class Selectors {
 	public static function get_selectors() {
 		return [
 			'logo_item_style' => [
-				'border'        => '{{WRAPPER}} .rtsb-logo-slider-and-grid .logo-content-wrapper',
-				'padding'       => '{{WRAPPER}} .rtsb-logo-slider-and-grid .logo-content-wrapper',
-				'bg_color'      => '{{WRAPPER}} .rtsb-logo-slider-and-grid .logo-content-wrapper',
-				'border_radius' => '{{WRAPPER}} .rtsb-logo-slider-and-grid .logo-content-wrapper',
-				'box_shadow'    => '{{WRAPPER}} .rtsb-logo-slider-and-grid .logo-content-wrapper',
+				'border'           => '{{WRAPPER}} .rtsb-logo-slider-and-grid .logo-content-wrapper',
+				'padding'          => '{{WRAPPER}} .rtsb-logo-slider-and-grid .logo-content-wrapper',
+				'bg_color'         => '{{WRAPPER}} .rtsb-logo-slider-and-grid .logo-content-wrapper',
+				'border_radius'    => '{{WRAPPER}} .rtsb-logo-slider-and-grid .logo-content-wrapper',
+				'box_shadow'       => '{{WRAPPER}} .rtsb-logo-slider-and-grid .logo-content-wrapper',
+				'logo_bg'          => '{{WRAPPER}} .rtsb-logo-slider-and-grid .rtsb-logo-layout2 .rtsb-logo-img',
+				'brand_name_bg'    => '{{WRAPPER}} .rtsb-logo-slider-and-grid .rtsb-logo-layout2 .rtsb-brand-name',
+				'brand_name_hover' => '{{WRAPPER}} .rtsb-logo-slider-and-grid .rtsb-logo-layout2 .rtsb-logo-item:hover .rtsb-brand-name',
 			],
 			'columns'         => [
 				'cols'     => '{{WRAPPER}} .rtsb-elementor-container .rtsb-row',

@@ -191,37 +191,11 @@ class BuilderController {
 				try {
 					$widget = false;
 					$import = apply_filters( 'rtsb_import_status', false );
-					switch ( $element['category'] ) {
-						case 'product':
-							if ( BuilderFns::is_product() || $import ) {
-								$widget = new $element['base_class']();
-							}
-							break;
-						case 'shop':
-							if ( BuilderFns::is_archive() || BuilderFns::is_shop() || $import ) {
-								$widget = new $element['base_class']();
-							}
-							break;
-						case 'archive':
-							if ( BuilderFns::is_archive() || $import ) {
-								$widget = new $element['base_class']();
-							}
-							break;
-						case 'cart':
-							if ( BuilderFns::is_cart() || $import ) {
-								$widget = new $element['base_class']();
-							}
-							break;
-						case 'checkout':
-							if ( BuilderFns::is_checkout() || $import ) {
-								$widget = new $element['base_class']();
-							}
-							break;
-						case 'general':
-							$widget = new $element['base_class']();
-							break;
-						default:
+
+					if ( $this->should_register_widget( $element['category'], $import ) ) {
+						$widget = new $element['base_class']();
 					}
+
 					$widget = apply_filters( 'rtsb/element/list/init/widgets', $widget, $element );
 
 					if ( $widget && is_object( $widget ) ) {
@@ -232,6 +206,34 @@ class BuilderController {
 					continue;
 				}
 			}
+		}
+	}
+
+	/**
+	 * Determine whether a widget for the given category should be registered
+	 * in the current request context.
+	 *
+	 * @param string $category Element category.
+	 * @param bool   $import   Whether an import is in progress.
+	 *
+	 * @return bool
+	 */
+	protected function should_register_widget( $category, $import ) {
+		switch ( $category ) {
+			case 'product':
+				return BuilderFns::is_product() || $import;
+			case 'shop':
+				return BuilderFns::is_archive() || BuilderFns::is_shop() || $import;
+			case 'archive':
+				return BuilderFns::is_archive() || $import;
+			case 'cart':
+				return BuilderFns::is_cart() || $import;
+			case 'checkout':
+				return BuilderFns::is_checkout() || $import;
+			case 'general':
+				return true;
+			default:
+				return false;
 		}
 	}
 
@@ -308,10 +310,18 @@ class BuilderController {
 		$parent_class = apply_filters( 'rtsb/builder/content/parent_class', [] );
 
 		if ( BuilderFns::is_product() ) {
-			$product_id   = Fns::get_prepared_product_id();
+			$product_id = Fns::get_prepared_product_id();
+
+			// Ensure the WordPress global $product is a valid WC_Product before
+			// wc_get_product_class() fires the `woocommerce_post_class` filter.
+			// Some themes (e.g. Blocksy) read the global $product directly inside
+			// that filter and call methods like get_type() on it, which throws a
+			// fatal error when the global is still an unresolved string.
+			$_product = Fns::get_product();
+
 			$parent_class = wc_get_product_class( $parent_class, $product_id );
-			if ( function_exists( 'rtwpvs' ) ) {
-				$_product = Fns::get_product();
+
+			if ( function_exists( 'rtwpvs' ) && $_product instanceof \WC_Product ) {
 				if ( $_product->is_type( 'variable' ) ) {
 					$parent_class[] = 'rtwpvs-product';
 					$beside_label   = function_exists( 'rtwpvsp' ) && rtwpvs()->get_option( 'attribute_on_click_behavior' );

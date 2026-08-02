@@ -51,7 +51,7 @@ class ElementList extends ListModel {
 					'title' => esc_html__( 'Shop / Archive', 'shopbuilder' ),
 				],
 				'product'             => [
-					'title' => esc_html__( 'Single', 'shopbuilder' ),
+					'title' => esc_html__( 'Product Page', 'shopbuilder' ),
 				],
 				'quick_view'          => [
 					'title' => esc_html__( 'Quick View', 'shopbuilder' ),

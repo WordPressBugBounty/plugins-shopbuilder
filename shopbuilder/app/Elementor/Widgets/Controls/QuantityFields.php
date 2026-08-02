@@ -23,6 +23,8 @@ class QuantityFields {
 	/**
 	 * Widget Field
 	 *
+	 * @param object $widget Widget instance.
+	 *
 	 * @return array
 	 */
 	public static function quantity_fields( $widget ) {
@@ -31,7 +33,6 @@ class QuantityFields {
 				'mode'  => 'section_start',
 				'label' => esc_html__( 'Quantity', 'shopbuilder' ),
 			],
-			// TODO:: Control Type will be select image.
 			'quantity_style'        => [
 				'label'     => esc_html__( 'Style', 'shopbuilder' ),
 				'type'      => 'select',
@@ -128,6 +129,8 @@ class QuantityFields {
 	/**
 	 * Widget Field
 	 *
+	 * @param object $widget Widget instance.
+	 *
 	 * @return array
 	 */
 	public static function quantity_style_fields( $widget ) {
@@ -159,7 +162,7 @@ class QuantityFields {
 					],
 				],
 				'default'   => [
-					'size' => 15,
+					'size' => 10,
 				],
 				'selectors' => [
 					$widget->selectors['icon_size']['icon'] => 'font-size: {{SIZE}}{{UNIT}};',

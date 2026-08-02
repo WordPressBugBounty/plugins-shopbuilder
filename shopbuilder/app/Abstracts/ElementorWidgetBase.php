@@ -340,6 +340,95 @@ abstract class ElementorWidgetBase extends Widget_Base {
 	}
 
 	/**
+	 * Render a shared editor-only notice.
+	 *
+	 * Any widget can surface an editor placeholder (out of stock, no active
+	 * campaign, empty result, etc.) with one consistent design. Renders only in
+	 * edit/preview mode and prints the notice CSS inline once per request.
+	 *
+	 * The notice lives in the Elementor preview iframe, which loads only frontend
+	 * styles — so the rule is printed here instead of the editor panel stylesheet,
+	 * and kept out of the compiled frontend bundle.
+	 *
+	 * @param string $message Notice text (already translated).
+	 * @param string $extra_class Optional extra class for per-widget targeting.
+	 * @param string $title Optional hover tooltip; defaults to the editor-only hint.
+	 * @return void
+	 */
+	public function editor_notice( $message, $extra_class = '', $title = '' ) {
+		if ( ! $this->is_edit_mode() || '' === $message ) {
+			return;
+		}
+		$this->editor_notice_style();
+		$classes = trim( 'rtsb-editor-notice ' . $extra_class );
+		$title   = '' !== $title ? $title : esc_html__( 'This notice is only visible in the Elementor editor.', 'shopbuilder' );
+		?>
+		<div class="<?php echo esc_attr( $classes ); ?>" title="<?php echo esc_attr( $title ); ?>">
+			<span class="rtsb-editor-notice__label"><?php echo esc_html__( 'Editor Notice:', 'shopbuilder' ); ?></span>
+			<?php echo esc_html( $message ); ?>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Print the shared editor-notice CSS inline, once per request.
+	 *
+	 * @return void
+	 */
+	protected function editor_notice_style() {
+		static $printed = false;
+		if ( $printed ) {
+			return;
+		}
+		$printed = true;
+		?>
+		<style>
+			.rtsb-editor-notice {
+				position: relative;
+				max-height: 500px;
+				padding: 12px 16px 12px 44px;
+				border: 1px solid #f0b849;
+				border-left: 4px solid #f0b849;
+				border-radius: 4px;
+				background: #fff8e5;
+				color: #8a6d3b;
+				font-size: 13px;
+				font-weight: 500;
+				line-height: 1.5;
+				box-shadow: 0 1px 4px rgba(138, 109, 59, 0.2);
+				cursor: help;
+				overflow: hidden;
+				opacity: 1;
+				transition: opacity 0.3s ease, max-height 0.3s ease, margin 0.3s ease, padding 0.3s ease, border-width 0.3s ease;
+			}
+			.rtsb-editor-notice::before {
+				content: "\26A0";
+				position: absolute;
+				top: 50%;
+				left: 16px;
+				transform: translateY(-50%);
+				font-size: 18px;
+				line-height: 1;
+			}
+			.rtsb-editor-notice__label {
+				font-weight: 700;
+				margin-right: 4px;
+			}
+			/* Fade + collapse the notice when the editor panel is hidden (preview toggle). */
+			.elementor-editor-preview .rtsb-editor-notice {
+				max-height: 0;
+				margin-top: 0;
+				padding-top: 0;
+				padding-bottom: 0;
+				border-top-width: 0;
+				border-bottom-width: 0;
+				opacity: 0;
+			}
+		</style>
+		<?php
+	}
+
+	/**
 	 * Elementor Edit mode need some extra js for isotop reinitialize
 	 *
 	 * @return void

@@ -211,7 +211,7 @@ class StyleFields {
 			'type'       => 'dimensions',
 			'label'      => esc_html__( 'Wrapper Border Radius', 'shopbuilder' ),
 			'size_units' => [ 'px', '%', 'em' ],
-			'selectors'  => [ $css_selectors['wrapper_border_radius'] => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}; overflow: hidden;' ],
+			'selectors'  => [ $css_selectors['wrapper_border_radius'] => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};' ],
 		];
 
 		$fields['rtsb_el_element_border'] = [
@@ -575,12 +575,22 @@ class StyleFields {
 		$condition     = [
 			'show_rating' => [ 'yes' ],
 		];
-		$selectors     = [
+		// Spacing control: preset1 spreads the five stars via letter-spacing on
+		// `.star-rating`. preset2 has no `.star-rating` (it renders a single star
+		// icon + rating number, optionally a count), so the same control spaces
+		// those via `gap` on the flex rating wrappers — otherwise the setting
+		// silently does nothing on preset2.
+		$rating_spacing = [ $css_selectors['padding'] => 'letter-spacing: {{SIZE}}{{UNIT}};' ];
+		if ( ! empty( $css_selectors['spacing_preset2'] ) ) {
+			$rating_spacing[ $css_selectors['spacing_preset2'] ] = 'gap: {{SIZE}}{{UNIT}};';
+		}
+
+		$selectors = [
 			'typography' => [ $css_selectors['typography'] => 'font-size: {{SIZE}}{{UNIT}};' ],
 			'alignment'  => [ $css_selectors['alignment'] => 'justify-content: {{VALUE}};' ],
 			'color'      => [ $css_selectors['color'] => 'color: {{VALUE}} !important;' ],
 			'bg_color'   => [ $css_selectors['bg_color'] => 'color: {{VALUE}} !important;' ],
-			'padding'    => [ $css_selectors['padding'] => 'letter-spacing: {{SIZE}}{{UNIT}};' ],
+			'padding'    => $rating_spacing,
 			'margin'     => [ $css_selectors['margin'] => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};' ],
 		];
 
@@ -651,7 +661,26 @@ class StyleFields {
 			'show_badges' => [ 'yes' ],
 			'layout!'     => [ 'category-layout1', 'category-layout2' ],
 		];
-		$selectors     = [
+
+		// Scope each position-offset selector to its own alignment/vertical class.
+		// Elementor's frontend CSS generator emits a control's CSS based only on its
+		// saved value and ignores the control `condition` (which governs panel
+		// visibility only). Without this scoping, a horizontal/vertical offset set
+		// under one alignment (e.g. Left/Right) keeps overriding the centering rules
+		// after switching to Center/Middle, pushing the badge out of its
+		// `overflow:hidden` image wrapper. Binding each offset to its matching
+		// `badge-*` container class makes the offsets mutually exclusive, so a stale
+		// value simply no longer matches once the alignment changes.
+		$pos_x        = $css_selectors['position_x'];
+		$pos_y        = $css_selectors['position_y'];
+		$pos_x_left   = str_replace( '.rtsb-elementor-container', '.rtsb-elementor-container.badge-left', $pos_x );
+		$pos_x_right  = str_replace( '.rtsb-elementor-container', '.rtsb-elementor-container.badge-right', $pos_x );
+		$pos_x_center = str_replace( '.rtsb-elementor-container', '.rtsb-elementor-container.badge-center', $pos_x );
+		$pos_y_top    = str_replace( '.rtsb-elementor-container', '.rtsb-elementor-container.badge-top', $pos_y );
+		$pos_y_bottom = str_replace( '.rtsb-elementor-container', '.rtsb-elementor-container.badge-bottom', $pos_y );
+		$pos_y_middle = str_replace( '.rtsb-elementor-container', '.rtsb-elementor-container.badge-middle', $pos_y );
+
+		$selectors = [
 			'typography'        => $css_selectors['typography'],
 			'color'             => [ $css_selectors['color'] => 'color: {{VALUE}};' ],
 			'bg_color'          => [ $css_selectors['bg_color'] => 'background-color: {{VALUE}};' ],
@@ -659,10 +688,16 @@ class StyleFields {
 			'border_radius'     => [ $css_selectors['border_radius'] => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};' ],
 			'padding'           => [ $css_selectors['padding'] => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}} !important;' ],
 			'margin'            => [ $css_selectors['margin'] => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}} !important;' ],
-			'position_x'        => [ $css_selectors['position_x'] => 'left: {{SIZE}}{{UNIT}};' ],
-			'position_x_right'  => [ $css_selectors['position_x'] => 'right: {{SIZE}}{{UNIT}}; left: auto;' ],
-			'position_y'        => [ $css_selectors['position_y'] => 'top: {{SIZE}}{{UNIT}};' ],
-			'position_y_bottom' => [ $css_selectors['position_y'] => 'bottom: {{SIZE}}{{UNIT}}; top:auto;' ],
+			'position_x'        => [ $pos_x_left => 'left: {{SIZE}}{{UNIT}};' ],
+			'position_x_right'  => [ $pos_x_right => 'right: {{SIZE}}{{UNIT}}; left: auto;' ],
+			// Center/Middle keep the framework centering (`left/top:50%` + the
+			// `translate(-50%)` from `_cp-badges.scss`). Offsetting via `calc(50% + …)`
+			// composes with that transform instead of fighting it, so a positive value
+			// nudges right/down and a negative value nudges left/up from dead-center.
+			'position_x_center' => [ $pos_x_center => 'left: calc(50% + {{SIZE}}{{UNIT}});' ],
+			'position_y'        => [ $pos_y_top => 'top: {{SIZE}}{{UNIT}};' ],
+			'position_y_bottom' => [ $pos_y_bottom => 'bottom: {{SIZE}}{{UNIT}}; top:auto;' ],
+			'position_y_middle' => [ $pos_y_middle => 'top: calc(50% + {{SIZE}}{{UNIT}});' ],
 		];
 
 		$fields = ControlHelper::general_elementor_style( 'badges', $title, $obj, $condition, $selectors );
@@ -755,6 +790,28 @@ class StyleFields {
 			'selectors'  => $selectors['position_x_right'],
 		];
 
+		$extra_controls['badge_x_position_center'] = [
+			'type'        => 'slider',
+			'mode'        => 'responsive',
+			'label'       => esc_html__( 'Position Offset (Horizontal)', 'shopbuilder' ),
+			'description' => esc_html__( 'Nudge the centered badge horizontally. Positive moves right, negative moves left.', 'shopbuilder' ),
+			'size_units'  => [ 'px', '%' ],
+			'range'       => [
+				'px' => [
+					'min'  => -300,
+					'max'  => 300,
+					'step' => 1,
+				],
+				'%'  => [
+					'min'  => -100,
+					'max'  => 100,
+					'step' => 1,
+				],
+			],
+			'condition'   => [ 'badges_alignment' => 'center' ],
+			'selectors'   => $selectors['position_x_center'],
+		];
+
 		$extra_controls['badge_y_position'] = [
 			'type'       => 'slider',
 			'mode'       => 'responsive',
@@ -803,12 +860,40 @@ class StyleFields {
 			'selectors'  => $selectors['position_y_bottom'],
 		];
 
+		$extra_controls['badge_y_position_middle'] = [
+			'type'        => 'slider',
+			'mode'        => 'responsive',
+			'label'       => esc_html__( 'Position Offset (Vertical)', 'shopbuilder' ),
+			'description' => esc_html__( 'Nudge the middle-aligned badge vertically. Positive moves down, negative moves up.', 'shopbuilder' ),
+			'size_units'  => [ 'px', '%' ],
+			'range'       => [
+				'px' => [
+					'min'  => -300,
+					'max'  => 300,
+					'step' => 1,
+				],
+				'%'  => [
+					'min'  => -100,
+					'max'  => 100,
+					'step' => 1,
+				],
+			],
+			'condition'   => [ 'badges_position' => 'middle' ],
+			'selectors'   => $selectors['position_y_middle'],
+		];
+
 		$fields = Fns::insert_controls( 'badges_color_note', $fields, $extra_controls );
 
 		$extra_controls['badges_border_color'] = [
 			'type'      => 'color',
 			'label'     => esc_html__( 'Border Color', 'shopbuilder' ),
 			'selectors' => ! empty( $selectors['border_color'] ) ? $selectors['border_color'] : [],
+			// Only the outline presets (preset3/preset4 → `.rtsb-tag-outline`) carry a
+			// border; the fill presets (preset1/preset2 → `.rtsb-tag-fill`) have none,
+			// so a border colour is a no-op there. Show this control only where it works.
+			'condition' => [
+				'custom_badge_preset' => [ 'preset3', 'preset4' ],
+			],
 		];
 
 		$extra_controls['badges_border_radius'] = [
@@ -1053,7 +1138,7 @@ class StyleFields {
 				],
 				'px' => [
 					'min'  => 0,
-					'max'  => 500,
+					'max'  => 1200,
 					'step' => 1,
 				],
 			],
@@ -1072,7 +1157,7 @@ class StyleFields {
 				],
 				'px' => [
 					'min'  => 0,
-					'max'  => 500,
+					'max'  => 1200,
 					'step' => 1,
 				],
 
@@ -1249,6 +1334,18 @@ class StyleFields {
 
 		$fields = ControlHelper::general_elementor_style( 'pagination_buttons', $title, $obj, $condition, $selectors );
 
+		// Force text-decoration with !important so the typography setting beats the framework-wide
+		// `.rtsb-elementor-container a { text-decoration: none !important; }` reset. Without this the
+		// reset suppresses the decoration on the inactive page links (`li a`) while the active page
+		// (`li span`, not a link) still shows it — producing inconsistent pagination styling.
+		$fields['rtsb_el_pagination_buttons_typography']['fields_options'] = [
+			'text_decoration' => [
+				'selectors' => [
+					$css_selectors['typography'] => 'text-decoration: {{VALUE}} !important;',
+				],
+			],
+		];
+
 		unset( $fields['pagination_buttons_padding'] );
 
 		$fields['pagination_buttons_alignment']['options'] = [
@@ -1387,16 +1484,12 @@ class StyleFields {
 				$css_selectors['icon_size']['font_size'] => 'font-size: {{SIZE}}{{UNIT}};',
 				$css_selectors['icon_size']['width']     => 'height: {{SIZE}}{{UNIT}};',
 			],
-			'cart_icon_spacing'  => [
-				$css_selectors['cart_icon_spacing']['margin_left'] => 'margin-left: {{SIZE}}{{UNIT}};',
-				$css_selectors['cart_icon_spacing']['margin_right'] => 'margin-right: {{SIZE}}{{UNIT}};',
-			],
 			'cart_width'         => [ $css_selectors['cart_width'] => 'width: {{SIZE}}{{UNIT}} !important;' ],
 			'cart_height'        => [ $css_selectors['cart_height'] => 'height: {{SIZE}}{{UNIT}} !important;' ],
-			'color'              => [ $css_selectors['color'] => 'color: {{VALUE}};' ],
+			'color'              => [ self::scope_selectors_to_label( $css_selectors['color'] ) => 'color: {{VALUE}};' ],
 			'bg_color'           => [ $css_selectors['bg_color'] => 'background-color: {{VALUE}};' ],
 			'icon_color'         => [ $css_selectors['icon_color'] => 'color: {{VALUE}};' ],
-			'hover_color'        => [ $css_selectors['hover_color'] => 'color: {{VALUE}};' ],
+			'hover_color'        => [ self::scope_selectors_to_label( $css_selectors['hover_color'] ) => 'color: {{VALUE}};' ],
 			'hover_bg_color'     => [ $css_selectors['hover_bg_color'] => 'background-color: {{VALUE}};' ],
 			'hover_icon_color'   => [ $css_selectors['hover_icon_color'] => 'color: {{VALUE}};' ],
 			'border'             => $css_selectors['border'],
@@ -1407,6 +1500,26 @@ class StyleFields {
 		];
 
 		$fields = ControlHelper::general_elementor_style( 'add_to_cart_button', $title, $obj, $condition, $selectors );
+
+		// Relabel the generic "Color" / "Hover Color" controls to "Text Color" / "Hover Text Color"
+		// so they read distinctly from the "Background Color" controls.
+		$fields['add_to_cart_button_color']['label']       = esc_html__( 'Text Color', 'shopbuilder' );
+		$fields['add_to_cart_button_hover_color']['label'] = esc_html__( 'Hover Text Color', 'shopbuilder' );
+
+		// Force text-decoration with !important, scoped to the label span (`.text`) on EACH selector.
+		// The !important beats the framework-wide `.rtsb-elementor-container a { text-decoration: none
+		// !important; }` reset (the button is an `<a>`, so otherwise the setting silently does nothing).
+		// Scoping to `.text` keeps the decoration line off the sibling `.icon` — a text-decoration set on
+		// the button ancestor is painted across all its inline descendants, underlining the icon too.
+		// scope_selectors_to_label() walks the multi-selector list (free base + pro per-layout parts);
+		// plain concatenation would only reach the last selector and leave the others on the button.
+		$fields['rtsb_el_add_to_cart_button_typography']['fields_options'] = [
+			'text_decoration' => [
+				'selectors' => [
+					self::scope_selectors_to_label( $css_selectors['typography'] ) => 'text-decoration: {{VALUE}} !important;',
+				],
+			],
+		];
 
 		$fields['add_to_cart_button_alignment'] = [
 			'type'       => 'slider',
@@ -1446,28 +1559,6 @@ class StyleFields {
 				'show_cart_text' => [ 'yes' ],
 				'show_cart_icon' => [ 'yes' ],
 			],
-		];
-
-		$extra_controls['cart_icon_spacing'] = [
-			'type'       => 'slider',
-			'mode'       => 'responsive',
-			'label'      => esc_html__( 'Icon Spacing', 'shopbuilder' ),
-			'size_units' => [ 'px' ],
-			'range'      => [
-				'px' => [
-					'min' => 0,
-					'max' => 100,
-				],
-			],
-			'default'    => [
-				'unit' => 'px',
-				'size' => 8,
-			],
-			'condition'  => [
-				'show_cart_text' => [ 'yes' ],
-				'show_cart_icon' => [ 'yes' ],
-			],
-			'selectors'  => $selectors['cart_icon_spacing'],
 		];
 
 		$extra_controls['cart_width'] = [
@@ -1527,6 +1618,79 @@ class StyleFields {
 		$fields = Fns::insert_controls( 'add_to_cart_button_border_hover_color', $fields, $extra_controls, true );
 
 		return apply_filters( 'rtsb/elements/elementor/add_to_cart_style_control', $fields, $obj );
+	}
+
+	/**
+	 * Action Buttons Section.
+	 *
+	 * Shared style controls that apply to every action button (Add to Cart, Wishlist,
+	 * Compare, Quick View) instead of a single button type. The Icon Spacing control
+	 * uses flex `gap` on `.rtsb-action-btn.has-text`, so it adapts to both icon-left
+	 * and icon-right layouts and only affects buttons that display text.
+	 *
+	 * @param object $obj Reference object.
+	 *
+	 * @return array
+	 */
+	public static function action_buttons( $obj ): array {
+		$css_selectors = $obj->selectors['action_buttons'];
+
+		$fields = [];
+
+		$fields['action_buttons_style_section'] = $obj->start_section(
+			esc_html__( 'Action Buttons', 'shopbuilder' ),
+			'style'
+		);
+
+		$fields['action_buttons_icon_gap'] = [
+			'type'        => 'slider',
+			'mode'        => 'responsive',
+			'label'       => esc_html__( 'Icon/Text Spacing', 'shopbuilder' ),
+			'description' => esc_html__( 'Gap between the icon and text on action buttons. Applies whenever button text is shown.', 'shopbuilder' ),
+			'size_units'  => [ 'px' ],
+			'range'       => [
+				'px' => [
+					'min' => 0,
+					'max' => 100,
+				],
+			],
+			'default'     => [
+				'unit' => 'px',
+				'size' => 8,
+			],
+			'selectors'   => [
+				$css_selectors['icon_gap'] => 'gap: {{SIZE}}{{UNIT}} !important;',
+			],
+		];
+
+		$fields['action_buttons_style_section_end'] = $obj->end_section();
+
+		return apply_filters( 'rtsb/elements/elementor/action_buttons_style_control', $fields, $obj );
+	}
+
+	/**
+	 * Append the label-span suffix (` .text`) to every selector in a comma-separated list.
+	 *
+	 * The Add-to-Cart selector maps are multi-selector lists — the free base plus the per-layout
+	 * selectors that pro appends (grid/slider/list layouts). Text-only styling (Text Color, Hover
+	 * Text Color, Text Decoration) must target the label span on EACH selector so it never lands on
+	 * the button ancestor, where `color` would inherit into the sibling `.icon` and a `text-decoration`
+	 * line would be painted across it. Plain string concatenation would only reach the last selector.
+	 *
+	 * @param string $selector_list Comma-separated CSS selector list of button selectors.
+	 *
+	 * @return string Comma-separated list with ` .text` appended to each selector.
+	 */
+	private static function scope_selectors_to_label( $selector_list ): string {
+		$selectors = array_filter( array_map( 'trim', explode( ',', (string) $selector_list ) ) );
+		$selectors = array_map(
+			static function ( $selector ) {
+				return $selector . ' .text';
+			},
+			$selectors
+		);
+
+		return implode( ', ', $selectors );
 	}
 
 	/**
@@ -2161,6 +2325,10 @@ class StyleFields {
 
 		$fields = ControlHelper::general_elementor_style( 'share_text', $title, $obj, $condition, $selectors );
 
+		// text-align only bites on Preset 2, whose label has a min-width for the text to
+		// align within; Preset 1's label is exactly text-width, so hide the control there.
+		$fields['share_text_alignment']['condition'] = [ 'layout' => 'share-layout2' ];
+
 		return apply_filters( 'rtsb/elements/elementor/share_text_style_control', $fields, $obj );
 	}
 
@@ -2292,6 +2460,19 @@ class StyleFields {
 		];
 
 		$fields = ControlHelper::general_elementor_style( 'slider_buttons', $title, $obj, [], $selectors, $conditions );
+
+		$fields = Fns::insert_controls(
+			'slider_buttons_style_section',
+			$fields,
+			[
+				'slider_buttons_section_note' => [
+					'type'      => 'html',
+					'separator' => 'after',
+					'raw'       => '<p class="rtsb-el-notice">' . esc_html__( 'This section is not for the gallery image slider controls. It only controls the product slider section. The Gallery Thumbnail Slider style controls are located inside the "Image Styles" section.', 'shopbuilder' ) . '</p>',
+				],
+			],
+			true
+		);
 
 		unset(
 			$fields['rtsb_el_slider_buttons_typography'],
@@ -2449,7 +2630,7 @@ class StyleFields {
 
 		$extra_controls['slider_buttons_border_active_color'] = [
 			'type'      => 'color',
-			'label'     => esc_html__( 'Active Color', 'shopbuilder' ),
+			'label'     => esc_html__( 'Dot Active Border Color', 'shopbuilder' ),
 			'condition' => [ 'rtsb_el_slider_buttons_border_border!' => [ '' ] ],
 			'selectors' => $selectors['active_border_color'],
 		];
@@ -2467,7 +2648,7 @@ class StyleFields {
 		$extra_controls['slider_buttons_wrapper_padding'] = [
 			'mode'       => 'responsive',
 			'type'       => 'dimensions',
-			'label'      => esc_html__( 'Wrapper Margin', 'shopbuilder' ),
+			'label'      => esc_html__( 'Arrow Margin', 'shopbuilder' ),
 			'size_units' => [ 'px', '%', 'em' ],
 			'selectors'  => $selectors['wrapper_padding'],
 		];

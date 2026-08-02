@@ -171,7 +171,7 @@ class AddToCartSettings {
 					],
 				],
 				'default'   => [
-					'size' => 15,
+					'size' => 10,
 				],
 				'selectors' => [
 					self::$selectors['icon_size'] => 'font-size: {{SIZE}}{{UNIT}};',

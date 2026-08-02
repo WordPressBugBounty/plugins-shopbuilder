@@ -206,7 +206,8 @@ class Controls {
 	/**
 	 * Front Settings section
 	 *
-	 * @param object $obj Reference object.
+	 * @param object $obj    Reference object.
+	 * @param string $prefix Field prefix (front/back).
 	 *
 	 * @return array
 	 */
@@ -1213,7 +1214,8 @@ class Controls {
 	/**
 	 * Button style section
 	 *
-	 * @param object $obj Reference object.
+	 * @param object $obj  Reference object.
+	 * @param string $type Button type.
 	 *
 	 * @return array
 	 */
@@ -1249,6 +1251,25 @@ class Controls {
 		];
 
 		$fields = ControlHelper::general_elementor_style( 'sb_' . $type . '_button_style', $title, $obj, $condition, $selectors );
+
+		// The global `.rtsb-elementor-container a { text-decoration: none !important; }` shield
+		// ( _el-global.scss ) outranks the typography group's text-decoration on the button <a>.
+		// Re-emit it with !important so underline / overline / line-through actually apply.
+		$typography_key = 'rtsb_el_sb_' . $type . '_button_style_typography';
+		if ( isset( $fields[ $typography_key ] ) ) {
+			// Also target the .text/.hover-text spans: text-swap hover effects reveal an
+			// absolutely-positioned .hover-text that an ancestor <a>'s decoration cannot reach.
+			$td_base     = $css_selectors['typography'];
+			$td_selector = $td_base . ',' . $td_base . ' .text,' . $td_base . ' .hover-text';
+
+			$fields[ $typography_key ]['fields_options'] = [
+				'text_decoration' => [
+					'selectors' => [
+						$td_selector => 'text-decoration: {{VALUE}} !important;',
+					],
+				],
+			];
+		}
 		unset(
 			$fields[ 'sb_' . $type . '_button_style_bg_color' ],
 			$fields[ 'sb_' . $type . '_button_style_alignment' ],

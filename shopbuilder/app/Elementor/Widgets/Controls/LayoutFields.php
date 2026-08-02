@@ -1067,6 +1067,17 @@ class LayoutFields {
 			'classes'     => $obj->pro_class(),
 		];
 
+		$fields['enable_ajax_scroll'] = [
+			'type'        => 'switch',
+			'label'       => esc_html__( 'Enable Scroll To Top?', 'shopbuilder' ),
+			'description' => esc_html__( 'Switch on to scroll the page to the top when an Ajax tab filter or Ajax pagination loads products. Switch off to keep the current scroll position.', 'shopbuilder' ),
+			'label_on'    => esc_html__( 'On', 'shopbuilder' ),
+			'label_off'   => esc_html__( 'Off', 'shopbuilder' ),
+			'default'     => 'yes',
+			'separator'   => $obj->pro_class(),
+			'classes'     => $obj->pro_class(),
+		];
+
 		$fields['filter_section_end'] = $obj->end_section();
 
 		return apply_filters( 'rtsb/elementor/filter_control', $fields, $obj );

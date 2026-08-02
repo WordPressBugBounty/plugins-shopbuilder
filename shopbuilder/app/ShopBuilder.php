@@ -81,7 +81,6 @@ final class ShopBuilder {
 	 * Class Constructor
 	 */
 	private function __construct() {
-		$this->define_constants();
 		$this->post_type     = 'product';
 		$this->current_theme = wp_get_theme()->get( 'Template' ) ? wp_get_theme()->get( 'Template' ) : ( wp_get_theme()->get( 'TextDomain' ) ? wp_get_theme()->get( 'TextDomain' ) : strtolower( str_replace( ' ', '', wp_get_theme()->get( 'Name' ) ) ) );
 		add_action( 'plugins_loaded', [ $this, 'init' ], 15 );
@@ -106,22 +105,6 @@ final class ShopBuilder {
 			}
 		);
 	}
-
-	/**
-	 * Constants
-	 *
-	 * @return void
-	 */
-	private function define_constants() {
-		if ( ! defined( 'RTSB_ABSPATH' ) ) {
-			define( 'RTSB_ABSPATH', dirname( RTSB_FILE ) . '/' );
-		}
-
-		if ( ! defined( 'RTSB_URL' ) ) {
-			define( 'RTSB_URL', plugins_url( '', RTSB_FILE ) );
-		}
-	}
-
 
 	/**
 	 * Assets url generate with given assets file

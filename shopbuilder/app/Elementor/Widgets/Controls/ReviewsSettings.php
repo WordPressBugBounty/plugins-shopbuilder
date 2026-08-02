@@ -34,6 +34,8 @@ class ReviewsSettings {
 	/**
 	 * Widget Field
 	 *
+	 * @param object $widget widget object.
+	 *
 	 * @return array
 	 */
 	public static function widget_fields( $widget ) {
@@ -216,7 +218,6 @@ class ReviewsSettings {
 				'type'     => 'typography',
 				'label'    => esc_html__( 'Typography', 'shopbuilder' ),
 				'selector' => self::$selectors['form_heading_typography'],
-				'exclude'  => [ 'font_family', 'text_decoration', 'font_style' ], // phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_exclude
 			],
 			'form_heading_color'              => [
 				'label'     => esc_html__( 'Color', 'shopbuilder' ),
@@ -301,12 +302,10 @@ class ReviewsSettings {
 				'type'     => 'typography',
 				'label'    => esc_html__( 'Typography', 'shopbuilder' ),
 				'selector' => self::$selectors['label_input_text_typography'],
-				'exclude'  => [ 'font_family', 'text_decoration', 'font_style' ], // phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_exclude
 			],
 			'review_input_color'              => [
 				'label'     => esc_html__( 'Color', 'shopbuilder' ),
 				'type'      => 'color',
-				// 'separator' => 'default',
 				'selectors' => [
 					self::$selectors['review_input_color'] => 'color: {{VALUE}};',
 				],
@@ -432,7 +431,6 @@ class ReviewsSettings {
 				'type'     => 'typography',
 				'label'    => esc_html__( 'Typography', 'shopbuilder' ),
 				'selector' => self::$selectors['review_heading_typography'],
-				'exclude'  => [ 'font_family', 'text_decoration', 'font_style' ], // phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_exclude
 			],
 			'review_heading_color'      => [
 				'label'     => esc_html__( 'Color', 'shopbuilder' ),
@@ -497,7 +495,6 @@ class ReviewsSettings {
 				'type'     => 'typography',
 				'label'    => esc_html__( 'Meta Typography', 'shopbuilder' ),
 				'selector' => self::$selectors['review_meta_typography'],
-				'exclude'  => [ 'font_family', 'text_decoration', 'font_style' ], // phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_exclude
 			],
 			'review_desc_typography' => [
 				'mode'     => 'group',

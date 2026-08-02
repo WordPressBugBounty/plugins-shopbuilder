@@ -92,6 +92,7 @@ class Selectors {
 			],
 			'readmore_button_style' => [
 				'typography'         => '{{WRAPPER}} .rtsb-post-list .rtsb-button-wrapper .rtsb-readmore-btn',
+				'text_decoration'    => '{{WRAPPER}} .rtsb-post-list .rtsb-button-wrapper .rtsb-readmore-btn .text-wrap',
 				'color'              => '{{WRAPPER}}  .rtsb-post-list .rtsb-button-wrapper .rtsb-readmore-btn,{{WRAPPER}} .rtsb-post-list .rtsb-button-wrapper .rtsb-readmore-btn .icon',
 				'bg_color'           => '{{WRAPPER}}  .rtsb-post-list .rtsb-button-wrapper .rtsb-readmore-btn',
 				'hover_color'        => '{{WRAPPER}}  .rtsb-post-list .rtsb-button-wrapper .rtsb-readmore-btn:hover,{{WRAPPER}} .rtsb-post-list .rtsb-button-wrapper .rtsb-readmore-btn:hover .icon',

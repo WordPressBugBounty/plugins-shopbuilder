@@ -273,7 +273,21 @@ class CartRecoveryDB {
 				->offset( $offset )
 				->get();
 
-			return ! empty( $abandonments ) ? self::parseMetaData( $abandonments ) : [];
+			if ( empty( $abandonments ) ) {
+				return [];
+			}
+
+			$abandonments = self::parseMetaData( $abandonments );
+
+			// Convert stored UTC `time` to the site timezone for display.
+			foreach ( $abandonments as &$abandonment ) {
+				if ( ! empty( $abandonment['time'] ) ) {
+					$abandonment['time'] = get_date_from_gmt( $abandonment['time'], 'Y-m-d H:i:s' );
+				}
+			}
+			unset( $abandonment );
+
+			return $abandonments;
 		} catch ( Exception $e ) {
 			return [];
 		}

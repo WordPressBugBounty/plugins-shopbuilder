@@ -183,32 +183,65 @@ class ProductImages extends ElementorWidgetBase {
 			<?php } ?>
 
 
-			if (!'<?php echo esc_attr( Fns::is_optimization_enabled() ); ?>') {
-				jQuery(document).ready(function ($) {
-					setTimeout(function () {
-						const zoomIcon = $('.rtsb-product-images').attr('data-zoom-icon');
+			// Inject the selected lightbox icon into the gallery trigger inside the builder.
+			// The front-end bundle (RTSB modules / product-image.js) is dequeued in the
+			// Elementor editor preview, so the normal runtime injection never runs here.
+			// Read the server-rendered `data-zoom-icon` and drop it into the trigger. Since
+			// WooCommerce paints its own magnifier via the trigger's ::before/::after and
+			// hides real content with text-indent — neither of which JS can clear on a
+			// pseudo-element — also register a one-time <style> that neutralises them.
+			(function () {
+				var styleId = 'rtsb-editor-zoom-icon-style';
+
+				function ensureTriggerStyle() {
+					if (document.getElementById(styleId)) {
+						return;
+					}
+					var style = document.createElement('style');
+					style.id = styleId;
+					style.textContent =
+						'.rtsb-product-images .woocommerce-product-gallery__trigger{text-indent:0 !important;display:inline-flex;align-items:center;justify-content:center;}' +
+						'.rtsb-product-images .woocommerce-product-gallery__trigger::before,' +
+						'.rtsb-product-images .woocommerce-product-gallery__trigger::after{content:none !important;}';
+					document.head.appendChild(style);
+				}
+
+				function injectZoomIcon($scope) {
+					var $root = ($scope && $scope.length) ? $scope : jQuery(document);
+					$root.find('.rtsb-product-images').each(function () {
+						var $gallery  = jQuery(this);
+						var zoomIcon  = $gallery.attr('data-zoom-icon');
+						var $triggers = $gallery.find('.woocommerce-product-gallery__trigger, .rtwpvg-trigger');
 						if (!zoomIcon) {
-							$('.rtsb-product-images')
-								.find('.woocommerce-product-gallery__trigger,.rtwpvg-trigger')
-								.remove();
+							$triggers.remove();
+							return;
 						}
-						$('.rtsb-product-images')
-							.find('.woocommerce-product-gallery__trigger,.rtwpvg-trigger')
-							.html(zoomIcon);
-					}, 50);
-				});
-			} else {
-				if (typeof elementorFrontend !== 'undefined') {
+						$triggers.html(zoomIcon);
+					});
+				}
+
+				// WooCommerce re-inits the gallery ~600ms after render (see above) and can
+				// reset the trigger, so inject after that window to win the race.
+				window.rtsbEditorInjectZoomIcon = function ($scope) {
+					ensureTriggerStyle();
+					setTimeout(function () {
+						injectZoomIcon($scope);
+					}, 700);
+				};
+
+				if (typeof elementorFrontend !== 'undefined' && elementorFrontend.hooks) {
 					elementorFrontend.hooks.addAction(
 						'frontend/element_ready/<?php echo esc_attr( $this->rtsb_base ); ?>.default',
-						($scope) => {
-							window.waitForRTSB((RTSB) => {
-								RTSB.modules.get('productImage')?.refresh?.($, $scope);
-							});
+						function ($scope) {
+							window.rtsbEditorInjectZoomIcon($scope);
 						}
 					);
 				}
-			}
+
+				jQuery(function () {
+					window.rtsbEditorInjectZoomIcon();
+				});
+			})();
 
 		</script>
 		<?php
@@ -247,7 +280,7 @@ class ProductImages extends ElementorWidgetBase {
 		add_filter( 'rtwpvg_xs_thumbnails_columns', [ $this, 'thumbnails_columns_xs' ] );
 		// RTSB.
 		add_filter( 'rtsb/vg/thumbnails/position', [ $this, 'vg_thumbnail_position' ], 50 );
-		add_filter( 'rtsb/vg/lightbox', [ $this, 'vg_lightbox' ], 50 );
+		add_filter( 'rtsb/vg/lightbox', [ $this, 'vg_show_lightbox' ], 50 );
 		add_filter( 'rtsb/vg/lightbox/trigger/icon', [ $this, 'vg_lightbox' ], 50 );
 		add_filter( 'rtsb/vg/thumbnails/slider/options', [ $this, 'thumbnail_slider_js_options' ], 50, 2 );
 		add_filter( 'rtsb/vg/lightbox/position', [ $this, 'vg_lightbox_position' ], 50, 2 );
@@ -362,12 +395,30 @@ class ProductImages extends ElementorWidgetBase {
 	}
 
 	/**
+	 * Whether the Variation Gallery lightbox trigger should render.
+	 *
+	 * The `rtsb/vg/lightbox` filter is a boolean gate (see the VG product-image
+	 * template). It must reflect the widget's "Show Lightbox Icon?" (show_zoom)
+	 * setting so disabling it actually hides the trigger — not the icon HTML, which
+	 * is always truthy and would keep the trigger visible.
+	 *
+	 * @param bool $show Whether to show the lightbox trigger.
+	 * @return bool
+	 */
+	public function vg_show_lightbox( $show ) {
+		$controllers = $this->get_settings_for_display();
+		return ! empty( $controllers['show_zoom'] );
+	}
+	/**
 	 * @param bool $lightbox Lightbox.
 	 * @return mixed
 	 */
 	public function vg_lightbox( $lightbox ) {
 		$controllers = $this->get_settings_for_display();
-		return ! empty( $controllers['lightbox_icon'] ) ? Fns::icons_manager( $controllers['lightbox_icon'] ) : $lightbox;
+		// The icons control always returns a populated array (`value`/`library`), so
+		// check the actual `value`; when it is cleared, fall back to the default SVG
+		// instead of rendering an empty icon.
+		return ! empty( $controllers['lightbox_icon']['value'] ) ? Fns::icons_manager( $controllers['lightbox_icon'] ) : $lightbox;
 	}
 	/**
 	 * @param string $position position text.
@@ -376,6 +427,33 @@ class ProductImages extends ElementorWidgetBase {
 	public function vg_lightbox_position( $position ) {
 		$controllers = $this->get_settings_for_display();
 		return ! empty( $controllers['vg_lightbox_position'] ) ? $controllers['vg_lightbox_position'] : $position;
+	}
+
+	/**
+	 * Enqueue the Font Awesome library required by the selected lightbox icon.
+	 *
+	 * Elementor only auto-loads icon fonts for icons rendered through its own widget
+	 * flow. The lightbox icon is injected into the Variation Gallery / WooCommerce
+	 * gallery markup via a filter, so on the front end its font is never enqueued and
+	 * the glyph renders empty — it appears in the editor only because Elementor always
+	 * loads Font Awesome there. Enqueue the matching library so the icon shows on the
+	 * front end. SVG icons carry no library and need no enqueue.
+	 *
+	 * @param array $icon Elementor icons control value.
+	 * @return void
+	 */
+	private function enqueue_lightbox_icon_font( $icon ) {
+		if ( empty( $icon['library'] ) ) {
+			return;
+		}
+		$handles = [
+			'fa-solid'   => 'elementor-icons-fa-solid',
+			'fa-regular' => 'elementor-icons-fa-regular',
+			'fa-brands'  => 'elementor-icons-fa-brands',
+		];
+		if ( isset( $handles[ $icon['library'] ] ) ) {
+			wp_enqueue_style( $handles[ $icon['library'] ] );
+		}
 	}
 
 	/**
@@ -392,6 +470,12 @@ class ProductImages extends ElementorWidgetBase {
 		if ( empty( $controllers['show_module_badges'] ) ) {
 			add_filter( 'rtsb/module/badges/show', '__return_false', 99 );
 		}
+		// When "Show Thumbnails?" is off, hide the Variation Gallery thumbnail slider.
+		$hide_vg_thumbnails = empty( $controllers['show_thumbnails'] );
+
+		if ( ! empty( $controllers['show_zoom'] ) && ! empty( $controllers['lightbox_icon'] ) ) {
+			$this->enqueue_lightbox_icon_font( $controllers['lightbox_icon'] );
+		}
 
 		$this->theme_support();
 		$controllers['lightbox_icon'] = Fns::icons_manager( $controllers['lightbox_icon'] );
@@ -401,7 +485,15 @@ class ProductImages extends ElementorWidgetBase {
 		];
 		$this->the_hooks( $controllers );
 
+		if ( $hide_vg_thumbnails ) {
+			add_filter( 'rtsb/vg/show/thumbnails', '__return_false' );
+		}
+
 		Fns::load_template( $data['template'], $data );
+
+		if ( $hide_vg_thumbnails ) {
+			remove_filter( 'rtsb/vg/show/thumbnails', '__return_false' );
+		}
 
 		if ( $this->is_builder_mode() ) {
 			$this->init_scripts();

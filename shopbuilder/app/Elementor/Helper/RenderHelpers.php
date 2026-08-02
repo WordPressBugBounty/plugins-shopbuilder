@@ -1589,8 +1589,12 @@ class RenderHelpers {
 			$taxonomy          = $tax->taxonomy;
 			$product_count     = self::get_visible_term_count( $tax->taxonomy, $tax->term_id );
 
-			// Show count.
-			if ( 'archive' === apply_filters( 'rtsb/builder/set/current/page/type', '' ) && ! empty( $data['count_display'] ) && 'block' === $data['count_display'] ) {
+			// On a product taxonomy archive (category/tag/attribute page) scope the
+			// count to the current archive - only products that are in THIS archive
+			// AND have this term. This makes the displayed count reflect the current
+			// category context and lets terms that are empty in this archive be
+			// dropped from the list.
+			if ( is_product_taxonomy() || 'archive' === apply_filters( 'rtsb/builder/set/current/page/type', '' ) ) {
 				$product_count = self::count_tax_data( $tax, $product_count );
 			}
 
@@ -1683,6 +1687,13 @@ class RenderHelpers {
 	public static function count_tax_data( $tax, $count ) {
 		$page = get_queried_object();
 
+		// Scoping only applies on a real taxonomy archive where the queried
+		// object is a term. On other contexts (e.g. the shop page) the queried
+		// object is not a term, so keep the original (global) count.
+		if ( ! $page instanceof \WP_Term ) {
+			return $count;
+		}
+
 		if ( is_array( $tax ) && strpos( $tax['taxonomy'], 'attribute_' ) !== false ) {
 			$taxonomy = str_replace( 'attribute_', '', $tax['taxonomy'] );
 			$term_id  = $tax['term_id'];
@@ -1723,42 +1734,40 @@ class RenderHelpers {
 			return count( $products );
 		}
 
-		if ( $taxonomy !== $page->taxonomy ) {
-			$args = [
-				'limit'     => -1,
-				'return'    => 'ids',
-				'status'    => 'publish',
-				'tax_query' => [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
-					'relation' => 'AND',
-					[
-						'taxonomy' => $taxonomy,
-						'field'    => 'term_id',
-						'terms'    => $term_id,
-					],
-					[
-						'taxonomy' => 'product_visibility',
-						'terms'    => [ 'exclude-from-catalog' ],
-						'field'    => 'name',
-						'operator' => 'NOT IN',
-					],
+		// Scope the count to the current archive term (category, brand, tag, etc.)
+		// so it reflects only products that are in this archive AND also have the
+		// filter term. Works for cross-taxonomy filters (e.g. brands on a tag
+		// archive) and same-taxonomy filters (e.g. the Tags filter on a tag
+		// archive shows the intersection with the current tag).
+		$args = [
+			'limit'     => -1,
+			'return'    => 'ids',
+			'status'    => 'publish',
+			'tax_query' => [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
+				'relation' => 'AND',
+				[
+					'taxonomy' => $taxonomy,
+					'field'    => 'term_id',
+					'terms'    => $term_id,
 				],
-			];
+				[
+					'taxonomy' => $page->taxonomy,
+					'field'    => 'term_id',
+					'terms'    => $page->term_id,
+				],
+				[
+					'taxonomy' => 'product_visibility',
+					'terms'    => [ 'exclude-from-catalog' ],
+					'field'    => 'name',
+					'operator' => 'NOT IN',
+				],
+			],
+		];
 
-			if ( 'product_cat' === $page->taxonomy ) {
-				$args['category'] = [ $page->slug ];
-			}
+		$query    = new WC_Product_Query( $args );
+		$products = $query->get_products();
 
-			if ( 'product_tag' === $page->taxonomy ) {
-				$args['tag'] = [ $page->slug ];
-			}
-
-			$query    = new WC_Product_Query( $args );
-			$products = $query->get_products();
-
-			$count = count( $products );
-		}
-
-		return $count;
+		return count( $products );
 	}
 
 	/**

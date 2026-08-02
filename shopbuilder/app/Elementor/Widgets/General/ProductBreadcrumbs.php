@@ -53,7 +53,7 @@ class ProductBreadcrumbs extends ElementorWidgetBase {
 
 		$_post       = $post;
 		$controllers = $this->get_settings_for_display();
-        $this->theme_support();
+		$this->theme_support();
 		$controllers['breadcrumbs_icon'] = Fns::icons_manager( $controllers['breadcrumbs_icon'] );
 		$args                            = [
 			'delimiter'   => ! empty( $controllers['breadcrumbs_icon'] ) ? '<span class="breadcrumb-separator">' . $controllers['breadcrumbs_icon'] . '</span>' : '<span class="breadcrumb-separator">&nbsp;&#47;&nbsp;</span>',
@@ -72,8 +72,7 @@ class ProductBreadcrumbs extends ElementorWidgetBase {
 		}
 
 		Fns::load_template( $data['template'], $data );
-        $this->theme_support( 'render_reset' );
+		$this->theme_support( 'render_reset' );
 		$post = $_post; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 	}
-
 }

@@ -313,6 +313,7 @@ class ProductsArchiveCustom extends ElementorWidgetBase {
 			Controls\StyleFields::product_wishlist( $this ),
 			Controls\StyleFields::product_quick_view( $this ),
 			Controls\StyleFields::product_compare( $this ),
+			Controls\StyleFields::action_buttons( $this ),
 			Controls\StyleFields::product_badges( $this ),
 			Controls\StyleFields::pagination( $this ),
 			Controls\StyleFields::hover_icon_button( $this ),

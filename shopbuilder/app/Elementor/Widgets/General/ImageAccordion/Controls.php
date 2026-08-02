@@ -490,6 +490,10 @@ class Controls {
 		$title         = esc_html__( 'Link', 'shopbuilder' );
 		$selectors     = [
 			'typography'     => $css_selectors['typography'],
+			'icon_size'      => [
+				$css_selectors['icon_size']['font_size'] => 'font-size: {{SIZE}}{{UNIT}};',
+				$css_selectors['icon_size']['svg']       => 'height: {{SIZE}}{{UNIT}};width: {{SIZE}}{{UNIT}};',
+			],
 			'color'          => [ $css_selectors['color'] => 'color: {{VALUE}};' ],
 			'border'         => $css_selectors['border'],
 			'hover_color'    => [ $css_selectors['hover_color'] => 'color: {{VALUE}};' ],
@@ -512,6 +516,30 @@ class Controls {
 		unset(
 			$fields['link_style_alignment'],
 			$fields['link_style_border_hover_color'],
+		);
+
+		// Dedicated Icon Size control for the link icon — works for BOTH Font Awesome (`.link i` font-size)
+		// and SVG (`.link svg` width/height), so the icon is sized independently of the link Typography.
+		$extra_controls_icon['link_style_icon_size'] = [
+			'type'       => 'slider',
+			'mode'       => 'responsive',
+			'label'      => esc_html__( 'Icon Size', 'shopbuilder' ),
+			'size_units' => [ 'px' ],
+			'range'      => [
+				'px' => [
+					'min' => 0,
+					'max' => 100,
+				],
+			],
+			'selectors'  => $selectors['icon_size'],
+		];
+
+		$fields = Fns::insert_controls( 'rtsb_el_link_style_typography', $fields, $extra_controls_icon, true );
+
+		// The link is icon-only (no text label), so the Typography control + its heading are not needed.
+		unset(
+			$fields['link_style_typo_note'],
+			$fields['rtsb_el_link_style_typography'],
 		);
 
 		return $fields;

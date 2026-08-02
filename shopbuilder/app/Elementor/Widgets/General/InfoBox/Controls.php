@@ -626,7 +626,8 @@ class Controls {
 	/**
 	 * Button style section
 	 *
-	 * @param object $obj Reference object.
+	 * @param object $obj  Reference object.
+	 * @param string $type Button type.
 	 *
 	 * @return array
 	 */
@@ -658,6 +659,20 @@ class Controls {
 		];
 
 		$fields = ControlHelper::general_elementor_style( 'sb_' . $type . '_button_style', $title, $obj, $condition, $selectors );
+
+		// The global `.rtsb-elementor-container a { text-decoration: none !important; }` shield
+		// ( _el-global.scss ) outranks the typography group's text-decoration on the button <a>.
+		// Re-emit it with !important so underline / overline / line-through actually apply.
+		$typography_key = 'rtsb_el_sb_' . $type . '_button_style_typography';
+		if ( isset( $fields[ $typography_key ] ) ) {
+			$fields[ $typography_key ]['fields_options'] = [
+				'text_decoration' => [
+					'selectors' => [
+						$css_selectors['typography'] => 'text-decoration: {{VALUE}} !important;',
+					],
+				],
+			];
+		}
 		unset(
 			$fields[ 'sb_' . $type . '_button_style_bg_color' ],
 			$fields[ 'sb_' . $type . '_button_style_alignment' ],

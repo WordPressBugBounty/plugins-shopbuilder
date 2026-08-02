@@ -230,9 +230,14 @@ class GalleryFns {
 			$gallery_images = (array) $variation->get_gallery_image_ids();
 		}
 
-		$variation_image_id = absint( $variation->get_image_id() );
-		if ( ! empty( $variation_image_id ) ) {
-			array_unshift( $gallery_images, $variation_image_id );
+		$lead_image_id = absint( $variation->get_image_id() );
+		if ( empty( $lead_image_id ) && $parent_product ) {
+			// Variation has no featured image of its own — lead with the parent
+			// product's featured image (WooCommerce-style image swap).
+			$lead_image_id = absint( $parent_product->get_image_id() );
+		}
+		if ( ! empty( $lead_image_id ) ) {
+			array_unshift( $gallery_images, $lead_image_id );
 		}
 
 		$gallery_images = array_values( array_unique( array_filter( array_map( 'absint', $gallery_images ) ) ) );
@@ -285,6 +290,50 @@ class GalleryFns {
 	}
 
 	/**
+	 * Resolve a variation ID from the URL attribute params.
+	 *
+	 * Reads the same `attribute_*` request params WooCommerce uses to pre-select
+	 * the variation form (e.g. ?attribute_pa_color=green&attribute_pa_size=medium)
+	 * so the matching variation gallery can be painted server-side on initial load.
+	 * Only resolves when every variation attribute is present, otherwise returns 0.
+	 *
+	 * @param \WC_Product $product Variable product object.
+	 *
+	 * @return int Variation ID, or 0 when the params do not uniquely resolve one.
+	 */
+	public static function get_requested_variation_id( $product ) {
+		if ( ! ( $product instanceof WC_Product ) || ! $product->is_type( 'variable' ) ) {
+			return 0;
+		}
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only gallery paint using the same attribute params WooCommerce itself reads to pre-select variations.
+		$request = wp_unslash( $_REQUEST );
+
+		$match_attributes = [];
+		foreach ( $product->get_variation_attributes() as $attribute_name => $options ) {
+			$key = 'attribute_' . sanitize_title( $attribute_name );
+			if ( ! isset( $request[ $key ] ) ) {
+				// A required attribute is missing, so a single variation cannot resolve.
+				return 0;
+			}
+			$value = wc_clean( $request[ $key ] );
+			if ( '' === $value ) {
+				return 0;
+			}
+			$match_attributes[ $key ] = $value;
+		}
+
+		if ( empty( $match_attributes ) ) {
+			return 0;
+		}
+
+		$data_store   = \WC_Data_Store::load( 'product' );
+		$variation_id = $data_store->find_matching_product_variation( $product, $match_attributes );
+
+		return absint( $variation_id );
+	}
+
+	/**
 	 * Get the attachment IDs to render for a product's initial gallery paint.
 	 *
 	 * When a default variation resolves, returns that variation's gallery image IDs
@@ -299,23 +348,34 @@ class GalleryFns {
 	 * }
 	 */
 	public static function get_initial_gallery_render( $product ) {
-		$context   = $product;
-		$image_ids = [];
+		$context      = $product;
+		$image_ids    = [];
+		$variation_id = 0;
 
 		if ( $product instanceof WC_Product ) {
-			$default_variation_id = self::get_default_variation_id( $product );
-			if ( $default_variation_id ) {
-				$variation_props = self::get_variation_gallery( $product->get_id(), $default_variation_id );
+			// Prefer the variation requested via URL attribute params (the same
+			// params WooCommerce reads to pre-select the variation form) so the
+			// correct gallery is painted server-side; fall back to the product's
+			// default variation otherwise.
+			$selected_variation_id = self::get_requested_variation_id( $product );
+			if ( ! $selected_variation_id ) {
+				$selected_variation_id = self::get_default_variation_id( $product );
+			}
+			if ( $selected_variation_id ) {
+				$variation_props = self::get_variation_gallery( $product->get_id(), $selected_variation_id );
 				foreach ( (array) $variation_props as $prop ) {
 					if ( ! empty( $prop['image_id'] ) ) {
 						$image_ids[] = absint( $prop['image_id'] );
 					}
 				}
 				if ( ! empty( $image_ids ) ) {
-					$variation = wc_get_product( $default_variation_id );
+					$variation = wc_get_product( $selected_variation_id );
 					if ( $variation ) {
 						$context = $variation;
 					}
+					// The server has painted this variation's gallery, so JS can
+					// skip its redundant initial AJAX/re-render for it.
+					$variation_id = $selected_variation_id;
 				}
 			}
 		}
@@ -336,8 +396,9 @@ class GalleryFns {
 		$image_ids = array_values( array_unique( array_filter( $image_ids ) ) );
 
 		return [
-			'image_ids' => $image_ids,
-			'context'   => $context,
+			'image_ids'    => $image_ids,
+			'context'      => $context,
+			'variation_id' => $variation_id,
 		];
 	}
 

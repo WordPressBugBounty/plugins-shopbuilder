@@ -10,8 +10,8 @@
 
 namespace RadiusTheme\SB\Models;
 
-use MatthiasMullie\Minify\JS;
-use MatthiasMullie\Minify\CSS;
+use RadiusTheme\SB\Dependencies\MatthiasMullie\Minify\JS;
+use RadiusTheme\SB\Dependencies\MatthiasMullie\Minify\CSS;
 
 // Do not allow directly accessing this file.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -137,6 +137,17 @@ class AssetBundler {
 				return '';
 			}
 
+			// Guard against the scoped Minify library not being loadable yet — e.g. the first
+			// request right after a plugin upgrade, when opcache/the autoload map still points
+			// at the old (now deleted) files. Instantiating the class then would fatal; instead
+			// skip bundling for this request and fall back to the unbundled assets. It self-heals
+			// on the next request once the autoloader is refreshed.
+			$minify_class = ( 'css' === $this->type ) ? CSS::class : JS::class;
+
+			if ( ! class_exists( $minify_class ) ) {
+				return '';
+			}
+
 			$minifier = ( 'css' === $this->type ) ? new CSS() : new JS();
 
 			foreach ( $this->source_files as $file ) {
@@ -185,7 +196,13 @@ class AssetBundler {
 	 * @return string
 	 */
 	protected function generate_filename() {
-		$hash = md5( $this->handle . wp_json_encode( $this->source_files ) );
+		$version = defined( 'RTSB_VERSION' ) ? RTSB_VERSION : '';
+
+		if ( defined( 'RTSBPRO_VERSION' ) ) {
+			$version .= '-' . RTSBPRO_VERSION;
+		}
+
+		$hash = md5( $this->handle . $version . wp_json_encode( $this->source_files ) );
 
 		return "$this->handle-$hash.min.$this->type";
 	}

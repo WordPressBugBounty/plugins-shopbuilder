@@ -117,10 +117,12 @@ class Selectors {
 				'btn_width'          => '{{WRAPPER}} .rtsb-default-archive-filters  .product-filter-toggle',
 				'color'              => '{{WRAPPER}} .rtsb-default-archive-filters  .product-filter-toggle',
 				'bg_color'           => '{{WRAPPER}} .rtsb-default-archive-filters  .product-filter-toggle',
-				'hover_color'        => '{{WRAPPER}} .rtsb-default-archive-filters  .product-filter-toggle:hover',
-				'hover_bg_color'     => '{{WRAPPER}} .rtsb-default-archive-filters  .product-filter-toggle:hover',
+				// Touch devices have no :hover, so the toggle's Hover controls also target
+				// :active (press) and .active (open state, set by product-default-filter.js).
+				'hover_color'        => '{{WRAPPER}} .rtsb-default-archive-filters .product-filter-toggle:hover, {{WRAPPER}} .rtsb-default-archive-filters .product-filter-toggle:active, {{WRAPPER}} .rtsb-default-archive-filters .product-filter-toggle.active',
+				'hover_bg_color'     => '{{WRAPPER}} .rtsb-default-archive-filters .product-filter-toggle:hover, {{WRAPPER}} .rtsb-default-archive-filters .product-filter-toggle:active, {{WRAPPER}} .rtsb-default-archive-filters .product-filter-toggle.active',
 				'border'             => '{{WRAPPER}} .rtsb-default-archive-filters  .product-filter-toggle',
-				'border_hover_color' => '{{WRAPPER}} .rtsb-default-archive-filters  .product-filter-toggle:hover',
+				'border_hover_color' => '{{WRAPPER}} .rtsb-default-archive-filters .product-filter-toggle:hover, {{WRAPPER}} .rtsb-default-archive-filters .product-filter-toggle:active, {{WRAPPER}} .rtsb-default-archive-filters .product-filter-toggle.active',
 				'border_radius'      => '{{WRAPPER}} .rtsb-default-archive-filters  .product-filter-toggle',
 				'padding'            => '{{WRAPPER}} .rtsb-default-archive-filters  .product-filter-toggle',
 				'margin'             => '{{WRAPPER}} .rtsb-default-archive-filters  .product-filter-toggle',

@@ -1433,7 +1433,7 @@ class ModuleList extends ListModel {
 				[
 					'id'           => 'bulk_discounts',
 					'active'       => '',
-					'title'        => esc_html__( 'Bulk Discounts', 'shopbuilder' ),
+					'title'        => esc_html__( 'Volume Discount', 'shopbuilder' ),
 					'active_field' => [
 						'label' => esc_html__( 'Enable Bulk Discounts?', 'shopbuilder' ),
 						'help'  => esc_html__( 'Switch on to enable bulk discounts module.', 'shopbuilder' ),
@@ -4787,8 +4787,8 @@ class ModuleList extends ListModel {
 						'rules' => [
 							[
 								'item'     => 'modules.variation_gallery.gallery_style',
-								'value'    => 'bottom',
-								'operator' => '==',
+								'value'    => 'grid',
+								'operator' => '!=',
 							],
 						],
 					],
@@ -4868,6 +4868,7 @@ class ModuleList extends ListModel {
 						'blur' => esc_html__( 'Blur', 'shopbuilder' ),
 						'fade' => esc_html__( 'Fade', 'shopbuilder' ),
 						'gray' => esc_html__( 'Gray', 'shopbuilder' ),
+						'none' => esc_html__( 'No Effect', 'shopbuilder' ),
 					],
 					'tab'     => 'general',
 				],

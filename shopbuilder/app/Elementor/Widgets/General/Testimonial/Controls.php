@@ -571,54 +571,48 @@ class Controls {
 			$fields['content_style_hover_color_tab_end'],
 			$fields['content_style_color_tabs_end'],
 		);
-		$extra_controls['content_style_quote_icon_size'] = [
-			'type'       => 'slider',
-			'mode'       => 'responsive',
-			'label'      => esc_html__( 'Quote Icon Size', 'shopbuilder' ),
-			'size_units' => [ 'px' ],
-			'range'      => [
-				'px' => [
-					'min' => 0,
-					'max' => 150,
+		$quote_icon_size_control = [
+			'content_style_quote_icon_size' => [
+				'type'       => 'slider',
+				'mode'       => 'responsive',
+				'label'      => esc_html__( 'Quote Icon Size', 'shopbuilder' ),
+				'size_units' => [ 'px' ],
+				'range'      => [
+					'px' => [
+						'min' => 0,
+						'max' => 150,
+					],
+				],
+				'selectors'  => $selectors['quote_icon_size'],
+				'condition'  => [
+					'layout_style!'      => [ 'rtsb-testimonial-layout4' ],
+					'display_quote_icon' => 'yes',
 				],
 			],
-			'selectors'  => $selectors['quote_icon_size'],
 		];
-		$fields = Fns::insert_controls( 'content_style_color_note', $fields, $extra_controls );
-		$extra_controls['content_style_quote_icon_size'] = [
-			'type'       => 'slider',
-			'mode'       => 'responsive',
-			'label'      => esc_html__( 'Quote Icon Size', 'shopbuilder' ),
-			'size_units' => [ 'px' ],
-			'range'      => [
-				'px' => [
-					'min' => 0,
-					'max' => 150,
+		$fields                  = Fns::insert_controls( 'content_style_color_note', $fields, $quote_icon_size_control );
+
+		$quote_icon_color_controls = [
+			'content_style_quote_icon_color'    => [
+				'type'      => 'color',
+				'label'     => esc_html__( 'Quote Icon Color', 'shopbuilder' ),
+				'selectors' => $selectors['quote_icon_color'],
+				'condition' => [
+					'layout_style!'      => [ 'rtsb-testimonial-layout4' ],
+					'display_quote_icon' => 'yes',
 				],
 			],
-			'selectors'  => $selectors['quote_icon_size'],
-			'condition'  => [
-				'layout_style!' => [ 'rtsb-testimonial-layout4' ],
+			'content_style_quote_icon_bg_color' => [
+				'type'      => 'color',
+				'label'     => esc_html__( 'Quote Icon Background', 'shopbuilder' ),
+				'selectors' => $selectors['quote_icon_bg'],
+				'condition' => [
+					'layout_style'       => [ 'rtsb-testimonial-layout5' ],
+					'display_quote_icon' => 'yes',
+				],
 			],
 		];
-		$fields = Fns::insert_controls( 'content_style_color_note', $fields, $extra_controls );
-		$extra_controls['content_style_quote_icon_color']    = [
-			'type'      => 'color',
-			'label'     => esc_html__( 'Quote Icon Color', 'shopbuilder' ),
-			'selectors' => $selectors['quote_icon_color'],
-			'condition' => [
-				'layout_style!' => [ 'rtsb-testimonial-layout4' ],
-			],
-		];
-		$extra_controls['content_style_quote_icon_bg_color'] = [
-			'type'      => 'color',
-			'label'     => esc_html__( 'Quote Icon Background', 'shopbuilder' ),
-			'selectors' => $selectors['quote_icon_bg'],
-			'condition' => [
-				'layout_style' => [ 'rtsb-testimonial-layout5' ],
-			],
-		];
-		$fields = Fns::insert_controls( 'content_style_color', $fields, $extra_controls, true );
+		$fields                    = Fns::insert_controls( 'content_style_color', $fields, $quote_icon_color_controls, true );
 		return $fields;
 	}
 	/**

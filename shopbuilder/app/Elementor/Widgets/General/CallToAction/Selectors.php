@@ -54,7 +54,7 @@ class Selectors {
 				'margin'     => '{{WRAPPER}} .rtsb-cta-title',
 			],
 			'content_style'          => [
-				'typography' => '{{WRAPPER}} .rtsb-cta-description',
+				'typography' => '{{WRAPPER}} .rtsb-cta-description, {{WRAPPER}} .rtsb-cta-description p',
 				'color'      => '{{WRAPPER}} .rtsb-cta-description',
 				'border'     => '{{WRAPPER}} .rtsb-cta-description',
 				'padding'    => '{{WRAPPER}} .rtsb-cta-description',

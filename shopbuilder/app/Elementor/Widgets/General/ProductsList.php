@@ -132,6 +132,7 @@ class ProductsList extends ElementorWidgetBase {
 				Controls\StyleFields::product_wishlist( $this ),
 				Controls\StyleFields::product_quick_view( $this ),
 				Controls\StyleFields::product_compare( $this ),
+				Controls\StyleFields::action_buttons( $this ),
 				Controls\StyleFields::product_badges( $this ),
 				Controls\StyleFields::pagination( $this ),
 				Controls\StyleFields::hover_icon_button( $this ),
@@ -165,15 +166,14 @@ class ProductsList extends ElementorWidgetBase {
 	/**
 	 * Widget Field
 	 *
-	 * @return array
+	 * @param string|array $thumbnail_size Current thumbnail size.
+	 *
+	 * @return array|string
 	 */
 	public function thumbnail_size( $thumbnail_size ) {
 		$settings = $this->get_settings_for_display();
 		if ( 'rtsb_custom' === $settings['image'] ) {
 			// Custom image size is not supported. It may be implemented later.
-			// $thumbnail_size   = [];
-			// $thumbnail_size[] = $settings['image_custom_dimension']['width'] ?? 0;
-			// $thumbnail_size[] = $settings['image_custom_dimension']['height'] ?? 0;.
 			return $thumbnail_size;
 		}
 		return $settings['image'] ?? $thumbnail_size;

@@ -44,7 +44,7 @@ $actions      = [
 		'description'  => 'Explore our easy-to-follow documentation, complete with step-by-step guides, screenshots, and videos to simplify your setup process.',
 		'icon_class'   => 'rtsb-documentation-icon',
 		'button_label' => 'View Documentation',
-		'button_link'  => 'https://shopbuilderwp.com/docs/installation/',
+		'button_link'  => 'https://shopbuilderwp.com/docs/',
 	],
 	[
 		'title'        => 'Need Any Help?',

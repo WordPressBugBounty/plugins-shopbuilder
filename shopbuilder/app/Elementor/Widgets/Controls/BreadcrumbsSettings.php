@@ -21,6 +21,7 @@ class BreadcrumbsSettings {
 	/**
 	 * Widget Field
 	 *
+	 * @param object $widget object.
 	 * @return array
 	 */
 	public static function widget_fields( $widget ) {
@@ -54,10 +55,10 @@ class BreadcrumbsSettings {
 				'selector' => $widget->selectors['breadcrumbs_typography'],
 			],
 			'breadcrumbs_align'      => [
-				'label'        => esc_html__( 'Alignment', 'shopbuilder' ),
-				'type'         => 'choose',
-				'separator'    => 'default',
-				'options'      => [
+				'label'                => esc_html__( 'Alignment', 'shopbuilder' ),
+				'type'                 => 'choose',
+				'separator'            => 'default',
+				'options'              => [
 					'left'   => [
 						'title' => esc_html__( 'Left', 'shopbuilder' ),
 						'icon'  => 'eicon-text-align-left',
@@ -71,9 +72,14 @@ class BreadcrumbsSettings {
 						'icon'  => 'eicon-text-align-right',
 					],
 				],
-				'prefix_class' => 'elementor-align-%s',
-				'selectors'    => [
-					$widget->selectors['breadcrumbs_align'] => 'text-align: {{VALUE}};',
+				'prefix_class'         => 'elementor-align-%s',
+				'selectors_dictionary' => [
+					'left'   => 'flex-start',
+					'center' => 'center',
+					'right'  => 'flex-end',
+				],
+				'selectors'            => [
+					$widget->selectors['breadcrumbs_align'] => 'justify-content: {{VALUE}};',
 				],
 			],
 			'text_color'             => [
@@ -147,6 +153,4 @@ class BreadcrumbsSettings {
 		];
 		return $fields;
 	}
-
-
 }

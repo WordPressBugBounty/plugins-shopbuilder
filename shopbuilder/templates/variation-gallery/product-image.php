@@ -69,10 +69,11 @@ $slider_options  = apply_filters( 'rtsb/vg/slider/options', $slider_options );
 // Render the default variation's gallery server-side when one resolves (also warms
 // its transient so the variations JSON exposes it inline — no AJAX, no empty flash);
 // otherwise fall back to the parent product's featured + gallery images.
-$initial_render  = GalleryFns::get_initial_gallery_render( $product );
-$images          = $initial_render['image_ids'];
-$gallery_context = $initial_render['context'];
-$wrapper_classes = apply_filters(
+$initial_render    = GalleryFns::get_initial_gallery_render( $product );
+$images            = $initial_render['image_ids'];
+$gallery_context   = $initial_render['context'];
+$initial_variation = ! empty( $initial_render['variation_id'] ) ? absint( $initial_render['variation_id'] ) : 0;
+$wrapper_classes   = apply_filters(
 	'woocommerce_single_product_image_gallery_classes',
 	[
 		'woocommerce-product-gallery',
@@ -80,7 +81,7 @@ $wrapper_classes = apply_filters(
 		'images',
 	]
 );
-$custom_class    = [];
+$custom_class      = [];
 if ( rtsb()->has_pro() ) {
 	$custom_class[] = 'rtsb-pro-active';
 }
@@ -98,7 +99,7 @@ $icon_right = '<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" 
 $icon_left  = '<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 320 512" aria-hidden="true"><path d="M34.5 239l194-194c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9L135.4 256l150.6 149.4c9.4 9.4 9.4 24.6 0 33.9l-22.6 22.6c-9.4 9.4-24.6 9.4-33.9 0l-194-194c-9.4-9.4-9.4-24.6 0-34z"/></svg>';
 ?>
 <div class="<?php echo esc_attr( implode( ' ', array_map( 'sanitize_html_class', $wrapper_classes ) ) ); ?>">
-	<div class="rtsb-vg-main-slider-wrapper <?php echo esc_attr( implode( ' ', array_map( 'sanitize_html_class', $custom_class ) ) ); ?>" data-image-zoom="<?php echo esc_attr( boolval( $image_zoom ) ); ?>" >
+	<div class="rtsb-vg-main-slider-wrapper <?php echo esc_attr( implode( ' ', array_map( 'sanitize_html_class', $custom_class ) ) ); ?>" data-image-zoom="<?php echo esc_attr( boolval( $image_zoom ) ); ?>" data-initial-variation="<?php echo esc_attr( $initial_variation ); ?>" >
 		<div class="rtsb-carousel-slider product-vg-gallery"  data-options=<?php echo esc_js( wp_json_encode( $slider_options ) ); ?>>
 			<!-- Main Slider -->
 			<?php
@@ -138,7 +139,7 @@ $icon_left  = '<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" 
 				</div>
 			<?php } ?>
 		</div>
-		<?php if ( $has_any_gallery_images ) { ?>
+		<?php if ( $has_any_gallery_images && apply_filters( 'rtsb/vg/show/thumbnails', true ) ) { ?>
 			<?php
 			$options = apply_filters(
 				'rtsb/vg/thumbnails/slider/options',

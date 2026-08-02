@@ -328,7 +328,7 @@ class ControlSelectors {
 	private static function general_widget_selectors(): array {
 		$selectors = [
 			'rtsb-product-breadcrumbs'        => [
-				'breadcrumbs_align'      => '{{WRAPPER}} .rtsb-breadcrumb',
+				'breadcrumbs_align'      => '{{WRAPPER}} .rtsb-breadcrumb .woocommerce-breadcrumb',
 				'text_color'             => '{{WRAPPER}} .rtsb-breadcrumb .woocommerce-breadcrumb',
 				'link_color'             => '{{WRAPPER}} .rtsb-breadcrumb .woocommerce-breadcrumb a',
 				'link_hover_color'       => '{{WRAPPER}} .rtsb-breadcrumb .woocommerce-breadcrumb a:hover',
@@ -427,12 +427,12 @@ class ControlSelectors {
 				'table_header_align'         => '{{WRAPPER}} .rtsb-wishlist-content table thead th',
 				'table_header_color'         => '{{WRAPPER}} .rtsb-wishlist-content table thead th',
 				'table_header_bg_color'      => '{{WRAPPER}} .rtsb-wishlist-content table thead th',
-				'table_item_typo'            => '{{WRAPPER}} .rtsb-wishlist-content table td,{{WRAPPER}} .rtsb-wishlist-content table td a',
+				'table_item_typo'            => '{{WRAPPER}} .rtsb-wishlist-content table td,{{WRAPPER}} .rtsb-wishlist-content table td a,{{WRAPPER}} .rtsb-wishlist-content table td .rtsb-partial-pay-avail-note span,{{WRAPPER}} .rtsb-wishlist-content table td .rtsb-bis-out-of-stock-message,{{WRAPPER}} .rtsb-wishlist-content table td .rtsb-bis-out-of-stock-details-message,{{WRAPPER}} .rtsb-wishlist-content table td .rtsb-bis-privacy-checkbox label span',
 				'table_item_align'           => '{{WRAPPER}} .rtsb-wishlist-content table td',
-				'table_item_color'           => '{{WRAPPER}} .rtsb-wishlist-content table td,{{WRAPPER}} .rtsb-wishlist-content table td a',
+				'table_item_color'           => '{{WRAPPER}} .rtsb-wishlist-content table td,{{WRAPPER}} .rtsb-wishlist-content table td a,{{WRAPPER}} .rtsb-wishlist-content table td .rtsb-partial-pay-avail-note span,{{WRAPPER}} .rtsb-wishlist-content table td .rtsb-bis-out-of-stock-message,{{WRAPPER}} .rtsb-wishlist-content table td .rtsb-bis-out-of-stock-details-message,{{WRAPPER}} .rtsb-wishlist-content table td .rtsb-bis-privacy-checkbox label span',
 				'table_item_bg_color'        => '{{WRAPPER}} .rtsb-wishlist-content table td',
-				'header_cell_width'          => '{{WRAPPER}} .rtsb-wishlist-content table thead th',
-				'item_cell_width'            => '{{WRAPPER}} .rtsb-wishlist-content table tbody td',
+				'column_width'               => '{{WRAPPER}} .rtsb-wishlist-content table thead th,{{WRAPPER}} .rtsb-wishlist-content table tbody td',
+				'table_item_text_decoration' => '{{WRAPPER}} .rtsb-wishlist-content table td, {{WRAPPER}} .rtsb-wishlist-content table td a, {{WRAPPER}} .rtsb-wishlist-content table td a span, {{WRAPPER}} .rtsb-wishlist-content table td .rtsb-partial-pay-avail-note span, {{WRAPPER}} .rtsb-wishlist-content table td .rtsb-bis-out-of-stock-message, {{WRAPPER}} .rtsb-wishlist-content table td .rtsb-bis-out-of-stock-details-message, {{WRAPPER}} .rtsb-wishlist-content table td .rtsb-bis-privacy-checkbox label span',
 			],
 			'rtsb-advanced-heading'           => AdvancedHeading\Selectors::get_selectors(),
 			'rtsb-dropcaps'                   => DropCaps\Selectors::get_selectors(),
@@ -669,8 +669,8 @@ class ControlSelectors {
 				'row_gap'                => '{{WRAPPER}} .rtsb-product-meta .product_meta',
 				'column_gap'             => '{{WRAPPER}} .rtsb-product-meta .product_meta',
 				'meta_padding'           => '{{WRAPPER}} .rtsb-product-meta .product_meta :is(.sku_wrapper, .posted_in, .tagged_as)',
-				'label_typo'             => '{{WRAPPER}} .rtsb-product-meta .product_meta :is(.sku_wrapper, .posted_in, .tagged_as)',
-				'meta_label_color'       => '{{WRAPPER}} .rtsb-product-meta .product_meta :is(.sku_wrapper, .posted_in, .tagged_as)',
+				'label_typo'             => '{{WRAPPER}} .rtsb-product-meta .product_meta .rtsb-meta-label',
+				'meta_label_color'       => '{{WRAPPER}} .rtsb-product-meta .product_meta .rtsb-meta-label',
 				'value_typo'             => '{{WRAPPER}} .rtsb-product-meta .product_meta :is(.sku, .posted_in a, .tagged_as a)',
 				'meta_value_color'       => '{{WRAPPER}} .rtsb-product-meta .product_meta :is(.sku, .posted_in a, .tagged_as a)',
 				'meta_value_hover_color' => '{{WRAPPER}} .rtsb-product-meta .product_meta :is(.posted_in a, .tagged_as a):hover',
@@ -710,18 +710,18 @@ class ControlSelectors {
 				'meta_value_hover_color' => '{{WRAPPER}} .rtsb-product-sku .sku-value:hover',
 			],
 			'rtsb-product-stock'           => [
-				'stock_text_typography' => '{{WRAPPER}} .rtsb-product-stock .stock',
-				'in_stock_color'        => '{{WRAPPER}} .rtsb-product-stock .stock.in-stock',
-				'outof_stock_color'     => '{{WRAPPER}} .rtsb-product-stock .stock.out-of-stock',
-				'backorder_stock_color' => '{{WRAPPER}} .rtsb-product-stock .stock.available-on-backorder',
+				'stock_text_typography' => '{{WRAPPER}} .rtsb-product-stock .stock .rtsb-stock-text',
+				'in_stock_color'        => '{{WRAPPER}} .rtsb-product-stock .stock.in-stock .rtsb-stock-text',
+				'outof_stock_color'     => '{{WRAPPER}} .rtsb-product-stock .stock.out-of-stock .rtsb-stock-text',
+				'backorder_stock_color' => '{{WRAPPER}} .rtsb-product-stock .stock.available-on-backorder .rtsb-stock-text',
 				'icon_size'             => [
 					'icon' => '{{WRAPPER}} .rtsb-product-stock .stock i',
 					'svg'  => '{{WRAPPER}} .rtsb-product-stock .stock svg',
 				],
-				'icon_gap'              => '{{WRAPPER}}  .rtsb-product-stock .stock i',
-				'stock_alignment'       => '{{WRAPPER}}  .rtsb-product-stock p',
-				'stock_padding'         => '{{WRAPPER}}  .rtsb-product-stock p',
-				'stock_margin'          => '{{WRAPPER}}  .rtsb-product-stock p',
+				'icon_gap'              => '{{WRAPPER}} .rtsb-product-stock .stock :is(i, svg)',
+				'stock_alignment'       => '{{WRAPPER}} .rtsb-product-stock > .stock',
+				'stock_padding'         => '{{WRAPPER}} .rtsb-product-stock > .stock',
+				'stock_margin'          => '{{WRAPPER}} .rtsb-product-stock > .stock',
 			],
 			'rtsb-product-tabs'            => array_merge(
 				self::reviews_settings_selecotor(),
@@ -748,7 +748,7 @@ class ControlSelectors {
 					'tab_title_gap'                 => '.rtsb-builder-content {{WRAPPER}} .rtsb-product-tabs .woocommerce-tabs .wc-tab h2',
 					'tab_content_title_color'       => '.rtsb-builder-content {{WRAPPER}} .rtsb-product-tabs .woocommerce-tabs .woocommerce-Tabs-panel > h2:first-child, {{WRAPPER}} .rtsb-product-tabs .woocommerce-tabs .woocommerce-Tabs-panel .woocommerce-Reviews-title',
 
-					'additional_info_typography'    => '.rtsb-builder-content {{WRAPPER}} .rtsb-product-tabs .woocommerce-tabs .wc-tab .shop_attributes',
+					'additional_info_typography'    => '.rtsb-builder-content {{WRAPPER}} .rtsb-product-tabs .woocommerce-tabs .wc-tab .shop_attributes :is(th, td, td p)',
 					'attributes_gap'                => '.rtsb-builder-content {{WRAPPER}} .rtsb-product-tabs table.shop_attributes td,{{WRAPPER}} .rtsb-product-tabs table.shop_attributes th',
 				]
 			),
@@ -768,28 +768,35 @@ class ControlSelectors {
 				'text_color'  => '{{WRAPPER}} :is(.rtsb-short-description , p)',
 				'text_shadow' => '{{WRAPPER}} .rtsb-short-description, {{WRAPPER}} .rtsb-short-description p',
 			],
+			// The widget badge lives inside `{{WRAPPER}} .rtsb-product-onsale`; the Badges
+			// module also renders group badges on the main product gallery (above-image
+			// position). Style both from the same controls by pairing the widget selector
+			// with a gallery-scoped selector for the module group badges. The gallery
+			// scope (`.woocommerce-product-gallery`/`.rtsb-product-images`) keeps related
+			// product card badges untouched.
 			'rtsb-product-onsale'          => [
-				'flash_sale_typography'          => '{{WRAPPER}} .rtsb-product-onsale :is(.onsale, .rtsb-tag-fill, .rtsb-tag-outline)',
-				'product_flash_sale_color'       => '{{WRAPPER}} .rtsb-product-onsale :is(.onsale, .rtsb-tag-fill, .rtsb-tag-outline)',
-				'flash_sale_bg_color'            => '{{WRAPPER}} .rtsb-product-onsale :is(.onsale, .rtsb-tag-fill, .rtsb-tag-outline)',
-				'flash_sale_border_color'        => '{{WRAPPER}} .rtsb-product-onsale :is(.onsale, .rtsb-tag-fill, .rtsb-tag-outline), {{WRAPPER}} .rtsb-tag-outline.angle-right::after',
-				'flash_sale_badge_width'         => '{{WRAPPER}} .rtsb-product-onsale :is(.onsale, .rtsb-tag-fill, .rtsb-tag-outline)',
-				'flash_sale_badge_height'        => '{{WRAPPER}} .rtsb-product-onsale :is(.onsale, .rtsb-tag-fill, .rtsb-tag-outline)',
-				'flash_sale_badge_border_radius' => '{{WRAPPER}} .rtsb-product-onsale :is(.onsale, .rtsb-tag-fill, .rtsb-tag-outline)',
+				'flash_sale_typography'          => '{{WRAPPER}} .rtsb-product-onsale :is(.onsale, .rtsb-tag-fill, .rtsb-tag-outline), :is(.woocommerce-product-gallery, .rtsb-product-images) .rtsb-badge-group-style :is(.rtsb-tag-fill, .rtsb-tag-outline)',
+				'product_flash_sale_color'       => '{{WRAPPER}} .rtsb-product-onsale :is(.onsale, .rtsb-tag-fill, .rtsb-tag-outline), :is(.woocommerce-product-gallery, .rtsb-product-images) .rtsb-badge-group-style :is(.rtsb-tag-fill, .rtsb-tag-outline)',
+				'flash_sale_bg_color'            => '{{WRAPPER}} .rtsb-product-onsale :is(.onsale, .rtsb-tag-fill, .rtsb-tag-outline), :is(.woocommerce-product-gallery, .rtsb-product-images) .rtsb-badge-group-style :is(.rtsb-tag-fill, .rtsb-tag-outline)',
+				'flash_sale_border_color'        => '{{WRAPPER}} .rtsb-product-onsale :is(.onsale, .rtsb-tag-fill, .rtsb-tag-outline), {{WRAPPER}} .rtsb-tag-outline.angle-right::after, :is(.woocommerce-product-gallery, .rtsb-product-images) .rtsb-badge-group-style :is(.rtsb-tag-fill, .rtsb-tag-outline)',
+				'flash_sale_badge_width'         => '{{WRAPPER}} .rtsb-product-onsale :is(.onsale, .rtsb-tag-fill, .rtsb-tag-outline), :is(.woocommerce-product-gallery, .rtsb-product-images) .rtsb-badge-group-style :is(.rtsb-tag-fill, .rtsb-tag-outline)',
+				'flash_sale_badge_height'        => '{{WRAPPER}} .rtsb-product-onsale :is(.onsale, .rtsb-tag-fill, .rtsb-tag-outline), :is(.woocommerce-product-gallery, .rtsb-product-images) .rtsb-badge-group-style :is(.rtsb-tag-fill, .rtsb-tag-outline)',
+				'flash_sale_badge_border_radius' => '{{WRAPPER}} .rtsb-product-onsale :is(.onsale, .rtsb-tag-fill, .rtsb-tag-outline), :is(.woocommerce-product-gallery, .rtsb-product-images) .rtsb-badge-group-style :is(.rtsb-tag-fill, .rtsb-tag-outline)',
 				'product_badges'                 => [
 					'typography'    => '{{WRAPPER}} .rtsb-product-onsale :is(.rtsb-tag-fill, .rtsb-tag-outline)',
 					'color'         => '{{WRAPPER}} .rtsb-product-onsale :is(.rtsb-tag-fill,.rtsb-tag-outline)',
 					'bg_color'      => '{{WRAPPER}} .rtsb-product-onsale :is(.rtsb-tag-fill,.rtsb-tag-outline)',
 					'border_color'  => '{{WRAPPER}} .rtsb-product-onsale :is(.rtsb-tag-fill,.rtsb-tag-outline),{{WRAPPER}} .rtsb-tag-outline.angle-right::after',
 					'border_radius' => '{{WRAPPER}} .rtsb-product-onsale :is(.rtsb-tag-fill,.rtsb-tag-outline)',
-					'padding'       => '{{WRAPPER}} .rtsb-product-onsale :is(.rtsb-tag-fill,.rtsb-tag-outline)',
-					'margin'        => '{{WRAPPER}} .rtsb-product-onsale :is(.rtsb-tag-fill,.rtsb-tag-outline)',
+					'padding'       => '{{WRAPPER}} .rtsb-product-onsale :is(.rtsb-tag-fill,.rtsb-tag-outline), :is(.woocommerce-product-gallery, .rtsb-product-images) .rtsb-badge-group-style :is(.rtsb-tag-fill, .rtsb-tag-outline)',
+					'margin'        => '{{WRAPPER}} .rtsb-product-onsale :is(.rtsb-tag-fill,.rtsb-tag-outline), :is(.woocommerce-product-gallery, .rtsb-product-images) .rtsb-badge-group-style :is(.rtsb-tag-fill, .rtsb-tag-outline)',
 					'position_x'    => '',
 					'position_y'    => '',
 				],
 				'badges_module'                  => [
-					'direction' => '{{WRAPPER}} .rtsb-promotion .rtsb-badge-group-style',
-					'alignment' => '{{WRAPPER}} .rtsb-promotion .rtsb-badge-group-style',
+					'direction'      => '{{WRAPPER}} .rtsb-promotion .rtsb-badge-group-style',
+					'alignment'      => '{{WRAPPER}} .rtsb-promotion .rtsb-badge-group-style',
+					'alignment_wrap' => '{{WRAPPER}} .rtsb-badge-container .rtsb-promotion:not(.rtsb-badge-group-style)',
 				],
 			],
 		];
@@ -846,7 +853,6 @@ class ControlSelectors {
 				'mode_button_height'             => '{{WRAPPER}} .rtsb-archive-view-mode a',
 				'mode_button_width'              => '{{WRAPPER}} .rtsb-archive-view-mode a',
 				'mode_button_gap'                => '{{WRAPPER}} .rtsb-archive-view-mode',
-				'mode_button_color'              => '{{WRAPPER}} .rtsb-archive-view-mode a',
 				'mode_button_bg_color'           => '{{WRAPPER}} .rtsb-archive-view-mode a',
 				'text_color'                     => '{{WRAPPER}} .rtsb-archive-view-mode a',
 				'mode_button_border'             => '{{WRAPPER}} .rtsb-archive-view-mode a',
@@ -858,7 +864,10 @@ class ControlSelectors {
 			'rtsb-archive-result-count'    => [
 				'align'       => '{{WRAPPER}}',
 				'text_color'  => '{{WRAPPER}}',
-				'typo'        => '{{WRAPPER}} .rtsb-archive-result-count',
+				// Also target the inner <p> (woocommerce_result_count output): text-decoration
+				// is not inherited and does not draw through the descendant block, so it must
+				// hit the text element directly. Other typography keeps working via the div.
+				'typo'        => '{{WRAPPER}} .rtsb-archive-result-count, {{WRAPPER}} .rtsb-archive-result-count .woocommerce-result-count',
 				'text_shadow' => '{{WRAPPER}} .rtsb-archive-result-count',
 			],
 			'rtsb-products-ordering'       => [
@@ -1468,7 +1477,7 @@ class ControlSelectors {
 					'hover_color'        => '{{WRAPPER}} .rtsb-elementor-container [class*=category-single-layout] .rtsb-category-grid:hover .single-category-area .product-count, {{WRAPPER}} .rtsb-elementor-container [class*=rtsb-category-layout] .rtsb-category-grid:hover .category-wrapper .product-count',
 					'hover_bg_color'     => '{{WRAPPER}} .rtsb-elementor-container [class*=category-single-layout] .rtsb-category-grid:hover .single-category-area .product-count, {{WRAPPER}} .rtsb-elementor-container [class*=rtsb-category-layout] .rtsb-category-grid:hover .category-wrapper .product-count',
 					'border'             => '{{WRAPPER}} .rtsb-elementor-container .rtsb-category-grid .product-count',
-					'border_hover_color' => '{{WRAPPER}} .rtsb-elementor-container .rtsb-category-grid:hover .product-count',
+					'border_hover_color' => '{{WRAPPER}} .rtsb-elementor-container .rtsb-category-grid .product-count:hover',
 					'border_radius'      => '{{WRAPPER}} .rtsb-elementor-container .rtsb-category-grid .product-count',
 					'padding'            => '{{WRAPPER}} .rtsb-elementor-container .rtsb-category-grid .product-count',
 					'margin'             => '{{WRAPPER}} .rtsb-elementor-container .rtsb-category-grid .product-count',
@@ -1517,8 +1526,9 @@ class ControlSelectors {
 					'content_border_radius'        => '{{WRAPPER}} .rtsb-elementor-container .rtsb-product-content, {{WRAPPER}} .rtsb-elementor-container .rtsb-row:not(.rtsb-category-layout2) .rtsb-category-content, {{WRAPPER}} .rtsb-elementor-container .rtsb-category-layout2 .category-title-with-image',
 				],
 				'badges_module'  => [
-					'direction' => '{{WRAPPER}} .rtsb-promotion .rtsb-badge-group-style',
-					'alignment' => '{{WRAPPER}} .rtsb-promotion .rtsb-badge-group-style',
+					'direction'      => '{{WRAPPER}} .rtsb-promotion .rtsb-badge-group-style',
+					'alignment'      => '{{WRAPPER}} .rtsb-promotion .rtsb-badge-group-style',
+					'alignment_wrap' => '{{WRAPPER}} .rtsb-badge-container .rtsb-promotion:not(.rtsb-badge-group-style)',
 				],
 			]
 		);
@@ -1583,10 +1593,14 @@ class ControlSelectors {
 					'alignment'          => '{{WRAPPER}} .rtsb-elementor-container .product-title',
 					'color'              => '{{WRAPPER}} .rtsb-elementor-container .product-title',
 					'bg_color'           => '{{WRAPPER}} .rtsb-elementor-container .rtsb-product-title-wrapper,{{WRAPPER}} .rtsb-elementor-container .product-title',
-					'hover_color'        => '{{WRAPPER}} .rtsb-elementor-container .rtsb-product-title-wrapper:hover .product-title',
-					'hover_bg_color'     => '{{WRAPPER}} .rtsb-elementor-container .rtsb-product-title-wrapper:hover,{{WRAPPER}} .rtsb-elementor-container .product-title:hover',
+					// Layout 2 (grid/slider) reveals a hover button that overlays the title wrapper and captures :hover, so the
+					// wrapper's own :hover never fires; the extra `.rtsb-product:hover .product-title-with-btn` clause re-applies the
+					// hover text/bg/border color on product-card hover. NOTE: layout 2 fades the title text out on hover, so the
+					// hover *text* color is not visibly noticeable there — the wrapper background and border remain visible.
+					'hover_color'        => '{{WRAPPER}} .rtsb-elementor-container .rtsb-product-title-wrapper:hover .product-title, {{WRAPPER}} .rtsb-elementor-container .rtsb-product:hover .product-title-with-btn .product-title',
+					'hover_bg_color'     => '{{WRAPPER}} .rtsb-elementor-container .rtsb-product-title-wrapper:hover,{{WRAPPER}} .rtsb-elementor-container .product-title:hover, {{WRAPPER}} .rtsb-elementor-container .rtsb-product:hover .product-title-with-btn .rtsb-product-title-wrapper',
 					'border'             => '{{WRAPPER}} .rtsb-elementor-container .rtsb-product-title-wrapper',
-					'border_hover_color' => '{{WRAPPER}} .rtsb-elementor-container .rtsb-product-title-wrapper:hover',
+					'border_hover_color' => '{{WRAPPER}} .rtsb-elementor-container .rtsb-product-title-wrapper:hover, {{WRAPPER}} .rtsb-elementor-container .rtsb-product:hover .product-title-with-btn .rtsb-product-title-wrapper',
 					'padding'            => '{{WRAPPER}} .rtsb-elementor-container .rtsb-product-title-wrapper,{{WRAPPER}} .rtsb-elementor-container .product-title',
 					'margin'             => '{{WRAPPER}} .rtsb-elementor-container .rtsb-product-title-wrapper,{{WRAPPER}} .rtsb-elementor-container .product-title',
 				],
@@ -1605,10 +1619,11 @@ class ControlSelectors {
 				'action_buttons'      => [
 					'action_btn_alignment' => '{{WRAPPER}} .rtsb-elementor-container .rtsb-product .rtsb-action-buttons.horizontal-floating-btn .rtsb-action-button-list',
 					'action_btn_gap'       => '{{WRAPPER}} .rtsb-elementor-container .rtsb-action-button-list',
+					'icon_gap'             => '{{WRAPPER}} .rtsb-elementor-container .rtsb-action-btn.has-text',
 				],
 				'product_price'       => [
-					'typography'              => '{{WRAPPER}} .rtsb-elementor-container .price-wrapper, {{WRAPPER}} .rtsb-elementor-container .price-wrapper ins .woocommerce-Price-amount, {{WRAPPER}}.elementor-element .rtsb-elementor-container.products .price-wrapper > p',
-					'sale_typography'         => '{{WRAPPER}} .rtsb-elementor-container.products .price-wrapper del',
+					'typography'              => '{{WRAPPER}} .rtsb-elementor-container .price-wrapper .price > .woocommerce-Price-amount, {{WRAPPER}} .rtsb-elementor-container .price-wrapper del',
+					'sale_typography'         => '{{WRAPPER}} .rtsb-elementor-container .price-wrapper ins',
 					'regular_text_decoration' => '{{WRAPPER}} .rtsb-elementor-container .price-wrapper .price > .woocommerce-Price-amount, {{WRAPPER}} .rtsb-elementor-container .price-wrapper del',
 					'sale_text_decoration'    => '{{WRAPPER}} .rtsb-elementor-container .price-wrapper ins',
 					'alignment'               => '{{WRAPPER}} .rtsb-elementor-container .product-price',
@@ -1621,12 +1636,13 @@ class ControlSelectors {
 					'margin'                  => '{{WRAPPER}} .rtsb-elementor-container .product-price',
 				],
 				'product_rating'      => [
-					'typography' => '{{WRAPPER}} .rtsb-elementor-container .star-rating',
-					'alignment'  => '{{WRAPPER}} .rtsb-elementor-container .product-rating',
-					'color'      => '{{WRAPPER}} .rtsb-elementor-container :is(.star-rating span):before',
-					'bg_color'   => '{{WRAPPER}} .rtsb-elementor-container  :is(.star-rating):before',
-					'padding'    => '{{WRAPPER}} .rtsb-elementor-container .star-rating',
-					'margin'     => '{{WRAPPER}} .rtsb-elementor-container .product-rating',
+					'typography'      => '{{WRAPPER}} .rtsb-elementor-container .star-rating',
+					'alignment'       => '{{WRAPPER}} .rtsb-elementor-container .product-rating',
+					'color'           => '{{WRAPPER}} .rtsb-elementor-container :is(.star-rating span):before',
+					'bg_color'        => '{{WRAPPER}} .rtsb-elementor-container  :is(.star-rating):before',
+					'padding'         => '{{WRAPPER}} .rtsb-elementor-container .star-rating',
+					'spacing_preset2' => '{{WRAPPER}} .rtsb-elementor-container .product-rating.preset2, {{WRAPPER}} .rtsb-elementor-container .product-rating.preset2 .inner-wrapper',
+					'margin'          => '{{WRAPPER}} .rtsb-elementor-container .product-rating',
 				],
 				'product_categories'  => [
 					'typography'         => '{{WRAPPER}} .rtsb-elementor-container .rtsb-category-list li > a',
@@ -1680,10 +1696,6 @@ class ControlSelectors {
 					'icon_size'          => [
 						'font_size' => '{{WRAPPER}} .rtsb-elementor-container .rtsb-cart .rtsb-action-btn .icon',
 						'width'     => '{{WRAPPER}} .rtsb-elementor-container .rtsb-cart .rtsb-action-btn .icon svg',
-					],
-					'cart_icon_spacing'  => [
-						'margin_left'  => '{{WRAPPER}} .rtsb-elementor-container .rtsb-action-button-list .rtsb-cart .rtsb-action-btn.icon-left .icon + .text',
-						'margin_right' => '{{WRAPPER}} .rtsb-elementor-container .rtsb-action-button-list .rtsb-cart .rtsb-action-btn.icon-right .icon + .text',
 					],
 					'cart_width'         => '{{WRAPPER}} .rtsb-elementor-container .rtsb-cart .rtsb-action-btn',
 					'cart_height'        => '{{WRAPPER}} .rtsb-elementor-container .rtsb-cart .rtsb-action-btn',

@@ -223,8 +223,55 @@ class BuilderHooks {
 	 * @return void
 	 */
 	public function elementor_frontend() {
+		// Priority 15: after Elementor registers style handles (priority 5) and before
+		// its enqueue_styles / after_enqueue_post_styles pass (priority 20) that renders
+		// the atomic-widget (V4) styles collected via the elementor/post/render action.
+		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_elementor_template_css' ], 15 );
 		add_action( 'rtsb/builder/before/header', [ $this, 'el_body_class' ] );
 		add_action( 'rtsb/builder/template/main/content', [ $this, 'elementor_template_main_content' ] );
+	}
+
+	/**
+	 * Enqueue the Elementor builder template CSS in the document head.
+	 *
+	 * ShopBuilder renders the Elementor template on a WooCommerce object (e.g. a product),
+	 * so Elementor's own wp_enqueue_scripts pass only fires elementor/post/render for the
+	 * queried object — never for the builder template. As a result the template's
+	 * document CSS (post-{id}.css) and, on Elementor V4, its atomic-widget styles
+	 * (local-{id}-*.css rendered on elementor/frontend/after_enqueue_post_styles) are
+	 * never loaded on builder pages although they load on Elementor's own preview.
+	 *
+	 * Firing elementor/post/render for the template id here — before Elementor's
+	 * priority-20 style pass — registers the template with the atomic styles manager so
+	 * its styles are generated and enqueued. enqueue_styles() loads the classic post CSS.
+	 *
+	 * @return void
+	 */
+	public function enqueue_elementor_template_css() {
+		if ( ! $this->builder_page_id || ! class_exists( '\Elementor\Plugin' ) ) {
+			return;
+		}
+
+		$documents = \Elementor\Plugin::$instance->documents;
+
+		if ( ! $documents ) {
+			return;
+		}
+
+		$document = $documents->get( $this->builder_page_id );
+
+		if ( ! $document ) {
+			return;
+		}
+
+		// Register the template with Elementor's render pipeline (atomic V4 styles manager
+		// collects these post ids and renders their styles on after_enqueue_post_styles).
+		do_action( 'elementor/post/render', $this->builder_page_id );
+
+		// Classic per-post document CSS (post-{id}.css) and font dependencies.
+		if ( method_exists( $document, 'enqueue_styles' ) ) {
+			$document->enqueue_styles();
+		}
 	}
 
 	/**

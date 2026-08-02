@@ -184,6 +184,7 @@ abstract class AdditionalQueryCustomLayout extends ElementorWidgetBase {
 				Controls\StyleFields::product_wishlist( $this ),
 				Controls\StyleFields::product_quick_view( $this ),
 				Controls\StyleFields::product_compare( $this ),
+				Controls\StyleFields::action_buttons( $this ),
 				Controls\StyleFields::product_badges( $this ),
 				$this->pagination_navigation(),
 				Controls\StyleFields::hover_icon_button( $this )

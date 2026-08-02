@@ -21,6 +21,8 @@ class ArchiveViewModeSettings {
 	/**
 	 * Widget Field
 	 *
+	 * @param object $widget Elementor widget instance.
+	 *
 	 * @return array
 	 */
 	public static function widget_fields( $widget ) {
@@ -107,13 +109,6 @@ class ArchiveViewModeSettings {
 				],
 
 			],
-			'mode_button_color'              => [
-				'label'     => esc_html__( 'Color', 'shopbuilder' ),
-				'type'      => 'color',
-				'selectors' => [
-					$widget->selectors['mode_button_color'] => 'color: {{VALUE}} !important;',
-				],
-			],
 			'mode_button_tabs_start'         => [
 				'mode' => 'tabs_start',
 			],
@@ -131,7 +126,7 @@ class ArchiveViewModeSettings {
 				],
 			],
 			'text_color'                     => [
-				'label'     => esc_html__( 'Text Color', 'shopbuilder' ),
+				'label'     => esc_html__( 'Color', 'shopbuilder' ),
 				'type'      => 'color',
 				'default'   => '',
 				'selectors' => [
@@ -160,7 +155,7 @@ class ArchiveViewModeSettings {
 				],
 			],
 			'text_hover_color'               => [
-				'label'     => esc_html__( 'Text Color', 'shopbuilder' ),
+				'label'     => esc_html__( 'Color', 'shopbuilder' ),
 				'type'      => 'color',
 				'default'   => '',
 				'selectors' => [

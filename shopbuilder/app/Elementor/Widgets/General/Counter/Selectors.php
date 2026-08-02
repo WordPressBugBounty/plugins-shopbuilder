@@ -71,6 +71,11 @@ class Selectors {
 				'margin'       => '{{WRAPPER}} .rtsb-counter .counter-inner .rtsb-counter-number-wrap',
 				'suffix_color' => '{{WRAPPER}} .rtsb-counter .counter-inner .rtsb-counter-prefix',
 				'prefix_color' => '{{WRAPPER}} .rtsb-counter .counter-inner .rtsb-counter-suffix',
+				'decoration'   => '{{WRAPPER}} .rtsb-counter .counter-inner .rtsb-counter-number-wrap .rtsb-counter-prefix,' .
+					'{{WRAPPER}} .rtsb-counter .counter-inner .rtsb-counter-number-wrap .rtsb-counter-suffix,' .
+					'{{WRAPPER}} .rtsb-counter .counter-inner .rtsb-counter-number-wrap .rtsb-count-number,' .
+					'{{WRAPPER}} .rtsb-counter .counter-inner .rtsb-counter-number-wrap .rtsb-count-number .odometer-value,' .
+					'{{WRAPPER}} .rtsb-counter .counter-inner .rtsb-counter-number-wrap .rtsb-count-number .odometer-formatting-mark',
 			],
 		];
 	}
