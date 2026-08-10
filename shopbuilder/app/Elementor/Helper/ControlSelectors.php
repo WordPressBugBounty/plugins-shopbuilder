@@ -283,7 +283,7 @@ class ControlSelectors {
 			'arrows_hover_color'             => '{{WRAPPER}} .rtsb-carousel-slider .rtsb-slider-btn:hover',
 			'arrows_hover_bg_color'          => '{{WRAPPER}} .rtsb-carousel-slider .rtsb-slider-btn:hover',
 			'arrows_hover_border_color'      => '{{WRAPPER}} .rtsb-carousel-slider .rtsb-slider-btn:hover',
-			'dots_gap'                       => '{{WRAPPER}} .rtsb-carousel-slider .swiper-wrapper',
+			'dots_gap'                       => '{{WRAPPER}} .rtsb-slider-pagination .swiper-pagination-bullet',
 			'dots_size'                      => '{{WRAPPER}} .rtsb-slider-pagination .swiper-pagination-bullet',
 			'dot_color'                      => '{{WRAPPER}} .rtsb-slider-pagination .swiper-pagination-bullet',
 			'dot_active_color'               => '{{WRAPPER}} .rtsb-slider-pagination .swiper-pagination-bullet.swiper-pagination-bullet-active',
@@ -536,7 +536,12 @@ class ControlSelectors {
 				'heading_typography' => '{{WRAPPER}} .rtsb-product-additional-information h2',
 				'heading_color'      => '{{WRAPPER}} .rtsb-product-additional-information h2',
 				'heading_margin'     => '{{WRAPPER}} .rtsb-product-additional-information h2',
-				'content_typography' => '{{WRAPPER}} .shop_attributes',
+				// Target the label + value cells (and the value's <p>) directly, by their WooCommerce
+				// classes, so Content Typography (font-weight, text-transform, …) reliably overrides the
+				// theme's higher-specificity `.woocommerce-js table.shop_attributes th` (0,2,2) rule and
+				// applies UNIFORMLY. Styling only `.shop_attributes` (the table) let the theme's direct
+				// th/cell rules win the cascade, so labels and values ended up styled inconsistently.
+				'content_typography' => '{{WRAPPER}} .shop_attributes th.woocommerce-product-attributes-item__label, {{WRAPPER}} .shop_attributes td.woocommerce-product-attributes-item__value, {{WRAPPER}} .shop_attributes td.woocommerce-product-attributes-item__value p',
 				'content_color'      => '{{WRAPPER}} .shop_attributes',
 				'content_border'     => '{{WRAPPER}} .shop_attributes td, {{WRAPPER}} .shop_attributes th',
 				'content_padding'    => '{{WRAPPER}} .shop_attributes td, {{WRAPPER}} .shop_attributes th',
@@ -632,8 +637,9 @@ class ControlSelectors {
 				'image_border'                   => '{{WRAPPER}} .rtwpvg-wrapper .rtwpvg-slider-wrapper,{{WRAPPER}} .rtsb-product-images .woocommerce-product-gallery__image, {{WRAPPER}} .rtsb-product-images .product-vg-gallery',
 				'image_border_radius'            => '{{WRAPPER}} .rtsb-product-images .woocommerce-product-gallery__image',
 				'gallery_thumbs_column'          => '{{WRAPPER}} div.images .flex-control-thumbs li',
-				'thumb_border'                   => '{{WRAPPER}} .rtsb-vg-main-slider-wrapper .rtsb-vs-thumb-item, {{WRAPPER}} .rtsb-product-images div.images .flex-control-thumbs li img, {{WRAPPER}} .rtsb-product-images .rtwpvg-thumbnail-image img, {{WRAPPER}} .rtsb-product-images .rtwpvg-grid-layout .rtwpvg-gallery-image',
-				'thumbs_border_radius'           => '{{WRAPPER}} .rtsb-product-images div.images .flex-control-thumbs li img, {{WRAPPER}} .rtsb-product-images :is( .rtwpvg-thumbnail-image, img), {{WRAPPER}} .rtsb-product-images .rtwpvg-grid-layout .rtwpvg-gallery-image',
+				'thumb_border'                   => '{{WRAPPER}} .rtsb-vg-main-slider-wrapper .rtsb-vs-thumb-item, {{WRAPPER}} .rtsb-product-images div.images .flex-control-thumbs li img, {{WRAPPER}} .rtsb-product-images .rtwpvg-thumbnail-wrapper .rtwpvg-thumbnail-slider .rtwpvg-thumbnail-image, {{WRAPPER}} .rtsb-product-images .rtwpvg-grid-wrapper .rtwpvg-grid-layout .rtwpvg-gallery-image',
+				'thumbs_border_radius'           => '{{WRAPPER}} .rtsb-vg-main-slider-wrapper :is(.rtsb-vs-thumb-item, .rtsb-vs-thumb-item img), {{WRAPPER}} .rtsb-product-images div.images .flex-control-thumbs li img, {{WRAPPER}} .rtsb-product-images .rtwpvg-thumbnail-wrapper .rtwpvg-thumbnail-slider :is(.rtwpvg-thumbnail-image, img), {{WRAPPER}} .rtsb-product-images .rtwpvg-grid-wrapper .rtwpvg-grid-layout :is(.rtwpvg-gallery-image, img)',
+				'gallery_thumbs_padding'         => '{{WRAPPER}} .rtsb-vg-main-slider-wrapper .rtsb-vs-thumb-item, {{WRAPPER}} .rtsb-product-images div.images .flex-control-thumbs li img, {{WRAPPER}} .rtsb-product-images .rtwpvg-thumbnail-wrapper .rtwpvg-thumbnail-slider .rtwpvg-thumbnail-image, {{WRAPPER}} .rtsb-product-images .rtwpvg-grid-wrapper .rtwpvg-grid-layout .rtwpvg-gallery-image',
 				'flash_sale_typography'          => '{{WRAPPER}} .rtsb-product-images .onsale',
 				'product_flash_sale_color'       => '{{WRAPPER}} .rtsb-product-images .onsale',
 				'flash_sale_bg_color'            => '{{WRAPPER}} .rtsb-product-images .onsale',
@@ -783,19 +789,30 @@ class ControlSelectors {
 				'flash_sale_badge_height'        => '{{WRAPPER}} .rtsb-product-onsale :is(.onsale, .rtsb-tag-fill, .rtsb-tag-outline), :is(.woocommerce-product-gallery, .rtsb-product-images) .rtsb-badge-group-style :is(.rtsb-tag-fill, .rtsb-tag-outline)',
 				'flash_sale_badge_border_radius' => '{{WRAPPER}} .rtsb-product-onsale :is(.onsale, .rtsb-tag-fill, .rtsb-tag-outline), :is(.woocommerce-product-gallery, .rtsb-product-images) .rtsb-badge-group-style :is(.rtsb-tag-fill, .rtsb-tag-outline)',
 				'product_badges'                 => [
-					'typography'    => '{{WRAPPER}} .rtsb-product-onsale :is(.rtsb-tag-fill, .rtsb-tag-outline)',
-					'color'         => '{{WRAPPER}} .rtsb-product-onsale :is(.rtsb-tag-fill,.rtsb-tag-outline)',
-					'bg_color'      => '{{WRAPPER}} .rtsb-product-onsale :is(.rtsb-tag-fill,.rtsb-tag-outline)',
-					'border_color'  => '{{WRAPPER}} .rtsb-product-onsale :is(.rtsb-tag-fill,.rtsb-tag-outline),{{WRAPPER}} .rtsb-tag-outline.angle-right::after',
-					'border_radius' => '{{WRAPPER}} .rtsb-product-onsale :is(.rtsb-tag-fill,.rtsb-tag-outline)',
-					'padding'       => '{{WRAPPER}} .rtsb-product-onsale :is(.rtsb-tag-fill,.rtsb-tag-outline), :is(.woocommerce-product-gallery, .rtsb-product-images) .rtsb-badge-group-style :is(.rtsb-tag-fill, .rtsb-tag-outline)',
-					'margin'        => '{{WRAPPER}} .rtsb-product-onsale :is(.rtsb-tag-fill,.rtsb-tag-outline), :is(.woocommerce-product-gallery, .rtsb-product-images) .rtsb-badge-group-style :is(.rtsb-tag-fill, .rtsb-tag-outline)',
+					// Match BOTH the free wrapper (.rtsb-product-onsale, from
+					// templates/elementor/single-product/product-badges.php) AND the pro wrapper
+					// (.rtsb-product-badges-widgets, from the pro template override). Scoping only to
+					// `.rtsb-product-onsale` made every badge style control (typography/color/bg/
+					// border/padding/margin) silently no-op on pro sites, where that div is absent.
+					// `:is()` matches the most specific arg, preserving the original (0,3,0) specificity.
+					// Padding/margin also target the Badges-module group badges on the product gallery.
+					'typography'    => '{{WRAPPER}} :is(.rtsb-product-onsale, .rtsb-product-badges-widgets) :is(.rtsb-tag-fill, .rtsb-tag-outline)',
+					'color'         => '{{WRAPPER}} :is(.rtsb-product-onsale, .rtsb-product-badges-widgets) :is(.rtsb-tag-fill,.rtsb-tag-outline)',
+					'bg_color'      => '{{WRAPPER}} :is(.rtsb-product-onsale, .rtsb-product-badges-widgets) :is(.rtsb-tag-fill,.rtsb-tag-outline)',
+					'border_color'  => '{{WRAPPER}} :is(.rtsb-product-onsale, .rtsb-product-badges-widgets) :is(.rtsb-tag-fill,.rtsb-tag-outline),{{WRAPPER}} .rtsb-tag-outline.angle-right::after',
+					'border_radius' => '{{WRAPPER}} :is(.rtsb-product-onsale, .rtsb-product-badges-widgets) :is(.rtsb-tag-fill,.rtsb-tag-outline)',
+					'padding'       => '{{WRAPPER}} :is(.rtsb-product-onsale, .rtsb-product-badges-widgets) :is(.rtsb-tag-fill,.rtsb-tag-outline), :is(.woocommerce-product-gallery, .rtsb-product-images) .rtsb-badge-group-style :is(.rtsb-tag-fill, .rtsb-tag-outline)',
+					'margin'        => '{{WRAPPER}} :is(.rtsb-product-onsale, .rtsb-product-badges-widgets) :is(.rtsb-tag-fill,.rtsb-tag-outline), :is(.woocommerce-product-gallery, .rtsb-product-images) .rtsb-badge-group-style :is(.rtsb-tag-fill, .rtsb-tag-outline)',
 					'position_x'    => '',
 					'position_y'    => '',
 				],
 				'badges_module'                  => [
-					'direction'      => '{{WRAPPER}} .rtsb-promotion .rtsb-badge-group-style',
-					'alignment'      => '{{WRAPPER}} .rtsb-promotion .rtsb-badge-group-style',
+					// Compound (no descendant combinator): `.rtsb-badge-group-style` and `.rtsb-promotion`
+					// are emitted on the SAME element by BadgesFrontEnd::group_badges_html(). The pro
+					// single-product template drops the outer `.rtsb-promotion` wrapper, so a descendant
+					// selector matches nothing and the Direction/Alignment controls silently no-op.
+					'direction'      => '{{WRAPPER}} .rtsb-promotion.rtsb-badge-group-style',
+					'alignment'      => '{{WRAPPER}} .rtsb-promotion.rtsb-badge-group-style',
 					'alignment_wrap' => '{{WRAPPER}} .rtsb-badge-container .rtsb-promotion:not(.rtsb-badge-group-style)',
 				],
 			],
@@ -923,7 +940,7 @@ class ControlSelectors {
 				'show_title'                     => '{{WRAPPER}} .rtsb-cart-totals h2',
 				'table_min_width'                => '.rtsb-builder-content {{WRAPPER}} .rtsb-table-horizontal-scroll-on-mobile table.shop_table',
 				// Title Style.
-				'title_align'                    => '{{WRAPPER}}',
+				'title_align'                    => '{{WRAPPER}} .rtsb-cart-totals h2',
 				'title_typo'                     => '{{WRAPPER}} .rtsb-cart-totals h2',
 				'title_color'                    => '{{WRAPPER}} .rtsb-cart-totals h2',
 				'title_text_stroke'              => '{{WRAPPER}} .rtsb-cart-totals h2',
@@ -979,7 +996,7 @@ class ControlSelectors {
 				'coupon_padding'                        => '{{WRAPPER}} .woocommerce-cart-form .coupon input',
 				'coupon_border_radius'                  => '{{WRAPPER}} .woocommerce-cart-form .coupon input',
 				'coupon_input_border'                   => '{{WRAPPER}} .woocommerce-cart-form .coupon .input-text',
-				'input_text_color'                      => '{{WRAPPER}} .woocommerce-cart-form input',
+				'input_text_color'                      => '{{WRAPPER}} .woocommerce-cart-form input, {{WRAPPER}} .woocommerce-cart-form input::placeholder',
 				'input_bg_color'                        => '{{WRAPPER}} .woocommerce-cart-form input',
 
 				'return_shop_button_typography'         => '{{WRAPPER}} .return-to-shop .button',
@@ -1045,12 +1062,12 @@ class ControlSelectors {
 					'td' => '{{WRAPPER}} .shop_table.cart tr td',
 				],
 
-				'clear_cart_button_bg_color'            => '{{WRAPPER}} .woocommerce-cart-form .rtsb-clear-cart-items',
-				'clear_cart_button_text_color'          => '{{WRAPPER}} .woocommerce-cart-form .rtsb-clear-cart-items',
-				'clear_cart_button_border_color'        => '{{WRAPPER}} .woocommerce-cart-form .rtsb-clear-cart-items',
-				'clear_cart_button_bg_color_hover'      => '{{WRAPPER}} .woocommerce-cart-form .rtsb-clear-cart-items:hover',
-				'clear_cart_button_text_color_hover'    => '{{WRAPPER}} .woocommerce-cart-form .rtsb-clear-cart-items:hover',
-				'clear_cart_button_border_color_hover'  => '{{WRAPPER}} .woocommerce-cart-form .rtsb-clear-cart-items:hover',
+				'clear_cart_button_bg_color'            => '{{WRAPPER}} .woocommerce-cart-form .button.rtsb-clear-cart-items',
+				'clear_cart_button_text_color'          => '{{WRAPPER}} .woocommerce-cart-form .button.rtsb-clear-cart-items',
+				'clear_cart_button_border_color'        => '{{WRAPPER}} .woocommerce-cart-form .button.rtsb-clear-cart-items',
+				'clear_cart_button_bg_color_hover'      => '{{WRAPPER}} .woocommerce-cart-form .button.rtsb-clear-cart-items:hover',
+				'clear_cart_button_text_color_hover'    => '{{WRAPPER}} .woocommerce-cart-form .button.rtsb-clear-cart-items:hover',
+				'clear_cart_button_border_color_hover'  => '{{WRAPPER}} .woocommerce-cart-form .button.rtsb-clear-cart-items:hover',
 
 				// Table.
 				'table_row_border'                      => '.rtsb-builder-content {{WRAPPER}} .rtsb-cart-table table.shop_table :is( thead, tbody ) tr',
@@ -1763,7 +1780,11 @@ class ControlSelectors {
 					'margin'             => '{{WRAPPER}} .rtsb-elementor-container .rtsb-quick-view .rtsb-action-btn',
 				],
 				'hover_icon_button'   => [
-					'typography'         => '{{WRAPPER}} .rtsb-elementor-container .product-title-with-btn .btn-wrap a',
+					// Include `.text` (the label span): the button is display:inline-flex, so its
+					// `.text` child is a flex item and `text-decoration` set on the <a> does NOT
+					// propagate to it (the Text Decoration control would silently do nothing).
+					// Other typography props inherit fine; decoration must hit `.text` directly.
+					'typography'         => '{{WRAPPER}} .rtsb-elementor-container .product-title-with-btn .btn-wrap a, {{WRAPPER}} .rtsb-elementor-container .product-title-with-btn .btn-wrap a .text',
 					'icon_size'          => [
 						'font_size' => '{{WRAPPER}} .rtsb-elementor-container .product-title-with-btn .btn-wrap a .icon',
 						'svg'       => '{{WRAPPER}} .rtsb-elementor-container .product-title-with-btn .btn-wrap a .icon svg',

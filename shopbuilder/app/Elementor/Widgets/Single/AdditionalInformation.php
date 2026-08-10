@@ -57,19 +57,18 @@ class AdditionalInformation extends ElementorWidgetBase {
 		$_product    = $product;
 		$controllers = $this->get_settings_for_display();
 		$product     = Fns::get_product();
-        $this->theme_support();
-		$data        = [
-			'template'    => 'elementor/single-product/additional-information',
-			'controllers' => $controllers,
+		$this->theme_support();
+		$data = [
+			'template'     => 'elementor/single-product/additional-information',
+			'controllers'  => $controllers,
+			'is_edit_mode' => $this->is_edit_mode(),
 		];
-        // add_filter( 'woocommerce_product_additional_information_heading', '__return_true' );
-        remove_filter( 'woocommerce_product_additional_information_heading', '__return_false' );
+		remove_filter( 'woocommerce_product_additional_information_heading', '__return_false' );
 		if ( empty( $controllers['show_title'] ) ) {
 			add_filter( 'woocommerce_product_additional_information_heading', '__return_false' );
 		}
 		Fns::load_template( $data['template'], $data );
-        $this->theme_support( 'render_reset' );
+		$this->theme_support( 'render_reset' );
 		$product = $_product; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 	}
-
 }

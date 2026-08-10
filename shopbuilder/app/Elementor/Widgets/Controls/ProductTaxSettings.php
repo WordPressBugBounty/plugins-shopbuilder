@@ -22,6 +22,8 @@ class ProductTaxSettings {
 	/**
 	 * Widget Field
 	 *
+	 * @param object $widget Widget.
+	 *
 	 * @return array
 	 */
 	public static function widget_fields( $widget ) {
@@ -67,7 +69,6 @@ class ProductTaxSettings {
 				'mode'      => 'group',
 				'type'      => 'typography',
 				'selector'  => $widget->selectors['label_typo'],
-				'exclude'   => [ 'text_transform', 'text_decoration', 'font_style', 'letter_spacing' ], // phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_exclude
 				'condition' => [
 					'show_label' => 'yes',
 				],
@@ -95,7 +96,6 @@ class ProductTaxSettings {
 				'mode'     => 'group',
 				'type'     => 'typography',
 				'selector' => $widget->selectors['value_typo'],
-				'exclude'  => [ 'text_transform', 'text_decoration', 'font_style', 'letter_spacing' ], // phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_exclude
 			],
 			'meta_value_color'               => [
 				'label'     => esc_html__( 'Color', 'shopbuilder' ),
@@ -117,6 +117,4 @@ class ProductTaxSettings {
 		];
 		return $fields;
 	}
-
-
 }

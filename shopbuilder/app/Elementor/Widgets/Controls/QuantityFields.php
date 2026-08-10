@@ -23,7 +23,7 @@ class QuantityFields {
 	/**
 	 * Widget Field
 	 *
-	 * @param object $widget Widget instance.
+	 * @param object $widget Widget object.
 	 *
 	 * @return array
 	 */
@@ -33,6 +33,7 @@ class QuantityFields {
 				'mode'  => 'section_start',
 				'label' => esc_html__( 'Quantity', 'shopbuilder' ),
 			],
+			// Note: Control Type may become a select-image control in a future iteration.
 			'quantity_style'        => [
 				'label'     => esc_html__( 'Style', 'shopbuilder' ),
 				'type'      => 'select',
@@ -129,7 +130,7 @@ class QuantityFields {
 	/**
 	 * Widget Field
 	 *
-	 * @param object $widget Widget instance.
+	 * @param object $widget Widget object.
 	 *
 	 * @return array
 	 */
@@ -231,7 +232,7 @@ class QuantityFields {
 				],
 			],
 			'quantity_background_color'         => [
-				'label'     => esc_html__( 'Quantity Backgeound', 'shopbuilder' ),
+				'label'     => esc_html__( 'Quantity Background', 'shopbuilder' ),
 				'type'      => 'color',
 				'selectors' => [
 					$widget->selectors['quantity_background_color'] => 'background: {{VALUE}}',
@@ -276,7 +277,7 @@ class QuantityFields {
 				],
 			],
 			'quantity_decrement_button_padding' => [
-				'label'      => esc_html__( 'Quantity Increment Button Padding', 'shopbuilder' ),
+				'label'      => esc_html__( 'Quantity Decrement Button Padding', 'shopbuilder' ),
 				'type'       => 'dimensions',
 				'size_units' => [ 'px' ],
 				'selectors'  => [

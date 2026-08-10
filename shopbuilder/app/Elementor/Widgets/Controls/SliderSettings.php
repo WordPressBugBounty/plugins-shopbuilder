@@ -23,6 +23,8 @@ class SliderSettings {
 	/**
 	 * Widget Field
 	 *
+	 * @param object $widget Widget instance.
+	 *
 	 * @return array
 	 */
 	public static function slider_style( $widget ) {
@@ -167,9 +169,6 @@ class SliderSettings {
 			'arrows_tabs_end'           => [
 				'mode' => 'tabs_end',
 			],
-			// 'style_section_end'         => [
-			// 'mode' => 'section_end',
-			// ],
 			'slider_dots_style'         => [
 				'type'            => 'html',
 				'raw'             => sprintf(
@@ -193,12 +192,8 @@ class SliderSettings {
 						'step' => 1,
 					],
 				],
-				'default'    => [
-					'unit' => 'px',
-					'size' => 30,
-				],
 				'selectors'  => [
-					$selector['dots_gap'] => 'padding-bottom: {{SIZE}}{{UNIT}};',
+					$selector['dots_gap'] => 'margin-left: calc({{SIZE}}{{UNIT}} / 2); margin-right: calc({{SIZE}}{{UNIT}} / 2);',
 				],
 				'condition'  => [
 					'show_dots!' => '',

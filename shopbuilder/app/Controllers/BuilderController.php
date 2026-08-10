@@ -219,6 +219,18 @@ class BuilderController {
 	 * @return bool
 	 */
 	protected function should_register_widget( $category, $import ) {
+		// On the frontend the Elementor Widgets Manager can initialise at an
+		// unpredictable time — e.g. Elementor Pro's Theme Builder boots it on
+		// template_redirect — when WooCommerce query conditionals such as
+		// is_shop()/is_archive() are not yet reliable. Widget registration is
+		// cached for the whole request, so gating it by those conditionals can
+		// permanently skip ShopBuilder widgets, leaving the builder template to
+		// render empty container shells. Register unconditionally on the
+		// frontend; keep the per-category gate only for the editor widget panel.
+		if ( ! is_admin() ) {
+			return true;
+		}
+
 		switch ( $category ) {
 			case 'product':
 				return BuilderFns::is_product() || $import;

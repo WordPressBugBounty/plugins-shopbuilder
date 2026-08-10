@@ -87,7 +87,7 @@ class CartTableSettings {
 
 				'separator' => 'default',
 				'selectors' => [
-					self::$selectors['clear_cart_button_bg_color'] => 'background-color: {{VALUE}};',
+					self::$selectors['clear_cart_button_bg_color'] => 'background-color: {{VALUE}} !important;',
 				],
 			],
 			'clear_cart_button_text_color'         => [
@@ -95,7 +95,7 @@ class CartTableSettings {
 				'type'      => 'color',
 
 				'selectors' => [
-					self::$selectors['clear_cart_button_text_color'] => 'color: {{VALUE}};',
+					self::$selectors['clear_cart_button_text_color'] => 'color: {{VALUE}} !important;',
 				],
 			],
 			'clear_cart_button_border_color'       => [
@@ -103,7 +103,7 @@ class CartTableSettings {
 				'type'      => 'color',
 
 				'selectors' => [
-					self::$selectors['clear_cart_button_border_color'] => 'border-color: {{VALUE}};',
+					self::$selectors['clear_cart_button_border_color'] => 'border-color: {{VALUE}} !important;',
 				],
 			],
 			'clear_cart_button_normal_end'         => [
@@ -119,7 +119,7 @@ class CartTableSettings {
 				'separator' => 'default',
 
 				'selectors' => [
-					self::$selectors['clear_cart_button_bg_color_hover'] => 'background-color: {{VALUE}};',
+					self::$selectors['clear_cart_button_bg_color_hover'] => 'background-color: {{VALUE}} !important;',
 				],
 			],
 			'clear_cart_button_text_color_hover'   => [
@@ -127,7 +127,7 @@ class CartTableSettings {
 				'type'      => 'color',
 
 				'selectors' => [
-					self::$selectors['clear_cart_button_text_color_hover'] => 'color: {{VALUE}};',
+					self::$selectors['clear_cart_button_text_color_hover'] => 'color: {{VALUE}} !important;',
 				],
 			],
 			'clear_cart_button_border_color_hover' => [
@@ -135,7 +135,7 @@ class CartTableSettings {
 				'type'      => 'color',
 
 				'selectors' => [
-					self::$selectors['clear_cart_button_border_color_hover'] => 'border-color: {{VALUE}};',
+					self::$selectors['clear_cart_button_border_color_hover'] => 'border-color: {{VALUE}} !important;',
 				],
 			],
 			'clear_cart_button_hover_end'          => [
@@ -1238,7 +1238,7 @@ class CartTableSettings {
 					],
 				],
 				'selectors' => [
-					self::$selectors['coupon_input_height'] => 'height: {{SIZE}}{{UNIT}} !important;',
+					self::$selectors['coupon_input_height'] => 'height: {{SIZE}}{{UNIT}} !important; max-height: {{SIZE}}{{UNIT}} !important;',
 				],
 			],
 			'coupon_input_border'      => [

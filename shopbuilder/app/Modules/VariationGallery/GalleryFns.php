@@ -179,7 +179,9 @@ class GalleryFns {
 		}
 		if ( is_array( $attachment_ids ) && ! empty( $attachment_ids ) ) {
 			foreach ( $attachment_ids as $i => $image_id ) {
-				if ( $image_id ) {
+				// Skip IDs whose attachment was deleted from the media library so
+				// the gallery never renders an empty (bordered) slide.
+				if ( $image_id && wp_attachment_is_image( $image_id ) ) {
 					$images[ $i ] = self::product_attachment_props( $image_id, $product );
 				}
 			}
@@ -240,7 +242,10 @@ class GalleryFns {
 			array_unshift( $gallery_images, $lead_image_id );
 		}
 
-		$gallery_images = array_values( array_unique( array_filter( array_map( 'absint', $gallery_images ) ) ) );
+		// Drop IDs whose attachment was deleted from the media library so the
+		// variation gallery never renders an empty (bordered) thumbnail/main slide.
+		$gallery_images = array_filter( array_unique( array_filter( array_map( 'absint', $gallery_images ) ) ), 'wp_attachment_is_image' );
+		$gallery_images = array_values( $gallery_images );
 
 		$images = [];
 		foreach ( $gallery_images as $image_id ) {
@@ -393,7 +398,10 @@ class GalleryFns {
 			}
 		}
 
-		$image_ids = array_values( array_unique( array_filter( $image_ids ) ) );
+		// Drop IDs whose attachment was deleted from the media library so the
+		// gallery never renders an empty (bordered) thumbnail/main slide.
+		$image_ids = array_filter( array_unique( array_filter( $image_ids ) ), 'wp_attachment_is_image' );
+		$image_ids = array_values( $image_ids );
 
 		return [
 			'image_ids'    => $image_ids,

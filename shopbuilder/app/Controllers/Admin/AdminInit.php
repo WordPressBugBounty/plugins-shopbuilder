@@ -119,8 +119,8 @@ class AdminInit {
 		);
 		add_submenu_page(
 			self::MENU_PAGE_SLUG,
-			esc_html__( 'Themes & Apps', 'shopbuilder' ),
-			esc_html__( 'Themes & Apps', 'shopbuilder' ),
+			esc_html__( 'Themes', 'shopbuilder' ),
+			esc_html__( 'Themes', 'shopbuilder' ),
 			self::MENU_CAPABILITY,
 			'rtsb-themes',
 			[ $this, 'get_themes_page' ],

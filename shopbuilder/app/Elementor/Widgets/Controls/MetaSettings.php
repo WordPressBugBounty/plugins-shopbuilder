@@ -64,40 +64,42 @@ class MetaSettings {
 				],
 			],
 			'row_gap'                   => [
-				'label'      => esc_html__( 'Meta Row gap(px)', 'shopbuilder' ),
-				'type'       => 'slider',
-				'mode'       => 'responsive',
-				'size_units' => [ 'px' ],
-				'range'      => [
+				'label'       => esc_html__( 'Meta Row gap(px)', 'shopbuilder' ),
+				'description' => esc_html__( 'Set the vertical spacing between meta rows.', 'shopbuilder' ),
+				'type'        => 'slider',
+				'mode'        => 'responsive',
+				'size_units'  => [ 'px' ],
+				'range'       => [
 					'px' => [
 						'min'  => 0,
 						'max'  => 100,
 						'step' => 1,
 					],
 				],
-				'default'    => [
+				'default'     => [
 					'size' => 20,
 				],
-				'selectors'  => [
+				'selectors'   => [
 					$widget->selectors['row_gap'] => 'row-gap: {{SIZE}}{{UNIT}}',
 				],
 			],
 			'column_gap'                => [
-				'label'      => esc_html__( 'Meta Column Gap (px)', 'shopbuilder' ),
-				'type'       => 'slider',
-				'mode'       => 'responsive',
-				'size_units' => [ 'px' ],
-				'range'      => [
+				'label'       => esc_html__( 'Meta Column Gap (px)', 'shopbuilder' ),
+				'description' => esc_html__( 'Set the horizontal spacing between meta columns.', 'shopbuilder' ),
+				'type'        => 'slider',
+				'mode'        => 'responsive',
+				'size_units'  => [ 'px' ],
+				'range'       => [
 					'px' => [
 						'min'  => 0,
 						'max'  => 100,
 						'step' => 1,
 					],
 				],
-				'default'    => [
+				'default'     => [
 					'size' => 15,
 				],
-				'selectors'  => [
+				'selectors'   => [
 					$widget->selectors['column_gap'] => 'column-gap: {{SIZE}}{{UNIT}}',
 				],
 			],

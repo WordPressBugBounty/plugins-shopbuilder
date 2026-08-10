@@ -251,10 +251,10 @@ class ProductImagesSettings {
 				],
 				'default'         => [
 					'unit' => 'px',
-					'size' => 6,
+					'size' => 4,
 				],
 				'desktop_default' => [
-					'size' => 5,
+					'size' => 4,
 					'unit' => 'px',
 				],
 				'tablet_default'  => [
@@ -314,6 +314,15 @@ class ProductImagesSettings {
 				'selectors'  => [
 					':root' => '--vg-thumb-border-radius:{{SIZE}}{{UNIT}};',
 					self::$selectors['thumbs_border_radius'] => 'border-radius: {{SIZE}}{{UNIT}}',
+				],
+			],
+			'gallery_thumbs_padding'      => [
+				'label'      => esc_html__( 'Item Inner Padding', 'shopbuilder' ),
+				'type'       => 'dimensions',
+				'mode'       => 'responsive',
+				'size_units' => [ 'px', 'em', '%' ],
+				'selectors'  => [
+					self::$selectors['gallery_thumbs_padding'] => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			],
 			'image_section_end'           => [
@@ -451,6 +460,10 @@ class ProductImagesSettings {
 						'max'  => 50,
 						'step' => 1,
 					],
+				],
+				'default'    => [
+					'unit' => 'px',
+					'size' => 12,
 				],
 				'selectors'  => [
 					':root' => '--vg-lightbox-icon-size: {{SIZE}}{{UNIT}}',

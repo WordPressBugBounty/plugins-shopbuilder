@@ -4,7 +4,7 @@ Donate link:
 Tags: Elementor, Woocommerce Builder, Elementor Woocommerce Builder, Woocommerce, Woocommerce Product
 Requires at least: 5.5
 Tested up to: 7.0
-Stable tag: 3.4.0
+Stable tag: 3.4.1
 Requires PHP: 7.4
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -424,6 +424,10 @@ If you like the ShopBuilder Plugin, then consider checking out our other WordPre
 
 == Changelog ==
 
+= 3.4.1 (Aug 10, 2026) =
+* Fix: Archive/Shop builder widgets no longer disappear on the frontend when Elementor Pro is active
+* Fix: Loaded the Elementor V4 atomic (container/flexbox) styles for builder templates on shop, archive, cart, checkout and product pages
+
 = 3.4.0 (Aug 02, 2026) =
 * New: Scoped all bundled Composer dependencies with PHP-Scoper to prevent conflicts with other plugins
 * Fix: Product Images widget lightbox icon now renders in the Elementor editor instead of the default magnifier
@@ -433,31 +437,6 @@ If you like the ShopBuilder Plugin, then consider checking out our other WordPre
 * Update: Variation Gallery skips re-rendering when the selected variation's images are already loaded, just sliding to the correct image
 * Add: "No Effect" option for the Variation Gallery Change Effect setting
 * Fix: Variation Gallery now falls back to the parent product's featured image when a variation has no image of its own
-
-= 3.3.0 (Jun 16, 2026) =
-* Update: Added module/widgets icons to the settings page
-* Update: Template Builder modal now opens instantly with a loader in the preview area
-* Fix: Template Builder no longer stuck loading when the pre-built templates server is unreachable
-* Update: Modal action buttons are disabled while pre-built templates are loading
-* Add: Show a "No preview templates available" message when no layouts are returned
-* Fix: Corrected placement of the "Elementor not activated" notice on the Elements settings tab
-* Fix: Review request notice no longer appears immediately after activation
-* Fix: Module enable/disable toggle now switches the module instead of opening its settings
-* Fix: Product position options now correctly read "Above Add To Cart" and "Below Add To Cart"
-* Fix: Variation Gallery Image Display now correctly displays the variation image
-* Fix: Empty Gallery Slider Blank Spece Is showing correctly
-* Fix: Imager Full Size Missing Error For "Variaiton Gallery" Module
-* Fix: Variation Swatch Button Style Control Added IN the Settings pages
-* Fix: Quick View modal close button now closes the popup
-* Fix: Compare now enforces the configured Compare Limit on the frontend
-* Fix: Compare columns now keep the backend order on the frontend
-* Fix: Changing the Compare page now reflects on the frontend
-* Fix: Product badge now respects the selected position (e.g. After Add to Cart / After Short Description)
-* Fix: Checkout field order set in the backend now applies on the checkout page
-* Fix: Checkout floating label no longer overlaps the placeholder text
-* Fix: Changing the Login/Logout button color no longer changes the Place Order button
-* Fix: Abandoned Cart - deleting an entry now actually removes it
-* Fix: Abandoned Cart - recovery emails are now sent to customers
 
 [See changelog for all versions.](https://raw.githubusercontent.com/radiustheme/changelog/refs/heads/main/shopbuilder.txt)
 

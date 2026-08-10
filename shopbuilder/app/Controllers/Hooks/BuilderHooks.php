@@ -162,6 +162,10 @@ class BuilderHooks {
 		if ( defined( 'RTSBPRO_VERSION' ) ) {
 			$classes[] = 'rtsb-shopbuilder-pro-v-' . RTSBPRO_VERSION;
 		}
+
+		if ( defined( 'ELEMENTOR_PRO_VERSION' ) ) {
+			$classes[] = 'rtsb-elementor-pro-v-' . ELEMENTOR_PRO_VERSION;
+		}
 		if ( Fns::is_woocommerce() || BuilderFns::is_builder_preview() ) {
 			$classes[] = 'woocommerce-page';
 		}
@@ -272,6 +276,45 @@ class BuilderHooks {
 		if ( method_exists( $document, 'enqueue_styles' ) ) {
 			$document->enqueue_styles();
 		}
+
+		// Elementor hooks its own frontend enqueue_styles() pass only when the
+		// *queried* object is a singular Elementor document (Frontend::init).
+		// On ShopBuilder frontend pages the queried object (shop/archive/cart/
+		// checkout/product) is never the builder template, so that pass never
+		// runs — leaving the elementor-frontend base stylesheet and, critically,
+		// the V4 atomic styles manager (which renders the template's flexbox/
+		// container CSS on elementor/frontend/after_enqueue_post_styles)
+		// un-triggered, so containers collapse to full width. We drive the pass
+		// manually below, but ONLY on the real frontend: in the Elementor editor
+		// preview and the ShopBuilder single-template preview the queried object
+		// *is* the template (singular + built with Elementor), so Elementor runs
+		// its own pass and firing ours early would interfere with the editor
+		// preview load (the panel waits on that iframe). Skip both cases.
+		$preview             = \Elementor\Plugin::$instance->preview ?? null;
+		$is_editor_view      = $preview && method_exists( $preview, 'is_editor_or_preview' ) && $preview->is_editor_or_preview();
+		$queried_document    = $documents->get( get_the_ID() );
+		$elementor_will_load = is_singular() && $queried_document && $queried_document->is_built_with_elementor();
+		$frontend            = \Elementor\Plugin::$instance->frontend ?? null;
+
+		if ( $is_editor_view || $elementor_will_load || ! $frontend || ! method_exists( $frontend, 'enqueue_styles' ) ) {
+			return;
+		}
+
+		// Enqueues the elementor-frontend base stylesheet; one-shot (internal
+		// static guard) so it is a no-op if something already ran it.
+		$frontend->enqueue_styles();
+
+		// The V4 Atomic_Styles_Manager only renders CSS for the post ids collected
+		// via elementor/post/render *before* the style pass runs. When another
+		// plugin triggers that pass first — e.g. Elementor Pro's Theme Builder
+		// rendering its own archive location — our builder template id is
+		// registered too late, so its per-template file (local-{id}-frontend-*.css)
+		// is written to disk but never enqueued, and containers stay full width.
+		// Re-firing the atomic trigger after registering the template above makes
+		// the manager enqueue that file. This action's only listener is the atomic
+		// styles manager, and wp_enqueue_style() de-duplicates handles, so the
+		// extra pass is safe.
+		do_action( 'elementor/frontend/after_enqueue_post_styles' );
 	}
 
 	/**

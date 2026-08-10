@@ -22,6 +22,8 @@ class AddInfoSettings {
 	/**
 	 * Widget Field
 	 *
+	 * @param object $widget Widget instance.
+	 *
 	 * @return array
 	 */
 	public static function widget_fields( $widget ) {
@@ -69,6 +71,14 @@ class AddInfoSettings {
 				'label'      => esc_html__( 'Margin', 'shopbuilder' ),
 				'type'       => 'dimensions',
 				'size_units' => [ 'px', '%', 'em' ],
+				'default'    => [
+					'top'      => '0',
+					'right'    => '0',
+					'bottom'   => '20',
+					'left'     => '0',
+					'unit'     => 'px',
+					'isLinked' => false,
+				],
 				'selectors'  => [
 					$widget->selectors['heading_margin'] => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -95,16 +105,42 @@ class AddInfoSettings {
 				],
 			],
 			'content_border'      => [
-				'mode'       => 'group',
-				'type'       => 'border',
-				'selector'   => $widget->selectors['content_border'],
-				'size_units' => [ 'px' ],
+				'mode'           => 'group',
+				'type'           => 'border',
+				'selector'       => $widget->selectors['content_border'],
+				'size_units'     => [ 'px' ],
+				'fields_options' => [
+					'border' => [
+						'default' => 'solid',
+					],
+					'width'  => [
+						'default' => [
+							'top'      => '1',
+							'right'    => '1',
+							'bottom'   => '1',
+							'left'     => '1',
+							'unit'     => 'px',
+							'isLinked' => true,
+						],
+					],
+					'color'  => [
+						'default' => '#e5e7eb',
+					],
+				],
 			],
 			'content_padding'     => [
 				'mode'       => 'responsive',
 				'label'      => esc_html__( 'Padding', 'shopbuilder' ),
 				'type'       => 'dimensions',
 				'size_units' => [ 'px', '%', 'em' ],
+				'default'    => [
+					'top'      => '12',
+					'right'    => '18',
+					'bottom'   => '12',
+					'left'     => '18',
+					'unit'     => 'px',
+					'isLinked' => false,
+				],
 				'selectors'  => [
 					$widget->selectors['content_padding'] => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -116,6 +152,4 @@ class AddInfoSettings {
 
 		return $fields;
 	}
-
-
 }
