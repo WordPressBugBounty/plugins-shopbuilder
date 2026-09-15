@@ -147,19 +147,23 @@ class AssetRegistry {
 	/**
 	 * Get bundled JS assets by context.
 	 *
+	 * @param bool $all Build every materialised context rather than only the one
+	 *                  this request serves. Used by the manual regeneration path.
+	 *
 	 * @return array
 	 */
-	public function get_bundled_js_by_context() {
+	public function get_bundled_js_by_context( $all = false ) {
 		$js_files_by_context = $this->get_contextual_assets( 'js' );
 		$bundled_contexts    = [];
+		$wanted              = $all ? array_keys( $js_files_by_context ) : $this->contexts_to_build( $js_files_by_context );
 
 		foreach ( $js_files_by_context as $context => $files ) {
-			if ( empty( $files ) ) {
+			if ( empty( $files ) || ! in_array( $context, $wanted, true ) ) {
 				continue;
 			}
 
 			$bundler = new AssetBundler( "rtsb-bundled-$context", $files, 'js' );
-			$src     = $bundler->build();
+			$src     = $this->build_bundle( $bundler, $context );
 			$deps    = [ 'jquery', 'rtsb-tipsy' ];
 
 			$builder_page_id = BuilderFns::builder_page_id_by_page();
@@ -1192,7 +1196,7 @@ class AssetRegistry {
 
 		$handle  = 'rtsb-bundled';
 		$bundler = new AssetBundler( $handle, $this->js_files, 'js' );
-		$src     = $bundler->build();
+		$src     = $this->build_bundle( $bundler );
 		$deps    = [ 'jquery', 'rtsb-tipsy' ];
 
 		$builder_page_id = BuilderFns::builder_page_id_by_page();
@@ -1226,7 +1230,7 @@ class AssetRegistry {
 		}
 
 		$bundler = new AssetBundler( 'rtsb-bundled', $this->css_files, 'css' );
-		$src     = $bundler->build();
+		$src     = $this->build_bundle( $bundler );
 
 		$this->bundled_css = [
 			'handle' => 'rtsb-bundled',
@@ -1239,19 +1243,23 @@ class AssetRegistry {
 	/**
 	 * Get bundled CSS by context
 	 *
+	 * @param bool $all Build every materialised context rather than only the one
+	 *                  this request serves. Used by the manual regeneration path.
+	 *
 	 * @return array|null
 	 */
-	public function get_bundled_css_by_context() {
+	public function get_bundled_css_by_context( $all = false ) {
 		$css_files_by_context = $this->get_contextual_assets( 'css' );
 		$bundled_contexts     = [];
+		$wanted               = $all ? array_keys( $css_files_by_context ) : $this->contexts_to_build( $css_files_by_context );
 
 		foreach ( $css_files_by_context as $context => $files ) {
-			if ( empty( $files ) ) {
+			if ( empty( $files ) || ! in_array( $context, $wanted, true ) ) {
 				continue;
 			}
 
 			$bundler = new AssetBundler( "rtsb-bundled-$context", $files, 'css' );
-			$src     = $bundler->build();
+			$src     = $this->build_bundle( $bundler, $context );
 
 			$bundled_contexts[ $context ] = [
 				'handle' => "rtsb-bundled-$context",
@@ -1260,6 +1268,68 @@ class AssetRegistry {
 		}
 
 		return $bundled_contexts;
+	}
+
+	/**
+	 * The context or contexts this request actually needs built.
+	 *
+	 * A request serves exactly one bundle per type: load_optimized_assets() and
+	 * enqueue_optimized_assets() both resolve the detected context, falling back
+	 * to `global` when it has no mapping of its own. Building the others produces
+	 * files this request will never reference.
+	 *
+	 * Only the selected context is returned, never context plus global: where a
+	 * contextual bundle exists, get_contextual_assets() has already merged the
+	 * global files into it, so global is not served alongside.
+	 *
+	 * Resolved separately for CSS and JS, because the two maps are built
+	 * independently and a context can be mapped for one type but not the other.
+	 *
+	 * @param array $map Context to file-list map for a single asset type.
+	 *
+	 * @return array List of context keys to build.
+	 */
+	protected function contexts_to_build( array $map ) {
+		$context = Fns::detect_context();
+
+		if ( isset( $map[ $context ] ) ) {
+			return [ $context ];
+		}
+
+		return isset( $map['global'] ) ? [ 'global' ] : [];
+	}
+
+	/**
+	 * Build a bundle and report an unusable result to Fns.
+	 *
+	 * AssetBundler::build() returns an empty string when it cannot write a file,
+	 * for example when the cache directory is not writable or when the scoped
+	 * minifier is not loadable yet on the first request after an upgrade.
+	 * Registering a handle with an empty source makes WordPress print nothing at
+	 * all, so the request must fall back to the unbundled assets instead.
+	 *
+	 * @param AssetBundler $bundler Bundler instance.
+	 * @param string|null  $context Context this bundle belongs to, null when not
+	 *                              using contextual loading.
+	 *
+	 * @return string Bundle URL, or an empty string on failure.
+	 */
+	private function build_bundle( AssetBundler $bundler, $context = null ) {
+		$src = $bundler->build();
+
+		if ( '' !== $src ) {
+			return $src;
+		}
+
+		// Only fall back when the bundle that would actually be served is the one
+		// that failed. enqueue_optimized_assets() serves the detected context and
+		// falls back to `global`, so a failure in any other context is harmless
+		// and must not disable optimization for the whole request.
+		if ( null === $context || 'global' === $context || Fns::detect_context() === $context ) {
+			Fns::mark_optimization_unavailable();
+		}
+
+		return $src;
 	}
 
 	/**
@@ -1275,9 +1345,12 @@ class AssetRegistry {
 
 		$this->collect_assets();
 
+		// Explicitly eager: this is the manual "Purge Asset Cache" path, which is
+		// expected to rebuild every materialised context rather than only the one
+		// the current request happens to serve.
 		return [
-			'js'  => $this->contextual_loading ? $this->get_bundled_js_by_context() : $this->get_bundled_js(),
-			'css' => $this->contextual_loading ? $this->get_bundled_css_by_context() : $this->get_bundled_css(),
+			'js'  => $this->contextual_loading ? $this->get_bundled_js_by_context( true ) : $this->get_bundled_js(),
+			'css' => $this->contextual_loading ? $this->get_bundled_css_by_context( true ) : $this->get_bundled_css(),
 		];
 	}
 

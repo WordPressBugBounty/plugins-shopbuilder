@@ -36,19 +36,11 @@ $randThumbnail     = wp_rand();
 // present in the DOM if at least one variation has a gallery so JS can populate
 // it on variation change; otherwise, skip it to avoid the blank space.
 $has_any_gallery_images = is_array( $attachment_ids ) && count( $attachment_ids ) > 0;
-if ( ! $has_any_gallery_images && $product && $product->is_type( 'variable' ) ) {
-	foreach ( $product->get_children() as $child_id ) {
-		if ( get_post_meta( $child_id, 'rtsb_vg_images', true ) ) {
-			$has_any_gallery_images = true;
-			break;
-		}
-	}
+if ( ! $has_any_gallery_images ) {
+	$has_any_gallery_images = GalleryFns::product_has_variation_gallery( $product );
 }
 
-$galleryStyle = 'bottom';
-if ( rtsb()->has_pro() ) {
-	$galleryStyle = GalleryFns::get_options( 'gallery_style' ) ?: $galleryStyle;
-}
+$galleryStyle    = GalleryFns::get_gallery_style();
 $image_zoom      = GalleryFns::get_options( 'image_zoom' ) ?: '';
 $adaptive_height = boolval( GalleryFns::get_options( 'adaptive_height' ) );
 $slider_options  = [

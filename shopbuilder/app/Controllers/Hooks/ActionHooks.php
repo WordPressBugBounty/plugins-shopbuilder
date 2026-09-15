@@ -34,6 +34,8 @@ class ActionHooks {
 		// preventing the "invalid_schedule" (Event schedule does not exist) error.
 		add_filter( 'cron_schedules', [ CartRecoveryCron::instance(), 'abandoned_cart_cron' ] ); // phpcs:ignore WordPress.WP.CronInterval.ChangeDetected
 		add_action( 'wp_head', [ __CLASS__, 'og_metatags_for_sharing' ], 1 );
+		add_action( 'wp_head', [ __CLASS__, 'reveal_builder_content_css' ], 2 );
+		add_filter( 'style_loader_tag', [ __CLASS__, 'defer_non_critical_styles' ], 10, 4 );
 		add_action( 'woocommerce_share', [ __CLASS__, 'shopbuilder_share' ], 20 );
 		add_action( 'rtsb/wcqv/product/summary', [ __CLASS__, 'shopbuilder_share' ], 40 );
 		add_action( 'rtsb/shop/product/image', [ __CLASS__, 'render_image' ], 10, 2 );
@@ -335,6 +337,90 @@ class ActionHooks {
 
 		Fns::print_html( '<meta property="og:site_name" content="' . get_bloginfo( 'name' ) . '" />', true );
 		Fns::print_html( '<meta name="twitter:card" content="summary" />', true );
+	}
+
+	/**
+	 * Reveal the builder content via a CSS-only failsafe.
+	 *
+	 * The builder wrapper is hidden by `.content-invisible`
+	 * (visibility:hidden;opacity:0) to avoid a flash of unstyled content, and is
+	 * normally un-hidden by JavaScript on DOMContentLoaded. On mobile that event
+	 * waits for the ShopBuilder JS bundle to download+parse, so the already-loaded
+	 * LCP product image cannot paint until the script runs — inflating LCP
+	 * "Element Render Delay".
+	 *
+	 * This inlines a tiny keyframe in the <head> that reveals the content from
+	 * CSS alone, capping the hidden window (default 200ms) regardless of when the
+	 * JS runs. First paint is therefore driven by HTML + CSS, not JavaScript. The
+	 * existing JS reveal still fires and simply removes the class earlier on fast
+	 * connections. Only emitted while the gate is active.
+	 *
+	 * @return void
+	 */
+	public static function reveal_builder_content_css() {
+		if ( is_admin() || ! Fns::content_invisible() ) {
+			return;
+		}
+
+		/**
+		 * APPLY_FILTERS: rtsb/builder/content_reveal_delay
+		 *
+		 * Maximum time (ms) the builder content may stay hidden before the CSS
+		 * failsafe reveals it, independent of JavaScript. Lower = earlier paint,
+		 * higher = longer anti-FOUC window.
+		 *
+		 * @param int $delay Delay in milliseconds. Default 200.
+		 */
+		$delay = (int) apply_filters( 'rtsb/builder/content_reveal_delay', 200 );
+
+		$css = '.rtsb-builder-content.content-invisible{animation:rtsb-reveal-builder-content 1ms linear ' . absint( $delay ) . 'ms forwards}'
+			. '@keyframes rtsb-reveal-builder-content{to{visibility:visible;opacity:1}}';
+
+		Fns::print_html( '<style id="rtsb-content-reveal">' . $css . '</style>', true );
+	}
+
+	/**
+	 * Make non-critical ShopBuilder stylesheets non-render-blocking.
+	 *
+	 * Certain stylesheets (e.g. the icon font) are not required to paint the
+	 * first viewport, yet they sit in the <head> as render-blocking <link>s and
+	 * delay FCP. This loads them with `media="print"` and swaps to `all` on load,
+	 * with a <noscript> fallback so nothing breaks without JavaScript.
+	 *
+	 * @param string $tag    The <link> tag for the enqueued style.
+	 * @param string $handle The style handle.
+	 * @param string $href   The stylesheet source URL.
+	 * @param string $media  The media attribute.
+	 *
+	 * @return string
+	 */
+	public static function defer_non_critical_styles( $tag, $handle, $href, $media ) {
+		if ( is_admin() ) {
+			return $tag;
+		}
+
+		/**
+		 * APPLY_FILTERS: rtsb/frontend/non_critical_styles
+		 *
+		 * Handles of ShopBuilder stylesheets to load non-render-blocking. Only
+		 * include styles that are NOT needed to paint the first viewport.
+		 *
+		 * @param array $handles Style handles. Default: icon font.
+		 */
+		$handles = (array) apply_filters( 'rtsb/frontend/non_critical_styles', [ 'rtsb-fonts' ] );
+
+		if ( ! in_array( $handle, $handles, true ) || false !== strpos( $tag, "media='print'" ) ) {
+			return $tag;
+		}
+
+		$deferred = preg_replace(
+			"/media=(['\"])" . preg_quote( $media, '/' ) . "\\1/",
+			'media="print" onload="this.media=\'all\';this.onload=null;"',
+			$tag
+		);
+
+		// Fallback to the original blocking tag when JavaScript is unavailable.
+		return $deferred . '<noscript>' . $tag . '</noscript>';
 	}
 
 	/**

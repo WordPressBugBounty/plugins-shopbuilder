@@ -58,6 +58,7 @@ final class VariationGalleryInit {
 	private function init() {
 		GalleryAdmin::instance();
 		GalleryFrontEnd::instance();
+		GalleryMigration::instance();
 	}
 	/**
 	 * Shared dependencies.
@@ -193,6 +194,11 @@ final class VariationGalleryInit {
 					'add_media'    => esc_html__( 'Add Media', 'shopbuilder' ),
 					'add_video'    => esc_html__( 'Add Video', 'shopbuilder' ),
 					'sure_txt'     => esc_html__( 'Are you sure to delete?', 'shopbuilder' ),
+					'choose_image' => esc_html__( 'Choose an Image', 'shopbuilder' ),
+					'add_image'    => esc_html__( 'Add Image', 'shopbuilder' ),
+					'edit_image'   => esc_html__( 'Edit Image', 'shopbuilder' ),
+					'update_image' => esc_html__( 'Update Image', 'shopbuilder' ),
+					'remove_image' => esc_html__( 'Remove', 'shopbuilder' ),
 				]
 			);
 		}

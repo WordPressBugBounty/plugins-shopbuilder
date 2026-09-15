@@ -46,25 +46,27 @@ if ( ! defined( 'ABSPATH' ) ) {
 			/**
 			 * Category Image.
 			 */
-			if ( $image_link ) {
-				$tax_type   = ! empty( $tag_term ) ? 'Tag' : 'Category';
-				$aria_label = esc_attr(
-					/* translators: 1. Taxonomy Type, 2. Product Category Name */
-					sprintf( __( 'Image link for %1$s: %2$s', 'shopbuilder' ), $tax_type, $title )
-				);
-				?>
-				<figure>
-					<a href="<?php echo esc_url( $cat_link ); ?>" target="<?php echo esc_attr( $target ); ?>" class="rtsb-img-link" aria-label="<?php echo esc_attr( $aria_label ); ?>">
-						<?php
-						Fns::get_product_image( $img_html );
-						?>
-					</a>
-				</figure>
-				<?php
-			} else {
-				echo '<figure class="rtsb-img-link">';
-				Fns::get_product_image( $img_html );
-				echo '</figure>';
+			if ( $img_html ) {
+				if ( $image_link ) {
+					$tax_type   = ! empty( $tag_term ) ? 'Tag' : 'Category';
+					$aria_label = esc_attr(
+						/* translators: 1. Taxonomy Type, 2. Product Category Name */
+						sprintf( __( 'Image link for %1$s: %2$s', 'shopbuilder' ), $tax_type, $title )
+					);
+					?>
+					<figure>
+						<a href="<?php echo esc_url( $cat_link ); ?>" target="<?php echo esc_attr( $target ); ?>" class="rtsb-img-link" aria-label="<?php echo esc_attr( $aria_label ); ?>">
+							<?php
+							Fns::get_product_image( $img_html );
+							?>
+						</a>
+					</figure>
+					<?php
+				} else {
+					echo '<figure class="rtsb-img-link">';
+					Fns::get_product_image( $img_html );
+					echo '</figure>';
+				}
 			}
 
 			/**

@@ -111,6 +111,28 @@ class ProductImages extends ElementorWidgetBase {
 					});
 					$slider.rtsb_slider();
 				});
+				// The sync writes a fixed px height onto the thumbnail column and its
+				// slots. Without re-running it on viewport change that value goes stale
+				// the moment the layout reflows — switching to a responsive/device width
+				// leaves a tall thumbnail column beside a much smaller main image. The
+				// frontend module rebinds on resize for exactly this reason; the editor
+				// preview needs the same.
+				window.rtsbEditorBindResize($ctx);
+			};
+			// Re-run the height sync (debounced) whenever the viewport changes, so the
+			// side-thumbnail layouts stay correct in Elementor's responsive modes and in
+			// the browser's device toolbar.
+			window.rtsbEditorBindResize = window.rtsbEditorBindResize || function ($ctx) {
+				var resizeTimer;
+				jQuery(window).off('resize.rtsbEditorVg').on('resize.rtsbEditorVg', function () {
+					clearTimeout(resizeTimer);
+					resizeTimer = setTimeout(function () {
+						var $scope = ($ctx && $ctx.length) ? $ctx : jQuery(document);
+						$scope.find('.rtsb-carousel-slider').each(function () {
+							window.rtsbEditorSyncThumbHeight(jQuery(this));
+						});
+					}, 150);
+				});
 			};
 			// Size the thumbnail column (and its slots) to the main image height, the
 			// same way the frontend module does, so the editor preview isn't unbounded.
@@ -140,12 +162,42 @@ class ProductImages extends ElementorWidgetBase {
 					thumbEl.swiper.update();
 				}
 			};
+			// Re-scan for gallery wrappers, whichever way the module happens to be
+			// available. The module registers itself with the RTSB registry only when
+			// RTSB was already initialised at bundle-eval time; otherwise it just
+			// exposes window.rtsbVariationGallery. Asking the registry alone therefore
+			// silently no-ops in the Elementor template-builder preview, so the module
+			// never runs and `rtsb-content-loading` (opacity:0) is never removed.
+			window.rtsbRefreshVariationGallery = window.rtsbRefreshVariationGallery || function () {
+				var modules = window.RTSB && window.RTSB.modules;
+				var mod = (modules && typeof modules.get === 'function') ? modules.get('variationGallery') : null;
+				if (mod && typeof mod.refresh === 'function') {
+					mod.refresh();
+					return;
+				}
+				if (typeof window.rtsbVariationGallery === 'function') {
+					window.rtsbVariationGallery();
+					return;
+				}
+				if (typeof window.waitForRTSB === 'function') {
+					window.waitForRTSB(function (RTSB) {
+						RTSB.modules.get('variationGallery')?.refresh();
+					});
+				}
+			};
+			// Last-resort reveal: the wrapper ships with `rtsb-content-loading`
+			// (opacity:0) and every init path above is responsible for dropping it. If
+			// they all fail the gallery is invisible with no way back, so uncover it
+			// rather than leave a blank box.
+			window.rtsbRevealGalleryFallback = window.rtsbRevealGalleryFallback || function () {
+				setTimeout(function () {
+					jQuery('.rtsb-vg-main-slider-wrapper.rtsb-content-loading').removeClass('rtsb-content-loading');
+				}, 3000);
+			};
 			if (!'<?php echo esc_attr( Fns::is_optimization_enabled() ); ?>') {
 				setTimeout(function() {
 					window.rtsbInitGallerySliders();
-					if (typeof window.rtsbVariationGallery === 'function') {
-						window.rtsbVariationGallery();
-					}
+					window.rtsbRefreshVariationGallery();
 				}, 600);
 			} else {
 				if (typeof elementorFrontend !== 'undefined') {
@@ -156,13 +208,19 @@ class ProductImages extends ElementorWidgetBase {
 							// the rtsb_slider plugin, not the RTSB module system, so it must
 							// not be gated behind waitForRTSB (which may not resolve here).
 							window.rtsbInitGallerySliders($scope);
-							window.waitForRTSB((RTSB) => {
-								RTSB.modules.get('variationGallery')?.refresh();
-							});
+							window.rtsbRefreshVariationGallery();
 						}
 					);
+				} else {
+					// No Elementor frontend on this request (some preview/standalone
+					// renders): nothing would ever initialise the module otherwise.
+					jQuery(function () {
+						window.rtsbInitGallerySliders();
+						window.rtsbRefreshVariationGallery();
+					});
 				}
 			}
+			window.rtsbRevealGalleryFallback();
 			/*
 			* Initialize all galleries on page.
 			*/
@@ -170,9 +228,17 @@ class ProductImages extends ElementorWidgetBase {
 				const that = this;
 
 				setTimeout(function () {
-					jQuery(this).trigger('wc-product-gallery-before-init', [this, wc_single_product_params]);
+					// `wc_single_product_params` is localised on WooCommerce's
+					// `wc-single-product` script, which is absent in some contexts —
+					// Elementor template previews most commonly. Referencing it there
+					// throws a ReferenceError that aborts gallery initialisation, so
+					// bail out quietly instead.
+					if (typeof wc_single_product_params === 'undefined' || typeof jQuery(that).wc_product_gallery !== 'function') {
+						return;
+					}
+					jQuery(that).trigger('wc-product-gallery-before-init', [that, wc_single_product_params]);
 					jQuery(that).wc_product_gallery(wc_single_product_params);
-					jQuery(that).trigger('wc-product-gallery-after-init', [this, wc_single_product_params]);
+					jQuery(that).trigger('wc-product-gallery-after-init', [that, wc_single_product_params]);
 				}, 600);
 
 			});

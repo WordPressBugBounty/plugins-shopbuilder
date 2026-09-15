@@ -2,9 +2,9 @@
 Contributors: techlabpro1, mamunnu, mamunur105, srafiz
 Donate link:
 Tags: Elementor, Woocommerce Builder, Elementor Woocommerce Builder, Woocommerce, Woocommerce Product
-Requires at least: 5.5
-Tested up to: 7.0
-Stable tag: 3.4.1
+Requires at least: 6.0
+Tested up to: 7.1
+Stable tag: 3.4.2
 Requires PHP: 7.4
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -423,6 +423,20 @@ If you like the ShopBuilder Plugin, then consider checking out our other WordPre
 * You can report security bugs through the Patchstack Vulnerability Disclosure Program. The Patchstack team help validate, triage and handle any security vulnerabilities. [Report a security vulnerability.](https://patchstack.com/database/vdp/shopbuilder)
 
 == Changelog ==
+
+= 3.4.2 (Aug 15, 2026) =
+* New: Order Review widget can show an editable quantity selector on the checkout page
+* Fix: PHP 8.5 deprecation notice ("Using null as an array offset") from the ShopBuilder admin bar cache menu
+* Security: Fixed a reflected XSS in the Product Archive widget where a crafted search term could break out of the data-rtsb-ajax attribute and inject event handlers (affects 3.4.1 and earlier)
+* Fix: Search terms containing quotes, apostrophes, ampersands or non-Latin characters are now preserved correctly by Ajax load more, pagination and filters on search result pages
+* Improvement: Faster mobile LCP on product archives - fetchpriority=high on the first row of images, and a CSS failsafe reveals the grid without waiting for JavaScript
+* Improvement: Icon font stylesheet no longer render-blocking (loads non-blocking with noscript fallback)
+* Fix: Add to Cart widget Variation style controls now work with the Variation Swatches module
+* Fix: Module settings repeater fields (e.g. Volume Discount rules) no longer jump the cursor to the end of the input while typing
+* Fix: Product Filters widget no longer renders blank on category archives when a persistent object cache is active
+* Fix: Fatal error "Cannot declare class MatthiasMullie\Minify\JS" when another plugin bundles the same library - bundled dependencies are namespaced again
+* Fix: Product widgets now fall back to the default layout instead of rendering nothing and printing a "load_template was called incorrectly" notice when a theme or addon layout is no longer available
+* Fix: Product Filters category counts no longer shrink to an overlap of the selected category, and sibling categories are no longer hidden, when a category filter is applied on the shop page
 
 = 3.4.1 (Aug 10, 2026) =
 * Fix: Archive/Shop builder widgets no longer disappear on the frontend when Elementor Pro is active

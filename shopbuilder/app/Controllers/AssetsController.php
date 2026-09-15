@@ -138,8 +138,16 @@ class AssetsController {
 		$pro_version     = defined( 'RTSBPRO_VERSION' ) ? RTSBPRO_VERSION : '0';
 		$addon_condition = version_compare( $pro_version, '1.9.0', '<' );
 
+		$optimized = [];
+
 		if ( ! rtsb()->has_pro() && Fns::is_optimization_enabled() ) {
-			$this->styles[] = AssetRegistry::instance()->load_optimized_assets();
+			$optimized = AssetRegistry::instance()->load_optimized_assets();
+		}
+
+		// An empty `src` means the bundle could not be built. Registering it would
+		// produce a handle WordPress never prints, so use the unbundled assets.
+		if ( ! empty( $optimized['src'] ) ) {
+			$this->styles[] = $optimized;
 		} else {
 			if ( $addon_condition ) {
 				$this->styles[] = [
@@ -273,8 +281,15 @@ class AssetsController {
 			];
 		}
 
+		$optimized = [];
+
 		if ( ! rtsb()->has_pro() && Fns::is_optimization_enabled() ) {
-			$this->scripts[] = AssetRegistry::instance()->load_optimized_assets( 'js' );
+			$optimized = AssetRegistry::instance()->load_optimized_assets( 'js' );
+		}
+
+		// See get_public_styles(): an empty `src` means the bundle build failed.
+		if ( ! empty( $optimized['src'] ) ) {
+			$this->scripts[] = $optimized;
 		} else {
 			$this->scripts[] = [
 				'handle' => 'rtsb-public',

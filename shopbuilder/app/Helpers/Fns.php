@@ -15,6 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use RadiusTheme\SB\Dependencies\CodesVault\Howdyqb\DB;
 use DateTime;
+use WP_Query;
 use WP_Styles;
 use WC_Product;
 use Elementor\Plugin;
@@ -37,6 +38,42 @@ class Fns {
 	 * @var array
 	 */
 	private static $cache = [];
+
+	/**
+	 * Whether asset bundling failed during this request.
+	 *
+	 * Set by AssetRegistry when AssetBundler::build() cannot produce a file, for
+	 * example on the first request after a plugin upgrade while the autoloader
+	 * still points at the removed files, or when the cache directory turns out
+	 * not to be writable. Once set, is_optimization_enabled() reports false for
+	 * the remainder of the request so the callers register and enqueue the plain
+	 * unbundled assets instead of a stylesheet handle with an empty source.
+	 *
+	 * Request scoped on purpose: it must not be persisted, the next request
+	 * retries the build.
+	 *
+	 * @var bool
+	 */
+	private static $optimization_unavailable = false;
+
+	/**
+	 * Flag that a bundle could not be produced during this request.
+	 *
+	 * @return void
+	 */
+	public static function mark_optimization_unavailable() {
+		self::$optimization_unavailable = true;
+	}
+
+	/**
+	 * Whether bundling has been marked unavailable for this request.
+	 *
+	 * @return bool
+	 */
+	public static function is_optimization_unavailable() {
+		return self::$optimization_unavailable;
+	}
+
 	/**
 	 * Check if the stored license is valid. Its Only Show Pro Label.
 	 *
@@ -244,8 +281,18 @@ class Fns {
 	 * @return array|false|mixed
 	 */
 	public static function get_all_user_roles() {
+		// Memoized because the settings schema asks for the role list several
+		// times per request, and the miss path require_once()s an admin-only
+		// WordPress file. The static also covers the legitimate empty-result
+		// case, which wp_cache_get() alone cannot distinguish from a miss.
+		static $memo = null;
+
+		if ( null !== $memo ) {
+			return $memo;
+		}
+
 		$cache_key = 'rtsb_get_user_roles';
-		$roles     = wp_cache_get( $cache_key, 'shopbuilder' );
+		$roles     = wp_cache_get( $cache_key, Cache::group() );
 
 		if ( empty( $roles ) ) {
 			if ( ! function_exists( 'get_editable_roles' ) ) {
@@ -261,10 +308,16 @@ class Fns {
 				}
 				$roles[ $key ] = $role['name'];
 			}
+
+			// Only prime the object cache on a miss. Re-writing it on every hit
+			// also re-appended the key to the tracked data-cache index.
+			wp_cache_set( $cache_key, $roles, Cache::group(), 12 * HOUR_IN_SECONDS );
+			Cache::set_data_cache_key( $cache_key );
 		}
-		wp_cache_set( $cache_key, $roles, 'shopbuilder' );
-		Cache::set_data_cache_key( $cache_key );
-		return $roles;
+
+		$memo = $roles;
+
+		return $memo;
 	}
 
 	/**
@@ -412,7 +465,7 @@ class Fns {
 	 */
 	public static function load_template( $template_name, $args = null, $return = false, $template_path = '', $plugin_path = '' ) {
 		$cache_key = sanitize_key( implode( '-', [ 'template', $template_name, $template_path ] ) );
-		$located   = (string) wp_cache_get( $cache_key, 'shopbuilder' );
+		$located   = (string) wp_cache_get( $cache_key, Cache::group() );
 		if ( ! $located ) {
 			$located = self::locate_template( $template_name, $template_path, $plugin_path );
 			// Don't cache the absolute path so that it can be shared between web servers with different paths.
@@ -423,8 +476,12 @@ class Fns {
 			$located = wc_untokenize_path( $located, wc_get_path_define_tokens() );
 		}
 		if ( ! file_exists( $located ) ) {
+			// $located is empty when the template could not be found anywhere,
+			// so report the requested name instead of an empty path.
+			$reported = $located ? $located : $template_name;
+
 			// translators: %s template.
-			self::doing_it_wrong( __FUNCTION__, sprintf( __( '%s does not exist.', 'shopbuilder' ), '<code>' . $located . '</code>' ), '1.0' );
+			self::doing_it_wrong( __FUNCTION__, sprintf( __( '%s does not exist.', 'shopbuilder' ), '<code>' . esc_html( $reported ) . '</code>' ), '1.0' );
 
 			return;
 		}
@@ -555,13 +612,13 @@ class Fns {
 
 		global $wpdb;
 		$cache_key = 'rtsb_prepared_product_id';
-		$_post_id  = wp_cache_get( $cache_key, 'shopbuilder' );
+		$_post_id  = wp_cache_get( $cache_key, Cache::group() );
 		if ( false === $_post_id || 'publish' !== get_post_status( $_post_id ) ) {
             // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
 			$_post_id = $wpdb->get_var(
 				$wpdb->prepare( "SELECT MAX(ID) FROM {$wpdb->prefix}posts WHERE post_type =  %s AND post_status IN('publish', 'draft')", 'product' )
 			);
-			wp_cache_set( $cache_key, $_post_id, 'shopbuilder', 12 * HOUR_IN_SECONDS );
+			wp_cache_set( $cache_key, $_post_id, Cache::group(), 12 * HOUR_IN_SECONDS );
 			Cache::set_data_cache_key( $cache_key );
 		}
 
@@ -608,6 +665,15 @@ class Fns {
 	 * @return array
 	 */
 	public static function get_pages() {
+		// Memoized because this only feeds admin select fields, yet the settings
+		// schema is built on every request and asks for it several times. Each
+		// miss runs a full get_pages() query and hydrates every page object.
+		static $memo = null;
+
+		if ( null !== $memo ) {
+			return $memo;
+		}
+
 		$pages    = [];
 		$rawPages = get_pages();
 		if ( ! empty( $rawPages ) ) {
@@ -616,7 +682,9 @@ class Fns {
 			}
 		}
 
-		return $pages;
+		$memo = $pages;
+
+		return $memo;
 	}
 
 	/**
@@ -995,6 +1063,14 @@ class Fns {
 	/**
 	 * Prints HTMl.
 	 *
+	 * The full-markup branch is echoed as-is. It used to run stripslashes_deep(),
+	 * which corrupts already-rendered markup: product loop templates embed JSON in
+	 * attributes (e.g. the Variation Swatches `data-product_variations` payload),
+	 * and stripping backslashes turns `\"` into `"` and `\n` into `n`, so the JSON
+	 * no longer parses and every swatch renders disabled. Rendered HTML never
+	 * carries WordPress slashes — values that do are unslashed where they are read
+	 * (see stripslashes_value()), not at output time.
+	 *
 	 * @param string $html HTML.
 	 * @param bool   $allHtml All HTML.
 	 *
@@ -1005,7 +1081,7 @@ class Fns {
 			return;
 		}
 		if ( $allHtml ) {
-			echo stripslashes_deep( $html ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			echo $html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		} else {
 			echo wp_kses_post( stripslashes_deep( $html ) );
 		}
@@ -1236,6 +1312,16 @@ class Fns {
 	 * @return array
 	 */
 	public static function get_image_sizes() {
+		// Memoized: called repeatedly while the settings schema is built, and each
+		// call loops every registered size doing three get_option() lookups for
+		// the core ones. Image sizes are registered on after_setup_theme, long
+		// before anything here runs, so the list cannot change mid-request.
+		static $memo = null;
+
+		if ( null !== $memo ) {
+			return $memo;
+		}
+
 		global $_wp_additional_image_sizes;
 
 		$sizes = [];
@@ -1263,7 +1349,9 @@ class Fns {
 		$imgSize['full']        = esc_html__( 'Full size', 'shopbuilder' );
 		$imgSize['rtsb_custom'] = esc_html__( 'Custom image size', 'shopbuilder' );
 
-		return $imgSize;
+		$memo = $imgSize;
+
+		return $memo;
 	}
 
 	/**
@@ -1727,19 +1815,20 @@ class Fns {
 	/**
 	 * Get Featured Image HTML.
 	 *
-	 * @param string $type Image type.
-	 * @param int    $post_id Post ID.
-	 * @param string $f_img_size Image size.
-	 * @param null   $default_img_id Default image ID.
-	 * @param array  $custom_img_size Custom image size.
-	 * @param bool   $lazy Lazy load check.
-	 * @param bool   $hover Hover image.
-	 * @param bool   $gallery Gallery image.
-	 * @param bool   $custom_image_id Custom category image ID.
+	 * @param string      $type Image type.
+	 * @param int         $post_id Post ID.
+	 * @param string      $f_img_size Image size.
+	 * @param null        $default_img_id Default image ID.
+	 * @param array       $custom_img_size Custom image size.
+	 * @param bool        $lazy Lazy load check.
+	 * @param bool        $hover Hover image.
+	 * @param bool        $gallery Gallery image.
+	 * @param bool        $custom_image_id Custom category image ID.
+	 * @param bool|string $priority Eager/priority hint: 'high', 'eager', or false (default lazy).
 	 *
 	 * @return string|null
 	 */
-	public static function get_product_image_html( $type = 'product', $post_id = null, $f_img_size = 'medium', $default_img_id = null, $custom_img_size = [], $lazy = false, $hover = false, $gallery = false, $custom_image_id = 0 ) {
+	public static function get_product_image_html( $type = 'product', $post_id = null, $f_img_size = 'medium', $default_img_id = null, $custom_img_size = [], $lazy = false, $hover = false, $gallery = false, $custom_image_id = 0, $priority = false ) {
 		$img_html      = null;
 		$attachment_id = null;
 		$c_size        = false;
@@ -1779,6 +1868,17 @@ class Fns {
 			'class' => 'img-responsive rtsb-product-image' . $lazy_class . $hover_class,
 			'alt'   => $alt_tag,
 		];
+
+		// Eager-load above-the-fold images so the LCP candidate is fetched
+		// immediately instead of being lazy-loaded after render-blocking CSS.
+		// Only the first image is marked fetchpriority=high to avoid competing hints.
+		if ( $priority ) {
+			$attr['loading'] = 'eager';
+
+			if ( 'high' === $priority ) {
+				$attr['fetchpriority'] = 'high';
+			}
+		}
 
 		if ( $a_id ) {
 			$img_html      = wp_get_attachment_image( $a_id, $f_img_size, false, $attr );
@@ -1959,7 +2059,19 @@ class Fns {
 		?>
 		<div class="rtsb-swatches <?php echo esc_attr( $type ); ?>-layout">
 			<?php
-			if ( class_exists( 'Rtwpvsp' ) ) {
+			/*
+			 * Hand off to the Variation Swatches plugin's own archive renderer when it
+			 * is listening, otherwise fall back to the built-in module.
+			 *
+			 * Detected with has_action() rather than a class name on purpose: this used
+			 * to test `class_exists( 'Rtwpvsp' )`, but the plugin moved its classes into
+			 * a namespace (`Rtwpvsp\Rtwpvsp`), so that check silently started failing.
+			 * The else branch then fired the built-in module's action — which is never
+			 * hooked while the plugin is active, because the module deliberately stands
+			 * down — leaving this wrapper rendered but empty. Asking whether anything is
+			 * actually listening is both the correct question and rename-proof.
+			 */
+			if ( has_action( 'rtwpvs_show_archive_variation' ) ) {
 				do_action( 'rtwpvs_show_archive_variation' );
 			} else {
 				do_action( 'rtsb/vs/showcase/variation' );
@@ -2090,15 +2202,28 @@ class Fns {
 	/**
 	 * Pagination
 	 *
-	 * @param string  $pages Pages.
-	 * @param integer $range Range.
-	 * @param boolean $ajax Ajax.
+	 * @param string   $pages Pages.
+	 * @param integer  $per_page Per-page count (unused; kept for positional compatibility).
+	 * @param boolean  $ajax Ajax.
+	 * @param int|null $visible_range Page links to show on each side of the current
+	 *                                page (from the widget's "Page Number Range"
+	 *                                control). Falls back to the filter default.
 	 *
 	 * @return string
 	 */
-	public static function custom_pagination( $pages = '', $range = 4, $ajax = false ) {
-		$html          = null;
-		$visible_range = apply_filters( 'rtsb/elements/pagination/visible_range', ( $range * 2 ) + 1 );
+	public static function custom_pagination( $pages = '', $per_page = 4, $ajax = false, $visible_range = null ) {
+		$html = null;
+
+		// How many page links to show on each side of the current page. Driven by
+		// the widget's "Page Number Range" control; the filter is the fallback
+		// default. Keeping it small truncates long paginations (« ‹ 1 2 3 › »)
+		// with jump-to-first/last arrows instead of listing every page number.
+		// (The 2nd argument callers pass is the per-page count, not a window).
+		if ( null === $visible_range ) {
+			$visible_range = apply_filters( 'rtsb/elements/pagination/visible_range', 5 );
+		}
+
+		$visible_range = max( 1, (int) $visible_range );
 
 		global $paged;
 
@@ -2156,7 +2281,7 @@ class Fns {
 				$html .= "<li><a data-paged='{$p}' href=\"" . get_pagenum_link( $paged + 1 ) . "\"  aria-label='Next'>&rsaquo;</a></li>";
 			}
 
-			if ( $paged < $pages - 1 && $paged + $range - 1 < $pages && $visible_range < $pages ) {
+			if ( $paged < $pages - 1 && $paged + $visible_range < $pages && $visible_range < $pages ) {
 				$html .= "<li><a data-paged='{$pages}' href='" . get_pagenum_link( $pages ) . "' aria-label='Last'>&raquo;</a></li>";
 			}
 
@@ -2704,6 +2829,42 @@ class Fns {
 	}
 
 	/**
+	 * Count published products matching a tax query.
+	 *
+	 * Filter badges must agree with the number of products the same filter lists.
+	 * The archive (and the Ajax filter response) runs a plain WP_Query, while
+	 * WC_Product_Query additionally restricts results to the registered
+	 * `product_type` terms — so a product imported without a `product_type` term
+	 * is listed on the archive but silently dropped from the count, making the
+	 * badge read lower than the result set (e.g. "Cat1 (4)" for 10 results).
+	 *
+	 * @param array $tax_query Tax query clauses.
+	 *
+	 * @return int Number of matching products.
+	 */
+	public static function count_products_by_tax_query( array $tax_query ) {
+		if ( empty( $tax_query ) ) {
+			return 0;
+		}
+
+		$query = new WP_Query(
+			[
+				'post_type'              => 'product',
+				'post_status'            => 'publish',
+				'posts_per_page'         => -1,
+				'fields'                 => 'ids',
+				'ignore_sticky_posts'    => true,
+				'no_found_rows'          => true,
+				'update_post_meta_cache' => false,
+				'update_post_term_cache' => false,
+				'tax_query'              => $tax_query, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
+			]
+		);
+
+		return count( $query->posts );
+	}
+
+	/**
 	 * Count products by taxonomies.
 	 *
 	 * @param array  $terms Terms.
@@ -3097,7 +3258,7 @@ class Fns {
 		if ( isset( self::$cache[ $cache_key ] ) ) {
 			return self::$cache[ $cache_key ];
 		}
-		$results = wp_cache_get( $cache_key, 'shopbuilder' );
+		$results = wp_cache_get( $cache_key, Cache::group() );
 		if ( ! $results ) {
 			global $wpdb;
 			$sql = "SELECT t.term_id, t.name
@@ -3114,7 +3275,7 @@ class Fns {
 
 			$results = $wpdb->get_results( $prepared_sql ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.NotPrepared
 			// Cache the results in the object cache for future use.
-			wp_cache_set( $cache_key, $results, 'shopbuilder' ); // Adjust the expiration time as needed.
+			wp_cache_set( $cache_key, $results, Cache::group(), 12 * HOUR_IN_SECONDS );
 			Cache::set_data_cache_key( $cache_key );
 		}
 
@@ -3153,7 +3314,7 @@ class Fns {
 		if ( isset( self::$cache[ $cache_key ] ) ) {
 			return self::$cache[ $cache_key ];
 		}
-		$results = wp_cache_get( $cache_key, 'shopbuilder' );
+		$results = wp_cache_get( $cache_key, Cache::group() );
 		if ( ! $results ) {
 			global $wpdb;
 			$sql = "SELECT t.term_id, t.name
@@ -3170,7 +3331,7 @@ class Fns {
 
 			$results = $wpdb->get_results( $prepared_sql ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.NotPrepared
 			// Cache the results in the object cache for future use.
-			wp_cache_set( $cache_key, $results, 'shopbuilder' ); // Adjust the expiration time as needed.
+			wp_cache_set( $cache_key, $results, Cache::group(), 12 * HOUR_IN_SECONDS );
 			Cache::set_data_cache_key( $cache_key );
 		}
 
@@ -3709,7 +3870,7 @@ class Fns {
 	 * @return void
 	 */
 	public static function dynamic_styles( $options, $cache_key, $css_properties ) {
-		$cached_css   = wp_cache_get( $cache_key, 'shopbuilder' );
+		$cached_css   = wp_cache_get( $cache_key, Cache::group() );
 		$style_handle = self::optimized_handle( 'rtsb-frontend' );
 
 		if ( false !== $cached_css ) {
@@ -3747,7 +3908,7 @@ class Fns {
 
 		$dynamic_css = implode( ' ', $css_rules );
 
-		wp_cache_set( $cache_key, $dynamic_css, 'shopbuilder', 12 * HOUR_IN_SECONDS );
+		wp_cache_set( $cache_key, $dynamic_css, Cache::group(), 12 * HOUR_IN_SECONDS );
 		Cache::set_data_cache_key( $cache_key );
 
 		if ( ! empty( $dynamic_css ) ) {
@@ -3812,7 +3973,7 @@ class Fns {
 			return self::$cache[ $cache_key ];
 		}
 
-		$cached_result = wp_cache_get( $cache_key, 'shopbuilder' );
+		$cached_result = wp_cache_get( $cache_key, Cache::group() );
 
 		if ( false !== $cached_result ) {
 			self::$cache[ $cache_key ] = $cached_result;
@@ -3823,7 +3984,7 @@ class Fns {
 		$gallery_ids               = $product->get_gallery_image_ids();
 		self::$cache[ $cache_key ] = $gallery_ids;
 
-		wp_cache_set( $cache_key, $gallery_ids, 'shopbuilder', 12 * HOUR_IN_SECONDS );
+		wp_cache_set( $cache_key, $gallery_ids, Cache::group(), 12 * HOUR_IN_SECONDS );
 		Cache::set_data_cache_key( $cache_key );
 
 		return $gallery_ids;
@@ -3856,6 +4017,12 @@ class Fns {
 	 * @return bool
 	 */
 	public static function is_optimization_enabled() {
+		// A bundle could not be built during this request, fall back to the
+		// unbundled assets rather than emitting handles with an empty source.
+		if ( self::$optimization_unavailable ) {
+			return false;
+		}
+
 		if ( ! self::is_optimization_setting_on() ) {
 			return false;
 		}
@@ -4058,7 +4225,6 @@ class Fns {
 				strpos( $src, 'style.css' ) !== false
 			) {
 				set_transient( $transient_key, $handle, DAY_IN_SECONDS );
-				Cache::set_transient_cache_key( $transient_key );
 				$cached_handle = $handle;
 
 				return $handle;
@@ -4069,14 +4235,12 @@ class Fns {
 
 		if ( is_string( $filtered_handle ) && ! empty( $filtered_handle ) ) {
 			set_transient( $transient_key, $filtered_handle, DAY_IN_SECONDS );
-			Cache::set_transient_cache_key( $transient_key );
 			$cached_handle = $filtered_handle;
 
 			return $filtered_handle;
 		}
 
 		set_transient( $transient_key, false, DAY_IN_SECONDS );
-		Cache::set_transient_cache_key( $transient_key );
 		$cached_handle = false;
 
 		return false;
@@ -4244,7 +4408,7 @@ class Fns {
 		}
 
 		$cache_key   = 'rtsb_module_list';
-		$cache_group = 'shopbuilder';
+		$cache_group = Cache::group();
 
 		$cached = wp_cache_get( $cache_key, $cache_group );
 
@@ -4277,7 +4441,7 @@ class Fns {
 		}
 
 		$cache_key   = 'rtsb_elementor_widget_list';
-		$cache_group = 'shopbuilder';
+		$cache_group = Cache::group();
 
 		$cached = wp_cache_get( $cache_key, $cache_group );
 

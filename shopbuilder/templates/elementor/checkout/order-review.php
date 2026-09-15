@@ -8,6 +8,7 @@
 
 // Do not allow directly accessing this file.
 use RadiusTheme\SB\Helpers\Fns;
+use RadiusTheme\SB\Controllers\Frontend\OrderReviewQuantity;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit( 'This script cannot be accessed directly.' );
@@ -26,6 +27,15 @@ $wrapper_classes = ! empty( $controllers['table_horizontal_scroll_on_mobile'] ) 
 	?>
 
 	<?php do_action( 'woocommerce_checkout_before_order_review' ); ?>
+
+	<?php
+	// Marker for the update_order_review request, where the widget does not render.
+	if ( ! empty( $controllers['show_quantity'] ) ) {
+		?>
+		<input type="hidden" name="<?php echo esc_attr( OrderReviewQuantity::MARKER_FIELD ); ?>" value="1" />
+		<?php
+	}
+	?>
 
 	<?php
 	$addons = 'on' === ( Fns::get_options( 'modules', 'product_add_ons' )['active'] ?? '' );

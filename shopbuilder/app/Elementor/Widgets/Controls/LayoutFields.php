@@ -1033,6 +1033,19 @@ class LayoutFields {
 			'condition'   => [ 'show_pagination' => [ 'yes' ] ],
 		];
 
+		$fields['pagination_visible_range'] = [
+			'type'        => 'number',
+			'label'       => esc_html__( 'Page Number Range', 'shopbuilder' ),
+			'default'     => 5,
+			'min'         => 1,
+			'max'         => 20,
+			'description' => esc_html__( 'Number of page links to show on each side of the current page. Lower values truncate long paginations.', 'shopbuilder' ),
+			'condition'   => [
+				'show_pagination' => [ 'yes' ],
+				'pagination_type' => [ 'pagination', 'pagination_ajax' ],
+			],
+		];
+
 		$fields['pagination_section_end'] = $obj->end_section();
 
 		return apply_filters( 'rtsb/elementor/pagination_control', $fields, $obj );

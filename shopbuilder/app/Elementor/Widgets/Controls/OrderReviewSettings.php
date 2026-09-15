@@ -43,7 +43,7 @@ class OrderReviewSettings {
 		self::$widget    = $widget;
 		self::$selectors = self::$widget->selectors;
 
-		return self::general_settings() + TitleSettings::title_settings( self::$widget ) + self::review_tables();
+		return self::general_settings() + TitleSettings::title_settings( self::$widget ) + self::review_tables() + self::quantity_style();
 	}
 
 	/**
@@ -55,6 +55,13 @@ class OrderReviewSettings {
 		// The function will Overwrite.
 		$fields = TitleSettings::general_settings();
 
+		$new_fields['show_quantity']                     = [
+			'label'       => esc_html__( 'Show Quantity Selector?', 'shopbuilder' ),
+			'type'        => 'switch',
+			'description' => esc_html__( 'Switch on to let customers change the item quantity from the order review table.', 'shopbuilder' ),
+			'default'     => '',
+			'separator'   => 'default',
+		];
 		$new_fields['table_horizontal_scroll_on_mobile'] = [
 			'label'       => esc_html__( 'Show default Table View On Mobile?', 'shopbuilder' ),
 			'type'        => 'switch',
@@ -97,7 +104,7 @@ class OrderReviewSettings {
 			'review_table_start'          => [
 				'mode'  => 'section_start',
 				'tab'   => 'style',
-				'label' => esc_html__( 'Review Table', 'shopbuilder' ),
+				'label' => esc_html__( 'Order Review Table', 'shopbuilder' ),
 			],
 
 			'table_wrapper_border'        => [
@@ -323,6 +330,259 @@ class OrderReviewSettings {
 				],
 			],
 			'review_table_end'            => [
+				'mode' => 'section_end',
+			],
+		];
+	}
+
+	/**
+	 * Quantity selector style fields.
+	 *
+	 * @return array
+	 */
+	public static function quantity_style(): array {
+		return [
+			'qty_section_start'      => [
+				'mode'      => 'section_start',
+				'tab'       => 'style',
+				'label'     => esc_html__( 'Quantity Selector', 'shopbuilder' ),
+				'condition' => [
+					'show_quantity' => 'yes',
+				],
+			],
+
+			'qty_align'              => [
+				'label'     => esc_html__( 'Alignment', 'shopbuilder' ),
+				'type'      => 'choose',
+				'mode'      => 'responsive',
+				'options'   => [
+					'flex-start' => [
+						'title' => esc_html__( 'Left', 'shopbuilder' ),
+						'icon'  => 'eicon-text-align-left',
+					],
+					'center'     => [
+						'title' => esc_html__( 'Center', 'shopbuilder' ),
+						'icon'  => 'eicon-text-align-center',
+					],
+					'flex-end'   => [
+						'title' => esc_html__( 'Right', 'shopbuilder' ),
+						'icon'  => 'eicon-text-align-right',
+					],
+				],
+				'selectors' => [
+					self::$selectors['qty_align'] => 'justify-content: {{VALUE}};',
+				],
+			],
+			'qty_wrapper_margin'     => [
+				'label'      => esc_html__( 'Margin (px)', 'shopbuilder' ),
+				'type'       => 'dimensions',
+				'mode'       => 'responsive',
+				'size_units' => [ 'px' ],
+				'selectors'  => [
+					self::$selectors['qty_wrapper_margin'] => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				],
+			],
+
+			'qty_box_label'          => [
+				'type'            => 'html',
+				'raw'             => sprintf(
+					'<h3 class="rtsb-elementor-group-heading">%s</h3>',
+					esc_html__( 'Box', 'shopbuilder' )
+				),
+				'content_classes' => 'elementor-panel-heading-title',
+				'separator'       => 'default',
+			],
+			'qty_box_height'         => [
+				'label'      => esc_html__( 'Height', 'shopbuilder' ),
+				'type'       => 'slider',
+				'mode'       => 'responsive',
+				'size_units' => [ 'px' ],
+				'range'      => [
+					'px' => [
+						'min' => 20,
+						'max' => 80,
+					],
+				],
+				'selectors'  => [
+					self::$selectors['qty_box_height'] => 'height: {{SIZE}}{{UNIT}};',
+				],
+			],
+			'qty_box_border'         => [
+				'mode'           => 'group',
+				'type'           => 'border',
+				'selector'       => self::$selectors['qty_box_border'],
+				'size_units'     => [ 'px' ],
+				'fields_options' => [
+					'border' => [
+						'label'       => esc_html__( 'Border', 'shopbuilder' ),
+						'label_block' => true,
+					],
+					'color'  => [
+						'label' => esc_html__( 'Border Color', 'shopbuilder' ),
+					],
+				],
+			],
+			'qty_box_radius'         => [
+				'label'      => esc_html__( 'Border Radius', 'shopbuilder' ),
+				'type'       => 'dimensions',
+				'mode'       => 'responsive',
+				'size_units' => [ 'px', '%' ],
+				'selectors'  => [
+					self::$selectors['qty_box_radius'] => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				],
+			],
+			'qty_box_bg_color'       => [
+				'label'     => esc_html__( 'Background Color', 'shopbuilder' ),
+				'type'      => 'color',
+				'alpha'     => true,
+				'selectors' => [
+					self::$selectors['qty_box_bg_color'] => 'background-color: {{VALUE}};',
+				],
+			],
+
+			'qty_input_label'        => [
+				'type'            => 'html',
+				'raw'             => sprintf(
+					'<h3 class="rtsb-elementor-group-heading">%s</h3>',
+					esc_html__( 'Quantity Field', 'shopbuilder' )
+				),
+				'content_classes' => 'elementor-panel-heading-title',
+				'separator'       => 'default',
+			],
+			'qty_input_width'        => [
+				'label'      => esc_html__( 'Width', 'shopbuilder' ),
+				'type'       => 'slider',
+				'mode'       => 'responsive',
+				'size_units' => [ 'px' ],
+				'range'      => [
+					'px' => [
+						'min' => 20,
+						'max' => 120,
+					],
+				],
+				'selectors'  => [
+					self::$selectors['qty_input_width'] => 'width: {{SIZE}}{{UNIT}};',
+				],
+			],
+			'qty_input_typo'         => [
+				'mode'     => 'group',
+				'type'     => 'typography',
+				'label'    => esc_html__( 'Typography', 'shopbuilder' ),
+				'selector' => self::$selectors['qty_input_typo'],
+			],
+			'qty_input_color'        => [
+				'label'     => esc_html__( 'Text Color', 'shopbuilder' ),
+				'type'      => 'color',
+				'selectors' => [
+					self::$selectors['qty_input_color'] => 'color: {{VALUE}};',
+				],
+			],
+			'qty_input_bg_color'     => [
+				'label'     => esc_html__( 'Background Color', 'shopbuilder' ),
+				'type'      => 'color',
+				'alpha'     => true,
+				'selectors' => [
+					self::$selectors['qty_input_bg_color'] => 'background-color: {{VALUE}};',
+				],
+			],
+			'qty_input_border_color' => [
+				'label'     => esc_html__( 'Separator Color', 'shopbuilder' ),
+				'type'      => 'color',
+				'selectors' => [
+					self::$selectors['qty_input_border_color'] => 'border-left-color: {{VALUE}}; border-right-color: {{VALUE}};',
+				],
+			],
+
+			'qty_btn_label'          => [
+				'type'            => 'html',
+				'raw'             => sprintf(
+					'<h3 class="rtsb-elementor-group-heading">%s</h3>',
+					esc_html__( 'Buttons', 'shopbuilder' )
+				),
+				'content_classes' => 'elementor-panel-heading-title',
+				'separator'       => 'default',
+			],
+			'qty_btn_width'          => [
+				'label'      => esc_html__( 'Width', 'shopbuilder' ),
+				'type'       => 'slider',
+				'mode'       => 'responsive',
+				'size_units' => [ 'px' ],
+				'range'      => [
+					'px' => [
+						'min' => 20,
+						'max' => 80,
+					],
+				],
+				'selectors'  => [
+					self::$selectors['qty_btn_width'] => 'width: {{SIZE}}{{UNIT}};',
+				],
+			],
+			'qty_icon_size'          => [
+				'label'      => esc_html__( 'Icon Size', 'shopbuilder' ),
+				'type'       => 'slider',
+				'size_units' => [ 'px' ],
+				'range'      => [
+					'px' => [
+						'min' => 5,
+						'max' => 30,
+					],
+				],
+				'selectors'  => [
+					self::$selectors['qty_icon_size'] => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};',
+				],
+			],
+			'qty_btn_tabs_start'     => [
+				'mode' => 'tabs_start',
+			],
+			'qty_btn_normal_tab'     => [
+				'mode'  => 'tab_start',
+				'label' => esc_html__( 'Normal', 'shopbuilder' ),
+			],
+			'qty_btn_color'          => [
+				'label'     => esc_html__( 'Icon Color', 'shopbuilder' ),
+				'type'      => 'color',
+				'selectors' => [
+					self::$selectors['qty_btn_color'] => 'color: {{VALUE}};',
+				],
+			],
+			'qty_btn_bg_color'       => [
+				'label'     => esc_html__( 'Background Color', 'shopbuilder' ),
+				'type'      => 'color',
+				'alpha'     => true,
+				'selectors' => [
+					self::$selectors['qty_btn_bg_color'] => 'background-color: {{VALUE}};',
+				],
+			],
+			'qty_btn_normal_tab_end' => [
+				'mode' => 'tab_end',
+			],
+			'qty_btn_hover_tab'      => [
+				'mode'  => 'tab_start',
+				'label' => esc_html__( 'Hover', 'shopbuilder' ),
+			],
+			'qty_btn_hover_color'    => [
+				'label'     => esc_html__( 'Icon Color', 'shopbuilder' ),
+				'type'      => 'color',
+				'selectors' => [
+					self::$selectors['qty_btn_hover_color'] => 'color: {{VALUE}};',
+				],
+			],
+			'qty_btn_hover_bg_color' => [
+				'label'     => esc_html__( 'Background Color', 'shopbuilder' ),
+				'type'      => 'color',
+				'alpha'     => true,
+				'selectors' => [
+					self::$selectors['qty_btn_hover_bg_color'] => 'background-color: {{VALUE}};',
+				],
+			],
+			'qty_btn_hover_tab_end'  => [
+				'mode' => 'tab_end',
+			],
+			'qty_btn_tabs_end'       => [
+				'mode' => 'tabs_end',
+			],
+
+			'qty_section_end'        => [
 				'mode' => 'section_end',
 			],
 		];

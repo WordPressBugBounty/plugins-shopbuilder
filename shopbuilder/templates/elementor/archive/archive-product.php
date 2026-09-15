@@ -25,7 +25,16 @@ if ( rtsb()->has_pro() && ( Fns::product_has_applied_filters( 'shop' ) || Fns::p
 
 $parent_class .= ! empty( $controllers['show_pagination'] ) ? ' rtsb-has-pagination' : ' rtsb-no-pagination';
 ?>
-<div class="rtsb-product-catalog has-cart-button <?php echo esc_attr( $parent_class ); ?>" data-cart-icon="<?php echo esc_attr( $icon ); ?>" <?php Fns::print_html( $archive_data, true ); ?>>
+<?php
+/*
+ * $archive_data is a complete attribute whose value is already escaped with
+ * esc_attr() in RenderHelpers::archive_data(). It must not go through
+ * Fns::print_html( ..., true ): that helper runs stripslashes_deep(), which
+ * strips the backslashes JSON uses for its own escapes and would leave the
+ * attribute value unable to be parsed back into JSON.
+ */
+?>
+<div class="rtsb-product-catalog has-cart-button <?php echo esc_attr( $parent_class ); ?>" data-cart-icon="<?php echo esc_attr( $icon ); ?>"<?php echo $archive_data; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Attribute value escaped with esc_attr() in RenderHelpers::archive_data(). ?>>
 	<?php
 	// column_per_row.
 	if ( woocommerce_product_loop() ) {

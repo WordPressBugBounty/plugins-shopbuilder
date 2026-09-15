@@ -462,6 +462,16 @@ class ControlSelectors {
 	 * @return array
 	 */
 	private static function product_widget_selectors(): array {
+		// Swatch size belongs to the Variation Swatches plugin once it is active: it
+		// prints its own Color & Image width/height rule, which this widget's size
+		// controls would outrank (element-scoped Elementor CSS, and these controls
+		// carry a default so they always print). Dropping the plugin's terms from
+		// the size selectors leaves that setting in charge, while the controls keep
+		// sizing ShopBuilder's own markup — the dropdowns and the built-in module.
+		$swatch_size_target = defined( 'RTWPVS_VERSION' )
+			? ''
+			: '.rtwpvs  {{WRAPPER}} .rtwpvs-terms-wrapper .rtwpvs-term:not(.rtwpvs-radio-term), ';
+
 		$selectors = [
 			'rtsb-related-product'         => array_merge(
 				self::products_loop_default_selector(),
@@ -592,21 +602,28 @@ class ControlSelectors {
 				'quantity_wrapper_background_color' => '{{WRAPPER}} .rtsb-product-add-to-cart .quantity .rtsb-quantity-box-group',
 				'qunatity_wrapper_padding'          => '{{WRAPPER}} .rtsb-product-add-to-cart .quantity .rtsb-quantity-box-group',
 				'quantity_wrapper_radius'           => '{{WRAPPER}} .rtsb-product-add-to-cart .quantity .rtsb-quantity-box-group',
-				'variation_padding'                 => '{{WRAPPER}} .rtsb-product-add-to-cart .variations select, .rtwpvs  {{WRAPPER}} .rtwpvs-terms-wrapper .rtwpvs-term:not(.rtwpvs-radio-term).rtwpvs-button-term',
+				'variation_padding'                 => '{{WRAPPER}} .rtsb-product-add-to-cart .variations select, .rtwpvs  {{WRAPPER}} .rtwpvs-terms-wrapper .rtwpvs-term:not(.rtwpvs-radio-term).rtwpvs-button-term, {{WRAPPER}} .rtsb-product-add-to-cart .rtsb-terms-wrapper .rtsb-term:not(.rtsb-radio-term).rtsb-button-term',
 				'variation_label_margin'            => '{{WRAPPER}} .rtsb-product-add-to-cart  table.variations tr .label label',
 				'variation_item_margin'             => '{{WRAPPER}} .rtsb-product-add-to-cart table.variations tr:not(:last-child) .value',
-				'variation_border'                  => '{{WRAPPER}} .rtsb-product-add-to-cart .variations select',
+				'variation_border'                  => '{{WRAPPER}} .rtsb-product-add-to-cart .variations select, {{WRAPPER}} .rtsb-product-add-to-cart .rtsb-terms-wrapper .rtsb-term:not(.rtsb-radio-term)',
 				'price_typography'                  => '.single-product {{WRAPPER}}  .single_variation .price',
 				'price_color'                       => '.single-product {{WRAPPER}}  .single_variation :is(.price, .price .amount, .price ins)',
 				'price_margin'                      => '.single-product {{WRAPPER}}  .single_variation :is(.price, .price .amount, .price ins)',
-				'variation_height'                  => '.rtwpvs  {{WRAPPER}} .rtwpvs-terms-wrapper .rtwpvs-term:not(.rtwpvs-radio-term), {{WRAPPER}} .rtsb-product-add-to-cart .variations select',
-				'variation_width'                   => '.rtwpvs  {{WRAPPER}} .rtwpvs-terms-wrapper .rtwpvs-term:not(.rtwpvs-radio-term), {{WRAPPER}} .rtsb-product-add-to-cart .variations select',
-				'variation_border_radius'           => '.rtwpvs  {{WRAPPER}} .rtwpvs-terms-wrapper .rtwpvs-term:not(.rtwpvs-radio-term), {{WRAPPER}} .rtsb-product-add-to-cart .variations select',
+				'variation_height'                  => $swatch_size_target . '{{WRAPPER}} .rtsb-product-add-to-cart .variations select, {{WRAPPER}} .rtsb-product-add-to-cart .rtsb-terms-wrapper .rtsb-term:not(.rtsb-radio-term)',
+				'variation_width'                   => $swatch_size_target . '{{WRAPPER}} .rtsb-product-add-to-cart .variations select, {{WRAPPER}} .rtsb-product-add-to-cart .rtsb-terms-wrapper .rtsb-term:not(.rtsb-radio-term)',
+				'variation_border_radius'           => '.rtwpvs  {{WRAPPER}} .rtwpvs-terms-wrapper .rtwpvs-term:not(.rtwpvs-radio-term), {{WRAPPER}} .rtsb-product-add-to-cart .variations select, {{WRAPPER}} .rtsb-product-add-to-cart .rtsb-terms-wrapper .rtsb-term:not(.rtsb-radio-term)',
 				'variation_label_typography'        => '{{WRAPPER}} .rtsb-product-add-to-cart  table.variations tr .label label',
 				'variation_stock_typography'        => '{{WRAPPER}} .rtsb-product-add-to-cart  .woocommerce-variation-availability .stock',
 				'variation_label_color'             => '{{WRAPPER}} .rtsb-product-add-to-cart  table.variations tr .label label',
 				'variation_stock_color'             => '{{WRAPPER}} .rtsb-product-add-to-cart  .woocommerce-variation-availability .stock',
 				'variation_outofstock_color'        => '{{WRAPPER}} .rtsb-product-add-to-cart  .woocommerce-variation-availability .stock.out-of-stock',
+				'variation_swatch_border_color'     => '{{WRAPPER}} .rtsb-product-add-to-cart',
+				'variation_swatch_selected_color'   => '{{WRAPPER}} .rtsb-product-add-to-cart',
+				'variation_checkmark_bg_color'      => '{{WRAPPER}} .rtsb-product-add-to-cart',
+				'variation_checkmark_size'          => '{{WRAPPER}} .rtsb-product-add-to-cart',
+				'variation_checkmark_icon_size'     => '{{WRAPPER}} .rtsb-product-add-to-cart',
+				'variation_clear_margin'            => '{{WRAPPER}} .rtsb-product-add-to-cart .reset_variations',
+				'variation_clear_padding'           => '{{WRAPPER}} .rtsb-product-add-to-cart .reset_variations',
 
 			],
 			'rtsb-product-categories'      => [
@@ -1266,6 +1283,24 @@ class ControlSelectors {
 				// Counter.
 				'counter_text_color'          => '{{WRAPPER}} .product-quantity',
 				'counter_style'               => '{{WRAPPER}} .product-quantity',
+				// Quantity selector.
+				'qty_align'                   => '{{WRAPPER}} .rtsb-order-review-quantity',
+				'qty_wrapper_margin'          => '{{WRAPPER}} .rtsb-order-review-quantity',
+				'qty_box_border'              => '{{WRAPPER}} .rtsb-order-review-quantity .rtsb-order-qty-group',
+				'qty_box_radius'              => '{{WRAPPER}} .rtsb-order-review-quantity .rtsb-order-qty-group',
+				'qty_box_bg_color'            => '{{WRAPPER}} .rtsb-order-review-quantity .rtsb-order-qty-group',
+				'qty_box_height'              => '{{WRAPPER}} .rtsb-order-review-quantity :is( .rtsb-order-qty-btn, .rtsb-order-qty-input )',
+				'qty_input_width'             => '{{WRAPPER}} .rtsb-order-review-quantity .rtsb-order-qty-input',
+				'qty_input_typo'              => '{{WRAPPER}} .rtsb-order-review-quantity .rtsb-order-qty-input',
+				'qty_input_color'             => '{{WRAPPER}} .rtsb-order-review-quantity .rtsb-order-qty-input',
+				'qty_input_bg_color'          => '{{WRAPPER}} .rtsb-order-review-quantity .rtsb-order-qty-input',
+				'qty_input_border_color'      => '{{WRAPPER}} .rtsb-order-review-quantity .rtsb-order-qty-input',
+				'qty_btn_width'               => '{{WRAPPER}} .rtsb-order-review-quantity .rtsb-order-qty-btn',
+				'qty_icon_size'               => '{{WRAPPER}} .rtsb-order-review-quantity .rtsb-order-qty-btn svg',
+				'qty_btn_color'               => '{{WRAPPER}} .rtsb-order-review-quantity .rtsb-order-qty-btn',
+				'qty_btn_bg_color'            => '{{WRAPPER}} .rtsb-order-review-quantity .rtsb-order-qty-btn',
+				'qty_btn_hover_color'         => '{{WRAPPER}} .rtsb-order-review-quantity .rtsb-order-qty-btn:hover',
+				'qty_btn_hover_bg_color'      => '{{WRAPPER}} .rtsb-order-review-quantity .rtsb-order-qty-btn:hover',
 				// Table Footer.
 				'table_footer_label_typo'     => '{{WRAPPER}} #order_review tfoot :is( th, td )',
 				'table_footer_label_color'    => '{{WRAPPER}} #order_review tfoot th',

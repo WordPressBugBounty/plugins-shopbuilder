@@ -9,6 +9,7 @@ namespace RadiusTheme\SB\Elementor\Widgets\Checkout;
 
 use RadiusTheme\SB\Helpers\Fns;
 use RadiusTheme\SB\Abstracts\ElementorWidgetBase;
+use RadiusTheme\SB\Controllers\Frontend\OrderReviewQuantity;
 use RadiusTheme\SB\Elementor\Widgets\Controls\OrderReviewSettings;
 
 // Do not allow directly accessing this file.
@@ -44,9 +45,16 @@ class OrderReview extends ElementorWidgetBase {
 	/**
 	 * Widget Field.
 	 *
+	 * @param array $controllers Widget settings.
+	 *
 	 * @return void
 	 */
-	public function apply_hooks() {
+	public function apply_hooks( $controllers = [] ) {
+		// Editable quantity inside the review table.
+		if ( ! empty( $controllers['show_quantity'] ) ) {
+			OrderReviewQuantity::instance()->enable();
+		}
+
 		// Remove Payment Button.
 		remove_action( 'woocommerce_checkout_order_review', 'woocommerce_checkout_payment' );
 		remove_action( 'woocommerce_checkout_order_review', 'woocommerce_checkout_payment', 20 );
@@ -74,12 +82,14 @@ class OrderReview extends ElementorWidgetBase {
 		if ( $this->has_checkout_restriction() ) {
 			return;
 		}
-		$this->apply_hooks();
+		$controllers = $this->get_settings_for_display();
+
+		$this->apply_hooks( $controllers );
 		$this->theme_support();
 
 		$data = [
 			'template'    => 'elementor/checkout/order-review',
-			'controllers' => $this->get_settings_for_display(),
+			'controllers' => $controllers,
 		];
 
 		if ( $this->is_builder_mode() ) {

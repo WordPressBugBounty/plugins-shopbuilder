@@ -539,9 +539,9 @@ class Render {
 						$posts_loading_type = ! empty( $metas['posts_loading_type'] ) ? $metas['posts_loading_type'] : 'pagination';
 
 						if ( 'pagination_ajax' === $posts_loading_type ) {
-							$this->html .= Fns::custom_pagination( $wp_query->max_num_pages, $posts_per_page, true );
+							$this->html .= Fns::custom_pagination( $wp_query->max_num_pages, $posts_per_page, true, $metas['visible_range'] ?? null );
 						} elseif ( 'pagination' === $posts_loading_type ) {
-							$this->html .= Fns::custom_pagination( $wp_query->max_num_pages, $posts_per_page, false );
+							$this->html .= Fns::custom_pagination( $wp_query->max_num_pages, $posts_per_page, false, $metas['visible_range'] ?? null );
 						} elseif ( 'load_on_scroll' === $posts_loading_type ) {
 							$this->html .= "<div class='rtsb-infinite-scroll' data-trigger='1' data-paged='2' data-max-page='{$wp_query->max_num_pages}'>
 								<div class='rtsb-infinite-action'>
@@ -1091,13 +1091,35 @@ class Render {
 			add_filter( 'rtsb/module/wishlist/icon_html', [ $this, 'wishlist_icon' ] );
 		}
 
+		// Eager-load the above-the-fold product images so the LCP candidate is
+		// fetched immediately instead of being lazy-loaded after render-blocking
+		// CSS and layout. Defaults to the mobile viewport row count (Lighthouse
+		// scores mobile); eagering below-the-fold images would only steal
+		// bandwidth from the visible ones. Filterable per layout.
+		$eager_count = (int) apply_filters( 'rtsb/loop/eager_image_count', 6, $meta );
+
+		// The mobile LCP is often NOT the first card but the top-right one in a
+		// 2-column grid, so the first *row* of images gets fetchpriority=high to
+		// promote the real LCP candidate ahead of render-blocking CSS. Kept small
+		// (default 2 = one mobile row) to avoid competing high-priority requests.
+		$high_count   = (int) apply_filters( 'rtsb/loop/fetchpriority_high_count', 2, $meta );
+		$img_priority = false;
+
+		if ( $i <= $eager_count ) {
+			$img_priority = $i <= $high_count ? 'high' : 'eager';
+		}
+
 		$arg['img_html'] = $meta['f_img'] ? Fns::get_product_image_html(
 			'product',
 			$post_id,
 			$meta['f_img_size'],
 			$meta['default_img_id'],
 			$meta['custom_img_size'],
-			$lazy_load
+			$lazy_load,
+			false,
+			false,
+			0,
+			$img_priority
 		) : null;
 
 		if ( ! ( function_exists( 'rtwpvsp' ) && $product->is_type( 'variable' ) && $product->get_attributes() ) ) {
@@ -1332,7 +1354,9 @@ class Render {
 			if ( $is_grid ) {
 				$html_utility .= Fns::custom_pagination(
 					$total_page,
-					'wc' === $query_type ? $per_page : $posts_per_page
+					'wc' === $query_type ? $per_page : $posts_per_page,
+					false,
+					$meta['visible_range'] ?? null
 				);
 			}
 		} elseif ( 'pagination_ajax' === $meta['posts_loading_type'] && ! rtsb()->has_pro() ) {
@@ -1341,7 +1365,9 @@ class Render {
 			if ( $is_grid ) {
 				$html_utility .= Fns::custom_pagination(
 					$total_page,
-					'wc' === $query_type ? $per_page : $posts_per_page
+					'wc' === $query_type ? $per_page : $posts_per_page,
+					false,
+					$meta['visible_range'] ?? null
 				);
 			}
 		} else {

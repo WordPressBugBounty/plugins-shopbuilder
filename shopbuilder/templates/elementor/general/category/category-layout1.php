@@ -41,32 +41,38 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <div class="<?php echo esc_attr( $grid ) . ' ' . esc_attr( $class ); ?>">
 	<div class="category-wrapper">
-		<div class="rtsb-product-img">
-			<?php
-			/**
-			 * Category Image.
-			 */
-			if ( $image_link ) {
-				$aria_label = esc_attr(
-					/* translators: Product Category Name */
-					sprintf( __( 'Image link for Category: %s', 'shopbuilder' ), $title )
-				);
-				?>
-				<figure>
-					<a href="<?php echo esc_url( $cat_link ); ?>" target="<?php echo esc_attr( $target ); ?>" class="rtsb-img-link" aria-label="<?php echo esc_attr( $aria_label ); ?>">
-						<?php
-						Fns::get_product_image( $img_html );
-						?>
-					</a>
-				</figure>
-				<?php
-			} else {
-				echo '<figure class="rtsb-img-link">';
-				Fns::get_product_image( $img_html );
-				echo '</figure>';
-			}
+		<?php
+		/**
+		 * Category Image.
+		 */
+		if ( $img_html ) {
 			?>
-		</div><!-- .rtsb-product-img -->
+			<div class="rtsb-product-img">
+				<?php
+				if ( $image_link ) {
+					$aria_label = esc_attr(
+						/* translators: Product Category Name */
+						sprintf( __( 'Image link for Category: %s', 'shopbuilder' ), $title )
+					);
+					?>
+					<figure>
+						<a href="<?php echo esc_url( $cat_link ); ?>" target="<?php echo esc_attr( $target ); ?>" class="rtsb-img-link" aria-label="<?php echo esc_attr( $aria_label ); ?>">
+							<?php
+							Fns::get_product_image( $img_html );
+							?>
+						</a>
+					</figure>
+					<?php
+				} else {
+					echo '<figure class="rtsb-img-link">';
+					Fns::get_product_image( $img_html );
+					echo '</figure>';
+				}
+				?>
+			</div><!-- .rtsb-product-img -->
+			<?php
+		}
+		?>
 
 		<div class="rtsb-category-content">
 			<div class="category-inner <?php echo esc_attr( in_array( 'excerpt', $items, true ) ? 'excerpt-enabled' : 'no-excerpt' ) . ( ! empty( $count ) ? esc_attr( 'block' === $count_position ? ' block-count' : ' inline-count' ) : ' no-count' ); ?>">

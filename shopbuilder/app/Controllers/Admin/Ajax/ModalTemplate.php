@@ -671,10 +671,10 @@ class ModalTemplate {
 			10
 		);
 		$cache_key = md5( $query );
-		$_product  = wp_cache_get( $cache_key, 'shopbuilder' );
+		$_product  = wp_cache_get( $cache_key, Cache::group() );
 		if ( false === $_product ) {
 			$_product = $wpdb->get_results( $query ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.NotPrepared
-			wp_cache_set( $cache_key, $_product, 'shopbuilder' );
+			wp_cache_set( $cache_key, $_product, Cache::group(), 12 * HOUR_IN_SECONDS );
 			Cache::set_data_cache_key( $cache_key );
 		}
 		$product_list = [];

@@ -7,7 +7,6 @@
 
 namespace RadiusTheme\SB\Modules\VariationGallery;
 
-use RadiusTheme\SB\Helpers\Cache;
 use RadiusTheme\SB\Helpers\Fns;
 use WC_Product;
 
@@ -17,6 +16,249 @@ defined( 'ABSPATH' ) || exit();
  * Sticky add-to-cart Functions Class.
  */
 class GalleryFns {
+
+	/**
+	 * Legacy post meta key holding this module's own variation gallery.
+	 *
+	 * Kept in place forever: it keeps CSV export/import and any third-party reader
+	 * working, and lets a store roll back to an older WooCommerce without data loss.
+	 *
+	 * @var string
+	 */
+	const LEGACY_GALLERY_META_KEY = 'rtsb_vg_images';
+
+	/**
+	 * Sentinel meta marking a variation whose gallery is owned by the native store.
+	 *
+	 * Set by the migration and by the admin save path. Its presence — not its value —
+	 * is what matters: once stamped, an empty native gallery is an explicit "no
+	 * images" choice, so the legacy meta must never resurrect removed images.
+	 *
+	 * @var string
+	 */
+	const NATIVE_GALLERY_SENTINEL_META_KEY = '_rtsb_vg_gallery_migrated';
+
+	/**
+	 * First WooCommerce version shipping the native variation gallery for everyone.
+	 *
+	 * Only used as a fallback when WooCommerce's own feature gate cannot be reached.
+	 *
+	 * @var string
+	 */
+	const NATIVE_GALLERY_WC_VERSION = '11.1.0';
+
+	/**
+	 * WooCommerce's variation gallery package, which owns the feature gate.
+	 *
+	 * @var string
+	 */
+	const NATIVE_GALLERY_PACKAGE = 'Automattic\WooCommerce\Internal\VariationGallery\Package';
+
+	/**
+	 * Whether the running WooCommerce provides the native variation gallery.
+	 *
+	 * WooCommerce 11.0 ships the feature behind an option/canary gate and 11.1 turns
+	 * it on for everyone, so a bare version comparison would mis-read the 11.0 stores
+	 * that already have it. WooCommerce's own gate is asked first and the version
+	 * comparison is only the fallback for builds where that class is unavailable.
+	 *
+	 * This is the single decision point for the whole module — nothing else should
+	 * test the WooCommerce version for this feature.
+	 *
+	 * @return bool
+	 */
+	public static function use_native_gallery() {
+		static $supported = null;
+
+		if ( null === $supported ) {
+			$package = self::NATIVE_GALLERY_PACKAGE;
+
+			if ( class_exists( $package ) && method_exists( $package, 'is_enabled' ) ) {
+				$supported = (bool) $package::is_enabled();
+			} else {
+				$supported = defined( 'WC_VERSION' ) && version_compare( WC_VERSION, self::NATIVE_GALLERY_WC_VERSION, '>=' );
+			}
+		}
+
+		return (bool) apply_filters( 'rtsb/vg/use/native/gallery', $supported );
+	}
+
+	/**
+	 * Read the native variation gallery IDs straight from storage.
+	 *
+	 * Uses the `edit` context on purpose: the `view` context runs
+	 * `woocommerce_product_variation_get_gallery_image_ids`, which this module filters
+	 * on the frontend to stop WooCommerce rendering its own competing gallery markup.
+	 * Reading raw keeps that suppression from feeding back into our own resolution.
+	 *
+	 * @param \WC_Product_Variation $variation Variation object.
+	 *
+	 * @return array Attachment IDs.
+	 */
+	public static function get_native_variation_gallery_ids( $variation ) {
+		if ( ! is_object( $variation ) || ! method_exists( $variation, 'get_gallery_image_ids' ) ) {
+			return [];
+		}
+
+		return array_values( array_filter( array_map( 'absint', (array) $variation->get_gallery_image_ids( 'edit' ) ) ) );
+	}
+
+	/**
+	 * Whether a variation's gallery is already owned by the native store.
+	 *
+	 * @param int $variation_id Variation ID.
+	 *
+	 * @return bool
+	 */
+	public static function is_native_gallery_owned( $variation_id ) {
+		return metadata_exists( 'post', absint( $variation_id ), self::NATIVE_GALLERY_SENTINEL_META_KEY );
+	}
+
+	/**
+	 * Mark a variation's gallery as owned by the native store.
+	 *
+	 * @param int $variation_id Variation ID.
+	 *
+	 * @return void
+	 */
+	public static function mark_native_gallery_owned( $variation_id ) {
+		update_post_meta( absint( $variation_id ), self::NATIVE_GALLERY_SENTINEL_META_KEY, 'yes' );
+	}
+
+	/**
+	 * Read the legacy gallery IDs stored by this module.
+	 *
+	 * @param int $variation_id Variation ID.
+	 *
+	 * @return array Attachment IDs.
+	 */
+	public static function get_legacy_variation_gallery_ids( $variation_id ) {
+		$legacy_ids = get_post_meta( absint( $variation_id ), self::LEGACY_GALLERY_META_KEY, true );
+
+		return array_values( array_filter( array_map( 'absint', (array) $legacy_ids ) ) );
+	}
+
+	/**
+	 * Resolve the ordered gallery attachment IDs for a variation.
+	 *
+	 * With the native gallery available it is authoritative, and the legacy meta is
+	 * only a fallback for variations the migration has not processed yet. Without it
+	 * the legacy meta stays authoritative, exactly as before. In both cases the parent
+	 * product gallery remains the last resort, so a variation with no gallery of its
+	 * own keeps showing the product's thumbnail strip instead of collapsing to a
+	 * single image.
+	 *
+	 * The variation's featured image is not part of this list; the caller prepends it,
+	 * matching WooCommerce's own featured/gallery split.
+	 *
+	 * @param \WC_Product $variation      Variation object.
+	 * @param \WC_Product $parent_product Parent product object, or false.
+	 *
+	 * @return array Attachment IDs.
+	 */
+	protected static function resolve_variation_gallery_image_ids( $variation, $parent_product ) {
+		$variation_id = absint( $variation->get_id() );
+
+		if ( self::use_native_gallery() ) {
+			$native_ids = self::get_native_variation_gallery_ids( $variation );
+
+			// Migrated variation: the native gallery is the source of truth and the
+			// legacy meta is never consulted — it does not need to exist at all.
+			if ( ! empty( $native_ids ) ) {
+				return $native_ids;
+			}
+
+			// Pre-migration variation: keep serving the legacy meta until the batch
+			// runner has copied it across. Once the sentinel is set, an empty native
+			// gallery is a deliberate "no images" choice and must be respected.
+			if ( ! self::is_native_gallery_owned( $variation_id ) ) {
+				$legacy_ids = self::get_legacy_variation_gallery_ids( $variation_id );
+
+				if ( ! empty( $legacy_ids ) ) {
+					return $legacy_ids;
+				}
+			}
+		} else {
+			$legacy_ids = self::get_legacy_variation_gallery_ids( $variation_id );
+
+			if ( ! empty( $legacy_ids ) ) {
+				return $legacy_ids;
+			}
+		}
+
+		if ( $parent_product ) {
+			return (array) $parent_product->get_gallery_image_ids();
+		}
+
+		return (array) $variation->get_gallery_image_ids();
+	}
+
+	/**
+	 * Resolve the saved thumbnail position / gallery style.
+	 *
+	 * Bottom, left and right ship with the free version. The grid layout needs the pro
+	 * templates, so a stored `grid` value falls back to the bottom position whenever
+	 * pro is not active — otherwise a downgraded site would try to render a layout it
+	 * has no template for.
+	 *
+	 * Single decision point: every caller resolves the style through here rather than
+	 * reading the raw option, so the free/pro split cannot drift between the template,
+	 * the template override and the pro slider options.
+	 *
+	 * @return string One of `bottom`, `left`, `right` or `grid`.
+	 */
+	public static function get_gallery_style() {
+		$saved = self::get_options( 'gallery_style' );
+
+		if ( ! $saved ) {
+			$saved = 'bottom';
+		}
+
+		if ( 'grid' === $saved && ! rtsb()->has_pro() ) {
+			$saved = 'bottom';
+		}
+
+		return apply_filters( 'rtsb/vg/gallery/style', $saved );
+	}
+
+	/**
+	 * Whether any of a variable product's variations carries its own gallery.
+	 *
+	 * The thumbnail wrapper must exist in the DOM when at least one variation has a
+	 * gallery, so JS can populate it on variation change; otherwise it is skipped to
+	 * avoid a blank column. Both stores are consulted so the answer stays correct
+	 * before, during and after the migration.
+	 *
+	 * @param \WC_Product $product Parent product object.
+	 *
+	 * @return bool
+	 */
+	public static function product_has_variation_gallery( $product ) {
+		if ( ! ( $product instanceof WC_Product ) || ! $product->is_type( 'variable' ) ) {
+			return false;
+		}
+
+		$native = self::use_native_gallery();
+
+		foreach ( $product->get_children() as $child_id ) {
+			// Native first: a migrated store answers without ever reading the legacy
+			// meta, which may no longer exist.
+			if ( $native ) {
+				$variation = wc_get_product( $child_id );
+
+				if ( $variation && self::get_native_variation_gallery_ids( $variation ) ) {
+					return true;
+				}
+			}
+
+			if ( self::get_legacy_variation_gallery_ids( $child_id ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	/**
 	 * @param string       $key Default Attribute.
 	 * @param array|string $default Default Attribute.
@@ -187,7 +429,6 @@ class GalleryFns {
 			}
 		}
 		set_transient( $transient_name, $images, 12 * HOUR_IN_SECONDS );
-		Cache::set_transient_cache_key( $transient_name );
 		return apply_filters( 'rtsb/vg/get/gallery/images', $images, $product_id );
 	}
 	/**
@@ -223,14 +464,7 @@ class GalleryFns {
 
 		$parent_product = $product_id ? wc_get_product( $product_id ) : false;
 
-		$has_variation_gallery_images = (bool) get_post_meta( $variation_id, 'rtsb_vg_images', true );
-		if ( $has_variation_gallery_images ) {
-			$gallery_images = (array) get_post_meta( $variation_id, 'rtsb_vg_images', true );
-		} elseif ( $parent_product ) {
-			$gallery_images = (array) $parent_product->get_gallery_image_ids();
-		} else {
-			$gallery_images = (array) $variation->get_gallery_image_ids();
-		}
+		$gallery_images = self::resolve_variation_gallery_image_ids( $variation, $parent_product );
 
 		$lead_image_id = absint( $variation->get_image_id() );
 		if ( empty( $lead_image_id ) && $parent_product ) {
@@ -257,7 +491,6 @@ class GalleryFns {
 
 		if ( $transient_name ) {
 			set_transient( $transient_name, $images, HOUR_IN_SECONDS * 12 );
-			Cache::set_transient_cache_key( $transient_name );
 		}
 
 		return apply_filters( 'rtsb/vg/get/variation/gallery', $images, $product_id, $variation_id );
@@ -462,12 +695,15 @@ class GalleryFns {
 			self::flush_product_gallery_transients( $parent_id );
 		}
 
-		// Flush any variation whose custom gallery meta references this attachment.
+		// Flush any variation whose gallery references this attachment. Both stores are
+		// scanned: the legacy meta holds a serialised array, while WooCommerce's native
+		// variation gallery holds a comma-separated string under `_product_image_gallery`.
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT post_id, meta_value FROM {$wpdb->postmeta} WHERE meta_key = %s",
-				'rtsb_vg_images'
+				"SELECT post_id, meta_value FROM {$wpdb->postmeta} WHERE meta_key IN ( %s, %s )",
+				self::LEGACY_GALLERY_META_KEY,
+				'_product_image_gallery'
 			)
 		);
 
@@ -478,10 +714,9 @@ class GalleryFns {
 		foreach ( $rows as $row ) {
 			$image_ids = maybe_unserialize( $row->meta_value );
 			if ( ! is_array( $image_ids ) ) {
-				continue;
+				$image_ids = explode( ',', (string) $image_ids );
 			}
 			$image_ids = array_map( 'absint', $image_ids );
-			// phpcs:ignore WordPress.PHP.StrictInArray.MissingTrueStrict
 			if ( in_array( $attachment_id, $image_ids, true ) ) {
 				self::delete_transients( $row->post_id, 'variation-images' );
 			}

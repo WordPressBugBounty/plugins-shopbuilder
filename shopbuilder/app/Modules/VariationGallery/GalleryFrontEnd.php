@@ -29,7 +29,21 @@ class GalleryFrontEnd {
 	private function __construct() {
 		add_filter( 'woocommerce_locate_template', [ $this, 'override_templates' ], 10, 2 );
 		add_action( 'wp_footer', [ $this, 'slider_and_thumbnail_template_js' ] );
+
+		// Side (left/right) thumbnail layouts are free. Pro re-filters both of these at
+		// its own priority and wins where the two overlap, so pro behaviour is unchanged.
+		add_filter( 'rtsb/vg/slider/options', [ $this, 'side_thumbnail_slider_options' ] );
+		add_filter( 'rtsb/vg/thumbnails/slider/options', [ $this, 'side_thumbnails_slider_options' ], 10, 2 );
 		add_filter( 'woocommerce_available_variation', [ $this, 'available_variation_gallery' ], 90, 3 );
+		add_filter( 'woocommerce_product_variation_get_gallery_image_ids', [ $this, 'suppress_native_variation_gallery' ], 20, 2 );
+
+		// Track the variation form so its embedded "default gallery" snapshot can be
+		// skipped. `wc_get_template` (not `woocommerce_locate_template`) is what the
+		// stub swaps on, because WooCommerce caches the located path and skips the
+		// locate filter on repeat renders within the same request.
+		add_action( 'woocommerce_before_template_part', [ $this, 'mark_variation_form_open' ] );
+		add_action( 'woocommerce_after_template_part', [ $this, 'mark_variation_form_closed' ] );
+		add_filter( 'wc_get_template', [ $this, 'skip_native_gallery_snapshot' ], 60, 2 );
 
 		add_action( 'wp_ajax_rtsb_vg_get_default_gallery_images', [ $this, 'get_default_gallery_images' ] );
 		add_action( 'wp_ajax_nopriv_rtsb_vg_get_default_gallery_images', [ $this, 'get_default_gallery_images' ] );
@@ -65,6 +79,21 @@ class GalleryFrontEnd {
 				unset( $available_variation['image'], $available_variation['image_id'] );
 			}
 
+			/*
+			 * WooCommerce 11.1+ also ships gallery markup in `gallery_images_html` and
+			 * swaps it in from `add-to-cart-variation.js`, replacing the whole
+			 * `.woocommerce-product-gallery` element. Our gallery owns that DOM, so the
+			 * payload is dropped to keep core's swap from competing with ours — and to
+			 * keep a duplicate copy of the gallery out of `data-product_variations`.
+			 *
+			 * suppress_native_variation_gallery() normally stops this being built at
+			 * all; blanking it here is the belt-and-braces for any request where the
+			 * gallery ids were re-added by a third party after that filter ran.
+			 */
+			if ( GalleryFns::use_native_gallery() && isset( $available_variation['gallery_images_html'] ) ) {
+				$available_variation['gallery_images_html'] = '';
+			}
+
 			// Inline the gallery for small products so variation swaps are instant with no
 			// per-click AJAX (the frontend renders variation_gallery_images directly). For
 			// large products we omit it and fall back to the lazy AJAX path
@@ -92,6 +121,214 @@ class GalleryFrontEnd {
 		}
 
 		return apply_filters( 'rtsb/vg/available/variation/gallery', $available_variation, $variation, $variation_id );
+	}
+
+	/**
+	 * Turn the main slider into a thumbnail-linked Swiper for side layouts.
+	 *
+	 * The bottom layout is deliberately left alone: its thumbnails are plain stacked
+	 * items (`thumbsSelectorNoSlider`), and switching it to a Swiper would change how
+	 * every existing free site renders. Only left/right — which need a vertical,
+	 * linked thumbnail strip — are adjusted here.
+	 *
+	 * @param array $slider_options Main slider options.
+	 *
+	 * @return array
+	 */
+	public function side_thumbnail_slider_options( $slider_options ) {
+		if ( ! $this->is_side_thumbnail_layout( GalleryFns::get_gallery_style() ) ) {
+			return $slider_options;
+		}
+
+		// Side layouts always track the active image's height: the two columns sit
+		// next to each other, so sizing to the tallest slide would leave a blank gap
+		// under a short image.
+		$slider_options['autoHeight']     = true;
+		$slider_options['observer']       = true;
+		$slider_options['observeParents'] = true;
+		$slider_options['thumbsSelector'] = '.rtsb-vg-thumb-slider';
+
+		unset( $slider_options['thumbsSelectorNoSlider'] );
+
+		return $slider_options;
+	}
+
+	/**
+	 * Supply the vertical thumbnail Swiper options for side layouts.
+	 *
+	 * @param array $options Thumbnail slider options.
+	 * @param array $args    Render args (thumbnailsPosition, randDom).
+	 *
+	 * @return array
+	 */
+	public function side_thumbnails_slider_options( $options, $args ) {
+		$position = $args['thumbnailsPosition'] ?? 'bottom';
+
+		if ( ! $this->is_side_thumbnail_layout( $position ) ) {
+			return $options;
+		}
+
+		$col = GalleryFns::get_options( 'thumbnails_columns' );
+		$gap = GalleryFns::get_options( 'thumbnails_gap' );
+
+		return [
+			'slidesPerView' => absint( $col ?: 4 ),
+			'spaceBetween'  => ( null === $gap || '' === $gap ) ? 10 : absint( $gap ),
+			'direction'     => 'vertical',
+			'speed'         => 500,
+			'loop'          => false,
+			'navigation'    => [
+				'nextEl' => '.swiper-gallery-next.rtsb-random-id-' . esc_attr( $args['randDom'] ?? '' ),
+				'prevEl' => '.swiper-gallery-prev.rtsb-random-id-' . esc_attr( $args['randDom'] ?? '' ),
+			],
+		] + $options;
+	}
+
+	/**
+	 * Whether a gallery style places the thumbnails beside the main image.
+	 *
+	 * @param string $style Gallery style / thumbnail position.
+	 *
+	 * @return bool
+	 */
+	private function is_side_thumbnail_layout( $style ) {
+		return in_array( $style, [ 'left', 'right' ], true );
+	}
+
+	/**
+	 * Whether WooCommerce is currently rendering the variable add-to-cart template.
+	 *
+	 * @var bool
+	 */
+	private $rendering_variation_form = false;
+
+	/**
+	 * Whether this module's gallery template replaced WooCommerce's for this request.
+	 *
+	 * Used to decide when it is safe to stop WooCommerce building its own variation
+	 * gallery output: only once our template is demonstrably the one rendering the
+	 * product images. Block themes and the WooCommerce Product Gallery block never go
+	 * through `single-product/product-image.php`, so they must keep reading the native
+	 * gallery untouched even though `is_product()` is true there.
+	 *
+	 * @var bool
+	 */
+	private $gallery_template_rendered = false;
+
+	/**
+	 * Note that the variable add-to-cart template has started rendering.
+	 *
+	 * @param string $template_name Template being rendered.
+	 *
+	 * @return void
+	 */
+	public function mark_variation_form_open( $template_name ) {
+		if ( 'single-product/add-to-cart/variable.php' === $template_name ) {
+			$this->rendering_variation_form = true;
+		}
+	}
+
+	/**
+	 * Note that the variable add-to-cart template has finished rendering.
+	 *
+	 * @param string $template_name Template that finished rendering.
+	 *
+	 * @return void
+	 */
+	public function mark_variation_form_closed( $template_name ) {
+		if ( 'single-product/add-to-cart/variable.php' === $template_name ) {
+			$this->rendering_variation_form = false;
+		}
+	}
+
+	/**
+	 * Skip the gallery snapshot WooCommerce embeds inside the variation form.
+	 *
+	 * `single-product/add-to-cart/variable.php` renders the whole product gallery a
+	 * second time into a hidden `<template>`, so core's variation script can restore it
+	 * after swapping in per-variation markup. That swap never happens here — the
+	 * payload driving it is dropped in available_variation_gallery() — so the snapshot
+	 * is dead weight: it would duplicate the entire slider on every variable product
+	 * page and fire the gallery's render hooks a second time.
+	 *
+	 * Scoped to renders that happen *inside* the variation form, so a genuine second
+	 * gallery elsewhere on the page is untouched.
+	 *
+	 * @param string $template      Resolved template path.
+	 * @param string $template_name Template name being loaded.
+	 *
+	 * @return string
+	 */
+	public function skip_native_gallery_snapshot( $template, $template_name ) {
+		if ( 'single-product/product-image.php' !== $template_name ) {
+			return $template;
+		}
+
+		// Re-assert ownership here as well as in override_templates(): WooCommerce
+		// caches the located path, so on a store with a persistent object cache the
+		// locate filter can be skipped entirely while this one always runs. The
+		// snapshot render is excluded, otherwise it would claim ownership on behalf of
+		// a gallery that has not actually been rendered.
+		if ( ! $this->rendering_variation_form && false !== strpos( $template, 'variation-gallery' ) ) {
+			$this->gallery_template_rendered = true;
+		}
+
+		if ( ! $this->rendering_variation_form ) {
+			return $template;
+		}
+
+		if ( ! GalleryFns::use_native_gallery() || ! $this->gallery_template_rendered || ! $this->is_single_product_context() ) {
+			return $template;
+		}
+
+		if ( ! apply_filters( 'rtsb/vg/skip/native/gallery/snapshot', true ) ) {
+			return $template;
+		}
+
+		$stub = Fns::locate_template( 'variation-gallery/vg-noop' );
+
+		return file_exists( $stub ) ? $stub : $template;
+	}
+
+	/**
+	 * Stop WooCommerce building its own variation gallery markup on the frontend.
+	 *
+	 * `WC_Product_Variable::get_available_variation()` renders
+	 * `single-product/product-image.php` once per variation whenever the native gallery
+	 * holds images — and on a single product page that template is ours, so after
+	 * migration every variation would re-render the full slider into
+	 * `data-product_variations`. Returning an empty list skips that render entirely;
+	 * the gallery data our script consumes is supplied separately through
+	 * `variation_gallery_images` and the on-demand AJAX endpoint.
+	 *
+	 * Only the `view` context reaches this filter, so
+	 * `GalleryFns::get_native_variation_gallery_ids()` (which reads in `edit` context)
+	 * and every admin/REST/CSV reader still see the stored value.
+	 *
+	 * @param array       $gallery_image_ids Native gallery image IDs.
+	 * @param \WC_Product $variation         Variation object.
+	 *
+	 * @return array
+	 */
+	public function suppress_native_variation_gallery( $gallery_image_ids, $variation ) {
+		if ( is_admin() || ( defined( 'REST_REQUEST' ) && REST_REQUEST ) ) {
+			return $gallery_image_ids;
+		}
+
+		// `gallery_template_rendered` is the load-bearing condition, not just a
+		// shortcut: block themes and the WooCommerce Product Gallery block read this
+		// same prop on a single product page (where is_single_product_context() is
+		// true) but never render our template, so suppressing there would empty their
+		// galleries instead of ours.
+		if ( ! GalleryFns::use_native_gallery() || ! $this->gallery_template_rendered || ! $this->is_single_product_context() ) {
+			return $gallery_image_ids;
+		}
+
+		if ( ! apply_filters( 'rtsb/vg/suppress/native/variation/gallery', true, $variation ) ) {
+			return $gallery_image_ids;
+		}
+
+		return [];
 	}
 
 	/**
@@ -125,8 +362,25 @@ class GalleryFrontEnd {
 			$referer = wp_get_referer();
 			if ( $referer ) {
 				$referer_id = url_to_postid( $referer );
-				if ( $referer_id && 'product' === get_post_type( $referer_id ) ) {
-					$is_single = true;
+				if ( $referer_id ) {
+					$referer_type = get_post_type( $referer_id );
+
+					if ( 'product' === $referer_type ) {
+						$is_single = true;
+					} elseif ( BuilderFns::$post_type_tb === $referer_type && 'product' === BuilderFns::builder_type( $referer_id ) ) {
+						/*
+						 * A ShopBuilder single-product template rendered on its own URL
+						 * (the template-builder preview). The referring post is a
+						 * `rtsb_builder` template rather than a product, so the check
+						 * above misses it — but that page renders this module's gallery
+						 * exactly like a product page does.
+						 *
+						 * Without this, WooCommerce's `get_variation` AJAX keeps its own
+						 * `gallery_images_html`, and `wc_variations_image_update()`
+						 * replaceWith()s our entire gallery on every variation change.
+						 */
+						$is_single = true;
+					}
 				}
 			}
 		}
@@ -229,11 +483,15 @@ class GalleryFrontEnd {
 	public function override_templates( $template, $template_name ) {
 		// List of templates you want to override.
 		if ( 'single-product/product-image.php' === $template_name ) {
-			$galleryStyle    = GalleryFns::get_options( 'gallery_style' );
+			$galleryStyle    = GalleryFns::get_gallery_style();
 			$galleryStyle    = apply_filters( 'rtsb/vg/thumbnails/position', $galleryStyle );
 			$temp            = rtsb()->has_pro() && 'grid' === $galleryStyle ? 'variation-gallery/vg-grid-view' : 'variation-gallery/product-image';
 			$custom_template = Fns::locate_template( $temp );
 			if ( file_exists( $custom_template ) ) {
+				// Record that our gallery — not WooCommerce's — is what this request
+				// renders, so the native-output suppression below can safely engage.
+				$this->gallery_template_rendered = true;
+
 				return $custom_template;
 			}
 		}

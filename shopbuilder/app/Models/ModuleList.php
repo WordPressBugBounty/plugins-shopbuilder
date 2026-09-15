@@ -1435,8 +1435,8 @@ class ModuleList extends ListModel {
 					'active'       => '',
 					'title'        => esc_html__( 'Volume Discount', 'shopbuilder' ),
 					'active_field' => [
-						'label' => esc_html__( 'Enable Bulk Discounts?', 'shopbuilder' ),
-						'help'  => esc_html__( 'Switch on to enable bulk discounts module.', 'shopbuilder' ),
+						'label' => esc_html__( 'Enable Volume Discount?', 'shopbuilder' ),
+						'help'  => esc_html__( 'Switch on to enable volume discount module.', 'shopbuilder' ),
 					],
 					'package'      => $this->pro_package(),
 					'fields'       => Fns::pro_version_notice( '1.10.0', 'general', 'ShopBuilder Pro', false ),
@@ -4162,8 +4162,8 @@ class ModuleList extends ListModel {
 					'type'    => 'switch',
 					'isPro'   => ! rtsb()->has_pro(),
 					'default' => false,
-					'label'   => esc_html__( 'Show Term Name', 'shopbuilder' ),
-					'help'    => esc_html__( 'Selected term name will show beside attribute label.', 'shopbuilder' ),
+					'label'   => esc_html__( 'Show Selected Term Name', 'shopbuilder' ),
+					'help'    => esc_html__( 'Displays the selected attribute value next to its label (e.g. "Color: Red").', 'shopbuilder' ),
 					'tab'     => 'general',
 				],
 				'disabled_attribute_behavior'       => [
@@ -4883,13 +4883,17 @@ class ModuleList extends ListModel {
 					'type'    => 'select',
 					'value'   => 'bottom',
 					'label'   => esc_html__( 'Thumbnail Position/Gallery Style', 'shopbuilder' ),
-					'isPro'   => ! rtsb()->has_pro(),
-					'options' => [
-						'bottom' => esc_html__( 'Thumbnail Position Bottom', 'shopbuilder' ),
-						'left'   => esc_html__( 'Thumbnail Position Left', 'shopbuilder' ),
-						'right'  => esc_html__( 'Thumbnail Position Right', 'shopbuilder' ),
-						'grid'   => esc_html__( 'Grid View Images', 'shopbuilder' ),
-					],
+					// Bottom, left and right are free. Grid needs the pro templates, so
+					// it is only offered when pro is active; a value saved while pro was
+					// active degrades to bottom via GalleryFns::get_gallery_style().
+					'options' => array_merge(
+						[
+							'bottom' => esc_html__( 'Thumbnail Position Bottom', 'shopbuilder' ),
+							'left'   => esc_html__( 'Thumbnail Position Left', 'shopbuilder' ),
+							'right'  => esc_html__( 'Thumbnail Position Right', 'shopbuilder' ),
+						],
+						rtsb()->has_pro() ? [ 'grid' => esc_html__( 'Grid View Images', 'shopbuilder' ) ] : []
+					),
 					'tab'     => 'general',
 				],
 				'thumbnails_columns'               => [

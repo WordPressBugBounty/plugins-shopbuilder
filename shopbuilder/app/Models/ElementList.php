@@ -247,6 +247,8 @@ class ElementList extends ListModel {
 			'account_dashboard'                    => 'user',
 			'account_orders'                       => 'document',
 			'account_downloads'                    => 'download',
+			'account_gift_cards'                   => 'gift',
+			'account_gift_card_details'            => 'gift',
 			'account_billing_address'              => 'address',
 			'account_shipping_address'             => 'address',
 			'account_address_description'          => 'document',
@@ -1834,6 +1836,30 @@ class ElementList extends ListModel {
 				[
 					'id'            => 'account_downloads',
 					'title'         => esc_html__( 'Account Downloads', 'shopbuilder' ),
+					'category'      => 'myaccount_dashboard',
+					'is_front_page' => 'all_myaccount_dashboard_inner',
+					'active'        => 'on',
+					'package'       => $this->pro_package(),
+					'fields'        => [],
+				]
+			),
+			'account_gift_cards'                   => apply_filters(
+				'rtsb/elements/account_gift_cards/options',
+				[
+					'id'            => 'account_gift_cards',
+					'title'         => esc_html__( 'Account Gift Cards', 'shopbuilder' ),
+					'category'      => 'myaccount_dashboard',
+					'is_front_page' => 'all_myaccount_dashboard_inner',
+					'active'        => 'on',
+					'package'       => $this->pro_package(),
+					'fields'        => [],
+				]
+			),
+			'account_gift_card_details'            => apply_filters(
+				'rtsb/elements/account_gift_card_details/options',
+				[
+					'id'            => 'account_gift_card_details',
+					'title'         => esc_html__( 'Account Gift Card Details', 'shopbuilder' ),
 					'category'      => 'myaccount_dashboard',
 					'is_front_page' => 'all_myaccount_dashboard_inner',
 					'active'        => 'on',

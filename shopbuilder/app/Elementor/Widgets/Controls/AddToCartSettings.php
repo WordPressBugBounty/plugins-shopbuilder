@@ -322,49 +322,81 @@ class AddToCartSettings {
 	 */
 	public static function variation_style_fields() {
 		$fields = [
-			'variation_section'          => [
+			'variation_section'               => [
 				'mode'  => 'section_start',
 				'tab'   => 'style',
 				'label' => esc_html__( 'Variations', 'shopbuilder' ),
 			],
-			'variation_label_typography' => [
+			'variation_label_heading'         => [
+				'type'            => 'html',
+				'raw'             => sprintf(
+					'<h3 class="rtsb-elementor-group-heading">%s</h3>',
+					esc_html__( 'Label', 'shopbuilder' )
+				),
+				'content_classes' => 'elementor-panel-heading-title',
+			],
+			'variation_label_typography'      => [
 				'type'        => 'typography',
-				'separator'   => 'before',
 				'mode'        => 'group',
 				'label'       => esc_html__( 'Label Typography', 'shopbuilder' ),
 				'description' => esc_html__( 'Only for Variation Label.', 'shopbuilder' ),
 				'selector'    => self::$selectors['variation_label_typography'],
 			],
-			'variation_stock_typography' => [
-				'type'        => 'typography',
-				'separator'   => 'before',
-				'mode'        => 'group',
-				'label'       => esc_html__( 'Stock Typography', 'shopbuilder' ),
-				'description' => esc_html__( 'Only for variation stock.', 'shopbuilder' ),
-				'selector'    => self::$selectors['variation_stock_typography'],
-			],
-			'variation_label_color'      => [
+			'variation_label_color'           => [
 				'label'     => esc_html__( 'Label Color', 'shopbuilder' ),
 				'type'      => 'color',
 				'selectors' => [
 					self::$selectors['variation_label_color'] => 'color: {{VALUE}}',
 				],
 			],
-			'variation_stock_color'      => [
+			'variation_label_margin'          => [
+				'label'      => esc_html__( 'Label Margin', 'shopbuilder' ),
+				'type'       => 'dimensions',
+				'size_units' => [ 'px', '%', 'em' ],
+				'selectors'  => [
+					self::$selectors['variation_label_margin'] => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}} !important;',
+				],
+			],
+			'variation_stock_heading'         => [
+				'type'            => 'html',
+				'raw'             => sprintf(
+					'<h3 class="rtsb-elementor-group-heading">%s</h3>',
+					esc_html__( 'Stock', 'shopbuilder' )
+				),
+				'content_classes' => 'elementor-panel-heading-title',
+				'separator'       => 'before',
+			],
+			'variation_stock_typography'      => [
+				'type'        => 'typography',
+				'mode'        => 'group',
+				'label'       => esc_html__( 'Stock Typography', 'shopbuilder' ),
+				'description' => esc_html__( 'Only for variation stock.', 'shopbuilder' ),
+				'selector'    => self::$selectors['variation_stock_typography'],
+			],
+			'variation_stock_color'           => [
 				'label'     => esc_html__( 'Stock Color', 'shopbuilder' ),
 				'type'      => 'color',
 				'selectors' => [
 					self::$selectors['variation_stock_color'] => 'color: {{VALUE}}',
 				],
 			],
-			'variation_outofstock_color' => [
+			'variation_outofstock_color'      => [
 				'label'     => esc_html__( 'Out of Stock Color', 'shopbuilder' ),
 				'type'      => 'color',
 				'selectors' => [
 					self::$selectors['variation_outofstock_color'] => 'color: {{VALUE}}',
 				],
 			],
-			'variation_height'           => [
+			'variation_swatch_heading'        => [
+				'type'            => 'html',
+				'raw'             => sprintf(
+					'<h3 class="rtsb-elementor-group-heading">%s</h3>',
+					esc_html__( 'Variation Items', 'shopbuilder' )
+				),
+				'content_classes' => 'elementor-panel-heading-title',
+				'separator'       => 'before',
+			],
+			'variation_height'                => [
 				'label'     => esc_html__( 'Height', 'shopbuilder' ),
 				'type'      => 'slider',
 				'range'     => [
@@ -373,16 +405,20 @@ class AddToCartSettings {
 						'max' => 200,
 					],
 				],
+				// 40px gives the label room to sit on its own line-height. The old 30px
+				// was fine on its own, but this widget also applies variation_padding to
+				// the same elements, and with border-box that left ~10px of content
+				// height — enough to squash/clip the term and select labels.
 				'default'   => [
 					'unit' => 'px',
-					'size' => '30',
+					'size' => '40',
 				],
 				'selectors' => [
 					self::$selectors['variation_height'] => 'height: {{SIZE}}{{UNIT}};',
 					':root'                              => '--details-page-attr-height:{{SIZE}}{{UNIT}};',
 				],
 			],
-			'variation_width'            => [
+			'variation_width'                 => [
 				'label'      => esc_html__( 'Min Width', 'shopbuilder' ),
 				'size_units' => [ 'px', '%' ],
 				'type'       => 'slider',
@@ -396,22 +432,45 @@ class AddToCartSettings {
 						'max' => 100,
 					],
 				],
+				// Matches the height so single-character terms (S, M, L) stay square.
 				'default'    => [
 					'unit' => 'px',
-					'size' => '30',
+					'size' => '40',
 				],
 				'selectors'  => [
 					self::$selectors['variation_width'] => 'min-width: {{SIZE}}{{UNIT}};',
 					':root'                             => '--details-page-attr-width:{{SIZE}}{{UNIT}};',
 				],
 			],
-			'variation_border'           => [
+			'variation_padding'               => [
+				'label'       => esc_html__( 'Padding ', 'shopbuilder' ),
+				'description' => sprintf( '<span style="color:#e01e1e;">%s</span>', esc_html__( 'Note: Only for Select And Button Field.', 'shopbuilder' ) ),
+				'type'        => 'dimensions',
+				'size_units'  => [ 'px' ],
+				// Horizontal only. These elements already have a fixed height, so vertical
+				// padding fights it rather than adding breathing room — the label ends up
+				// squashed against the top/bottom edge (or clipped) instead of centred.
+				'default'     => [
+					'top'      => '0',
+					'right'    => '10',
+					'bottom'   => '0',
+					'left'     => '10',
+					'unit'     => 'px',
+					'isLinked' => false,
+				],
+				'separator'   => 'default',
+				'selectors'   => [
+					self::$selectors['variation_padding'] => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					':root'                               => '--variation-padding:{{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				],
+			],
+			'variation_border'                => [
 				'mode'     => 'group',
 				'type'     => 'border',
-				'label'    => esc_html__( 'Quantity Border', 'shopbuilder' ),
+				'label'    => esc_html__( 'Border', 'shopbuilder' ),
 				'selector' => self::$selectors['variation_border'],
 			],
-			'variation_border_radius'    => [
+			'variation_border_radius'         => [
 				'label'      => esc_html__( 'Border Radius', 'shopbuilder' ),
 				'size_units' => [ 'px', '%' ],
 				'type'       => 'slider',
@@ -420,34 +479,23 @@ class AddToCartSettings {
 					':root' => '--variation-attr-border-radius:{{SIZE}}{{UNIT}};',
 				],
 			],
-			'variation_padding'          => [
-				'label'       => esc_html__( 'Padding ', 'shopbuilder' ),
-				'description' => esc_html__( 'Note: Only for Select And Button Field.', 'shopbuilder' ),
-				'type'        => 'dimensions',
-				'size_units'  => [ 'px' ],
-				'default'     => [
-					'top'      => '10',
-					'right'    => '10',
-					'bottom'   => '10',
-					'left'     => '10',
-					'unit'     => 'px',
-					'isLinked' => true,
-				],
-				'separator'   => 'default',
+			'variation_swatch_border_color'   => [
+				'label'       => esc_html__( 'Swatch Border Color', 'shopbuilder' ),
+				'type'        => 'color',
+				'description' => esc_html__( 'Border color of the swatch items (Variation Swatches module).', 'shopbuilder' ),
 				'selectors'   => [
-					self::$selectors['variation_padding'] => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
-					':root'                               => '--variation-padding:{{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					self::$selectors['variation_swatch_border_color'] => '--attribute-border-color: {{VALUE}};',
 				],
 			],
-			'variation_label_margin'     => [
-				'label'      => esc_html__( 'Label Margin', 'shopbuilder' ),
-				'type'       => 'dimensions',
-				'size_units' => [ 'px', '%', 'em' ],
-				'selectors'  => [
-					self::$selectors['variation_label_margin'] => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}} !important;',
+			'variation_swatch_selected_color' => [
+				'label'       => esc_html__( 'Selected Swatch Border Color', 'shopbuilder' ),
+				'type'        => 'color',
+				'description' => esc_html__( 'Border color of the hovered/selected swatch item.', 'shopbuilder' ),
+				'selectors'   => [
+					self::$selectors['variation_swatch_selected_color'] => '--attribute-border-color-hover: {{VALUE}};',
 				],
 			],
-			'variation_item_margin'      => [
+			'variation_item_margin'           => [
 				'label'      => esc_html__( 'Variation Item Margin', 'shopbuilder' ),
 				'type'       => 'dimensions',
 				'size_units' => [ 'px', '%', 'em' ],
@@ -455,7 +503,76 @@ class AddToCartSettings {
 					self::$selectors['variation_item_margin'] => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}} !important;',
 				],
 			],
-			'variation_section_end'      => [
+			'variation_checkmark_heading'     => [
+				'type'            => 'html',
+				'raw'             => sprintf(
+					'<h3 class="rtsb-elementor-group-heading">%s</h3>',
+					esc_html__( 'Checkmark', 'shopbuilder' )
+				),
+				'content_classes' => 'elementor-panel-heading-title',
+				'separator'       => 'before',
+			],
+			'variation_checkmark_bg_color'    => [
+				'label'     => esc_html__( 'Background Color', 'shopbuilder' ),
+				'type'      => 'color',
+				'selectors' => [
+					self::$selectors['variation_checkmark_bg_color'] => '--checkmark-bg-color: {{VALUE}};',
+				],
+			],
+			'variation_checkmark_size'        => [
+				'label'      => esc_html__( 'Size', 'shopbuilder' ),
+				'type'       => 'slider',
+				'size_units' => [ 'px' ],
+				'range'      => [
+					'px' => [
+						'min' => 8,
+						'max' => 50,
+					],
+				],
+				'selectors'  => [
+					self::$selectors['variation_checkmark_size'] => '--checkmark-width: {{SIZE}}{{UNIT}}; --checkmark-height: {{SIZE}}{{UNIT}};',
+				],
+			],
+			'variation_checkmark_icon_size'   => [
+				'label'      => esc_html__( 'Icon Size', 'shopbuilder' ),
+				'type'       => 'slider',
+				'size_units' => [ 'px' ],
+				'range'      => [
+					'px' => [
+						'min' => 6,
+						'max' => 40,
+					],
+				],
+				'selectors'  => [
+					self::$selectors['variation_checkmark_icon_size'] => '--checkmark-font-size: {{SIZE}}{{UNIT}};',
+				],
+			],
+			'variation_clear_heading'         => [
+				'type'            => 'html',
+				'raw'             => sprintf(
+					'<h3 class="rtsb-elementor-group-heading">%s</h3>',
+					esc_html__( 'Clear Button', 'shopbuilder' )
+				),
+				'content_classes' => 'elementor-panel-heading-title',
+				'separator'       => 'before',
+			],
+			'variation_clear_margin'          => [
+				'label'      => esc_html__( 'Margin', 'shopbuilder' ),
+				'type'       => 'dimensions',
+				'size_units' => [ 'px', '%', 'em' ],
+				'selectors'  => [
+					self::$selectors['variation_clear_margin'] => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}} !important;',
+				],
+			],
+			'variation_clear_padding'         => [
+				'label'      => esc_html__( 'Padding', 'shopbuilder' ),
+				'type'       => 'dimensions',
+				'size_units' => [ 'px', '%', 'em' ],
+				'selectors'  => [
+					self::$selectors['variation_clear_padding'] => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}} !important;',
+				],
+			],
+			'variation_section_end'           => [
 				'mode' => 'section_end',
 			],
 		];

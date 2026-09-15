@@ -138,6 +138,7 @@ class RenderHelpers {
 				'pagination'               => ! empty( $meta['show_pagination'] ),
 				'posts_loading_type'       => self::get_data( $meta, 'pagination_type', 'pagination' ),
 				'posts_per_page'           => self::get_data( $meta, 'pagination_per_page', '' ) ?: ( ! empty( $meta['posts_per_page'] ) ? absint( $meta['posts_per_page'] ) : '' ),
+				'visible_range'            => max( 1, absint( self::get_data( $meta, 'pagination_visible_range', 5 ) ) ),
 
 				// Image.
 				'f_img'                    => ! empty( $meta['show_featured_image'] ),
@@ -281,7 +282,11 @@ class RenderHelpers {
 		}
 
 		if ( is_search() ) {
-			$search_query = get_search_query();
+			// Ask for the unescaped term: this dataset is data, not output.
+			// get_search_query() defaults to esc_attr(), and pre-escaping here
+			// would be encoded a second time at the output boundary and would
+			// corrupt the JSON payload this array is encoded into.
+			$search_query = get_search_query( false );
 
 			if ( $search_query ) {
 				$data['search_query'] = sanitize_text_field( $search_query );
@@ -350,7 +355,11 @@ class RenderHelpers {
 		}
 
 		if ( is_search() ) {
-			$search_query = get_search_query();
+			// Ask for the unescaped term: this dataset is data, not output.
+			// get_search_query() defaults to esc_attr(), and pre-escaping here
+			// would be encoded a second time at the output boundary and would
+			// corrupt the JSON payload this array is encoded into.
+			$search_query = get_search_query( false );
 
 			if ( $search_query ) {
 				$data['search_query'] = sanitize_text_field( $search_query );
@@ -535,7 +544,16 @@ class RenderHelpers {
 	public static function pagination_data( $metas, $template ) {
 		$el_data = self::meta_dataset( $metas, $template );
 
-		return esc_js( wp_json_encode( $el_data, JSON_UNESCAPED_UNICODE ) );
+		// Returned as an attribute *value*; the caller escapes it for the
+		// attribute context (Elementor's Utils::render_html_attributes() applies
+		// esc_attr()). esc_js() here only double-encoded the payload and, via
+		// addslashes(), corrupted the JSON escapes for apostrophes and
+		// non-ASCII search terms. The HTML-safe flags keep the payload free of
+		// characters esc_attr() would have to encode - see self::archive_data().
+		return wp_json_encode(
+			$el_data,
+			JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT
+		);
 	}
 
 	/**
@@ -591,6 +609,10 @@ class RenderHelpers {
 				'show_compare_text'        => 'show-compare-text',
 				'show_quick_view_text'     => 'show-quick-view-text',
 				'show_wishlist_text'       => 'show-wishlist-text',
+				// Quick checkout only had its icon entry here, so the "Show Button Text?"
+				// switch had nothing to emit and the label stayed hidden whatever it was
+				// set to.
+				'show_quick_checkout_text' => 'show-quick-checkout-text',
 				'show_compare_icon'        => 'no-compare-icon',
 				'show_quick_view_icon'     => 'no-quick-view-icon',
 				'show_wishlist_icon'       => 'no-wishlist-icon',
@@ -638,10 +660,48 @@ class RenderHelpers {
 				$layout = self::set_default_layout( $layout );
 			}
 
-			return $layout;
+			return self::resolve_existing_layout( $layout, $template );
 		} else {
-			return ! empty( $template ) ? self::set_default_layout( $layout ) : $default;
+			return ! empty( $template ) ? self::resolve_existing_layout( self::set_default_layout( $layout ), $template ) : $default;
 		}
+	}
+
+	/**
+	 * Falls back to the default layout when the resolved template file cannot
+	 * be found.
+	 *
+	 * Layouts contributed by a theme or an addon (rtsb-*, toyup-*, zilly-*)
+	 * stay saved in the Elementor document after that theme or addon is gone.
+	 * Without this check the loop asks for a template that no longer exists,
+	 * so nothing renders and load_template() raises a "does not exist" notice
+	 * for every product in the loop.
+	 *
+	 * @param string $layout   Resolved layout name.
+	 * @param string $template Template directory, e.g. "elementor/general/grid/".
+	 *                         Empty when the layout is only used for CSS classes.
+	 *
+	 * @return string
+	 */
+	private static function resolve_existing_layout( $layout, $template ) {
+		if ( empty( $template ) || empty( $layout ) ) {
+			return $layout;
+		}
+
+		$cache_key = 'layout_exists_' . $template . $layout;
+
+		if ( isset( self::$cache[ $cache_key ] ) ) {
+			return self::$cache[ $cache_key ];
+		}
+
+		$resolved = $layout;
+
+		if ( ! Fns::locate_template( $template . $layout ) ) {
+			$resolved = self::set_default_layout( $layout );
+		}
+
+		self::$cache[ $cache_key ] = $resolved;
+
+		return $resolved;
 	}
 
 	/**
@@ -736,7 +796,21 @@ class RenderHelpers {
 	public static function archive_data( $metas, $template ) {
 		$el_data = self::archive_meta_dataset( $metas, $template );
 
-		return ' data-rtsb-ajax=\'' . esc_js( wp_json_encode( $el_data ) ) . '\'';
+		// The return value is an HTML attribute, so it must be escaped for the
+		// HTML attribute context. esc_js() is a JavaScript-string escaper: it
+		// turns &#039; back into a bare apostrophe and relies on a backslash
+		// that means nothing to an HTML parser, which let a search term close
+		// the attribute and inject its own. esc_attr() encodes both quote
+		// characters, so the value can never terminate the attribute.
+		//
+		// The JSON is additionally encoded with the HTML-safe flags so it holds
+		// no <, >, &, ' or " at all. That keeps a search term that itself looks
+		// like an entity (e.g. &quot;) intact: esc_attr() does not double-encode
+		// an existing entity, so without this the browser would decode the
+		// term back into a raw quote and break JSON.parse().
+		$json = wp_json_encode( $el_data, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT );
+
+		return sprintf( ' data-rtsb-ajax="%s"', esc_attr( $json ) );
 	}
 
 	/**
@@ -1315,50 +1389,47 @@ class RenderHelpers {
 		// (e.g. /product-category/clothing/). On the shop page WordPress can
 		// resolve ?product_cat=X to a queried term, but in that case we want
 		// the full hierarchy to remain visible for additional filtering.
-		$is_term_archive_url = self::request_path_is_term_archive( $taxonomy );
+		$archive_term = self::request_path_is_term_archive( $taxonomy ) ? self::resolve_archive_term_from_path( $taxonomy ) : null;
 
-		$cache_key      = $is_term_archive_url
-			? 'rtsb_get_terms_filter_products_archive_' . $taxonomy
+		// The cache key MUST include the archive term id. The scoped list is
+		// different for every term archive, so a taxonomy-only key leaks the
+		// first visited category's term list into every other category archive
+		// when a persistent object cache is active - the leaked terms are then
+		// counted as empty in the current archive and the whole filter renders
+		// blank.
+		$cache_key = $archive_term instanceof WP_Term
+			? 'rtsb_get_terms_filter_products_archive_' . $taxonomy . '_' . $archive_term->term_id
 			: 'rtsb_get_terms_filter_products_full_' . $taxonomy;
-		$taxonomy_terms = wp_cache_get( $cache_key, 'shopbuilder' );
+
+		$taxonomy_terms = wp_cache_get( $cache_key, Cache::group() );
 
 		if ( false === $taxonomy_terms ) {
-			$archive_term = $is_term_archive_url ? self::resolve_archive_term_from_path( $taxonomy ) : null;
-
 			if ( $archive_term instanceof WP_Term ) {
-				$term_id           = $archive_term->term_id;
-				$archive_cache_key = 'rtsb_get_terms_filter_products_' . $taxonomy . $term_id;
-				$taxonomy_terms    = wp_cache_get( $archive_cache_key, 'shopbuilder' );
-				if ( false === $taxonomy_terms ) {
-					// Treat the URL-derived term as the root of the visible
-					// hierarchy so the recursive renderer in
-					// get_product_default_filter_list_html() (which starts
-					// with $parent = 0) picks it up on child-category
-					// archives. Clone first to avoid mutating WP's term
-					// object.
-					$current_term         = clone $archive_term;
-					$current_term->parent = 0;
-					$taxonomy_terms       = [ $current_term ];
-					$child_args           = [
-						'taxonomy'   => $taxonomy,
-						'child_of'   => $term_id,
-						'hide_empty' => false,
-					];
+				// Treat the URL-derived term as the root of the visible
+				// hierarchy so the recursive renderer in
+				// get_product_default_filter_list_html() (which starts
+				// with $parent = 0) picks it up on child-category
+				// archives. Clone first to avoid mutating WP's term
+				// object.
+				$current_term         = clone $archive_term;
+				$current_term->parent = 0;
+				$taxonomy_terms       = [ $current_term ];
+				$child_args           = [
+					'taxonomy'   => $taxonomy,
+					'child_of'   => $archive_term->term_id,
+					'hide_empty' => false,
+				];
 
-					$child_terms = get_terms( $child_args );
+				$child_terms = get_terms( $child_args );
 
-					if ( ! empty( $child_terms ) ) {
-						$taxonomy_terms = array_merge( $taxonomy_terms, $child_terms );
-					}
-
-					wp_cache_set( $archive_cache_key, $taxonomy_terms, 'shopbuilder' );
-					Cache::set_data_cache_key( $archive_cache_key );
+				if ( ! empty( $child_terms ) && ! is_wp_error( $child_terms ) ) {
+					$taxonomy_terms = array_merge( $taxonomy_terms, $child_terms );
 				}
 			} else {
 				$taxonomy_terms = get_terms( $args );
 			}
 
-			wp_cache_set( $cache_key, $taxonomy_terms, 'shopbuilder' );
+			wp_cache_set( $cache_key, $taxonomy_terms, Cache::group(), 12 * HOUR_IN_SECONDS );
 			Cache::set_data_cache_key( $cache_key );
 		}
 
@@ -1702,6 +1773,18 @@ class RenderHelpers {
 			$term_id  = $tax->term_id;
 		}
 
+		// A taxonomy selected through the query string is a removable choice,
+		// not a fixed archive context, and the filter ORs terms within one
+		// taxonomy. Scoping a term's count to that selection therefore
+		// advertises a result the filter never produces - on
+		// /shop/?product_cat=aliens the Movies count read 32 while choosing
+		// Movies returns 279 - and it hides every sibling term whose overlap
+		// with the selection is zero. Only a real term-archive URL
+		// (/product-category/aliens/) is a fixed context worth scoping to.
+		if ( $taxonomy === $page->taxonomy && ! self::request_path_is_term_archive( $page->taxonomy ) ) {
+			return $count;
+		}
+
 		if ( strpos( $page->taxonomy, 'pa_' ) !== false ) {
 			$args['status']    = 'publish';
 			$args['limit']     = -1;
@@ -1728,10 +1811,7 @@ class RenderHelpers {
 				],
 			];
 
-			$query    = new WC_Product_Query( $args );
-			$products = $query->get_products();
-
-			return count( $products );
+			return Fns::count_products_by_tax_query( $args['tax_query'] );
 		}
 
 		// Scope the count to the current archive term (category, brand, tag, etc.)
@@ -1764,10 +1844,7 @@ class RenderHelpers {
 			],
 		];
 
-		$query    = new WC_Product_Query( $args );
-		$products = $query->get_products();
-
-		return count( $products );
+		return Fns::count_products_by_tax_query( $args['tax_query'] );
 	}
 
 	/**
@@ -1810,8 +1887,7 @@ class RenderHelpers {
 			],
 		];
 
-		$query = new WC_Product_Query( $args );
-		$count = count( $query->get_products() );
+		$count = Fns::count_products_by_tax_query( $args['tax_query'] );
 
 		$cache[ $cache_key ] = $count;
 

@@ -118,7 +118,6 @@ class BuilderFns {
 					$post_id = $template;
 					break;
 				}
-				Cache::set_transient_cache_key( $cache_key_product );
 				$builder_id = get_post_meta( get_the_ID(), self::$view_template_for_products_meta, true );
 
 				if ( self::get_specific_product_as_default( $builder_id ) && 'publish' === get_post_status( $builder_id ) ) {
@@ -185,7 +184,6 @@ class BuilderFns {
 						$post_id = $template;
 						break;
 					}
-					Cache::set_transient_cache_key( $cache_key_archive );
 					$builder_id = get_term_meta( $queried_object->term_id, self::$view_template_for_archive_meta, true );
 					if ( self::get_specific_category_as_default( $builder_id ) && 'publish' === get_post_status( $builder_id ) ) {
 						$post_id = $builder_id;

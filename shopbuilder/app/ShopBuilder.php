@@ -25,6 +25,7 @@ use RadiusTheme\SB\Controllers\Hooks\FilterHooks;
 use RadiusTheme\SB\Controllers\Hooks\ActionHooks;
 use RadiusTheme\SB\Controllers\Frontend\Ajax\AddToCart;
 use RadiusTheme\SB\Controllers\Frontend\Ajax\AjaxLogin;
+use RadiusTheme\SB\Controllers\Frontend\OrderReviewQuantity;
 use RadiusTheme\SB\Controllers\Frontend\Ajax\UpdateCheckoutSection;
 
 // Do not allow directly accessing this file.
@@ -85,6 +86,12 @@ final class ShopBuilder {
 		$this->current_theme = wp_get_theme()->get( 'Template' ) ? wp_get_theme()->get( 'Template' ) : ( wp_get_theme()->get( 'TextDomain' ) ? wp_get_theme()->get( 'TextDomain' ) : strtolower( str_replace( ' ', '', wp_get_theme()->get( 'Name' ) ) ) );
 		add_action( 'plugins_loaded', [ $this, 'init' ], 15 );
 		add_action( 'upgrader_process_complete', [ $this, 'maybe_run_after_update' ], 10, 2 );
+
+		// Runs before anything reads or writes the object cache: Installation is
+		// on init:5 and ModuleManager on init:15. Registered here rather than in
+		// init() so version tracking stays accurate even while a dependency is
+		// missing and the rest of the plugin is dormant.
+		add_action( 'init', [ Cache::class, 'maybe_rotate_group' ], 1 );
 
 		// Register Plugin Active Hook.
 		register_activation_hook( RTSB_FILE, [ Installation::class, 'activate' ] );
@@ -179,6 +186,9 @@ final class ShopBuilder {
 			AjaxLogin::instance();
 			UpdateCheckoutSection::instance();
 
+			// Checkout.
+			OrderReviewQuantity::instance();
+
 			BuilderController::instance();
 			FilterHooks::init_hooks();
 			ActionHooks::init_hooks();
@@ -212,21 +222,29 @@ final class ShopBuilder {
 			return;
 		}
 
-		// For normal update flow.
+		$basename = plugin_basename( RTSB_FILE );
+		$slug     = dirname( $basename );
+
+		// Bulk update flow: WordPress passes every plugin in the batch.
 		if ( ! empty( $options['plugins'] ) ) {
-			foreach ( $options['plugins'] as $plugin ) {
-				if ( strpos( $plugin, 'shopbuilder' ) !== false ) {
-					Cache::clear_all_cache();
-					break;
-				}
+			if ( in_array( $basename, (array) $options['plugins'], true ) ) {
+				Cache::clear_all_cache();
 			}
 			return;
 		}
 
-		// For upload-based installation.
+		// Single update flow: WordPress passes the basename under `plugin`.
+		if ( ! empty( $options['plugin'] ) ) {
+			if ( $basename === $options['plugin'] ) {
+				Cache::clear_all_cache();
+			}
+			return;
+		}
+
+		// Upload-based installation: only the destination folder name is known.
 		if (
 			! empty( $upgrader_object->result['destination_name'] ) &&
-			strpos( $upgrader_object->result['destination_name'], 'shopbuilder' ) !== false
+			$slug === $upgrader_object->result['destination_name']
 		) {
 			Cache::clear_all_cache();
 		}
