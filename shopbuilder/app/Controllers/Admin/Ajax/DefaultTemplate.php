@@ -41,7 +41,22 @@ class DefaultTemplate {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error();
 		}
-		$page_type       = isset( $_POST['template_type'] ) ? sanitize_text_field( wp_unslash( $_POST['template_type'] ) ) : null; // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$page_type = isset( $_POST['template_type'] ) ? sanitize_text_field( wp_unslash( $_POST['template_type'] ) ) : null; // phpcs:ignore WordPress.Security.NonceVerification.Missing
+
+		// Nothing renders a template whose type this install cannot build. Worse,
+		// with its plugin inactive the type is no longer a known singleton, so the
+		// pool branch below would stamp `_rtsb_tb_enabled_in_pool` onto a template
+		// that can never use it - which is how such rows end up showing an enabled
+		// switch. The column renders this control disabled; this refuses the
+		// request that reaches the endpoint anyway.
+		if ( ! array_key_exists( $page_type, BuilderFns::builder_page_types() ) ) {
+			wp_send_json_error(
+				[
+					'message' => esc_html__( 'This template type is unavailable. Activate the plugin that provides it to use this template.', 'shopbuilder' ),
+				]
+			);
+		}
+
 		$default_page_id = isset( $_POST['set_default_page_id'] ) && 'publish' === get_post_status( $_POST['set_default_page_id'] ) ? absint( wp_unslash( $_POST['set_default_page_id'] ) ) : null; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		$page_id         = isset( $_POST['page_id'] ) && 'publish' === get_post_status( $_POST['page_id'] ) ? absint( wp_unslash( $_POST['page_id'] ) ) : null; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		Cache::clear_transient_cache();
@@ -55,6 +70,14 @@ class DefaultTemplate {
 				$product_page_for = empty( $product_page_for ) ? 'all_products' : $product_page_for;
 				if ( 'all_products' !== $product_page_for ) {
 					$is_can_set_default = null;
+
+					// A scoped Product Page template is activated through its own
+					// `*_set_default_{id}` option, so the type-wide option must not keep
+					// pointing at it — that happens when the template was activated while
+					// it still targeted all products.
+					if ( $page_id && absint( TemplateSettings::instance()->get_option( $option_name ) ) === absint( $page_id ) ) {
+						TemplateSettings::instance()->set_option( $option_name, '' );
+					}
 				}
 				break;
 			case 'archive':

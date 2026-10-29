@@ -463,6 +463,15 @@ class AssetsController {
 				'hasElementor'          => defined( 'ELEMENTOR_VERSION' ),
 				'loadElementor'         => Fns::should_load_elementor_scripts(),
 				'isOptimizationEnabled' => Fns::is_optimization_enabled(),
+				'i18n'                  => [
+					'configured'        => esc_html__( 'Configured', 'shopbuilder' ),
+					'replace'           => esc_html__( 'Replace', 'shopbuilder' ),
+					'remove'            => esc_html__( 'Remove', 'shopbuilder' ),
+					'cancel'            => esc_html__( 'Cancel', 'shopbuilder' ),
+					'undo'              => esc_html__( 'Undo', 'shopbuilder' ),
+					'secretRemoved'     => esc_html__( 'Will be removed when you save', 'shopbuilder' ),
+					'secretUnavailable' => esc_html__( 'The saved key cannot be read on this site. Please enter it again.', 'shopbuilder' ),
+				],
 			]
 		);
 		wp_localize_script(

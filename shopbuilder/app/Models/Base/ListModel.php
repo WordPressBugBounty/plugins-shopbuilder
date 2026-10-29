@@ -11,6 +11,8 @@ defined( 'ABSPATH' ) || exit;
 
 use RadiusTheme\SB\Helpers\Fns;
 use RadiusTheme\SB\Models\DataModel;
+use RadiusTheme\SB\Models\Secret;
+use RadiusTheme\SB\Models\SecretStore;
 
 /**
  * ListModel
@@ -105,6 +107,26 @@ abstract class ListModel {
 
 				if ( ! empty( $item['fields'] ) ) {
 					foreach ( $item['fields'] as $field_key => $field ) {
+						/*
+						 * Secrets are redacted here rather than at each consumer.
+						 * Every browser-facing settings payload - the localized
+						 * `rtsbParams.sections`, the save response and the
+						 * module-toggle response - is built from this array, so
+						 * this is the one place that has to hold the line. The
+						 * field reports only whether it is configured, plus the
+						 * keep sentinel as its value so existing `!= ''`
+						 * dependency rules keep resolving.
+						 */
+						if ( ! empty( $field['secret'] ) ) {
+							$state = Secret::state( SecretStore::raw( $field_key ) );
+
+							$item['fields'][ $field_key ]['configured']  = $state['configured'];
+							$item['fields'][ $field_key ]['unavailable'] = $state['unavailable'];
+							$item['fields'][ $field_key ]['value']       = $state['value'];
+
+							continue;
+						}
+
 						$the_value = $this->db_options[ $name ][ $field_key ] ?? ( $item['fields'][ $field_key ]['value'] ?? '' );
 						if ( 'repeaters' === $field['type'] && empty( $the_value ) && ! empty( $field['defaults'] ) ) {
 							$repeater_defaults = array_values( $field['defaults'] );

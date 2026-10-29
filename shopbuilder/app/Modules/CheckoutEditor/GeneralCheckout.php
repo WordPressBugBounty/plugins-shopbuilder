@@ -44,118 +44,129 @@ class GeneralCheckout extends CheckoutEditorBase {
 		return $args;
 	}
 	/**
+	 * Field keys WooCommerce re-applies on the client from the country locale.
+	 *
+	 * `address-i18n.js` rewrites these fields on page load and on every country
+	 * change, taking label, required and hidden straight from the locale it was
+	 * handed. Whatever `woocommerce_billing_fields` produced for them is
+	 * overwritten in the browser, so the editor's settings have to reach the
+	 * locale as well or they only survive server side. Phone joined this list in
+	 * recent WooCommerce releases, which is how a phone marked required in the
+	 * editor still rendered as optional.
+	 *
+	 * `country` is deliberately excluded: WooCommerce forces it visible and
+	 * required after every locale filter has run, so feeding settings into it
+	 * changes nothing.
+	 *
+	 * @return array
+	 */
+	private function locale_managed_keys() {
+		$keys = [ 'address_1', 'address_2', 'state', 'postcode', 'city', 'phone' ];
+
+		if ( function_exists( 'WC' ) && WC()->countries && method_exists( WC()->countries, 'get_country_locale_field_selectors' ) ) {
+			$keys = array_keys( WC()->countries->get_country_locale_field_selectors() );
+		}
+
+		return array_values( array_diff( $keys, [ 'country' ] ) );
+	}
+
+	/**
+	 * Saved editor settings for one locale-managed key.
+	 *
+	 * The default address fields and the locale are shared by both forms, so the
+	 * billing side wins and shipping only fills in what billing does not define.
+	 *
+	 * @param string $key Unprefixed field key, e.g. `phone`.
+	 *
+	 * @return array Saved field settings, empty when the field is not in use.
+	 */
+	private function locale_field_settings( $key ) {
+		if ( ! empty( $this->billing_settings[ 'billing_' . $key ] ) ) {
+			return $this->billing_settings[ 'billing_' . $key ];
+		}
+
+		if ( ! empty( $this->shipping_settings[ 'shipping_' . $key ] ) ) {
+			return $this->shipping_settings[ 'shipping_' . $key ];
+		}
+
+		return [];
+	}
+
+	/**
+	 * Applies the editor's settings to WooCommerce's default address fields.
+	 *
+	 * This array is also what becomes the default country locale, so it is the
+	 * only place a locale-managed field can be brought in line for both the
+	 * server and the browser.
+	 *
 	 * @param array $fields fields.
 	 * @return array
 	 */
 	public function default_address_fields( $fields ) {
-		// address_1.
-		if ( ! empty( $fields['address_1'] ) ) {
-			if ( ! empty( $this->billing_settings['billing_address_1'] ) ) {
-				$fields['address_1'] = wp_parse_args( $this->billing_settings['billing_address_1'], $fields['address_1'] );
-			} elseif ( ! empty( $this->shipping_settings['shipping_address_1'] ) ) {
-				$fields['address_1'] = wp_parse_args( $this->shipping_settings['shipping_address_1'], $fields['address_1'] );
-			}
-		}
-		if ( ! empty( $fields['address_2'] ) ) {
-			// address_2.
-			if ( ! empty( $this->billing_settings['billing_address_2'] ) ) {
-				$fields['address_2'] = wp_parse_args( $this->billing_settings['billing_address_2'], $fields['address_2'] );
-			} elseif ( ! empty( $this->shipping_settings['shipping_address_2'] ) ) {
-				$fields['address_2'] = wp_parse_args( $this->shipping_settings['shipping_address_2'], $fields['address_2'] );
-			}
-		}
-		if ( ! empty( $fields['city'] ) ) {
-			// city.
-			if ( ! empty( $this->billing_settings['billing_city'] ) ) {
-				$fields['city'] = wp_parse_args( $this->billing_settings['billing_city'], $fields['city'] );
-			} elseif ( ! empty( $this->shipping_settings['shipping_city'] ) ) {
-				$fields['city'] = wp_parse_args( $this->shipping_settings['shipping_city'], $fields['city'] );
-			}
-		}
-		if ( ! empty( $fields['state'] ) ) {
-			// state.
-			if ( ! empty( $this->billing_settings['billing_state'] ) ) {
-				$fields['state'] = wp_parse_args( $this->billing_settings['billing_state'], $fields['state'] );
-			} elseif ( ! empty( $this->shipping_settings['shipping_state'] ) ) {
-				$fields['state'] = wp_parse_args( $this->shipping_settings['shipping_state'], $fields['state'] );
-			}
-		}
-		if ( ! empty( $fields['postcode'] ) ) {
-			// State.
-			if ( ! empty( $this->billing_settings['billing_postcode'] ) ) {
-				$fields['postcode'] = wp_parse_args( $this->billing_settings['billing_postcode'], $fields['postcode'] );
-			} elseif ( ! empty( $this->shipping_settings['shipping_postcode'] ) ) {
-				$fields['postcode'] = wp_parse_args( $this->shipping_settings['shipping_postcode'], $fields['postcode'] );
-			}
-		}
 		// Inject priority from saved settings order so WC's address-i18n.js does not re-sort locale-managed fields with core defaults.
 		$billing_keys  = array_keys( $this->billing_settings );
 		$shipping_keys = array_keys( $this->shipping_settings );
-		foreach ( [ 'address_1', 'address_2', 'city', 'state', 'postcode' ] as $key ) {
+
+		foreach ( $this->locale_managed_keys() as $key ) {
 			if ( empty( $fields[ $key ] ) ) {
 				continue;
 			}
+
+			$settings = $this->locale_field_settings( $key );
+
+			if ( ! empty( $settings ) ) {
+				$fields[ $key ] = wp_parse_args( $settings, $fields[ $key ] );
+			}
+
 			$billing_index  = array_search( 'billing_' . $key, $billing_keys, true );
 			$shipping_index = array_search( 'shipping_' . $key, $shipping_keys, true );
+
 			if ( false !== $billing_index ) {
 				$fields[ $key ]['priority'] = ( absint( $billing_index ) + 1 ) * 10;
 			} elseif ( false !== $shipping_index ) {
 				$fields[ $key ]['priority'] = ( absint( $shipping_index ) + 1 ) * 10;
 			}
 		}
+
 		return $fields;
 	}
 
 	/**
+	 * Applies the editor's settings to one country's locale overrides.
+	 *
 	 * @param array $fields fields.
 	 * @return array
 	 */
 	public function country_locale( $fields ) {
-		// State.
-		if ( isset( $fields['postcode']['label'] ) ) {
-			if ( ! empty( $this->billing_settings['billing_postcode']['label'] ) ) {
-				$fields['postcode']['label'] = $this->billing_settings['billing_postcode']['label'];
-			} elseif ( ! empty( $this->shipping_settings['shipping_postcode']['label'] ) ) {
-				$fields['postcode']['label'] = $this->shipping_settings['shipping_postcode']['label'];
+		foreach ( $this->locale_managed_keys() as $key ) {
+			if ( empty( $fields[ $key ] ) ) {
+				continue;
 			}
-		}
-		if ( isset( $fields['postcode']['required'] ) ) {
-			if ( isset( $this->billing_settings['billing_postcode']['required'] ) ) {
-				$fields['postcode']['required'] = $this->billing_settings['billing_postcode']['required'];
-			} elseif ( isset( $this->shipping_settings['shipping_postcode']['required'] ) ) {
-				$fields['postcode']['required'] = $this->shipping_settings['shipping_postcode']['required'];
-			}
-		}
-		// Billing state.
-		if ( isset( $fields['state']['label'] ) ) {
-			if ( ! empty( $this->billing_settings['billing_state'] ) ) {
-				$fields['state']['label'] = $this->billing_settings['billing_state']['label'] ?? $fields['postcode']['label'];
-			} elseif ( ! empty( $this->shipping_settings['shipping_state'] ) ) {
-				$fields['state']['label'] = $this->shipping_settings['shipping_state']['label'] ?? $fields['postcode']['label'];
-			}
-		}
-		if ( isset( $fields['state']['required'] ) ) {
-			if ( isset( $this->billing_settings['billing_state']['required'] ) ) {
-				$fields['state']['required'] = $this->billing_settings['billing_state']['required'];
-			} elseif ( isset( $this->shipping_settings['shipping_state']['required'] ) ) {
-				$fields['state']['required'] = $this->shipping_settings['shipping_state']['required'];
-			}
-		}
 
-		// Billing city.
-		if ( isset( $fields['city']['label'] ) ) {
-			if ( ! empty( $this->billing_settings['billing_city'] ) ) {
-				$fields['city']['label'] = $this->billing_settings['billing_city']['label'] ?? $fields['city']['label'];
-			} elseif ( ! empty( $this->shipping_settings['shipping_city'] ) ) {
-				$fields['city']['label'] = $this->shipping_settings['shipping_city'] ?? $fields['city']['label'];
-			}
-		}
+			$settings = $this->locale_field_settings( $key );
 
-		if ( isset( $fields['city']['required'] ) ) {
-			if ( isset( $this->billing_settings['billing_city']['required'] ) ) {
-				$fields['city']['required'] = $this->billing_settings['billing_city']['required'];
-			} elseif ( isset( $this->shipping_settings['shipping_city']['required'] ) ) {
-				$fields['city']['required'] = $this->shipping_settings['shipping_city']['required'];
+			if ( empty( $settings ) ) {
+				continue;
+			}
+
+			// Only keys the country actually declares are touched. Anything it
+			// leaves out falls through to the default locale, which
+			// default_address_fields() has already brought in line.
+			if ( isset( $fields[ $key ]['label'] ) && ! empty( $settings['label'] ) ) {
+				$fields[ $key ]['label'] = $settings['label'];
+			}
+
+			// A field the country hides has no answer to give: WooCommerce pairs
+			// `hidden` with `required => false` for exactly that reason, and
+			// address-i18n.js hides the row without clearing `validate-required`.
+			// Forcing required here is what left 14 countries unable to check out,
+			// blocked on a postcode field they could not see.
+			if ( ! empty( $fields[ $key ]['hidden'] ) ) {
+				continue;
+			}
+
+			if ( isset( $fields[ $key ]['required'], $settings['required'] ) ) {
+				$fields[ $key ]['required'] = $settings['required'];
 			}
 		}
 

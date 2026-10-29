@@ -195,6 +195,7 @@ class GeneralList extends ListModel {
 							'id'          => 'gpt_api_key',
 							'label'       => esc_html__( 'ChatGPT API Key', 'shopbuilder' ),
 							'type'        => 'password',
+							'secret'      => true,
 							'placeholder' => esc_html__( 'sk-p********', 'shopbuilder' ),
 							'help'        => wp_kses(
 								__(
@@ -243,6 +244,7 @@ class GeneralList extends ListModel {
 							'id'          => 'gemini_api_key',
 							'label'       => esc_html__( 'Gemini API Key', 'shopbuilder' ),
 							'type'        => 'password',
+							'secret'      => true,
 							'placeholder' => esc_html__( 'AIzaSy***********************', 'shopbuilder' ),
 							'help'        => wp_kses(
 								__(
@@ -313,6 +315,7 @@ class GeneralList extends ListModel {
 							'id'          => 'deepseek_api_key',
 							'label'       => esc_html__( 'DeepSeek API Key', 'shopbuilder' ),
 							'type'        => 'password',
+							'secret'      => true,
 							'placeholder' => esc_html__( 'ds-***********************', 'shopbuilder' ),
 							'help'        => wp_kses(
 								__(

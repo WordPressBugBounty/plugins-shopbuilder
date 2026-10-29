@@ -64,6 +64,23 @@ class CreateTemplate {
 			wp_send_json( $return );
 		}
 
+		// The type has to be one this install can actually build. The pro types the
+		// modal advertises are rendered disabled, so they never reach here from the
+		// form - only a forged request would carry one. A template that already
+		// holds an unbuildable type keeps it, so editing one after its plugin was
+		// deactivated does not rewrite it.
+		if ( ! array_key_exists( $page_type, BuilderFns::builder_page_types() )
+			&& ( ! $page_id || get_post_meta( $page_id, BuilderFns::template_type_meta_key(), true ) !== $page_type )
+		) {
+			wp_send_json(
+				[
+					'success' => false,
+					'post_id' => $page_id,
+					'message' => esc_html__( 'This template type is not available on your installation.', 'shopbuilder' ),
+				]
+			);
+		}
+
 		// Nonce verified above.
 		$can_save = apply_filters( 'rtsb/builder/create_template/can_save', true, $page_type, $_POST ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 
@@ -136,6 +153,11 @@ class CreateTemplate {
 			$is_pool_type    = ! in_array( $page_type, $singleton_types, true );
 			if ( ( 'product' === $page_type && 'all_products' !== $template_for ) || ( 'archive' === $page_type && count( $selected_category ) ) ) {
 				if ( ! $has_default ) {
+					TemplateSettings::instance()->set_option( $option_name, '' );
+				} elseif ( 'product' === $page_type && absint( $has_default ) === absint( $page_id ) ) {
+					// This template just moved from "All Products" to a scoped mode, so the
+					// type-wide option must stop pointing at it — otherwise it keeps
+					// resolving for every product and survives its own deactivation.
 					TemplateSettings::instance()->set_option( $option_name, '' );
 				}
 			} else {

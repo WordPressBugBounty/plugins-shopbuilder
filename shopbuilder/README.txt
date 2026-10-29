@@ -4,7 +4,7 @@ Donate link:
 Tags: Elementor, Woocommerce Builder, Elementor Woocommerce Builder, Woocommerce, Woocommerce Product
 Requires at least: 6.0
 Tested up to: 7.1
-Stable tag: 3.4.2
+Stable tag: 3.4.3
 Requires PHP: 7.4
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -423,6 +423,20 @@ If you like the ShopBuilder Plugin, then consider checking out our other WordPre
 * You can report security bugs through the Patchstack Vulnerability Disclosure Program. The Patchstack team help validate, triage and handle any security vulnerabilities. [Report a security vulnerability.](https://patchstack.com/database/vdp/shopbuilder)
 
 == Changelog ==
+
+= 3.4.3 (Oct 29, 2026) =
+* Fix: Module settings repeaters now keep a value of 0 instead of clearing it on reload (e.g. Currency Switcher "Number of Decimals")
+* Fix: Deactivated Product Page templates no longer keep rendering on their selected product
+* Fix: Fatal error "Call to undefined function getmypid()" while building asset bundles on hosts that disable the function
+* Fix: Fatal error while updating from an older version - asset bundles are no longer rebuilt during the update itself, but on the next page load
+* Fix: Checkout Fields Editor - a phone marked required now shows and validates as required on the checkout instead of being re-labelled "(optional)" by WooCommerce
+* Fix: Checkout Fields Editor - checkout could not be completed in 14 countries (UAE, Nigeria, Bahamas and others) where WooCommerce hides the postcode field but it was still required
+* Fix: Checkout Fields Editor - the country field is always required, matching WooCommerce, instead of showing an asterisk the server did not enforce
+* Improvement: Templates Builder list "Set as Active" column is now sortable, so active templates can be grouped at the top
+* Improvement: Template Settings shows the Pro template types (My Account, Thank You, Quick View, Popup, Mega Menu, Brand/Tag Archive) as disabled options, grouped under "Available in Pro"
+* Fix: Editing a template whose type belongs to a deactivated plugin no longer rewrites its type to Shop/Archive on save
+* Improvement: More reliable asset optimization - safer bundle generation, per page type bundles, and automatic fallback to the unbundled CSS/JS
+* Security: AI provider API keys are now encrypted at rest and never sent to the browser - the settings page shows only a configured state, with Replace and Remove actions, and prompts you to re-enter a key it can no longer read
 
 = 3.4.2 (Aug 15, 2026) =
 * New: Order Review widget can show an editable quantity selector on the checkout page

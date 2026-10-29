@@ -6,7 +6,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-09-15 06:26+0000\n"
+"POT-Creation-Date: 2026-10-29 09:12+0000\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-KeywordsList: __;_e;_ex:1,2c;_n:1,2;_n_noop:1,2;_nx:1,2,4c;_nx_noop:1,2,3c;_x:1,2c;esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c\n"
 "X-Poedit-SearchPath-0: .\n"
@@ -30,7 +30,7 @@ msgstr ""
 msgid "Off"
 msgstr ""
 
-#: ../app/Abstracts/ElementorWidgetBase.php:112, ../app/Controllers/Builder/BuilderCpt.php:361, ../app/Controllers/Builder/BuilderCpt.php:401
+#: ../app/Abstracts/ElementorWidgetBase.php:112, ../app/Controllers/Builder/BuilderCpt.php:365
 msgid "Pro"
 msgstr ""
 
@@ -82,7 +82,7 @@ msgstr ""
 msgid "Apply Title"
 msgstr ""
 
-#: ../app/AI/MetaBoxScripts.php:74
+#: ../app/AI/MetaBoxScripts.php:74, ../app/Controllers/AssetsController.php:470
 msgid "Cancel"
 msgstr ""
 
@@ -222,51 +222,75 @@ msgstr ""
 msgid "Update All Rates"
 msgstr ""
 
+#: ../app/Controllers/AssetsController.php:467
+msgid "Configured"
+msgstr ""
+
+#: ../app/Controllers/AssetsController.php:468
+msgid "Replace"
+msgstr ""
+
+#: ../app/Controllers/AssetsController.php:469, ../app/Modules/VariationGallery/GalleryAdmin.php:341, ../app/Modules/VariationGallery/VariationGalleryInit.php:201, ../app/Modules/WishList/WishlistFns.php:210, ../app/Elementor/Widgets/Controls/CartTableSettings.php:818, ../app/Elementor/Widgets/Controls/CartTableSettings.php:910, ../app/Elementor/Widgets/Controls/CartTableSettings.php:965, ../app/Modules/VariationGallery/view/template-admin-thumbnail.php:19
+msgid "Remove"
+msgstr ""
+
+#: ../app/Controllers/AssetsController.php:471
+msgid "Undo"
+msgstr ""
+
 #: ../app/Controllers/AssetsController.php:472
+msgid "Will be removed when you save"
+msgstr ""
+
+#: ../app/Controllers/AssetsController.php:473
+msgid "The saved key cannot be read on this site. Please enter it again."
+msgstr ""
+
+#: ../app/Controllers/AssetsController.php:481
 msgid "Abandoned Carts Follow Up"
 msgstr ""
 
-#: ../app/Controllers/AssetsController.php:474
+#: ../app/Controllers/AssetsController.php:483
 msgid "Name"
 msgstr ""
 
-#: ../app/Controllers/AssetsController.php:475
+#: ../app/Controllers/AssetsController.php:484
 msgid "Email To"
 msgstr ""
 
-#: ../app/Controllers/AssetsController.php:476
+#: ../app/Controllers/AssetsController.php:485
 msgid "Cart Total"
 msgstr ""
 
-#: ../app/Controllers/AssetsController.php:477
+#: ../app/Controllers/AssetsController.php:486
 msgid "Order Status"
 msgstr ""
 
-#: ../app/Controllers/AssetsController.php:478
+#: ../app/Controllers/AssetsController.php:487
 msgid "Date / Time"
 msgstr ""
 
-#: ../app/Controllers/AssetsController.php:479
+#: ../app/Controllers/AssetsController.php:488
 msgid "Action"
 msgstr ""
 
-#: ../app/Controllers/BuilderController.php:123, ../app/Controllers/Admin/AdminInit.php:95, ../app/Controllers/Admin/AdminInit.php:96, ../app/Elementor/Widgets/General/LogoSliderAndGrid/Controls.php:294
+#: ../app/Controllers/BuilderController.php:121, ../app/Controllers/Admin/AdminInit.php:96, ../app/Controllers/Admin/AdminInit.php:97, ../app/Elementor/Widgets/General/LogoSliderAndGrid/Controls.php:294
 msgid "ShopBuilder"
 msgstr ""
 
-#: ../app/Controllers/BuilderController.php:129
+#: ../app/Controllers/BuilderController.php:127
 msgid "Shopbuilder - General"
 msgstr ""
 
-#: ../app/Controllers/BuilderController.php:264
+#: ../app/Controllers/BuilderController.php:262
 msgid "ShopBuilder Icons"
 msgstr ""
 
-#: ../app/Controllers/BuilderController.php:385, ../app/Elementor/Widgets/Checkout/BillingForm.php:58, ../templates/shopify-checkout/checkout.php:62
+#: ../app/Controllers/BuilderController.php:383, ../app/Elementor/Widgets/Checkout/BillingForm.php:58, ../templates/shopify-checkout/checkout.php:62
 msgid "You must be logged in to checkout."
 msgstr ""
 
-#: ../app/Controllers/BuilderController.php:663, ../app/Controllers/BuilderController.php:664, ../app/Models/ElementList.php:1387
+#: ../app/Controllers/BuilderController.php:747, ../app/Controllers/BuilderController.php:748, ../app/Models/ElementList.php:1387
 msgid "Ajax Product Filters"
 msgstr ""
 
@@ -291,224 +315,224 @@ msgid "Shopbuilder cache has been successfully cleared."
 msgstr ""
 
 #. translators: %s template.
-#: ../app/Helpers/Fns.php:484
+#: ../app/Helpers/Fns.php:486
 msgid "%s does not exist."
 msgstr ""
 
-#: ../app/Helpers/Fns.php:1349
+#: ../app/Helpers/Fns.php:1351
 msgid "Full size"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:1350
+#: ../app/Helpers/Fns.php:1352
 msgid "Custom image size"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:1366
+#: ../app/Helpers/Fns.php:1368
 msgid "Addon Layout"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:1370, ../app/Elementor/Helper/ControlHelper.php:99
+#: ../app/Helpers/Fns.php:1372, ../app/Elementor/Helper/ControlHelper.php:99
 msgid "Grid Layout 1"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:1371, ../app/Elementor/Helper/ControlHelper.php:104
+#: ../app/Helpers/Fns.php:1373, ../app/Elementor/Helper/ControlHelper.php:104
 msgid "Grid Layout 2"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:1372, ../app/Elementor/Helper/ControlHelper.php:819
+#: ../app/Helpers/Fns.php:1374, ../app/Elementor/Helper/ControlHelper.php:819
 msgid "List Layout 1"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:1373, ../app/Elementor/Helper/ControlHelper.php:823
+#: ../app/Helpers/Fns.php:1375, ../app/Elementor/Helper/ControlHelper.php:823
 msgid "List Layout 2"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:1374, ../app/Elementor/Helper/ControlHelper.php:758
+#: ../app/Helpers/Fns.php:1376, ../app/Elementor/Helper/ControlHelper.php:758
 msgid "Slider Layout 1"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:1375, ../app/Elementor/Helper/ControlHelper.php:763
+#: ../app/Helpers/Fns.php:1377, ../app/Elementor/Helper/ControlHelper.php:763
 msgid "Slider Layout 2"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:1376
+#: ../app/Helpers/Fns.php:1378
 msgid "Category Single Layout 1"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:1377, ../app/Elementor/Helper/ControlHelper.php:867
+#: ../app/Helpers/Fns.php:1379, ../app/Elementor/Helper/ControlHelper.php:867
 msgid "Category Layout 1"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:1378, ../app/Elementor/Helper/ControlHelper.php:872
+#: ../app/Helpers/Fns.php:1380, ../app/Elementor/Helper/ControlHelper.php:872
 msgid "Category Layout 2"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:1413, ../app/Controllers/Admin/Ajax/ModalTemplate.php:174
+#: ../app/Helpers/Fns.php:1415, ../app/Controllers/Admin/Ajax/ModalTemplate.php:229
 msgid "All Products"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:1531
+#: ../app/Helpers/Fns.php:1533
 msgid "Product Category"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:1543
+#: ../app/Helpers/Fns.php:1545
 msgid "All Categories"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:1544
+#: ../app/Helpers/Fns.php:1546
 msgid "Sub-Categories by Parent"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:1545
+#: ../app/Helpers/Fns.php:1547
 msgid "Select by ID"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:1546
+#: ../app/Helpers/Fns.php:1548
 msgid "Manual Selection"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:1578
+#: ../app/Helpers/Fns.php:1580
 msgid "Nothing found"
 msgstr ""
 
 #. translators: %s is the number of reviews
-#: ../app/Helpers/Fns.php:1637
+#: ../app/Helpers/Fns.php:1639
 msgid "%s Review"
 msgid_plural "%s Reviews"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../app/Helpers/Fns.php:1933
+#: ../app/Helpers/Fns.php:1935
 msgid "Default Image"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:2422, ../app/Elementor/Helper/ControlHelper.php:1315
+#: ../app/Helpers/Fns.php:2424, ../app/Elementor/Helper/ControlHelper.php:1315
 msgid "Facebook"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:2426, ../app/Elementor/Helper/ControlHelper.php:1319
+#: ../app/Helpers/Fns.php:2428, ../app/Elementor/Helper/ControlHelper.php:1319
 msgid "Twitter"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:2430, ../app/Elementor/Helper/ControlHelper.php:1323
+#: ../app/Helpers/Fns.php:2432, ../app/Elementor/Helper/ControlHelper.php:1323
 msgid "Linkedin"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:2434, ../app/Elementor/Helper/ControlHelper.php:1349
+#: ../app/Helpers/Fns.php:2436, ../app/Elementor/Helper/ControlHelper.php:1349
 msgid "Pinterest"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:2438, ../app/Elementor/Helper/ControlHelper.php:1341
+#: ../app/Helpers/Fns.php:2440, ../app/Elementor/Helper/ControlHelper.php:1341
 msgid "Skype"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:2442, ../app/Elementor/Helper/ControlHelper.php:1353
+#: ../app/Helpers/Fns.php:2444, ../app/Elementor/Helper/ControlHelper.php:1353
 msgid "Whatsapp"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:2446, ../app/Elementor/Helper/ControlHelper.php:1361
+#: ../app/Helpers/Fns.php:2448, ../app/Elementor/Helper/ControlHelper.php:1361
 msgid "Reddit"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:2450
+#: ../app/Helpers/Fns.php:2452
 msgid "Telegram"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:2504
+#: ../app/Helpers/Fns.php:2506
 msgid "Share on Facebook"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:2511
+#: ../app/Helpers/Fns.php:2513
 msgid "Share on Twitter"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:2518
+#: ../app/Helpers/Fns.php:2520
 msgid "Share on Pinterest"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:2525
+#: ../app/Helpers/Fns.php:2527
 msgid "Share on LinkedIn"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:2532
+#: ../app/Helpers/Fns.php:2534
 msgid "Share on Skype"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:2539
+#: ../app/Helpers/Fns.php:2541
 msgid "Share on Whatsapp"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:2546
+#: ../app/Helpers/Fns.php:2548
 msgid "Share on Reddit"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:2553
+#: ../app/Helpers/Fns.php:2555
 msgid "Share on Telegram"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:2719, ../app/Controllers/Admin/Ajax/AdminSettings.php:137
+#: ../app/Helpers/Fns.php:2749, ../app/Controllers/Admin/Ajax/AdminSettings.php:144
 msgid "Section , block or options may be empty"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:2726
+#: ../app/Helpers/Fns.php:2756
 msgid "No section or block found with given data"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:2817
+#: ../app/Helpers/Fns.php:2888
 msgid "No changes found for update"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:2825, ../app/Controllers/Admin/Ajax/AdminSettings.php:172
+#: ../app/Helpers/Fns.php:2896, ../app/Controllers/Admin/Ajax/AdminSettings.php:179
 msgid "Successfully Saved"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:3078, ../app/Modules/Compare/CompareFns.php:63, ../app/Modules/WishList/WishlistFns.php:207, ../app/Elementor/Widgets/Controls/AddToCartSettings.php:592, ../app/Elementor/Widgets/Controls/CartTableSettings.php:821, ../app/Elementor/Widgets/Controls/CartTableSettings.php:977, ../app/Elementor/Widgets/Controls/PriceSettings.php:78, ../app/Elementor/Widgets/Controls/ProductsSettings.php:92, ../app/Elementor/Widgets/Archive/ProductFilters/Controls.php:66, ../app/Elementor/Widgets/Archive/ProductFilters/Controls.php:247, ../app/Elementor/Widgets/General/PricingTable/Controls.php:420, ../app/Elementor/Widgets/General/PricingTable/Controls.php:424
+#: ../app/Helpers/Fns.php:3183, ../app/Modules/Compare/CompareFns.php:63, ../app/Modules/WishList/WishlistFns.php:207, ../app/Elementor/Widgets/Controls/AddToCartSettings.php:592, ../app/Elementor/Widgets/Controls/CartTableSettings.php:821, ../app/Elementor/Widgets/Controls/CartTableSettings.php:977, ../app/Elementor/Widgets/Controls/PriceSettings.php:78, ../app/Elementor/Widgets/Controls/ProductsSettings.php:92, ../app/Elementor/Widgets/Archive/ProductFilters/Controls.php:66, ../app/Elementor/Widgets/Archive/ProductFilters/Controls.php:247, ../app/Elementor/Widgets/General/PricingTable/Controls.php:420, ../app/Elementor/Widgets/General/PricingTable/Controls.php:424
 msgid "Price"
 msgstr ""
 
 #. translators: %s: filter term name
-#: ../app/Helpers/Fns.php:3110
+#: ../app/Helpers/Fns.php:3215
 msgid "Remove %s"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:3120
+#: ../app/Helpers/Fns.php:3225
 msgid "Reset Filters"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:3164
+#: ../app/Helpers/Fns.php:3269
 msgid "Search"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:3167
+#: ../app/Helpers/Fns.php:3272
 msgid "Ratings"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:3170
+#: ../app/Helpers/Fns.php:3275
 msgid "Sale Filter"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:3456, ../app/Helpers/Fns.php:3449
+#: ../app/Helpers/Fns.php:3561, ../app/Helpers/Fns.php:3554
 msgid "404 Error"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:3757
+#: ../app/Helpers/Fns.php:3862
 msgid " Icon"
 msgstr ""
 
 #. translators: 1: required version, 2: link to the Plugins page
-#: ../app/Helpers/Fns.php:3936
+#: ../app/Helpers/Fns.php:4041
 msgid "To access all features and settings of this module, please ensure that \"%1$s\" is updated to version %2$s. %3$s"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:3948
+#: ../app/Helpers/Fns.php:4053
 msgid "Update to the latest version"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:3950
+#: ../app/Helpers/Fns.php:4055
 msgid "Go to the Plugin Page"
 msgstr ""
 
-#: ../app/Helpers/Fns.php:3951
+#: ../app/Helpers/Fns.php:4056
 msgid "from the Plugins page"
 msgstr ""
 
@@ -536,7 +560,7 @@ msgstr ""
 msgid "Product Page"
 msgstr ""
 
-#: ../app/Models/ElementList.php:57, ../app/Models/ModuleList.php:180, ../app/Modules/QuickView/QuickViewFrontEnd.php:193
+#: ../app/Models/ElementList.php:57, ../app/Models/ModuleList.php:180, ../app/Modules/QuickView/QuickViewFrontEnd.php:223
 msgid "Quick View"
 msgstr ""
 
@@ -556,7 +580,7 @@ msgstr ""
 msgid "My Account"
 msgstr ""
 
-#: ../app/Models/ElementList.php:72, ../app/Models/GeneralList.php:1625
+#: ../app/Models/ElementList.php:72, ../app/Models/GeneralList.php:1628
 msgid "Others"
 msgstr ""
 
@@ -580,7 +604,7 @@ msgstr ""
 msgid "Single Category"
 msgstr ""
 
-#: ../app/Models/ElementList.php:346, ../app/Models/ElementList.php:795, ../app/Models/ElementList.php:1181, ../app/Models/ModuleList.php:3862, ../app/Controllers/Admin/Ajax/ModalTemplate.php:175, ../app/Elementor/Widgets/Controls/StyleFields.php:921, ../app/Elementor/Widgets/General/ProductCategories.php:38, ../app/Elementor/Widgets/Single/ProductCats.php:30
+#: ../app/Models/ElementList.php:346, ../app/Models/ElementList.php:795, ../app/Models/ElementList.php:1181, ../app/Models/ModuleList.php:3862, ../app/Controllers/Admin/Ajax/ModalTemplate.php:230, ../app/Elementor/Widgets/Controls/StyleFields.php:921, ../app/Elementor/Widgets/General/ProductCategories.php:38, ../app/Elementor/Widgets/Single/ProductCats.php:30
 msgid "Product Categories"
 msgstr ""
 
@@ -732,7 +756,7 @@ msgstr ""
 msgid "Product Rating"
 msgstr ""
 
-#: ../app/Models/ElementList.php:819, ../app/Models/ElementList.php:1207, ../app/Controllers/Admin/Ajax/ModalTemplate.php:177, ../app/Elementor/Widgets/Single/ProductTags.php:30
+#: ../app/Models/ElementList.php:819, ../app/Models/ElementList.php:1207, ../app/Controllers/Admin/Ajax/ModalTemplate.php:232, ../app/Elementor/Widgets/Single/ProductTags.php:30
 msgid "Product Tags"
 msgstr ""
 
@@ -1140,423 +1164,423 @@ msgstr ""
 msgid "ChatGPT API Key"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:198
+#: ../app/Models/GeneralList.php:199
 msgid "sk-p********"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:200
+#: ../app/Models/GeneralList.php:201
 msgid "To integrate with ChatGPT, you need to obtain an API key from OpenAI. Visit <a href=\"https://platform.openai.com/account/api-keys\" target=\"_blank\">OpenAI API Keys</a> to generate one."
 msgstr ""
 
-#: ../app/Models/GeneralList.php:223
+#: ../app/Models/GeneralList.php:224
 msgid "ChatGPT Maximum Characters in Prompt Input"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:225
+#: ../app/Models/GeneralList.php:226
 msgid "Set the maximum character limit for the prompt input. This controls how many characters users can enter, ensuring input stays concise and manageable. Higher limits may affect performance and response quality."
 msgstr ""
 
-#: ../app/Models/GeneralList.php:230, ../app/Models/GeneralList.php:300, ../app/Models/GeneralList.php:367
+#: ../app/Models/GeneralList.php:231, ../app/Models/GeneralList.php:302, ../app/Models/GeneralList.php:370
 msgid "200"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:244
+#: ../app/Models/GeneralList.php:245
 msgid "Gemini API Key"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:246
+#: ../app/Models/GeneralList.php:248
 msgid "AIzaSy***********************"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:248
+#: ../app/Models/GeneralList.php:250
 msgid "To integrate with Google Gemini, you need to obtain an API key from Google Cloud. Visit <a href=\"https://makersuite.google.com/app/apikey\" target=\"_blank\">Google AI Studio API Keys</a> to generate one."
 msgstr ""
 
-#: ../app/Models/GeneralList.php:293
+#: ../app/Models/GeneralList.php:295
 msgid "Gemini Maximum Characters"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:295
+#: ../app/Models/GeneralList.php:297
 msgid "Set the maximum character limit for Gemini model prompts. Adjust according to model capabilities and performance."
 msgstr ""
 
-#: ../app/Models/GeneralList.php:314
+#: ../app/Models/GeneralList.php:316
 msgid "DeepSeek API Key"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:316
+#: ../app/Models/GeneralList.php:319
 msgid "ds-***********************"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:318
+#: ../app/Models/GeneralList.php:321
 msgid "To integrate with DeepSeek, you need to obtain an API key from DeepSeek. Visit <a href=\"https://www.deepseek.com/api-keys\" target=\"_blank\">DeepSeek API Keys</a> to generate one."
 msgstr ""
 
-#: ../app/Models/GeneralList.php:341
+#: ../app/Models/GeneralList.php:344
 msgid "DeepSeek Model"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:345
+#: ../app/Models/GeneralList.php:348
 msgid "DeepSeek Chat (Full Version)"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:346
+#: ../app/Models/GeneralList.php:349
 msgid "DeepSeek Reasoner Mini (Light Version)"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:360
+#: ../app/Models/GeneralList.php:363
 msgid "Deepshek Maximum Characters"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:362
+#: ../app/Models/GeneralList.php:365
 msgid "Set the maximum character limit for Deepshek model prompts. Adjust according to model configuration and speed requirements."
 msgstr ""
 
-#: ../app/Models/GeneralList.php:381
+#: ../app/Models/GeneralList.php:384
 msgid "Enable Semantic Search?"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:382
+#: ../app/Models/GeneralList.php:385
 msgid "Enable AI product search instead of keyword matching to get product"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:395
+#: ../app/Models/GeneralList.php:398
 msgid "Minimum Accuracy (in percentage)"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:396
+#: ../app/Models/GeneralList.php:399
 msgid "Set the minimum Accuracy. It is good between 40 and 60"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:401, ../app/Elementor/Widgets/General/PricingTable/Controls.php:428
+#: ../app/Models/GeneralList.php:404, ../app/Elementor/Widgets/General/PricingTable/Controls.php:428
 msgid "40"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:420
+#: ../app/Models/GeneralList.php:423
 msgid "Data Training"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:444
+#: ../app/Models/GeneralList.php:447
 msgid "Notification Settings"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:457
+#: ../app/Models/GeneralList.php:460
 msgid "Customize notifications for user actions such as adding items to cart, adding to wishlist, or comparing products."
 msgstr ""
 
-#: ../app/Models/GeneralList.php:463
+#: ../app/Models/GeneralList.php:466
 msgid "Notification Position"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:465
+#: ../app/Models/GeneralList.php:468
 msgid "Center Center"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:466, ../app/Models/ModuleList.php:3498, ../app/Models/ModuleList.php:3603, ../app/Models/ModuleList.php:4772, ../app/Elementor/Widgets/Controls/ProductImagesSettings.php:615
+#: ../app/Models/GeneralList.php:469, ../app/Models/ModuleList.php:3498, ../app/Models/ModuleList.php:3603, ../app/Models/ModuleList.php:4772, ../app/Elementor/Widgets/Controls/ProductImagesSettings.php:615
 msgid "Top Right"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:467, ../app/Models/ModuleList.php:3500, ../app/Models/ModuleList.php:3605, ../app/Models/ModuleList.php:4774, ../app/Elementor/Widgets/Controls/ProductImagesSettings.php:617
+#: ../app/Models/GeneralList.php:470, ../app/Models/ModuleList.php:3500, ../app/Models/ModuleList.php:3605, ../app/Models/ModuleList.php:4774, ../app/Elementor/Widgets/Controls/ProductImagesSettings.php:617
 msgid "Bottom Right"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:468, ../app/Models/ModuleList.php:3499, ../app/Models/ModuleList.php:3604, ../app/Models/ModuleList.php:4775, ../app/Elementor/Widgets/Controls/ProductImagesSettings.php:618
+#: ../app/Models/GeneralList.php:471, ../app/Models/ModuleList.php:3499, ../app/Models/ModuleList.php:3604, ../app/Models/ModuleList.php:4775, ../app/Elementor/Widgets/Controls/ProductImagesSettings.php:618
 msgid "Bottom Left"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:469, ../app/Models/ModuleList.php:3497, ../app/Models/ModuleList.php:3602, ../app/Models/ModuleList.php:4773, ../app/Elementor/Widgets/Controls/ProductImagesSettings.php:616
+#: ../app/Models/GeneralList.php:472, ../app/Models/ModuleList.php:3497, ../app/Models/ModuleList.php:3602, ../app/Models/ModuleList.php:4773, ../app/Elementor/Widgets/Controls/ProductImagesSettings.php:616
 msgid "Top Left"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:470
+#: ../app/Models/GeneralList.php:473
 msgid "Top center"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:471
+#: ../app/Models/GeneralList.php:474
 msgid "Bottom center"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:476
+#: ../app/Models/GeneralList.php:479
 msgid "Notification Time-Out (in seconds)"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:478
+#: ../app/Models/GeneralList.php:481
 msgid "Duration (in seconds) before the notification hides automatically."
 msgstr ""
 
-#: ../app/Models/GeneralList.php:485
+#: ../app/Models/GeneralList.php:488
 msgid "3"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:489, ../app/Models/ModuleList.php:3926, ../app/Elementor/Widgets/Controls/ArchiveCountSettings.php:51, ../app/Elementor/Widgets/Controls/ArchiveDescSettings.php:50, ../app/Elementor/Widgets/Controls/CartTableSettings.php:1261, ../app/Elementor/Widgets/Controls/CheckoutFromSettings.php:199, ../app/Elementor/Widgets/Controls/CheckoutFromSettings.php:237, ../app/Elementor/Widgets/Controls/CheckoutInfoBoxSettings.php:185, ../app/Elementor/Widgets/Controls/CheckoutInfoBoxSettings.php:222, ../app/Elementor/Widgets/Controls/NoticeSettings.php:108, ../app/Elementor/Widgets/Controls/NoticeSettings.php:151, ../app/Elementor/Widgets/Controls/NoticeSettings.php:195, ../app/Elementor/Widgets/Controls/NoticeSettings.php:239, ../app/Elementor/Widgets/Controls/OrderReviewSettings.php:474, ../app/Elementor/Widgets/Controls/ProductsOrderingSettings.php:107, ../app/Elementor/Widgets/Controls/ProductsOrderingSettings.php:136, ../app/Elementor/Widgets/Controls/StyleFields.php:1506, ../app/Elementor/Widgets/Controls/TextStyleSettings.php:48
+#: ../app/Models/GeneralList.php:492, ../app/Models/ModuleList.php:3926, ../app/Elementor/Widgets/Controls/ArchiveCountSettings.php:51, ../app/Elementor/Widgets/Controls/ArchiveDescSettings.php:50, ../app/Elementor/Widgets/Controls/CartTableSettings.php:1261, ../app/Elementor/Widgets/Controls/CheckoutFromSettings.php:199, ../app/Elementor/Widgets/Controls/CheckoutFromSettings.php:237, ../app/Elementor/Widgets/Controls/CheckoutInfoBoxSettings.php:185, ../app/Elementor/Widgets/Controls/CheckoutInfoBoxSettings.php:222, ../app/Elementor/Widgets/Controls/NoticeSettings.php:108, ../app/Elementor/Widgets/Controls/NoticeSettings.php:151, ../app/Elementor/Widgets/Controls/NoticeSettings.php:195, ../app/Elementor/Widgets/Controls/NoticeSettings.php:239, ../app/Elementor/Widgets/Controls/OrderReviewSettings.php:474, ../app/Elementor/Widgets/Controls/ProductsOrderingSettings.php:107, ../app/Elementor/Widgets/Controls/ProductsOrderingSettings.php:136, ../app/Elementor/Widgets/Controls/StyleFields.php:1506, ../app/Elementor/Widgets/Controls/TextStyleSettings.php:48
 msgid "Text Color"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:495
+#: ../app/Models/GeneralList.php:498
 msgid "Button Color"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:501, ../app/Models/ModuleList.php:2358, ../app/Models/ModuleList.php:2431, ../app/Models/ModuleList.php:2563, ../app/Models/ModuleList.php:2783, ../app/Models/ModuleList.php:2934, ../app/Models/ModuleList.php:3197, ../app/Models/ModuleList.php:3940, ../app/Elementor/Helper/ControlHelper.php:1179, ../app/Elementor/Widgets/Controls/AddToCartSettings.php:516, ../app/Elementor/Widgets/Controls/ArchiveViewModeSettings.php:121, ../app/Elementor/Widgets/Controls/ArchiveViewModeSettings.php:150, ../app/Elementor/Widgets/Controls/ButtonSettings.php:91, ../app/Elementor/Widgets/Controls/ButtonSettings.php:122, ../app/Elementor/Widgets/Controls/CartTableSettings.php:85, ../app/Elementor/Widgets/Controls/CartTableSettings.php:117, ../app/Elementor/Widgets/Controls/CartTableSettings.php:1116, ../app/Elementor/Widgets/Controls/CartTableSettings.php:1269, ../app/Elementor/Widgets/Controls/CartTableSettings.php:1345, ../app/Elementor/Widgets/Controls/CartTableSettings.php:1375, ../app/Elementor/Widgets/Controls/CheckoutFromSettings.php:207, ../app/Elementor/Widgets/Controls/CheckoutFromSettings.php:244, ../app/Elementor/Widgets/Controls/CheckoutInfoBoxSettings.php:193, ../app/Elementor/Widgets/Controls/CheckoutInfoBoxSettings.php:229, ../app/Elementor/Widgets/Controls/InfoboxSettings.php:48, ../app/Elementor/Widgets/Controls/ModuleBtnControls.php:136, ../app/Elementor/Widgets/Controls/ModuleBtnControls.php:167, ../app/Elementor/Widgets/Controls/NoticeSettings.php:101, ../app/Elementor/Widgets/Controls/NoticeSettings.php:144, ../app/Elementor/Widgets/Controls/NoticeSettings.php:187, ../app/Elementor/Widgets/Controls/NoticeSettings.php:232, ../app/Elementor/Widgets/Controls/OrderReviewSettings.php:214, ../app/Elementor/Widgets/Controls/OrderReviewSettings.php:435, ../app/Elementor/Widgets/Controls/OrderReviewSettings.php:481, ../app/Elementor/Widgets/Controls/OrderReviewSettings.php:549, ../app/Elementor/Widgets/Controls/OrderReviewSettings.php:571, ../app/Elementor/Widgets/Controls/OrderReviewTableSettings.php:179, ../app/Elementor/Widgets/Controls/OrderReviewTableSettings.php:217, ../app/Elementor/Widgets/Controls/ProductFlashSale.php:53, ../app/Elementor/Widgets/Controls/ProductImagesSettings.php:446, ../app/Elementor/Widgets/Controls/ProductsOrderingSettings.php:99, ../app/Elementor/Widgets/Controls/ProductsOrderingSettings.php:128, ../app/Elementor/Widgets/Controls/ProductsSettings.php:256, ../app/Elementor/Widgets/Controls/ProductsSettings.php:446, ../app/Elementor/Widgets/Controls/ProductsSettings.php:546, ../app/Elementor/Widgets/Controls/ProductsSettings.php:576, ../app/Elementor/Widgets/Controls/ProductsSettings.php:761, ../app/Elementor/Widgets/Controls/ProductsSettings.php:792, ../app/Elementor/Widgets/Controls/ProductTabsSettings.php:207, ../app/Elementor/Widgets/Controls/ProductTabsSettings.php:266, ../app/Elementor/Widgets/Controls/ReviewsSettings.php:119, ../app/Elementor/Widgets/Controls/ReviewsSettings.php:149, ../app/Elementor/Widgets/Controls/SliderSettings.php:120, ../app/Elementor/Widgets/Controls/SliderSettings.php:152, ../app/Elementor/Widgets/General/ProgressBar/Controls.php:245
+#: ../app/Models/GeneralList.php:504, ../app/Models/ModuleList.php:2358, ../app/Models/ModuleList.php:2431, ../app/Models/ModuleList.php:2563, ../app/Models/ModuleList.php:2783, ../app/Models/ModuleList.php:2934, ../app/Models/ModuleList.php:3197, ../app/Models/ModuleList.php:3940, ../app/Elementor/Helper/ControlHelper.php:1179, ../app/Elementor/Widgets/Controls/AddToCartSettings.php:516, ../app/Elementor/Widgets/Controls/ArchiveViewModeSettings.php:121, ../app/Elementor/Widgets/Controls/ArchiveViewModeSettings.php:150, ../app/Elementor/Widgets/Controls/ButtonSettings.php:91, ../app/Elementor/Widgets/Controls/ButtonSettings.php:122, ../app/Elementor/Widgets/Controls/CartTableSettings.php:85, ../app/Elementor/Widgets/Controls/CartTableSettings.php:117, ../app/Elementor/Widgets/Controls/CartTableSettings.php:1116, ../app/Elementor/Widgets/Controls/CartTableSettings.php:1269, ../app/Elementor/Widgets/Controls/CartTableSettings.php:1345, ../app/Elementor/Widgets/Controls/CartTableSettings.php:1375, ../app/Elementor/Widgets/Controls/CheckoutFromSettings.php:207, ../app/Elementor/Widgets/Controls/CheckoutFromSettings.php:244, ../app/Elementor/Widgets/Controls/CheckoutInfoBoxSettings.php:193, ../app/Elementor/Widgets/Controls/CheckoutInfoBoxSettings.php:229, ../app/Elementor/Widgets/Controls/InfoboxSettings.php:48, ../app/Elementor/Widgets/Controls/ModuleBtnControls.php:136, ../app/Elementor/Widgets/Controls/ModuleBtnControls.php:167, ../app/Elementor/Widgets/Controls/NoticeSettings.php:101, ../app/Elementor/Widgets/Controls/NoticeSettings.php:144, ../app/Elementor/Widgets/Controls/NoticeSettings.php:187, ../app/Elementor/Widgets/Controls/NoticeSettings.php:232, ../app/Elementor/Widgets/Controls/OrderReviewSettings.php:214, ../app/Elementor/Widgets/Controls/OrderReviewSettings.php:435, ../app/Elementor/Widgets/Controls/OrderReviewSettings.php:481, ../app/Elementor/Widgets/Controls/OrderReviewSettings.php:549, ../app/Elementor/Widgets/Controls/OrderReviewSettings.php:571, ../app/Elementor/Widgets/Controls/OrderReviewTableSettings.php:179, ../app/Elementor/Widgets/Controls/OrderReviewTableSettings.php:217, ../app/Elementor/Widgets/Controls/ProductFlashSale.php:53, ../app/Elementor/Widgets/Controls/ProductImagesSettings.php:446, ../app/Elementor/Widgets/Controls/ProductsOrderingSettings.php:99, ../app/Elementor/Widgets/Controls/ProductsOrderingSettings.php:128, ../app/Elementor/Widgets/Controls/ProductsSettings.php:256, ../app/Elementor/Widgets/Controls/ProductsSettings.php:446, ../app/Elementor/Widgets/Controls/ProductsSettings.php:546, ../app/Elementor/Widgets/Controls/ProductsSettings.php:576, ../app/Elementor/Widgets/Controls/ProductsSettings.php:761, ../app/Elementor/Widgets/Controls/ProductsSettings.php:792, ../app/Elementor/Widgets/Controls/ProductTabsSettings.php:207, ../app/Elementor/Widgets/Controls/ProductTabsSettings.php:266, ../app/Elementor/Widgets/Controls/ReviewsSettings.php:119, ../app/Elementor/Widgets/Controls/ReviewsSettings.php:149, ../app/Elementor/Widgets/Controls/SliderSettings.php:120, ../app/Elementor/Widgets/Controls/SliderSettings.php:152, ../app/Elementor/Widgets/General/ProgressBar/Controls.php:245
 msgid "Background Color"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:508
+#: ../app/Models/GeneralList.php:511
 msgid "Hide Notifications"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:509
+#: ../app/Models/GeneralList.php:512
 msgid "Enable this option if you don't want the notifications to show."
 msgstr ""
 
-#: ../app/Models/GeneralList.php:520
+#: ../app/Models/GeneralList.php:523
 msgid "Social Share Settings"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:533
+#: ../app/Models/GeneralList.php:536
 msgid "Configure social sharing platforms for products sharing."
 msgstr ""
 
-#: ../app/Models/GeneralList.php:537
+#: ../app/Models/GeneralList.php:540
 msgid "Select Social Sharing Platforms"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:546
+#: ../app/Models/GeneralList.php:549
 msgid "Sharing Button in Single Product Page"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:547
+#: ../app/Models/GeneralList.php:550
 msgid "Enable this option to allow share a product from product page. Woocommerce Supported Sharing plugins added to Hook: woocommerce_share"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:552
+#: ../app/Models/GeneralList.php:555
 msgid "Share Button Layout"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:554, ../app/Elementor/Helper/ControlHelper.php:188, ../app/Elementor/Helper/ControlHelper.php:226, ../app/Elementor/Helper/ControlHelper.php:243, ../app/Elementor/Helper/ControlHelper.php:265, ../app/Elementor/Helper/ControlHelper.php:303, ../app/Elementor/Helper/ControlHelper.php:337, ../app/Elementor/Helper/ControlHelper.php:375, ../app/Elementor/Helper/ControlHelper.php:396, ../app/Elementor/Helper/ControlHelper.php:429, ../app/Elementor/Helper/ControlHelper.php:458, ../app/Elementor/Helper/ControlHelper.php:479, ../app/Elementor/Helper/ControlHelper.php:505, ../app/Elementor/Helper/ControlHelper.php:578, ../app/Elementor/Helper/ControlHelper.php:603, ../app/Elementor/Helper/ControlHelper.php:628, ../app/Elementor/Helper/ControlHelper.php:686, ../app/Elementor/Helper/ControlHelper.php:708
+#: ../app/Models/GeneralList.php:557, ../app/Elementor/Helper/ControlHelper.php:188, ../app/Elementor/Helper/ControlHelper.php:226, ../app/Elementor/Helper/ControlHelper.php:243, ../app/Elementor/Helper/ControlHelper.php:265, ../app/Elementor/Helper/ControlHelper.php:303, ../app/Elementor/Helper/ControlHelper.php:337, ../app/Elementor/Helper/ControlHelper.php:375, ../app/Elementor/Helper/ControlHelper.php:396, ../app/Elementor/Helper/ControlHelper.php:429, ../app/Elementor/Helper/ControlHelper.php:458, ../app/Elementor/Helper/ControlHelper.php:479, ../app/Elementor/Helper/ControlHelper.php:505, ../app/Elementor/Helper/ControlHelper.php:578, ../app/Elementor/Helper/ControlHelper.php:603, ../app/Elementor/Helper/ControlHelper.php:628, ../app/Elementor/Helper/ControlHelper.php:686, ../app/Elementor/Helper/ControlHelper.php:708
 msgid "Layout 1"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:555, ../app/Elementor/Helper/ControlHelper.php:247, ../app/Elementor/Helper/ControlHelper.php:269, ../app/Elementor/Helper/ControlHelper.php:307, ../app/Elementor/Helper/ControlHelper.php:341, ../app/Elementor/Helper/ControlHelper.php:379, ../app/Elementor/Helper/ControlHelper.php:400, ../app/Elementor/Helper/ControlHelper.php:433, ../app/Elementor/Helper/ControlHelper.php:462, ../app/Elementor/Helper/ControlHelper.php:483, ../app/Elementor/Helper/ControlHelper.php:509, ../app/Elementor/Helper/ControlHelper.php:582, ../app/Elementor/Helper/ControlHelper.php:607, ../app/Elementor/Helper/ControlHelper.php:632, ../app/Elementor/Helper/ControlHelper.php:690, ../app/Elementor/Helper/ControlHelper.php:712
+#: ../app/Models/GeneralList.php:558, ../app/Elementor/Helper/ControlHelper.php:247, ../app/Elementor/Helper/ControlHelper.php:269, ../app/Elementor/Helper/ControlHelper.php:307, ../app/Elementor/Helper/ControlHelper.php:341, ../app/Elementor/Helper/ControlHelper.php:379, ../app/Elementor/Helper/ControlHelper.php:400, ../app/Elementor/Helper/ControlHelper.php:433, ../app/Elementor/Helper/ControlHelper.php:462, ../app/Elementor/Helper/ControlHelper.php:483, ../app/Elementor/Helper/ControlHelper.php:509, ../app/Elementor/Helper/ControlHelper.php:582, ../app/Elementor/Helper/ControlHelper.php:607, ../app/Elementor/Helper/ControlHelper.php:632, ../app/Elementor/Helper/ControlHelper.php:690, ../app/Elementor/Helper/ControlHelper.php:712
 msgid "Layout 2"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:576
+#: ../app/Models/GeneralList.php:579
 msgid "Guest User Controls"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:593
+#: ../app/Models/GeneralList.php:596
 msgid "Tooltip Settings"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:610
+#: ../app/Models/GeneralList.php:613
 msgid "Billing Form Settings"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:617
+#: ../app/Models/GeneralList.php:620
 msgid "Customize Billing Form Fields?"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:618
+#: ../app/Models/GeneralList.php:621
 msgid "Switch on to customize billing form fields."
 msgstr ""
 
-#: ../app/Models/GeneralList.php:624
+#: ../app/Models/GeneralList.php:627
 msgid "<strong>Deprecated:</strong> Billing Form Settings is deprecated. Please use the <strong><u>Checkout Fields Editor</u></strong> module to customize checkout fields. These settings will be disabled when the <strong><u>Checkout Fields Editor</u></strong> module is active."
 msgstr ""
 
-#: ../app/Models/GeneralList.php:631, ../app/Models/GeneralList.php:1246, ../app/Modules/CheckoutEditor/CheckoutFns.php:23
+#: ../app/Models/GeneralList.php:634, ../app/Models/GeneralList.php:1249, ../app/Modules/CheckoutEditor/CheckoutFns.php:23
 msgid "First Name"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:635, ../app/Models/GeneralList.php:1250
+#: ../app/Models/GeneralList.php:638, ../app/Models/GeneralList.php:1253
 msgid "First name"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:652, ../app/Models/GeneralList.php:1267
+#: ../app/Models/GeneralList.php:655, ../app/Models/GeneralList.php:1270
 msgid "First name Label"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:654, ../app/Models/GeneralList.php:669, ../app/Models/GeneralList.php:708, ../app/Models/GeneralList.php:723, ../app/Models/GeneralList.php:765, ../app/Models/GeneralList.php:780, ../app/Models/GeneralList.php:819, ../app/Models/GeneralList.php:857, ../app/Models/GeneralList.php:872, ../app/Models/GeneralList.php:928, ../app/Models/GeneralList.php:948, ../app/Models/GeneralList.php:991, ../app/Models/GeneralList.php:1006, ../app/Models/GeneralList.php:1044, ../app/Models/GeneralList.php:1081, ../app/Models/GeneralList.php:1096, ../app/Models/GeneralList.php:1137, ../app/Models/GeneralList.php:1152, ../app/Models/GeneralList.php:1189, ../app/Models/GeneralList.php:1204, ../app/Models/GeneralList.php:1269, ../app/Models/GeneralList.php:1284, ../app/Models/GeneralList.php:1322, ../app/Models/GeneralList.php:1337, ../app/Models/GeneralList.php:1375, ../app/Models/GeneralList.php:1390, ../app/Models/GeneralList.php:1428, ../app/Models/GeneralList.php:1466, ../app/Models/GeneralList.php:1481, ../app/Models/GeneralList.php:1534, ../app/Models/GeneralList.php:1554, ../app/Models/GeneralList.php:1596, ../app/Models/GeneralList.php:1611
+#: ../app/Models/GeneralList.php:657, ../app/Models/GeneralList.php:672, ../app/Models/GeneralList.php:711, ../app/Models/GeneralList.php:726, ../app/Models/GeneralList.php:768, ../app/Models/GeneralList.php:783, ../app/Models/GeneralList.php:822, ../app/Models/GeneralList.php:860, ../app/Models/GeneralList.php:875, ../app/Models/GeneralList.php:931, ../app/Models/GeneralList.php:951, ../app/Models/GeneralList.php:994, ../app/Models/GeneralList.php:1009, ../app/Models/GeneralList.php:1047, ../app/Models/GeneralList.php:1084, ../app/Models/GeneralList.php:1099, ../app/Models/GeneralList.php:1140, ../app/Models/GeneralList.php:1155, ../app/Models/GeneralList.php:1192, ../app/Models/GeneralList.php:1207, ../app/Models/GeneralList.php:1272, ../app/Models/GeneralList.php:1287, ../app/Models/GeneralList.php:1325, ../app/Models/GeneralList.php:1340, ../app/Models/GeneralList.php:1378, ../app/Models/GeneralList.php:1393, ../app/Models/GeneralList.php:1431, ../app/Models/GeneralList.php:1469, ../app/Models/GeneralList.php:1484, ../app/Models/GeneralList.php:1537, ../app/Models/GeneralList.php:1557, ../app/Models/GeneralList.php:1599, ../app/Models/GeneralList.php:1614
 msgid "Leave empty to set default."
 msgstr ""
 
-#: ../app/Models/GeneralList.php:667, ../app/Models/GeneralList.php:1282
+#: ../app/Models/GeneralList.php:670, ../app/Models/GeneralList.php:1285
 msgid "First name Placeholder"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:684, ../app/Models/GeneralList.php:1298, ../app/Modules/CheckoutEditor/CheckoutFns.php:37, ../app/Modules/CheckoutEditor/CheckoutFns.php:42
+#: ../app/Models/GeneralList.php:687, ../app/Models/GeneralList.php:1301, ../app/Modules/CheckoutEditor/CheckoutFns.php:37, ../app/Modules/CheckoutEditor/CheckoutFns.php:42
 msgid "Last Name"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:688, ../app/Models/GeneralList.php:1302
+#: ../app/Models/GeneralList.php:691, ../app/Models/GeneralList.php:1305
 msgid "Last name"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:706, ../app/Models/GeneralList.php:1320
+#: ../app/Models/GeneralList.php:709, ../app/Models/GeneralList.php:1323
 msgid "Last name label"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:721, ../app/Models/GeneralList.php:1335
+#: ../app/Models/GeneralList.php:724, ../app/Models/GeneralList.php:1338
 msgid "Last name Placeholder"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:738, ../app/Models/GeneralList.php:1351
+#: ../app/Models/GeneralList.php:741, ../app/Models/GeneralList.php:1354
 msgid "Company"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:742, ../app/Models/GeneralList.php:1355
+#: ../app/Models/GeneralList.php:745, ../app/Models/GeneralList.php:1358
 msgid "Company name"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:763, ../app/Models/GeneralList.php:1373
+#: ../app/Models/GeneralList.php:766, ../app/Models/GeneralList.php:1376
 msgid "Company label"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:778
+#: ../app/Models/GeneralList.php:781
 msgid "Company Placeholder"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:795, ../app/Models/GeneralList.php:799, ../app/Models/GeneralList.php:1404, ../app/Models/GeneralList.php:1408, ../app/Modules/CheckoutEditor/CheckoutFns.php:61
+#: ../app/Models/GeneralList.php:798, ../app/Models/GeneralList.php:802, ../app/Models/GeneralList.php:1407, ../app/Models/GeneralList.php:1411, ../app/Modules/CheckoutEditor/CheckoutFns.php:61
 msgid "Country"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:817, ../app/Models/GeneralList.php:1426
+#: ../app/Models/GeneralList.php:820, ../app/Models/GeneralList.php:1429
 msgid "Country label"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:833, ../app/Models/GeneralList.php:837, ../app/Models/GeneralList.php:1442, ../app/Models/GeneralList.php:1446
+#: ../app/Models/GeneralList.php:836, ../app/Models/GeneralList.php:840, ../app/Models/GeneralList.php:1445, ../app/Models/GeneralList.php:1449
 msgid "Address 1"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:855, ../app/Models/GeneralList.php:1464
+#: ../app/Models/GeneralList.php:858, ../app/Models/GeneralList.php:1467
 msgid "Address 1 label"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:870, ../app/Models/GeneralList.php:1479
+#: ../app/Models/GeneralList.php:873, ../app/Models/GeneralList.php:1482
 msgid "Address 1 Placeholder"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:886, ../app/Models/GeneralList.php:899, ../app/Models/GeneralList.php:1495, ../app/Models/GeneralList.php:1508
+#: ../app/Models/GeneralList.php:889, ../app/Models/GeneralList.php:902, ../app/Models/GeneralList.php:1498, ../app/Models/GeneralList.php:1511
 msgid "Address 2"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:912, ../app/Models/GeneralList.php:1518
+#: ../app/Models/GeneralList.php:915, ../app/Models/GeneralList.php:1521
 msgid "if \"Address 1\" is hidden then this field also hides."
 msgstr ""
 
-#: ../app/Models/GeneralList.php:926, ../app/Models/GeneralList.php:1532
+#: ../app/Models/GeneralList.php:929, ../app/Models/GeneralList.php:1535
 msgid "Address 2 label"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:946, ../app/Models/GeneralList.php:1552
+#: ../app/Models/GeneralList.php:949, ../app/Models/GeneralList.php:1555
 msgid "Address 2 Placeholder"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:967, ../app/Models/GeneralList.php:971, ../app/Models/GeneralList.php:1573, ../app/Models/GeneralList.php:1577
+#: ../app/Models/GeneralList.php:970, ../app/Models/GeneralList.php:974, ../app/Models/GeneralList.php:1576, ../app/Models/GeneralList.php:1580
 msgid "Town / City"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:989, ../app/Models/GeneralList.php:1594
+#: ../app/Models/GeneralList.php:992, ../app/Models/GeneralList.php:1597
 msgid "Town / City label"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:1004
+#: ../app/Models/GeneralList.php:1007
 msgid "City placeholder"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:1020, ../app/Models/GeneralList.php:1024, ../app/Models/GeneralList.php:1629
+#: ../app/Models/GeneralList.php:1023, ../app/Models/GeneralList.php:1027, ../app/Models/GeneralList.php:1632
 msgid "State"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:1042
+#: ../app/Models/GeneralList.php:1045
 msgid "State label"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:1058, ../app/Models/GeneralList.php:1062, ../app/Models/GeneralList.php:1646, ../app/Modules/CheckoutEditor/CheckoutFns.php:119
+#: ../app/Models/GeneralList.php:1061, ../app/Models/GeneralList.php:1065, ../app/Models/GeneralList.php:1649, ../app/Modules/CheckoutEditor/CheckoutFns.php:119
 msgid "Postcode / ZIP"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:1079
+#: ../app/Models/GeneralList.php:1082
 msgid "Postcode / ZIP label"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:1094
+#: ../app/Models/GeneralList.php:1097
 msgid "Postcode / ZIP placeholder"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:1110, ../app/Models/GeneralList.php:1114, ../app/Modules/CheckoutEditor/CheckoutFns.php:132
+#: ../app/Models/GeneralList.php:1113, ../app/Models/GeneralList.php:1117, ../app/Modules/CheckoutEditor/CheckoutFns.php:132
 msgid "Phone"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:1135
+#: ../app/Models/GeneralList.php:1138
 msgid "Phone field label"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:1150
+#: ../app/Models/GeneralList.php:1153
 msgid "Phone field placeholder"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:1166, ../app/Modules/AbandonedCartRecovery/CartRecoveryOptions.php:172
+#: ../app/Models/GeneralList.php:1169, ../app/Modules/AbandonedCartRecovery/CartRecoveryOptions.php:172
 msgid "Email"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:1170
+#: ../app/Models/GeneralList.php:1173
 msgid "Email address"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:1187
+#: ../app/Models/GeneralList.php:1190
 msgid "Email address field label"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:1202
+#: ../app/Models/GeneralList.php:1205
 msgid "Email address field placeholder"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:1225
+#: ../app/Models/GeneralList.php:1228
 msgid "Shipping Form Settings"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:1232
+#: ../app/Models/GeneralList.php:1235
 msgid "Customize Shipping form Fields?"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:1233
+#: ../app/Models/GeneralList.php:1236
 msgid "Switch on to customize shipping form fields."
 msgstr ""
 
-#: ../app/Models/GeneralList.php:1239
+#: ../app/Models/GeneralList.php:1242
 msgid "<strong>Deprecated:</strong> Shipping Form Settings is deprecated. Please use the <strong><u>Checkout Fields Editor</u></strong> module to customize checkout fields. These settings will be disabled when the <strong><u>Checkout Fields Editor</u></strong> module is active."
 msgstr ""
 
-#: ../app/Models/GeneralList.php:1388
+#: ../app/Models/GeneralList.php:1391
 msgid "Shipping company Placeholder"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:1609
+#: ../app/Models/GeneralList.php:1612
 msgid "Shipping city placeholder"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:1701
+#: ../app/Models/GeneralList.php:1704
 msgid "🎉 Congratulations! All your products are successfully embedded and up to date."
 msgstr ""
 
-#: ../app/Models/GeneralList.php:1696
+#: ../app/Models/GeneralList.php:1699
 msgid "Make Compatible your existing products with semantic search process."
 msgstr ""
 
-#: ../app/Models/GeneralList.php:1698
+#: ../app/Models/GeneralList.php:1701
 msgid "Generate Embeddings"
 msgstr ""
 
-#: ../app/Models/GeneralList.php:1690
+#: ../app/Models/GeneralList.php:1693
 msgid "Processing embeddings in the background. You can continue using the site."
 msgstr ""
 
-#: ../app/Models/GeneralList.php:1746
+#: ../app/Models/GeneralList.php:1749
 msgid "Missing Gemini API key. Enter and save your API key to turn on the data training feature."
 msgstr ""
 
-#: ../app/Models/GeneralList.php:1765
+#: ../app/Models/GeneralList.php:1768
 msgid "Missing OpenAI API key. Enter and save your API key to turn on the data training feature."
 msgstr ""
 
@@ -1961,7 +1985,7 @@ msgstr ""
 msgid "Switch on to enable product badges module."
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1051, ../app/Models/ModuleList.php:1800, ../app/Controllers/Admin/AdminInit.php:106, ../app/Controllers/Admin/AdminInit.php:107, ../app/Controllers/Admin/PluginRow.php:46, ../app/Elementor/Widgets/Controls/MetaSettings.php:30, ../app/Elementor/Widgets/Controls/StockSettings.php:35, ../app/Elementor/Widgets/General/TeamMember/Controls.php:356
+#: ../app/Models/ModuleList.php:1051, ../app/Models/ModuleList.php:1800, ../app/Controllers/Admin/AdminInit.php:107, ../app/Controllers/Admin/AdminInit.php:108, ../app/Controllers/Admin/PluginRow.php:46, ../app/Elementor/Widgets/Controls/MetaSettings.php:30, ../app/Elementor/Widgets/Controls/StockSettings.php:35, ../app/Elementor/Widgets/General/TeamMember/Controls.php:356
 msgid "Settings"
 msgstr ""
 
@@ -2378,7 +2402,7 @@ msgstr ""
 msgid "Choose a cart icon to display in your checkout's header. <br />%s"
 msgstr ""
 
-#: ../app/Models/ModuleList.php:1830, ../app/Models/ModuleList.php:3410, ../app/Models/ModuleList.php:3651, ../app/Models/ModuleList.php:3745
+#: ../app/Models/ModuleList.php:1830, ../app/Models/ModuleList.php:3410, ../app/Models/ModuleList.php:3651, ../app/Models/ModuleList.php:3745, ../app/Controllers/Admin/Ajax/ModalTemplate.php:208
 msgid "Upgrade to PRO"
 msgstr ""
 
@@ -3615,24 +3639,24 @@ msgstr ""
 msgid "Permission denied"
 msgstr ""
 
-#: ../app/Controllers/Admin/AdminInit.php:114, ../app/Controllers/Admin/AdminInit.php:115
+#: ../app/Controllers/Admin/AdminInit.php:115, ../app/Controllers/Admin/AdminInit.php:116
 msgid "Get Help"
 msgstr ""
 
-#: ../app/Controllers/Admin/AdminInit.php:122, ../app/Controllers/Admin/AdminInit.php:123
+#: ../app/Controllers/Admin/AdminInit.php:123, ../app/Controllers/Admin/AdminInit.php:124
 msgid "Themes"
 msgstr ""
 
 #. translators: %s: Elementor
-#: ../app/Controllers/Admin/AdminInit.php:224, ../app/Controllers/Admin/AdminInit.php:202
+#: ../app/Controllers/Admin/AdminInit.php:225, ../app/Controllers/Admin/AdminInit.php:203
 msgid "To build your WooCommerce pages, please Install and Activate the %s Plugin."
 msgstr ""
 
-#: ../app/Controllers/Admin/AdminInit.php:225, ../app/Controllers/Admin/AdminInit.php:203
+#: ../app/Controllers/Admin/AdminInit.php:226, ../app/Controllers/Admin/AdminInit.php:204
 msgid "Elementor Website Builder"
 msgstr ""
 
-#: ../app/Controllers/Admin/AdminInit.php:213
+#: ../app/Controllers/Admin/AdminInit.php:214
 msgid "Elementor is installed, but script loading is disabled. Please enable \"Load Elementor Scripts\" in the Advanced Optimization Settings."
 msgstr ""
 
@@ -3664,153 +3688,166 @@ msgstr ""
 msgid "If you’d prefer not to open a support ticket, please take a moment to share why you’re deactivating ShopBuilder:"
 msgstr ""
 
-#: ../app/Controllers/Builder/BuilderCpt.php:101
+#: ../app/Controllers/Builder/BuilderCpt.php:104
 msgid "Template Type "
 msgstr ""
 
-#: ../app/Controllers/Builder/BuilderCpt.php:119
+#. translators: %s: Template type name.
+#: ../app/Controllers/Builder/BuilderCpt.php:155, ../app/Controllers/Admin/Ajax/ModalTemplate.php:167
+msgid "%s (Pro)"
+msgstr ""
+
+#: ../app/Controllers/Builder/BuilderCpt.php:175
 msgctxt "Post Type General Name"
 msgid "WooCommerce Page Builder"
 msgstr ""
 
-#: ../app/Controllers/Builder/BuilderCpt.php:120
+#: ../app/Controllers/Builder/BuilderCpt.php:176
 msgctxt "Post Type Singular Name"
 msgid "Templates Builder"
 msgstr ""
 
-#: ../app/Controllers/Builder/BuilderCpt.php:121, ../app/Controllers/Builder/BuilderCpt.php:122, ../app/Controllers/Builder/BuilderCpt.php:126, ../app/Controllers/Builder/BuilderCpt.php:149
+#: ../app/Controllers/Builder/BuilderCpt.php:177, ../app/Controllers/Builder/BuilderCpt.php:178, ../app/Controllers/Builder/BuilderCpt.php:182, ../app/Controllers/Builder/BuilderCpt.php:205
 msgid "Templates Builder"
 msgstr ""
 
-#: ../app/Controllers/Builder/BuilderCpt.php:123
+#: ../app/Controllers/Builder/BuilderCpt.php:179
 msgid "WC Page Archives"
 msgstr ""
 
-#: ../app/Controllers/Builder/BuilderCpt.php:124
+#: ../app/Controllers/Builder/BuilderCpt.php:180
 msgid "Page Attributes"
 msgstr ""
 
-#: ../app/Controllers/Builder/BuilderCpt.php:125
+#: ../app/Controllers/Builder/BuilderCpt.php:181
 msgid "Parent Item:"
 msgstr ""
 
-#: ../app/Controllers/Builder/BuilderCpt.php:127
+#: ../app/Controllers/Builder/BuilderCpt.php:183
 msgid "Add New Page"
 msgstr ""
 
-#: ../app/Controllers/Builder/BuilderCpt.php:128
+#: ../app/Controllers/Builder/BuilderCpt.php:184
 msgid "Add New"
 msgstr ""
 
-#: ../app/Controllers/Builder/BuilderCpt.php:129
+#: ../app/Controllers/Builder/BuilderCpt.php:185
 msgid "New Page"
 msgstr ""
 
-#: ../app/Controllers/Builder/BuilderCpt.php:130
+#: ../app/Controllers/Builder/BuilderCpt.php:186
 msgid "Edit Page"
 msgstr ""
 
-#: ../app/Controllers/Builder/BuilderCpt.php:131
+#: ../app/Controllers/Builder/BuilderCpt.php:187
 msgid "Update Page"
 msgstr ""
 
-#: ../app/Controllers/Builder/BuilderCpt.php:132
+#: ../app/Controllers/Builder/BuilderCpt.php:188
 msgid "View Page"
 msgstr ""
 
-#: ../app/Controllers/Builder/BuilderCpt.php:133
+#: ../app/Controllers/Builder/BuilderCpt.php:189
 msgid "View Pages"
 msgstr ""
 
-#: ../app/Controllers/Builder/BuilderCpt.php:134
+#: ../app/Controllers/Builder/BuilderCpt.php:190
 msgid "Search Pages"
 msgstr ""
 
-#: ../app/Controllers/Builder/BuilderCpt.php:135
+#: ../app/Controllers/Builder/BuilderCpt.php:191
 msgid "Not found"
 msgstr ""
 
-#: ../app/Controllers/Builder/BuilderCpt.php:136
+#: ../app/Controllers/Builder/BuilderCpt.php:192
 msgid "Not found in Trash"
 msgstr ""
 
-#: ../app/Controllers/Builder/BuilderCpt.php:137
+#: ../app/Controllers/Builder/BuilderCpt.php:193
 msgid "Featured Image"
 msgstr ""
 
-#: ../app/Controllers/Builder/BuilderCpt.php:138
+#: ../app/Controllers/Builder/BuilderCpt.php:194
 msgid "Set featured image"
 msgstr ""
 
-#: ../app/Controllers/Builder/BuilderCpt.php:139
+#: ../app/Controllers/Builder/BuilderCpt.php:195
 msgid "Remove featured image"
 msgstr ""
 
-#: ../app/Controllers/Builder/BuilderCpt.php:140
+#: ../app/Controllers/Builder/BuilderCpt.php:196
 msgid "Use as featured image"
 msgstr ""
 
-#: ../app/Controllers/Builder/BuilderCpt.php:141
+#: ../app/Controllers/Builder/BuilderCpt.php:197
 msgid "Insert into page"
 msgstr ""
 
-#: ../app/Controllers/Builder/BuilderCpt.php:142
+#: ../app/Controllers/Builder/BuilderCpt.php:198
 msgid "Uploaded to this page"
 msgstr ""
 
-#: ../app/Controllers/Builder/BuilderCpt.php:143
+#: ../app/Controllers/Builder/BuilderCpt.php:199
 msgid "Pages list"
 msgstr ""
 
-#: ../app/Controllers/Builder/BuilderCpt.php:144
+#: ../app/Controllers/Builder/BuilderCpt.php:200
 msgid "Pages list navigation"
 msgstr ""
 
-#: ../app/Controllers/Builder/BuilderCpt.php:145
+#: ../app/Controllers/Builder/BuilderCpt.php:201
 msgid "Filter from list"
 msgstr ""
 
-#: ../app/Controllers/Builder/BuilderCpt.php:150
+#: ../app/Controllers/Builder/BuilderCpt.php:206
 msgid "Shopbuilder Template"
 msgstr ""
 
-#: ../app/Controllers/Builder/BuilderCpt.php:201
+#: ../app/Controllers/Builder/BuilderCpt.php:257
 msgid "Template Type"
 msgstr ""
 
-#: ../app/Controllers/Builder/BuilderCpt.php:202
+#: ../app/Controllers/Builder/BuilderCpt.php:258
 msgid "Editor Type"
 msgstr ""
 
-#: ../app/Controllers/Builder/BuilderCpt.php:203
+#: ../app/Controllers/Builder/BuilderCpt.php:259
 msgid "Set as Active"
 msgstr ""
 
-#: ../app/Controllers/Builder/BuilderCpt.php:312
+#: ../app/Controllers/Builder/BuilderCpt.php:306
 msgid "Only publish post can set default "
 msgstr ""
 
-#: ../app/Controllers/Builder/BuilderCpt.php:365
+#: ../app/Controllers/Builder/BuilderCpt.php:307, ../app/Controllers/Admin/Ajax/DefaultTemplate.php:55
+msgid "This template type is unavailable. Activate the plugin that provides it to use this template."
+msgstr ""
+
+#: ../app/Controllers/Builder/BuilderCpt.php:560
 msgid "Template For Selected Products"
 msgstr ""
 
-#: ../app/Controllers/Builder/BuilderCpt.php:371
+#: ../app/Controllers/Builder/BuilderCpt.php:566
 msgid "Template For Selected Categories"
 msgstr ""
 
-#: ../app/Controllers/Builder/BuilderCpt.php:377
+#: ../app/Controllers/Builder/BuilderCpt.php:572
 msgid "Template For Selected Tags"
 msgstr ""
 
-#: ../app/Controllers/Builder/BuilderCpt.php:402
+#: ../app/Controllers/Builder/BuilderCpt.php:597
+msgid "Template for:"
+msgstr ""
+
+#: ../app/Controllers/Builder/BuilderCpt.php:618
 msgid "Template For Selected Category"
 msgstr ""
 
-#: ../app/Controllers/Builder/BuilderCpt.php:654, ../app/Elementor/Helper/PostHelpers.php:809
+#: ../app/Controllers/Builder/BuilderCpt.php:906, ../app/Elementor/Helper/PostHelpers.php:809
 msgid "View"
 msgstr ""
 
-#: ../app/Controllers/Builder/BuilderCpt.php:654, ../app/Controllers/Admin/Ajax/ModalTemplate.php:576
+#: ../app/Controllers/Builder/BuilderCpt.php:906, ../app/Controllers/Admin/Ajax/ModalTemplate.php:631
 msgid "Preview"
 msgstr ""
 
@@ -5213,8 +5250,24 @@ msgstr ""
 msgid "The product does not delete!"
 msgstr ""
 
-#: ../app/Modules/QuickView/QuickViewFrontEnd.php:92
+#: ../app/Modules/QuickView/QuickViewFrontEnd.php:91
 msgid "Product Id not found"
+msgstr ""
+
+#: ../app/Modules/QuickView/QuickViewFrontEnd.php:104, ../app/Modules/QuickView/QuickViewFrontEnd.php:112, ../app/Modules/VariationGallery/GalleryFrontEnd.php:406
+msgid "Product not found."
+msgstr ""
+
+#: ../app/Modules/QuickView/QuickViewFrontEnd.php:120
+msgid "Product is not available."
+msgstr ""
+
+#: ../app/Modules/QuickView/QuickViewFrontEnd.php:128, ../app/Modules/QuickView/QuickViewFrontEnd.php:142
+msgid "Product could not be loaded."
+msgstr ""
+
+#: ../app/Modules/QuickView/QuickViewFrontEnd.php:311
+msgid "Sorry, this product could not be loaded."
 msgstr ""
 
 #: ../app/Modules/VariationGallery/GalleryAdmin.php:93
@@ -5241,10 +5294,6 @@ msgstr ""
 msgid "Edit Image"
 msgstr ""
 
-#: ../app/Modules/VariationGallery/GalleryAdmin.php:341, ../app/Modules/VariationGallery/VariationGalleryInit.php:201, ../app/Modules/WishList/WishlistFns.php:210, ../app/Elementor/Widgets/Controls/CartTableSettings.php:818, ../app/Elementor/Widgets/Controls/CartTableSettings.php:910, ../app/Elementor/Widgets/Controls/CartTableSettings.php:965, ../app/Modules/VariationGallery/view/template-admin-thumbnail.php:19
-msgid "Remove"
-msgstr ""
-
 #: ../app/Modules/VariationGallery/GalleryAdmin.php:355
 msgid "Add Gallery Images"
 msgstr ""
@@ -5255,10 +5304,6 @@ msgstr ""
 
 #: ../app/Modules/VariationGallery/GalleryFrontEnd.php:400
 msgid "Invalid product ID."
-msgstr ""
-
-#: ../app/Modules/VariationGallery/GalleryFrontEnd.php:406
-msgid "Product not found."
 msgstr ""
 
 #: ../app/Modules/VariationGallery/GalleryFrontEnd.php:410, ../app/Modules/VariationGallery/GalleryFrontEnd.php:451
@@ -5385,20 +5430,24 @@ msgstr ""
 msgid "The product does not deleted!"
 msgstr ""
 
-#: ../app/Controllers/Admin/Ajax/AdminSettings.php:41, ../app/Controllers/Admin/Ajax/AdminSettings.php:78, ../app/Controllers/Admin/Ajax/AdminSettings.php:125
+#: ../app/Controllers/Admin/Ajax/AdminSettings.php:41, ../app/Controllers/Admin/Ajax/AdminSettings.php:78, ../app/Controllers/Admin/Ajax/AdminSettings.php:132
 msgid "Security error: Insufficient permissions."
 msgstr ""
 
-#: ../app/Controllers/Admin/Ajax/AdminSettings.php:146
+#: ../app/Controllers/Admin/Ajax/AdminSettings.php:153
 msgid "No section found with given data"
 msgstr ""
 
-#: ../app/Controllers/Admin/Ajax/CreateTemplate.php:75
+#: ../app/Controllers/Admin/Ajax/CreateTemplate.php:79
+msgid "This template type is not available on your installation."
+msgstr ""
+
+#: ../app/Controllers/Admin/Ajax/CreateTemplate.php:92
 msgid "Template cannot be saved."
 msgstr ""
 
 #. translators: %s: Edit
-#: ../app/Controllers/Admin/Ajax/CreateTemplate.php:190, ../app/Controllers/Admin/Ajax/ModalTemplate.php:522
+#: ../app/Controllers/Admin/Ajax/CreateTemplate.php:212, ../app/Controllers/Admin/Ajax/ModalTemplate.php:577
 msgid "Edit with %s"
 msgstr ""
 
@@ -5406,11 +5455,11 @@ msgstr ""
 msgid "Template Settings"
 msgstr ""
 
-#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:47, ../app/Controllers/Admin/Ajax/ModalTemplate.php:640, ../app/Controllers/Admin/Ajax/ModalTemplate.php:702
+#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:47, ../app/Controllers/Admin/Ajax/ModalTemplate.php:695, ../app/Controllers/Admin/Ajax/ModalTemplate.php:757
 msgid "Session Expired..."
 msgstr ""
 
-#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:56, ../app/Controllers/Admin/Ajax/ModalTemplate.php:647, ../app/Controllers/Admin/Ajax/ModalTemplate.php:710
+#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:56, ../app/Controllers/Admin/Ajax/ModalTemplate.php:702, ../app/Controllers/Admin/Ajax/ModalTemplate.php:765
 msgid "Permission Denied..."
 msgstr ""
 
@@ -5442,91 +5491,103 @@ msgstr ""
 msgid "Select Template Type"
 msgstr ""
 
-#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:161
+#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:177
+msgid "Available"
+msgstr ""
+
+#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:190
+msgid "Available in Pro"
+msgstr ""
+
+#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:209
+msgid "to unlock My Account, Thank You, Quick View, Popup, Mega Menu and archive templates"
+msgstr ""
+
+#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:216
 msgid "Product Template For"
 msgstr ""
 
-#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:176, ../app/Elementor/Widgets/Controls/StyleFields.php:1002
+#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:231, ../app/Elementor/Widgets/Controls/StyleFields.php:1002
 msgid "Product Brands"
 msgstr ""
 
-#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:178
+#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:233
 msgid "Selected Products"
 msgstr ""
 
-#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:219
+#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:274
 msgid "Select Product Categories"
 msgstr ""
 
-#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:268
+#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:323
 msgid "Select Product Tags"
 msgstr ""
 
-#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:315
+#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:370
 msgid "Select Product Brands"
 msgstr ""
 
-#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:362
+#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:417
 msgid "Select Products "
 msgstr ""
 
-#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:396
+#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:451
 msgid "Select Preview Product"
 msgstr ""
 
-#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:405
+#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:460
 msgid "Select Editor Type"
 msgstr ""
 
-#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:408
+#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:463
 msgid "Elementor"
 msgstr ""
 
-#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:410
+#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:465
 msgid "Gutenberg (Coming Soon)"
 msgstr ""
 
-#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:414
+#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:469
 msgid "Set as Active Template"
 msgstr ""
 
-#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:465
+#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:520
 msgid "Switch on to set as active template"
 msgstr ""
 
-#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:492
+#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:547
 msgid "Pre-built Templates "
 msgstr ""
 
-#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:514
+#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:569
 msgid "Save"
 msgstr ""
 
-#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:615
+#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:670
 msgid "Creating Template..."
 msgstr ""
 
-#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:615
+#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:670
 msgid "Create Blank Template"
 msgstr ""
 
-#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:608
+#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:663
 msgid "Upgrade"
 msgstr ""
 
-#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:602
+#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:657
 msgid "Importing..."
 msgstr ""
 
-#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:602
+#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:657
 msgid "Import"
 msgstr ""
 
-#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:656
+#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:711
 msgid "Empty string Not allowed..."
 msgstr ""
 
-#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:720
+#: ../app/Controllers/Admin/Ajax/ModalTemplate.php:775
 msgid "Invalid taxonomy"
 msgstr ""
 
@@ -5534,13 +5595,28 @@ msgstr ""
 msgid "User permission error"
 msgstr ""
 
-#: ../app/Controllers/Admin/Notice/CachePermission.php:68
+#: ../app/Controllers/Admin/Notice/CachePermission.php:68, ../app/Controllers/Admin/Notice/SecretUnavailable.php:95
 msgid "ShopBuilder:"
 msgstr ""
 
 #. translators: %s: cache directory path
 #: ../app/Controllers/Admin/Notice/CachePermission.php:72
 msgid "The cache directory %s is not writable. The Asset Optimization setting will not work until the server has write permission to this directory. Please contact your hosting provider to fix the file permissions."
+msgstr ""
+
+#. translators: %d: number of stored API keys that cannot be read.
+#: ../app/Controllers/Admin/Notice/SecretUnavailable.php:98
+msgid "%d saved API key can no longer be read on this site and needs to be entered again."
+msgid_plural "%d saved API keys can no longer be read on this site and need to be entered again."
+msgstr[0] ""
+msgstr[1] ""
+
+#: ../app/Controllers/Admin/Notice/SecretUnavailable.php:110
+msgid "This usually happens after a site move, or when the encryption key configured for this site changes. The saved value is still stored and will work again if the original configuration is restored, so nothing has been deleted."
+msgstr ""
+
+#: ../app/Controllers/Admin/Notice/SecretUnavailable.php:118
+msgid "Open ShopBuilder settings"
 msgstr ""
 
 #: ../app/Controllers/Admin/Notice/Upgrade.php:68

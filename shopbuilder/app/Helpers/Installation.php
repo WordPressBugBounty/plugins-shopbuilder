@@ -27,6 +27,9 @@ class Installation {
 	 */
 	public static function init() {
 		add_action( 'init', [ __CLASS__, 'check_version' ], 5 );
+		// Runs after check_version so the rebuild happens against the version the
+		// update left behind, not the one being replaced.
+		add_action( 'init', [ Cache::class, 'maybe_run_deferred_asset_rebuild' ], 6 );
 	}
 
 	/**
@@ -124,15 +127,39 @@ class Installation {
 					$rawOptions['active'] = $blocks['active'] ?? null;
 
 					if ( ! empty( $blocks['fields'] ) ) {
-						foreach ( $blocks['fields'] as $field_id  => $field ) {
-							$type                    = 'array' === gettype( $field['value'] ) ? [] : '';
-							$rawOptions[ $field_id ] = ! empty( $field['value'] ) ? $field['value'] : $type;
-						}
+						$rawOptions += self::default_field_values( $blocks['fields'] );
 					}
 					Fns::set_options( $sections_id, $blocks_id, $rawOptions );
 				}
 			}
 		}
+	}
+
+	/**
+	 * Default values to seed for a settings block's fields.
+	 *
+	 * Credentials are left out entirely. This routine re-submits the output of
+	 * get_sections(), where a configured credential is represented by a
+	 * sentinel rather than its value, so seeding one would be meaningless at
+	 * best. Omitted here, they keep whatever the encrypted store already holds.
+	 *
+	 * @param array $fields Field descriptors.
+	 *
+	 * @return array
+	 */
+	private static function default_field_values( array $fields ) {
+		$defaults = [];
+
+		foreach ( $fields as $field_id => $field ) {
+			if ( ! empty( $field['secret'] ) ) {
+				continue;
+			}
+
+			$type                  = 'array' === gettype( $field['value'] ) ? [] : '';
+			$defaults[ $field_id ] = ! empty( $field['value'] ) ? $field['value'] : $type;
+		}
+
+		return $defaults;
 	}
 
 	/**

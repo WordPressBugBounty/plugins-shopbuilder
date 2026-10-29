@@ -20,41 +20,57 @@ class CheckoutEditorBase {
 	protected $cache = [];
 
 	/**
-	 * Billing Fields Settings
+	 * Checkout Fields Editor module settings.
+	 *
+	 * @var array
 	 */
 	protected $options = [];
 
 	/**
 	 * Billing Fields Settings
+	 *
+	 * @var array
 	 */
 	protected $billing_settings = [];
 
 	/**
 	 * All Custom Fields Here
+	 *
+	 * @var array
 	 */
 	protected $checkout_custom_fields = [];
 
 	/**
 	 * Billing Custom Fields
+	 *
+	 * @var array
 	 */
 	protected $billing_custom_field = [];
 
 	/**
-	 * Billing Custom Fields
+	 * Shipping Custom Fields
+	 *
+	 * @var array
 	 */
 	protected $shipping_custom_field = [];
 
 	/**
-	 * Shippping Field Settings
+	 * Shipping Field Settings
+	 *
+	 * @var array
 	 */
 	protected $shipping_settings = [];
 
 	/**
 	 * Additional Field Settings
+	 *
+	 * @var array
 	 */
 	protected $additional_settings = [];
 	/**
-	 * Billing Custom Fields
+	 * Additional Custom Fields
+	 *
+	 * @var array
 	 */
 	protected $additional_custom_field = [];
 
@@ -92,7 +108,9 @@ class CheckoutEditorBase {
 		return $modified_fields;
 	}
 	/**
-	 * Billing Custom Field.
+	 * Values of a multiselect control, flattened to a plain list.
+	 *
+	 * @param array $data Control rows, each holding a `value` key.
 	 *
 	 * @return array|mixed
 	 */
@@ -106,7 +124,7 @@ class CheckoutEditorBase {
 	 * @param string $group group name.
 	 * @return array
 	 */
-	private function fields_generator( $group ) {
+	private function fields_generator( $group ) { // phpcs:ignore Generic.Metrics.NestingLevel.TooHigh, Generic.Metrics.CyclomaticComplexity.MaxExceeded
 		$cache_key = 'checkout_' . $group . '_fields';
 		if ( isset( $this->cache[ $cache_key ] ) ) {
 			return $this->cache[ $cache_key ];
@@ -140,6 +158,11 @@ class CheckoutEditorBase {
 			} elseif ( 'country' === $field['name'] ) {
 				$field['type']  = 'country';
 				$field['value'] = $field['default'] ?? null;
+				// The country is the key WooCommerce resolves the whole locale
+				// from, so it forces the field visible and required after every
+				// locale filter has run. Honouring an "optional" toggle here would
+				// only leave the server accepting what the browser rejects.
+				$field['required'] = true;
 			} elseif ( 'state' === $field['name'] ) {
 				$field['type'] = 'state';
 			} elseif ( 'email' === $field['name'] ) {
@@ -203,7 +226,9 @@ class CheckoutEditorBase {
 	}
 
 	/**
-	 * Billing Custom Field.
+	 * Strips the editor-only keys off a field before it reaches WooCommerce.
+	 *
+	 * @param array $field Generated field.
 	 *
 	 * @return array|mixed
 	 */

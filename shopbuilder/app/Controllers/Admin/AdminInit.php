@@ -72,6 +72,7 @@ class AdminInit {
 		// Notice\BlackFridayV2::instance();.
 		Notice\Review::instance();
 		Notice\CachePermission::instance();
+		Notice\SecretUnavailable::instance();
 	}
 
 	/**

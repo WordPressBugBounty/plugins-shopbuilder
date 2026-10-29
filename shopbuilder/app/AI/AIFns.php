@@ -13,6 +13,8 @@ use RadiusTheme\SB\AI\AIServices\DeepSeekAdapter;
 use RadiusTheme\SB\AI\AIServices\GeminiAdapter;
 use RadiusTheme\SB\AI\AIServices\OpenAIAdapter;
 use RadiusTheme\SB\Helpers\Fns;
+use RadiusTheme\SB\Models\Secret;
+use RadiusTheme\SB\Models\SecretStore;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit( 'This script cannot be accessed directly.' );
@@ -48,13 +50,13 @@ class AIFns {
 		$apiKey = '';
 		switch ( $ai_tools ) {
 			case 'OpenAI':
-				$apiKey = self::get_options( 'gpt_api_key' );
+				$apiKey = self::get_secret( 'gpt_api_key' );
 				break;
 			case 'Gemini':
-				$apiKey = self::get_options( 'gemini_api_key' );
+				$apiKey = self::get_secret( 'gemini_api_key' );
 				break;
 			case 'DeepSeek':
-				$apiKey = self::get_options( 'deepseek_api_key' );
+				$apiKey = self::get_secret( 'deepseek_api_key' );
 				break;
 		}
 		if ( empty( $apiKey ) ) {
@@ -125,6 +127,90 @@ class AIFns {
 			}
 		}
 		return $options;
+	}
+
+	/**
+	 * Server-side accessor for a provider credential.
+	 *
+	 * The only place the plaintext of an API key is produced. Reads the
+	 * encrypted store first, then falls back to any plaintext still sitting in
+	 * `rtsb_settings` so an installation keeps working before the migration has
+	 * run. The return value must never be placed in a settings array, a
+	 * localized script, or any response body.
+	 *
+	 * @param string $key Secret id, e.g. `gemini_api_key`.
+	 *
+	 * @return string Plaintext credential, or an empty string when unavailable.
+	 */
+	public static function get_secret( $key ) {
+		$secret = SecretStore::get( $key );
+
+		if ( '' !== $secret ) {
+			return $secret;
+		}
+
+		$legacy = self::get_options( $key );
+
+		if ( ! is_string( $legacy ) || '' === $legacy || Secret::is_sentinel( $legacy ) ) {
+			return '';
+		}
+
+		$plaintext = Secret::decrypt( $legacy );
+
+		return is_string( $plaintext ) ? $plaintext : '';
+	}
+
+	/**
+	 * Whether a provider credential is configured, without recovering it.
+	 *
+	 * Safe for admin notices and any check that only needs presence.
+	 *
+	 * @param string $key Secret id.
+	 *
+	 * @return bool
+	 */
+	public static function has_secret( $key ) {
+		if ( SecretStore::has( $key ) ) {
+			return true;
+		}
+
+		$legacy = self::get_options( $key );
+
+		return is_string( $legacy ) && '' !== $legacy && ! Secret::is_sentinel( $legacy );
+	}
+
+	/**
+	 * Strip credentials out of a provider message before it leaves the server.
+	 *
+	 * Defence in depth, not the primary control: the transports pass the key in
+	 * a header and never in a URL, so a well-formed message carries no secret
+	 * to begin with. This exists because WP_Error and provider payloads echo
+	 * request context that is outside our control, and one leaked message is
+	 * enough. Nothing is logged here.
+	 *
+	 * @param string $message Provider or transport message.
+	 *
+	 * @return string Message with any credential replaced.
+	 */
+	public static function safe_error( $message ) {
+		if ( ! is_string( $message ) || '' === $message ) {
+			return '';
+		}
+
+		foreach ( [ 'gpt_api_key', 'gemini_api_key', 'deepseek_api_key' ] as $id ) {
+			$secret = self::get_secret( $id );
+
+			if ( is_string( $secret ) && strlen( $secret ) > 3 ) {
+				$message = str_replace( $secret, '[redacted]', $message );
+			}
+		}
+
+		// Credentials carried in request context echoed back by a transport.
+		$message = preg_replace( '/([?&](?:key|api_key|access_token)=)[^&\s"\']+/i', '$1[redacted]', $message );
+		$message = preg_replace( '/(Bearer\s+)[A-Za-z0-9._\-]+/i', '$1[redacted]', $message );
+		$message = preg_replace( '/(x-goog-api-key["\'\s:=]+)[^\s"\',}]+/i', '$1[redacted]', $message );
+
+		return is_string( $message ) ? $message : '';
 	}
 
 	/**

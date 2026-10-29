@@ -4,6 +4,10 @@ namespace RadiusTheme\SB\Helpers;
 
 use RadiusTheme\SB\Traits\SingletonTrait;
 
+/**
+ * Reads Elementor document data and answers questions about the elements a
+ * document contains.
+ */
 class ElementorDataMap {
 	/**
 	 * Singleton
@@ -25,7 +29,9 @@ class ElementorDataMap {
 	private array $eldata = [];
 
 	/***
-	 * @param int $post_id
+	 * Decoded `_elementor_data` for a post.
+	 *
+	 * @param int $post_id Post ID.
 	 *
 	 * @return array|null
 	 */
@@ -36,9 +42,11 @@ class ElementorDataMap {
 	}
 
 	/***
-	 * @param string $widget_name
-	 * @param array|null $data
-	 * @param int|null $post_id
+	 * Every instance of one widget type within a document.
+	 *
+	 * @param string     $widget_name Widget type name.
+	 * @param array|null $data        Element tree, or null to read it from $post_id.
+	 * @param int|null   $post_id     Post ID to read the element tree from.
 	 *
 	 * @return array
 	 */
@@ -60,9 +68,68 @@ class ElementorDataMap {
 		return $this->eldata;
 	}
 
+	/**
+	 * Every distinct Elementor widget type used by a document.
+	 *
+	 * Reads `_elementor_data` once per post id and memoises the result for the
+	 * rest of the request: the optimizer asks for this while building both the
+	 * CSS and the JS bundle, and neither should re-parse the document.
+	 *
+	 * @param int $post_id Post ID.
+	 *
+	 * @return array List of widget type names, e.g. `rtsb-advance-product-tabs`.
+	 */
+	public function get_widget_types( int $post_id ): array {
+		$cache_key = 'get_widget_types_' . $post_id;
+
+		if ( isset( self::$cache[ $cache_key ] ) ) {
+			return self::$cache[ $cache_key ];
+		}
+
+		$data  = $this->get_elementor_data( $post_id );
+		$found = [];
+
+		if ( ! empty( $data ) && is_array( $data ) ) {
+			$this->collect_widget_types( $data, $found );
+		}
+
+		self::$cache[ $cache_key ] = array_values( array_unique( $found ) );
+
+		return self::$cache[ $cache_key ];
+	}
+
+	/**
+	 * Walks an Elementor element tree collecting widget type names.
+	 *
+	 * Unlike search_el() this descends into every node, because a container can
+	 * hold both widgets and further containers.
+	 *
+	 * @param array $data  Element tree.
+	 * @param array $found Collected widget types, by reference.
+	 *
+	 * @return void
+	 */
+	private function collect_widget_types( array $data, array &$found ): void {
+		foreach ( $data as $value ) {
+			if ( ! is_array( $value ) ) {
+				continue;
+			}
+
+			if ( isset( $value['elType'] ) && 'widget' === $value['elType'] && ! empty( $value['widgetType'] ) ) {
+				$found[] = $value['widgetType'];
+			}
+
+			if ( ! empty( $value['elements'] ) && is_array( $value['elements'] ) ) {
+				$this->collect_widget_types( $value['elements'], $found );
+			}
+		}
+	}
+
 	/***
-	 * @param array $data
-	 * @param string $name
+	 * Collects matching widgets from an element tree into $this->eldata.
+	 *
+	 * @param array  $data Element tree.
+	 * @param string $name Widget type name to match.
 	 *
 	 * @return void
 	 */

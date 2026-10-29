@@ -22,8 +22,10 @@ use Elementor\Plugin;
 use WC_Product_Query;
 use Elementor\Icons_Manager;
 use RadiusTheme\SB\Models\ReSizer;
+use RadiusTheme\SB\Models\Secret;
 use RadiusTheme\SB\Models\Settings;
 use RadiusTheme\SB\Models\DataModel;
+use RadiusTheme\SB\Models\SecretStore;
 use RadiusTheme\SB\Models\ModuleList;
 use RadiusTheme\SB\Models\GeneralList;
 use RadiusTheme\SB\Models\ElementList;
@@ -2697,6 +2699,34 @@ class Fns {
 		];
 	}
 
+	/**
+	 * Sanitize a number control value before it is stored.
+	 *
+	 * The settings app renders number fields with an antd InputNumber, which
+	 * reports a cleared field as the JavaScript `null`. FormData serialises that
+	 * to the literal string "null", and the default sanitize_text_field() path in
+	 * set_options() stores it verbatim. Consumers then read a non-numeric string
+	 * where they expect a number and any arithmetic on it throws a TypeError on
+	 * PHP 8, so anything that is not a number is stored as an empty string and
+	 * the option falls back to its registered default instead.
+	 *
+	 * Numeric values are kept as posted, which preserves both integers and
+	 * decimals as well as the negative values some fields use as a sentinel.
+	 *
+	 * @param mixed $raw_value Raw posted value.
+	 *
+	 * @return string
+	 */
+	public static function sanitize_number_option( $raw_value ) {
+		if ( ! is_scalar( $raw_value ) || is_bool( $raw_value ) ) {
+			return '';
+		}
+
+		$value = trim( sanitize_text_field( (string) $raw_value ) );
+
+		return is_numeric( $value ) ? $value : '';
+	}
+
 	/***
 	 * Save Settings data
 	 *
@@ -2706,7 +2736,7 @@ class Fns {
 	 *
 	 * @return array
 	 */
-	public static function set_options( $section_id = '', $block_id = '', $rawOptions = [] ) { // phpcs:ignore Generic.Metrics.NestingLevel.TooHigh
+	public static function set_options( $section_id = '', $block_id = '', $rawOptions = [] ) { // phpcs:ignore Generic.Metrics.NestingLevel.TooHigh, Generic.Metrics.CyclomaticComplexity.MaxExceeded
 		$section_id = ! empty( $section_id ) ? sanitize_text_field( wp_unslash( $section_id ) ) : '';
 		$block_id   = ! empty( $block_id ) ? sanitize_text_field( wp_unslash( $block_id ) ) : '';
 		$rawOptions = ! empty( $rawOptions ) ? $rawOptions : [];
@@ -2748,6 +2778,45 @@ class Fns {
 				} else {
 					if ( isset( $fields[ $raw_option_key ] ) ) {
 						$field = $fields[ $raw_option_key ];
+
+						/*
+						 * Credentials never enter $options, so they never reach
+						 * `rtsb_settings` and never reach the browser through
+						 * $sections. They are routed to the encrypted store and
+						 * the descriptor is replaced with its redacted state.
+						 *
+						 * This branch has to exist before redaction is switched
+						 * on: Installation::set_default_options() re-submits the
+						 * output of get_sections(), which now carries the keep
+						 * sentinel, and without the no-change rule below that
+						 * round-trip would overwrite a live secret.
+						 */
+						if ( ! empty( $field['secret'] ) ) {
+							$legacy = $options[ $block_id ][ $raw_option_key ] ?? '';
+
+							if ( self::save_secret_option( $raw_option_key, $raw_value, $legacy ) ) {
+								$changed = true;
+							}
+
+							$state = Secret::state( SecretStore::raw( $raw_option_key ) );
+
+							$sections[ $section_id ]['list'][ $block_id ]['fields'][ $raw_option_key ]['configured']  = $state['configured'];
+							$sections[ $section_id ]['list'][ $block_id ]['fields'][ $raw_option_key ]['unavailable'] = $state['unavailable'];
+							$sections[ $section_id ]['list'][ $block_id ]['fields'][ $raw_option_key ]['value']       = $state['value'];
+
+							/*
+							 * Drop any pre-migration plaintext only once the
+							 * encrypted copy is confirmed present, or once the
+							 * secret is deliberately gone. Never on a failed
+							 * encryption: that would destroy the only copy.
+							 */
+							if ( SecretStore::has( $raw_option_key ) || Secret::CLEAR === $raw_value ) {
+								unset( $options[ $block_id ][ $raw_option_key ] );
+							}
+
+							continue;
+						}
+
 						if ( 'switch' === $field['type'] ) {
 							$value = 'on' === $raw_value ? 'on' : '';
 						} elseif ( 'repeaters' === $field['type'] ) {
@@ -2802,7 +2871,9 @@ class Fns {
 										$value = $field['sanitize_fn']( $raw_value );
 									}
 								} else {
-									$value = sanitize_text_field( $raw_value );
+									$value = 'number' === $field['type']
+										? self::sanitize_number_option( $raw_value )
+										: sanitize_text_field( $raw_value );
 								}
 							}
 						}
@@ -2826,6 +2897,40 @@ class Fns {
 		$results['sections'] = $sections;
 
 		return $results;
+	}
+
+	/**
+	 * Apply a submitted value to an encrypted secret.
+	 *
+	 * Implements the four states the settings form can express. The keep
+	 * sentinel - and the mask, in case a stale payload ever carries it - are
+	 * treated as "no replacement supplied", which is what makes an ordinary
+	 * save of the surrounding block leave a configured credential alone.
+	 *
+	 * @param string $key       Secret id, matching the field id.
+	 * @param mixed  $raw_value Value submitted for the field.
+	 * @param string $legacy    Pre-migration plaintext still in `rtsb_settings`, if any.
+	 *
+	 * @return bool Whether anything was written.
+	 */
+	private static function save_secret_option( $key, $raw_value, $legacy = '' ) {
+		if ( Secret::CLEAR === $raw_value ) {
+			return SecretStore::delete( $key );
+		}
+
+		$submitted = is_string( $raw_value ) ? trim( $raw_value ) : '';
+
+		// No replacement supplied. Fold any pre-migration plaintext into the
+		// encrypted store so the value is protected from this save onwards.
+		if ( '' === $submitted || Secret::is_sentinel( $submitted ) ) {
+			if ( ! SecretStore::has( $key ) && is_string( $legacy ) && '' !== $legacy && ! Secret::is_sentinel( $legacy ) ) {
+				return SecretStore::set( $key, $legacy );
+			}
+
+			return false;
+		}
+
+		return SecretStore::set( $key, $submitted );
 	}
 
 	/**
@@ -4060,13 +4165,16 @@ class Fns {
 	 * @return string
 	 */
 	public static function get_optimized_handle_by_context() {
-		$context = self::detect_context();
-
-		if ( 'account' === $context ) {
-			return 'rtsb-bundled-global';
-		}
-
-		return "rtsb-bundled-$context";
+		/*
+		 * Must name the bundle that is actually enqueued, because modules attach
+		 * dynamic CSS to it with wp_add_inline_style(). get_contextual_assets()
+		 * always materialises the detected context in both the CSS and the JS
+		 * map, so the handle below is always registered; the previous special
+		 * case returned `rtsb-bundled-global` on order-received and order-pay
+		 * pages, where the style enqueued is `rtsb-bundled-account`, and every
+		 * inline style attached there was silently dropped.
+		 */
+		return 'rtsb-bundled-' . self::detect_context();
 	}
 
 	/**

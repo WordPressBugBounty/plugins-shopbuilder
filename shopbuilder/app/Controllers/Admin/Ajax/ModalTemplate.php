@@ -149,11 +149,66 @@ class ModalTemplate {
 					<select class="rtsb-field" id="rtsb_tb_template_type" name="rtsb_tb_template_type">
 						<?php
 						$builder_page_types = BuilderFns::builder_page_types();
+						$pro_page_types     = BuilderFns::pro_page_types();
+						// A template built under pro keeps its type in post meta after pro
+						// goes away. Without an option carrying that value the browser falls
+						// back to the first one, and saving the modal would quietly rewrite
+						// the template's type, so it is offered back as the selected option.
+						$orphan_type  = $template_type && ! isset( $builder_page_types[ $template_type ] ) ? $template_type : '';
+						$orphan_label = $orphan_type ? BuilderFns::page_type_label( $orphan_type ) : '';
+
+						if ( $orphan_type ) {
+							?>
+							<option selected="selected" value="<?php echo esc_attr( $orphan_type ); ?>">
+								<?php
+								echo esc_html(
+									$orphan_label
+										/* translators: %s: Template type name. */
+										? sprintf( __( '%s (Pro)', 'shopbuilder' ), $orphan_label )
+										: $orphan_type
+								);
+								?>
+							</option>
+							<?php
+						}
+
+						if ( ! empty( $pro_page_types ) ) {
+							?>
+							<optgroup label="<?php esc_attr_e( 'Available', 'shopbuilder' ); ?>">
+							<?php
+						}
+
 						foreach ( $builder_page_types as $key => $value ) {
 							?>
 							<option <?php echo esc_attr( $key === $template_type ? 'selected="selected"' : '' ); ?> value="<?php echo esc_attr( $key ); ?>"> <?php echo esc_html( $value ); ?> </option>
-						<?php } ?>
+							<?php
+						}
+
+						if ( ! empty( $pro_page_types ) ) {
+							?>
+							</optgroup>
+							<optgroup label="<?php esc_attr_e( 'Available in Pro', 'shopbuilder' ); ?>">
+								<?php
+								foreach ( $pro_page_types as $key => $value ) {
+									if ( $key === $orphan_type ) {
+										continue;
+									}
+									?>
+									<option disabled value=""> <?php echo esc_html( $value ); ?> </option>
+									<?php
+								}
+								?>
+							</optgroup>
+							<?php
+						}
+						?>
 					</select>
+					<?php if ( ! empty( $pro_page_types ) ) { ?>
+						<span class="elementor-pro-notice">
+							<a target="_blank" href="<?php echo esc_url( rtsb()->pro_version_link() ); ?>"><?php esc_html_e( 'Upgrade to PRO', 'shopbuilder' ); ?></a>
+							<?php esc_html_e( 'to unlock My Account, Thank You, Quick View, Popup, Mega Menu and archive templates', 'shopbuilder' ); ?>
+						</span>
+					<?php } ?>
 				</div>
 
 				<div class="rtsb-product-page-for rtsb-tb-field-wraper  <?php echo esc_attr( ! rtsb()->has_pro() ? 'pro-disable' : '' ); ?>" style="display:none;" >

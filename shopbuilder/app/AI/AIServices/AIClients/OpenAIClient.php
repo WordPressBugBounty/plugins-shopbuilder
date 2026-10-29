@@ -39,7 +39,7 @@ class OpenAIClient {
 	 * @throws \Exception If API key or model is missing.
 	 */
 	public function __construct() {
-		$this->apiKey = AIFns::get_options( 'gpt_api_key' );
+		$this->apiKey = AIFns::get_secret( 'gpt_api_key' );
 		$this->model  = AIFns::get_options( 'gpt_models' );
 		$this->token  = AIFns::get_options( 'gpt_max_token' );
 
@@ -87,7 +87,7 @@ class OpenAIClient {
 		);
 
 		if ( is_wp_error( $response ) ) {
-			return 'Error: ' . $response->get_error_message();
+			return 'Error: ' . AIFns::safe_error( $response->get_error_message() );
 		}
 
 		$body = wp_remote_retrieve_body( $response );
@@ -162,7 +162,7 @@ class OpenAIClient {
 		);
 
 		if ( is_wp_error( $response ) ) {
-			return 'Error: ' . $response->get_error_message();
+			return 'Error: ' . AIFns::safe_error( $response->get_error_message() );
 		}
 
 		$body       = wp_remote_retrieve_body( $response );

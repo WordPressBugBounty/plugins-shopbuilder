@@ -41,6 +41,13 @@ class AjaxAI {
 		try {
 			$ai_service        = AIFns::initializeAIService();
 			$generated_content = $ai_service->generateResponse( $content_type, $instruction );
+
+			// Provider responses can carry echoed request context, and this is
+			// the boundary where they become a browser response.
+			if ( is_string( $generated_content ) ) {
+				$generated_content = AIFns::safe_error( $generated_content );
+			}
+
 			wp_send_json_success(
 				[
 					'content' => $generated_content,
@@ -48,7 +55,7 @@ class AjaxAI {
 				]
 			);
 		} catch ( \Exception $e ) {
-			wp_send_json_error( [ 'message' => $e->getMessage() ] );
+			wp_send_json_error( [ 'message' => AIFns::safe_error( $e->getMessage() ) ] );
 		}
 	}
 

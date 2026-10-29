@@ -66,7 +66,6 @@ class QuickViewFrontEnd {
 	 * @since  1.0.0
 	 */
 	public function quick_view_action_template() {
-		wp_enqueue_style( 'elementor-frontend' );
 		// Image.
 		add_action( 'rtsb/wcqv/product/image', 'woocommerce_show_product_sale_flash', 10 );
 		add_action( 'rtsb/wcqv/product/image', 'woocommerce_show_product_images', 20 );
@@ -88,19 +87,46 @@ class QuickViewFrontEnd {
 	public function product_quick_view_ajax() {
 		$product_id = isset( $_REQUEST['product_id'] ) ? absint( $_REQUEST['product_id'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
-		if ( empty( $product_id ) || 'publish' !== get_post_status( $product_id ) ) {
+		if ( empty( $product_id ) ) {
 			wp_send_json_error( esc_html__( 'Product Id not found', 'shopbuilder' ) );
 		}
 
-		global $sitepress;
+		global $sitepress, $wp_query;
 
 		$lang = isset( $_REQUEST['lang'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['lang'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( defined( 'ICL_LANGUAGE_CODE' ) && $lang && isset( $sitepress ) ) {
 			$sitepress->switch_lang( $lang, true );
 		}
 
+		$product = wc_get_product( $product_id );
+
+		if ( ! $product instanceof WC_Product ) {
+			wp_send_json_error( esc_html__( 'Product not found.', 'shopbuilder' ) );
+		}
+
+		// Variations have no template of their own, render the parent product instead.
+		if ( $product->is_type( 'variation' ) ) {
+			$parent = wc_get_product( $product->get_parent_id() );
+
+			if ( ! $parent instanceof WC_Product ) {
+				wp_send_json_error( esc_html__( 'Product not found.', 'shopbuilder' ) );
+			}
+
+			$product    = $parent;
+			$product_id = $parent->get_id();
+		}
+
+		if ( 'publish' !== get_post_status( $product_id ) ) {
+			wp_send_json_error( esc_html__( 'Product is not available.', 'shopbuilder' ) );
+		}
+
 		// Set the main wp query for the product.
 		wp( 'p=' . $product_id . '&post_type=product' );
+
+		// Third party hooks on the main query can filter the product out, bail with a proper error.
+		if ( ! $wp_query instanceof \WP_Query || ! $wp_query->have_posts() ) {
+			wp_send_json_error( esc_html__( 'Product could not be loaded.', 'shopbuilder' ) );
+		}
 
 		// Remove product thumbnails gallery.
 		if ( defined( 'RTWPVG_VERSION' ) ) {
@@ -111,6 +137,10 @@ class QuickViewFrontEnd {
 		Fns::load_template( 'quick-view/content' );
 		$html = ob_get_contents();  // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		ob_end_clean();
+
+		if ( '' === trim( (string) $html ) ) {
+			wp_send_json_error( esc_html__( 'Product could not be loaded.', 'shopbuilder' ) );
+		}
 
 		wp_send_json_success( [ 'html' => $html ] );
 	}
@@ -189,9 +219,9 @@ class QuickViewFrontEnd {
 			$product = wc_get_product( $product_id );
 		}
 
-		$classes          = [];
-		$button_text      = Fns::get_option( 'modules', 'quick_view', 'button_text', esc_html__( 'Quick View', 'shopbuilder' ) );
-		$has_button_text  = ! empty( Fns::get_option( 'modules', 'quick_view', 'button_text', '' ) );
+		$classes         = [];
+		$button_text     = Fns::get_option( 'modules', 'quick_view', 'button_text', esc_html__( 'Quick View', 'shopbuilder' ) );
+		$has_button_text = ! empty( Fns::get_option( 'modules', 'quick_view', 'button_text', '' ) );
 
 		if ( $has_button_text ) {
 			$classes[] = 'has-text';
@@ -241,6 +271,7 @@ class QuickViewFrontEnd {
 	 * @return void
 	 */
 	public function enqueue() {
+		wp_enqueue_style( 'elementor-frontend' );
 		wp_enqueue_style( 'elementor-icons-fa-regular' );
 		wp_enqueue_style( 'elementor-icons-fa-solid' );
 		wp_enqueue_style( 'elementor-icons-shared-0' );
@@ -277,6 +308,7 @@ class QuickViewFrontEnd {
 				'ajaxurl'    => admin_url( 'admin-ajax.php', 'relative' ),
 				'lang'       => defined( 'ICL_LANGUAGE_CODE' ) ? ICL_LANGUAGE_CODE : '',
 				'isLoggedIn' => is_user_logged_in(),
+				'errorText'  => esc_html__( 'Sorry, this product could not be loaded.', 'shopbuilder' ),
 			]
 		);
 

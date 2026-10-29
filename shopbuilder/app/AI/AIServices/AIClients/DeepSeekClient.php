@@ -33,7 +33,7 @@ class DeepSeekClient {
 	 * @throws \Exception If API key or model is missing.
 	 */
 	public function __construct() {
-		$apiKey      = AIFns::get_options( 'deepseek_api_key' );
+		$apiKey      = AIFns::get_secret( 'deepseek_api_key' );
 		$this->model = AIFns::get_options( 'deepseek_models' );
 		$this->token = AIFns::get_options( 'deepseek_max_token' );
 		if ( empty( $apiKey ) || empty( $this->model ) ) {
@@ -50,7 +50,7 @@ class DeepSeekClient {
 	 * @return string AI-generated response or error message.
 	 */
 	public function ask( string $prompt, string $system_prompt ) {
-		$apiKey = AIFns::get_options( 'deepseek_api_key' );
+		$apiKey = AIFns::get_secret( 'deepseek_api_key' );
 		$url    = 'https://api.deepseek.com/chat/completions';
 
 		if ( empty( $apiKey ) ) {
@@ -86,14 +86,14 @@ class DeepSeekClient {
 		);
 
 		if ( is_wp_error( $response ) ) {
-			return 'Error: ' . $response->get_error_message();
+			return 'Error: ' . AIFns::safe_error( $response->get_error_message() );
 		}
 
 		$body = wp_remote_retrieve_body( $response );
 		$data = json_decode( $body, true );
 
 		if ( isset( $data['error'] ) ) {
-			return 'Error: ' . $data['error']['message'];
+			return 'Error: ' . AIFns::safe_error( $data['error']['message'] );
 		}
 
 		if ( isset( $data['choices'][0]['message']['content'] ) ) {
@@ -136,7 +136,7 @@ class DeepSeekClient {
 	 * @return mixed API response.
 	 */
 	public function callDeepSeek( $prompt, $instruction, $temperature = 0.7, $model = null, $for = 'keyword' ) {
-		$apiKey = AIFns::get_options( 'deepseek_api_key' );
+		$apiKey = AIFns::get_secret( 'deepseek_api_key' );
 		$url    = 'https://api.deepseek.com/v1/chat/completions';
 
 		$response = wp_remote_post(
@@ -167,7 +167,7 @@ class DeepSeekClient {
 		);
 
 		if ( is_wp_error( $response ) ) {
-			return 'Error: ' . $response->get_error_message();
+			return 'Error: ' . AIFns::safe_error( $response->get_error_message() );
 		}
 
 		$body = wp_remote_retrieve_body( $response );

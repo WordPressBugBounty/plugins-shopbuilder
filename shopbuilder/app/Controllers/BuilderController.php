@@ -65,12 +65,10 @@ class BuilderController {
 			$this->both_builder_frontend();
 			add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'editor_scripts' ] );
 		}
-		// RT Select2 Ajax.
+		// RT Select2 Ajax. Editor-only controls — privileged (logged-in) requests only, no nopriv.
 		add_action( 'wp_ajax_rtsb_select2_object_search', [ $this, 'select2_ajax_posts_filter_autocomplete' ] );
-		add_action( 'wp_ajax_nopriv_rtsb_select2_object_search', [ $this, 'select2_ajax_posts_filter_autocomplete' ] );
 		// Select2 ajax save data.
 		add_action( 'wp_ajax_rtsb_select2_get_title', [ $this, 'select2_ajax_get_posts_value_titles' ] );
-		add_action( 'wp_ajax_nopriv_rtsb_select2_get_title', [ $this, 'select2_ajax_get_posts_value_titles' ] );
 	}
 
 	/**
@@ -427,12 +425,57 @@ class BuilderController {
 	}
 
 	/**
+	 * Allowed source types for the editor-only Select2 AJAX controls.
+	 *
+	 * Restricts the caller-supplied post type / taxonomy to the objects these controls
+	 * actually offer, so an authenticated low-privilege user cannot probe unrelated
+	 * object types. Filterable so third-party controls can extend the list.
+	 *
+	 * @param string $source_name Either 'taxonomy' or 'post_type'.
+	 *
+	 * @return string[]
+	 */
+	private function select2_allowed_source_types( $source_name ) {
+		if ( 'taxonomy' === $source_name ) {
+			return (array) apply_filters(
+				'rtsb/elementor/select2/allowed_taxonomies',
+				[ 'all', 'category', 'post_tag', 'product_cat', 'product_tag', 'product_brand', 'rtsb_coupon_group' ]
+			);
+		}
+
+		return (array) apply_filters(
+			'rtsb/elementor/select2/allowed_post_types',
+			[ 'any', 'all', 'post', 'page', 'product', 'shop_coupon' ]
+		);
+	}
+
+	/**
+	 * Whether the current user may read WooCommerce coupon data through these controls.
+	 *
+	 * The edit_posts capability alone is not enough: coupon codes are WooCommerce data, so this
+	 * checks the coupon post type's own capability (which maps to manage_woocommerce) rather than
+	 * a role name, since roles and capabilities can be customised.
+	 *
+	 * @return bool
+	 */
+	private function current_user_can_manage_coupons() {
+		$post_type  = get_post_type_object( 'shop_coupon' );
+		$capability = ( $post_type && isset( $post_type->cap->edit_posts ) ) ? $post_type->cap->edit_posts : 'manage_woocommerce';
+
+		return current_user_can( $capability );
+	}
+
+	/**
 	 * Ajax callback for rt-select2
 	 *
 	 * @return void
 	 */
 	public function select2_ajax_posts_filter_autocomplete() {
 		if ( ! wp_verify_nonce( Fns::get_nonce(), rtsb()->nonceText ) ) {
+			wp_send_json_error( [] );
+		}
+		// This control is only used inside the Elementor editor; restrict it to users who can edit content.
+		if ( ! current_user_can( 'edit_posts' ) ) {
 			wp_send_json_error( [] );
 		}
 		$query_per_page = 15;
@@ -454,6 +497,9 @@ class BuilderController {
 		$results = $post_list = []; // phpcs:ignore Squiz.PHP.DisallowMultipleAssignments.Found
 		switch ( $source_name ) {
 			case 'taxonomy':
+				if ( ! in_array( $post_type, $this->select2_allowed_source_types( 'taxonomy' ), true ) ) {
+					wp_send_json_error( [] );
+				}
 				$args = [
 					'hide_empty' => false,
 					'orderby'    => 'name',
@@ -469,6 +515,10 @@ class BuilderController {
 				$post_list = wp_list_pluck( get_terms( $args ), 'name', 'term_id' );
 				break;
 			case 'user':
+				// Enumerating users requires the dedicated capability.
+				if ( ! current_user_can( 'list_users' ) ) {
+					wp_send_json_error( [] );
+				}
 				$users = [];
 
 				foreach ( get_users( [ 'search' => "*{$search}*" ] ) as $user ) {
@@ -480,6 +530,13 @@ class BuilderController {
 				$post_list = $users;
 				break;
 			default:
+				if ( ! in_array( $post_type, $this->select2_allowed_source_types( 'post_type' ), true ) ) {
+					wp_send_json_error( [] );
+				}
+				// Coupons are WooCommerce data; require the coupon capability, not just edit_posts.
+				if ( 'shop_coupon' === $post_type && ! $this->current_user_can_manage_coupons() ) {
+					wp_send_json_error( [] );
+				}
 				$post_list = $this->get_query_data( $post_type, $query_per_page, $search, $paged );
 		}
 
@@ -515,6 +572,11 @@ class BuilderController {
 			wp_send_json_error( [] );
 		}
 
+		// This control is only used inside the Elementor editor; restrict it to users who can edit content.
+		if ( ! current_user_can( 'edit_posts' ) ) {
+			wp_send_json_error( [] );
+		}
+
 		if ( empty( $_POST['id'] ) ) {
 			wp_send_json_error( [] );
 		}
@@ -524,10 +586,14 @@ class BuilderController {
 			wp_send_json_error( [] );
 		}
 		$ids         = array_map( 'intval', $_POST['id'] );
-		$source_name = ! empty( $_POST['source_name'] ) ? sanitize_text_field( $_POST['source_name'] ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+		$source_name = ! empty( $_POST['source_name'] ) ? sanitize_text_field( wp_unslash( $_POST['source_name'] ) ) : '';
+		$post_type   = ! empty( $_POST['post_type'] ) ? sanitize_text_field( wp_unslash( $_POST['post_type'] ) ) : '';
 
 		switch ( $source_name ) {
 			case 'taxonomy':
+				if ( ! in_array( $post_type, $this->select2_allowed_source_types( 'taxonomy' ), true ) ) {
+					wp_send_json_error( [] );
+				}
 				$args = [
 					'hide_empty' => false,
 					'orderby'    => 'name',
@@ -535,15 +601,17 @@ class BuilderController {
 					'include'    => implode( ',', $ids ),
 				];
 
-				// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated
-				if ( 'all' !== $_POST['post_type'] ) {
-					// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
-					$args['taxonomy'] = sanitize_text_field( $_POST['post_type'] );
+				if ( 'all' !== $post_type ) {
+					$args['taxonomy'] = $post_type;
 				}
 
 				$response = wp_list_pluck( get_terms( $args ), 'name', 'term_id' );
 				break;
 			case 'user':
+				// Enumerating users requires the dedicated capability.
+				if ( ! current_user_can( 'list_users' ) ) {
+					wp_send_json_error( [] );
+				}
 				$users = [];
 
 				foreach ( get_users( [ 'include' => $ids ] ) as $user ) {
@@ -555,12 +623,28 @@ class BuilderController {
 				$response = $users;
 				break;
 			default:
-				$post_info = get_posts(
-					[
-						'post_type' => sanitize_text_field( $_POST['post_type'] ), // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotValidated
-						'include'   => implode( ',', $ids ),
-					]
-				);
+				if ( ! in_array( $post_type, $this->select2_allowed_source_types( 'post_type' ), true ) ) {
+					wp_send_json_error( [] );
+				}
+				// Coupons are WooCommerce data; require the coupon capability, not just edit_posts.
+				if ( 'shop_coupon' === $post_type && ! $this->current_user_can_manage_coupons() ) {
+					wp_send_json_error( [] );
+				}
+				$args = [
+					'post_type' => $post_type,
+					'include'   => implode( ',', $ids ),
+				];
+				// Never expose coupon codes that are not explicitly marked for frontend display.
+				if ( 'shop_coupon' === $post_type ) {
+					// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+					$args['meta_query'] = [
+						[
+							'key'   => 'rtsb_show_on_frontend',
+							'value' => 'on',
+						],
+					];
+				}
+				$post_info = get_posts( $args );
 				$response  = wp_list_pluck( $post_info, 'post_title', 'ID' );
 		}
 

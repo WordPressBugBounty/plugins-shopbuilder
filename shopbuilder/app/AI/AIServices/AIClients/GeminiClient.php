@@ -57,7 +57,7 @@ class GeminiClient {
 	 * @throws \Exception If API key is missing.
 	 */
 	public function __construct() {
-		$this->apiKey = AIFns::get_options( 'gemini_api_key' );
+		$this->apiKey = AIFns::get_secret( 'gemini_api_key' );
 		/**
 		 * Hard-coded model to avoid confusion.
 		 * $this->model = AIFns::get_options( 'gemini_models', 'gemini-2.5-flash' );
@@ -65,11 +65,29 @@ class GeminiClient {
 		$this->model               = 'gemini-2.5-flash';
 		$this->token               = AIFns::get_options( 'gemini_max_token' );
 		$this->root_url            = 'https://generativelanguage.googleapis.com/v1beta/models/';
-		$this->generateContent_url = $this->root_url . $this->model . ':generateContent?key=' . $this->apiKey;
+		$this->generateContent_url = $this->root_url . $this->model . ':generateContent';
 		$this->embedContent_url    = $this->root_url . 'gemini-embedding-001:embedContent';
 		if ( empty( $this->apiKey ) ) {
 			throw new \Exception( 'Gemini API key is not properly configured.' );
 		}
+	}
+
+	/**
+	 * Headers for an authenticated Gemini request.
+	 *
+	 * The credential travels here and never in the request URL. A key in a
+	 * query string is echoed by WP_Error messages, proxy and WAF logs, APM
+	 * traces and cURL diagnostics - the most commonly logged part of a
+	 * request. embedContent() already did this correctly; generateContent did
+	 * not, and used `?key=` until 3.4.3.
+	 *
+	 * @return array
+	 */
+	protected function request_headers() {
+		return [
+			'Content-Type'   => 'application/json',
+			'x-goog-api-key' => $this->apiKey,
+		];
 	}
 
 	/**
@@ -103,14 +121,14 @@ class GeminiClient {
 		$response = wp_remote_post(
 			$this->generateContent_url,
 			[
-				'headers' => [ 'Content-Type' => 'application/json' ],
+				'headers' => $this->request_headers(),
 				'body'    => wp_json_encode( $body_data ),
 				'timeout' => 12000,
 			]
 		);
 
 		if ( is_wp_error( $response ) ) {
-			$error = $response->get_error_message();
+			$error = AIFns::safe_error( $response->get_error_message() );
 			return 'Error: ' . $error;
 		}
 
@@ -123,7 +141,7 @@ class GeminiClient {
 
 		$result = json_decode( $body, true );
 		if ( isset( $result['error'] ) ) {
-			return 'Error: ' . wp_json_encode( $result['error'] );
+			return 'Error: ' . AIFns::safe_error( (string) wp_json_encode( $result['error'] ) );
 		}
 
 		$content = $result['candidates'][0]['content']['parts'][0]['text'] ?? '';
@@ -176,21 +194,23 @@ class GeminiClient {
 		$response = wp_remote_post(
 			$this->generateContent_url,
 			[
-				'headers' => [ 'Content-Type' => 'application/json' ],
+				'headers' => $this->request_headers(),
 				'body'    => wp_json_encode( $body_data ),
 				'timeout' => 12000,
 			]
 		);
 
 		if ( is_wp_error( $response ) ) {
-			return 'Error: ' . $response->get_error_message();
+			return 'Error: ' . AIFns::safe_error( $response->get_error_message() );
 		}
 
 		$body = wp_remote_retrieve_body( $response );
 		$data = json_decode( $body, true );
 
 		if ( ! empty( $data['error'] ) ) {
-			return $data;
+			// Scrubbed rather than passed through: the provider echoes request
+			// context, and this array is returned towards an Ajax response.
+			return [ 'error' => [ 'message' => AIFns::safe_error( $data['error']['message'] ?? 'Gemini request failed.' ) ] ];
 		}
 
 		$content = $data['candidates'][0]['content']['parts'][0]['text'] ?? '[]';

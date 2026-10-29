@@ -64,6 +64,16 @@ class Cache {
 	];
 
 	/**
+	 * Option flagging an asset rebuild that an upgrade postponed.
+	 *
+	 * Autoloaded: it has to be read on the requests that follow an update, and it
+	 * is deleted as soon as the rebuild is picked up.
+	 *
+	 * @var string
+	 */
+	const DEFERRED_REBUILD_OPTION = 'rtsb_deferred_asset_rebuild';
+
+	/**
 	 * Option holding the cache group rotation state.
 	 *
 	 * A single combined option rather than separate keys, so the signature, the
@@ -577,6 +587,68 @@ class Cache {
 		}
 
 		// Re-generate assets.
+		if ( self::is_upgrade_request() ) {
+			self::defer_asset_rebuild();
+
+			return;
+		}
+
+		AssetRegistry::instance()->regenerate_bundles();
+	}
+
+	/**
+	 * Whether this request has replaced plugin files on disk.
+	 *
+	 * After `upgrader_process_complete` the running process holds classes loaded
+	 * from the previous release, while anything autoloaded from that point on
+	 * comes from the files just unpacked. Building bundles mixes the two - the
+	 * bundler, the minifier and their helpers are all loaded late - so a new
+	 * class calling a method its old counterpart does not have is fatal.
+	 *
+	 * @return bool
+	 */
+	private static function is_upgrade_request() {
+		return (bool) did_action( 'upgrader_process_complete' );
+	}
+
+	/**
+	 * Hand the asset rebuild to the next request.
+	 *
+	 * Nothing is lost by waiting: bundle filenames carry a version signature, so
+	 * the new release never serves a file built by the old one, and a missing
+	 * bundle is built on demand by the first request that needs it.
+	 *
+	 * @return void
+	 */
+	private static function defer_asset_rebuild() {
+		update_option( self::DEFERRED_REBUILD_OPTION, 'yes', true );
+	}
+
+	/**
+	 * Run a rebuild left behind by an upgrade, once, on a later request.
+	 *
+	 * The flag is cleared before the rebuild runs so a failing build cannot make
+	 * every subsequent request retry it.
+	 *
+	 * @return void
+	 */
+	public static function maybe_run_deferred_asset_rebuild() {
+		if ( 'yes' !== get_option( self::DEFERRED_REBUILD_OPTION ) ) {
+			return;
+		}
+
+		// Still the request that swapped the files: leave the flag for the next one
+		// rather than consuming it on a rebuild that cannot run.
+		if ( self::is_upgrade_request() ) {
+			return;
+		}
+
+		delete_option( self::DEFERRED_REBUILD_OPTION );
+
+		if ( ! Fns::is_optimization_enabled() ) {
+			return;
+		}
+
 		AssetRegistry::instance()->regenerate_bundles();
 	}
 

@@ -11,7 +11,9 @@
 namespace RadiusTheme\SB\Controllers;
 
 use RadiusTheme\SB\Helpers\Fns;
+use RadiusTheme\SB\Helpers\Cache;
 use RadiusTheme\SB\Helpers\BuilderFns;
+use RadiusTheme\SB\Helpers\ElementorDataMap;
 use RadiusTheme\SB\Models\AssetBundler;
 use RadiusTheme\SB\Traits\SingletonTrait;
 
@@ -131,6 +133,27 @@ class AssetRegistry {
 	private $contextual_loading;
 
 	/**
+	 * Asset contexts this request has to serve, memoised.
+	 *
+	 * @var array|null
+	 */
+	private $required_contexts = null;
+
+	/**
+	 * Widget type to asset-context list, memoised.
+	 *
+	 * @var array|null
+	 */
+	private $widget_type_map = null;
+
+	/**
+	 * Widget types found in the documents this request renders, memoised.
+	 *
+	 * @var array|null
+	 */
+	private $template_widget_types = null;
+
+	/**
 	 * Class constructor.
 	 */
 	private function __construct() {
@@ -200,6 +223,8 @@ class AssetRegistry {
 			$all_contexts
 		);
 
+		$global = $normalized['global'] ?? [];
+
 		foreach ( $normalized as $context => $paths ) {
 			if ( 'global' === $context ) {
 				continue;
@@ -207,13 +232,442 @@ class AssetRegistry {
 
 			$normalized[ $context ] = array_unique(
 				array_merge(
-					$normalized['global'] ?? [],
+					$global,
 					$paths
 				)
 			);
 		}
 
+		/*
+		 * The bucket this request actually serves carries every category its
+		 * page needs, not just the one its page type maps to.
+		 *
+		 * Assets are filed under the widget's declared ElementList category
+		 * while the served bucket is chosen by page type, so a Template Builder
+		 * template holding widgets from another category - a product widget in a
+		 * Shop template, say - rendered with its CSS/JS left in a bucket this
+		 * request never loads. required_contexts() resolves what the template on
+		 * screen really needs; merging here keeps the existing "one bundle per
+		 * request" shape rather than enqueuing several.
+		 *
+		 * Writing the key unconditionally also guarantees the served context
+		 * exists in both the CSS and the JS map, so the two never resolve to
+		 * different bundles and Fns::optimized_handle() can never name a handle
+		 * that was not enqueued.
+		 */
+		$served = $this->served_context();
+		$merged = array_merge( $global, $this->template_module_assets( $type ) );
+
+		foreach ( $this->required_contexts() as $context ) {
+			if ( ! empty( $normalized[ $context ] ) ) {
+				$merged = array_merge( $merged, $normalized[ $context ] );
+			}
+		}
+
+		$normalized[ $served ] = array_values( array_unique( $merged ) );
+
 		return $normalized;
+	}
+
+	/**
+	 * The single context key this request serves.
+	 *
+	 * @return string
+	 */
+	public function served_context() {
+		return Fns::detect_context();
+	}
+
+	/**
+	 * Asset contexts this request has to cover.
+	 *
+	 * The page-type context, plus every context holding an asset that a
+	 * ShopBuilder widget in the resolved Template Builder template needs.
+	 * Returns just the page-type context when no template is resolved (an
+	 * ordinary WordPress or Elementor page) or when the template holds no
+	 * ShopBuilder widgets, so nothing extra is bundled for pages that do not
+	 * need it.
+	 *
+	 * @return array
+	 */
+	public function required_contexts() {
+		if ( null !== $this->required_contexts ) {
+			return $this->required_contexts;
+		}
+
+		$contexts = array_merge( [ $this->served_context() ], $this->template_widget_contexts() );
+
+		$this->required_contexts = array_values( array_unique( $contexts ) );
+
+		return $this->required_contexts;
+	}
+
+	/**
+	 * Contexts holding assets for the widgets used by the resolved template.
+	 *
+	 * @return array
+	 */
+	protected function template_widget_contexts() {
+		$map = $this->widget_asset_contexts_map();
+
+		if ( empty( $map ) ) {
+			return [];
+		}
+
+		$contexts = [];
+
+		foreach ( $this->template_widget_types() as $widget_type ) {
+			if ( empty( $map[ $widget_type ] ) ) {
+				continue;
+			}
+
+			$contexts = array_merge( $contexts, $map[ $widget_type ] );
+		}
+
+		return array_values( array_unique( $contexts ) );
+	}
+
+	/**
+	 * Widget types present in the documents this request can render.
+	 *
+	 * The builder template on screen, plus the Quick View template when that
+	 * module is active: its modal is injected by AJAX after this page's assets
+	 * are already printed, so whatever it contains has to be covered now or not
+	 * at all.
+	 *
+	 * @return array
+	 */
+	protected function template_widget_types() {
+		if ( null !== $this->template_widget_types ) {
+			return $this->template_widget_types;
+		}
+
+		$types = [];
+
+		foreach ( $this->render_template_ids() as $template_id ) {
+			$types = array_merge( $types, ElementorDataMap::instance()->get_widget_types( $template_id ) );
+		}
+
+		$this->template_widget_types = array_values( array_unique( $types ) );
+
+		return $this->template_widget_types;
+	}
+
+	/**
+	 * Template IDs whose widgets this request may render.
+	 *
+	 * @return array
+	 */
+	protected function render_template_ids() {
+		$ids = [ BuilderFns::current_template_id() ];
+
+		if ( Fns::is_module_active( 'quick_view' ) ) {
+			$ids[] = BuilderFns::current_template_id( 'quick-view' );
+		}
+
+		return array_values( array_unique( array_filter( array_map( 'absint', $ids ) ) ) );
+	}
+
+	/**
+	 * Module assets required by the widgets this request renders.
+	 *
+	 * A widget can own no assets at all and still need a module's stylesheet or
+	 * script - the Size Chart widget's template is nothing but a wrapper around
+	 * the module's action. The module files are pulled in individually rather
+	 * than by adding the module's whole context, so a Cart page gains the one
+	 * script its widget needs instead of every shop and product asset.
+	 *
+	 * Purely additive: a module already required by its own hooks, shortcodes or
+	 * AJAX keeps its declared contexts untouched.
+	 *
+	 * @param string $type 'css' or 'js'.
+	 *
+	 * @return array Absolute asset paths.
+	 */
+	protected function template_module_assets( $type ) {
+		$widgets = $this->template_widget_types();
+
+		if ( empty( $widgets ) ) {
+			return [];
+		}
+
+		$modules = [];
+
+		foreach ( $this->widget_module_dependency_map() as $group ) {
+			if ( empty( $group['widgets'] ) || empty( $group['modules'] ) ) {
+				continue;
+			}
+
+			// Typed by asset kind: several widgets need a module's CSS but have no
+			// use for its JS, and one of them has no JS to ask for.
+			$kinds = (array) ( $group['assets'] ?? [ 'css', 'js' ] );
+
+			if ( ! in_array( $type, $kinds, true ) ) {
+				continue;
+			}
+
+			if ( ! array_intersect( (array) $group['widgets'], $widgets ) ) {
+				continue;
+			}
+
+			$modules = array_merge( $modules, (array) $group['modules'] );
+		}
+
+		$paths = [];
+
+		foreach ( array_unique( $modules ) as $module ) {
+			if ( ! Fns::is_module_active( $module ) ) {
+				continue;
+			}
+
+			$slug = apply_filters( 'rtsb/optimizer/module/remap', str_replace( '_', '-', sanitize_key( $module ) ) );
+			$path = Fns::locate_asset( 'js' === $type ? "js/modules/$slug.js" : "{$this->dir}modules/{$slug}{$this->suffix}.css" );
+
+			if ( $path ) {
+				$paths[] = $path;
+			}
+		}
+
+		return array_values( array_unique( $paths ) );
+	}
+
+	/**
+	 * Widgets whose output is produced by a module, typed by asset kind.
+	 *
+	 * Shared group files are deliberately absent: the shared registry already
+	 * resolves those for both modules and widgets, and restating them here would
+	 * create a second, competing source of truth. Only a module's own
+	 * `modules/<slug>` files belong in this map.
+	 *
+	 * Filterable so Pro and third parties declare their own edges instead of
+	 * this list naming them.
+	 *
+	 * @return array
+	 */
+	protected function widget_module_dependency_map() {
+		return apply_filters(
+			'rtsb/optimizer/widgets/module_dependencies',
+			[
+				[
+					// The Quick View entries reuse these same widget classes, so this
+					// one type covers both the product page and the modal.
+					'widgets' => [ 'rtsb-product-size-chart' ],
+					'modules' => [ 'product_size_chart' ],
+					'assets'  => [ 'css', 'js' ],
+				],
+				[
+					'widgets' => [ 'rtsb-multi-step-checkout' ],
+					'modules' => [ 'multi_step_checkout' ],
+					'assets'  => [ 'css', 'js' ],
+				],
+				[
+					'widgets' => [ 'rtsb-save-for-buy-later', 'rtsb-save-for-later-preview' ],
+					'modules' => [ 'save_for_buy_later' ],
+					'assets'  => [ 'css', 'js' ],
+				],
+				[
+					'widgets' => [ 'rtsb-coupon-list' ],
+					'modules' => [ 'smart_coupons' ],
+					'assets'  => [ 'css', 'js' ],
+				],
+				[
+					'widgets' => [ 'rtsb-wishlist' ],
+					'modules' => [ 'wishlist' ],
+					'assets'  => [ 'css', 'js' ],
+				],
+				[
+					'widgets' => [ 'rtsb-product-quick-checkout' ],
+					'modules' => [ 'quick_checkout' ],
+					'assets'  => [ 'css', 'js' ],
+				],
+				[
+					// Pre-Order filters `rtsb/elementor/product_stock_icons`, which only
+					// this widget applies, and styles the `.rtsb-stock-text` it emits.
+					// Its script binds `.rtsb-product-add-to-cart` alone, so the stock
+					// widget has no use for it.
+					'widgets' => [ 'rtsb-product-stock' ],
+					'modules' => [ 'pre_order' ],
+					'assets'  => [ 'css' ],
+				],
+				[
+					// The buttons these widgets render exist only while the module does.
+					'widgets' => [ 'rtsb-actions-button' ],
+					'modules' => [ 'wishlist', 'compare', 'quick_view' ],
+					'assets'  => [ 'css', 'js' ],
+				],
+				[
+					// Account navigation and custom endpoints are styled by the module;
+					// it ships no script.
+					'widgets' => [ 'rtsb-account-navigation', 'rtsb-endpoint-dynamic-content' ],
+					'modules' => [ 'customize_my_account' ],
+					'assets'  => [ 'css' ],
+				],
+				[
+					// Countdown styling lives in a shared group the shared registry
+					// already resolves; the module itself owns no files.
+					'widgets' => [ 'rtsb-product-flash-sale-countdown' ],
+					'modules' => [ 'flash_sale_countdown' ],
+					'assets'  => [ 'css' ],
+				],
+			]
+		);
+	}
+
+	/**
+	 * Map of Elementor widget type name to every context its assets live in.
+	 *
+	 * The widget type stored in `_elementor_data` comes from the widget object's
+	 * `rtsb_base`, which is only set in its constructor, so the authoritative
+	 * link back to the ElementList entry is the class name of the registered
+	 * instance. Elementor has already built those instances on any page that
+	 * renders a builder template, so this reuses them rather than constructing
+	 * anything, and the result is cached for the same lifetime as the widget
+	 * list itself.
+	 *
+	 * A widget's own CSS/JS is filed under its ElementList category, but its
+	 * shared files are filed under contexts the shared maps declare
+	 * independently, and the two do not always agree - `shared/order-received`
+	 * sits in `account` while its widgets are categorised `thank_you`. Routing
+	 * on the category alone therefore misses assets, so the map unions both
+	 * sources and is derived from the shared maps rather than naming any widget.
+	 *
+	 * @return array
+	 */
+	protected function widget_asset_contexts_map() {
+		if ( null !== $this->widget_type_map ) {
+			return $this->widget_type_map;
+		}
+
+		$cache_key = 'rtsb_widget_asset_contexts_map';
+		$cached    = wp_cache_get( $cache_key, Cache::group() );
+
+		if ( is_array( $cached ) ) {
+			$this->widget_type_map = $cached;
+
+			return $this->widget_type_map;
+		}
+
+		$registered = $this->registered_widget_classes();
+
+		if ( empty( $registered ) ) {
+			// Elementor is unavailable or has registered nothing yet. Do not cache
+			// an empty map: fall back to the page-type context for this request
+			// and try again on the next one.
+			return [];
+		}
+
+		$shared = $this->shared_contexts_by_widget();
+		$map    = [];
+
+		foreach ( Fns::get_widgets_list() as $slug => $info ) {
+			if ( empty( $info['base_class'] ) ) {
+				continue;
+			}
+
+			if ( ! isset( $info['active'] ) || 'on' !== $info['active'] ) {
+				continue;
+			}
+
+			$class = ltrim( $info['base_class'], '\\' );
+
+			if ( ! isset( $registered[ $class ] ) ) {
+				continue;
+			}
+
+			$clean    = str_replace( '_', '-', sanitize_key( $slug ) );
+			$own      = ! empty( $info['category'] ) ? $info['category'] : 'global';
+			$contexts = array_merge( [ self::normalize_context( $own ) ], $shared[ $clean ] ?? [] );
+			$name     = $registered[ $class ];
+
+			/*
+			 * Several ElementList entries can share one widget class, and so one
+			 * widget type: the Quick View entries reuse the single-product widgets
+			 * under a `quick_view` category. Merge rather than assign, or whichever
+			 * entry is read last silently discards the other's contexts.
+			 */
+			$map[ $name ] = array_values(
+				array_unique( array_merge( $map[ $name ] ?? [], $contexts ) )
+			);
+		}
+
+		wp_cache_set( $cache_key, $map, Cache::group(), 12 * HOUR_IN_SECONDS );
+		Cache::set_data_cache_key( $cache_key );
+
+		$this->widget_type_map = $map;
+
+		return $this->widget_type_map;
+	}
+
+	/**
+	 * Widget slug to the contexts its shared asset files are filed under.
+	 *
+	 * Read straight off the same shared maps the bundler files those files with,
+	 * so membership stays correct when a map entry is edited or a third party
+	 * filters one.
+	 *
+	 * @return array
+	 */
+	protected function shared_contexts_by_widget() {
+		$contexts = [];
+
+		$groups = array_merge(
+			array_values( $this->get_elementor_shared_styles_map() ),
+			array_values( $this->get_shared_style_components() )
+		);
+
+		foreach ( $groups as $group ) {
+			if ( empty( $group['widgets'] ) ) {
+				continue;
+			}
+
+			foreach ( (array) ( $group['context'] ?? [ 'global' ] ) as $context ) {
+				$context = self::normalize_context( $context );
+
+				foreach ( (array) $group['widgets'] as $widget_slug ) {
+					$contexts[ $widget_slug ][ $context ] = $context;
+				}
+			}
+		}
+
+		return array_map( 'array_values', $contexts );
+	}
+
+	/**
+	 * Resolve a declared category to the bucket key the bundler actually uses.
+	 *
+	 * @param string $context Declared category or context.
+	 *
+	 * @return string
+	 */
+	protected static function normalize_context( $context ) {
+		return 'general' === $context ? 'global' : $context;
+	}
+
+	/**
+	 * Class name to widget type name for everything Elementor has registered.
+	 *
+	 * @return array
+	 */
+	private function registered_widget_classes() {
+		if ( ! class_exists( '\Elementor\Plugin' ) || empty( \Elementor\Plugin::$instance->widgets_manager ) ) {
+			return [];
+		}
+
+		$classes = [];
+
+		try {
+			$types = \Elementor\Plugin::$instance->widgets_manager->get_widget_types();
+		} catch ( \Throwable $e ) {
+			return [];
+		}
+
+		foreach ( (array) $types as $name => $instance ) {
+			if ( is_object( $instance ) ) {
+				$classes[ get_class( $instance ) ] = $name;
+			}
+		}
+
+		return $classes;
 	}
 
 	/**
@@ -1335,9 +1789,26 @@ class AssetRegistry {
 	/**
 	 * Forcefully regenerate bundled JS and CSS assets.
 	 *
+	 * Never runs in the request that replaced the plugin files. At that point the
+	 * process holds classes from the release being replaced while everything
+	 * autoloaded from here on comes from the new files, and a bundle build pulls
+	 * in a long tail of both - a new class calling a method the old one does not
+	 * have is fatal. Nothing is lost by skipping: a missing bundle is built on
+	 * demand by the first request that needs it.
+	 *
+	 * Deliberately guarded here as well as in Cache::clear_asset_cache(), because
+	 * an upgrade from an older release runs that caller from the old files.
+	 *
 	 * @return array
 	 */
 	public function regenerate_bundles() {
+		if ( did_action( 'upgrader_process_complete' ) ) {
+			return [
+				'js'  => null,
+				'css' => null,
+			];
+		}
+
 		$this->bundled_js  = null;
 		$this->bundled_css = null;
 		$this->js_files    = [];

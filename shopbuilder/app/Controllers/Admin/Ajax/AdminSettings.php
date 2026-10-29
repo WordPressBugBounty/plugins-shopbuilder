@@ -89,6 +89,13 @@ class AdminSettings {
 			$fields     = $sections[ $section_id ]['list'][ $block_id ]['fields'];
 			$db_options = Fns::get_options( $section_id, $block_id );
 			foreach ( $fields as $field_id  => $field ) {
+				// Credentials live in the encrypted store, never in $db_options,
+				// so they would always look "missing" here. Defaulting them would
+				// push a sentinel into the save payload; leave them out instead.
+				if ( ! empty( $field['secret'] ) ) {
+					continue;
+				}
+
 				if ( ! array_key_exists( $field_id, $db_options ) ) {
 					$type                 = 'array' === gettype( $field['value'] ) ? [] : '';
 					$options[ $field_id ] = ! empty( $field['value'] ) ? $field['value'] : $type;

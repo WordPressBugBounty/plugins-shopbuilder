@@ -92,14 +92,9 @@ class BuilderFns {
 			return 0;
 		}
 		// Wpml Supported.
-		$options = self::option_name( $type );
-		$post_id = TemplateSettings::instance()->get_option( $options );
+		$post_id = self::type_default_template_id( $type );
 		if ( empty( $post ) ) {
 			return 0;
-		}
-		if ( empty( $post_id ) ) {
-			$options = self::option_name( $type, true );
-			$post_id = TemplateSettings::instance()->get_option( $options );
 		}
 
 		$cache_key = 'rtsb_builder_page_id_by_type_' . $type;
@@ -114,7 +109,11 @@ class BuilderFns {
 				}
 				$cache_key_product = 'template_for_product_page_' . get_the_ID();
 				$template          = get_transient( $cache_key_product );
-				if ( $template && 'publish' === get_post_status( $template ) ) {
+				// A cached id is only honoured while the template is still active for
+				// this request: the transient outlives a deactivation by up to 12 hours
+				// and a purge cannot reach it when transients live in a persistent
+				// object cache.
+				if ( $template && self::is_template_active( $template, 'product' ) ) {
 					$post_id = $template;
 					break;
 				}
@@ -196,7 +195,7 @@ class BuilderFns {
 				$post_id = (int) apply_filters( 'rtsb/builder/page/id/by/type/resolve', $post_id, $type );
 				break;
 		}
-		if ( 'publish' === get_post_status( $post_id ) && self::builder_type( $post_id ) === $type ) {
+		if ( self::is_template_active( $post_id, $type ) ) {
 			self::$cache[ $cache_key ] = $post_id;
 			return $post_id;
 		}
@@ -237,6 +236,228 @@ class BuilderFns {
 	}
 
 	/**
+	 * The builder template this request actually renders.
+	 *
+	 * On a preview the page template renders `the_content()` of the queried
+	 * `rtsb_builder` post, so the document on screen is the queried post itself,
+	 * not the type-wide default that builder_page_id_by_page() resolves. Anything
+	 * that has to reason about the document being rendered - which widgets it
+	 * holds, which assets they need - must ask here rather than assume the
+	 * frontend rule, or it inspects a different template than the one displayed.
+	 *
+	 * This is the rule BuilderCpt::builder_template() and the page templates
+	 * already apply, lifted into one place rather than restated.
+	 *
+	 * @param string|null $type Restrict to a page type. Null accepts whichever
+	 *                          type the request resolves to.
+	 *
+	 * @return int Template ID, or 0 when the request renders no builder template.
+	 */
+	public static function current_template_id( $type = null ) {
+		$cache_key = 'rtsb_current_template_id_' . ( $type ?? '*' );
+
+		if ( isset( self::$cache[ $cache_key ] ) ) {
+			return self::$cache[ $cache_key ];
+		}
+
+		$template_id = self::resolve_current_template_id( $type );
+
+		self::$cache[ $cache_key ] = $template_id;
+
+		return $template_id;
+	}
+
+	/**
+	 * Uncached body of current_template_id().
+	 *
+	 * @param string|null $type Restrict to a page type.
+	 *
+	 * @return int
+	 */
+	private static function resolve_current_template_id( $type = null ) {
+		if ( self::is_builder_preview() ) {
+			$previewed = absint( get_the_ID() );
+
+			// Only the queried post counts, and only when it really is a builder
+			// template of the requested type. Anything else means this request is
+			// not previewing what the caller asked about.
+			if ( ! $previewed || get_post_type( $previewed ) !== self::$post_type_tb ) {
+				return 0;
+			}
+
+			if ( null !== $type && self::builder_type( $previewed ) !== $type ) {
+				return 0;
+			}
+
+			return $previewed;
+		}
+
+		return null === $type
+			? absint( self::builder_page_id_by_page() )
+			: absint( self::builder_page_id_by_type( $type ) );
+	}
+
+	/**
+	 * Get the template id stored in the type-wide "active template" option.
+	 *
+	 * Falls back to the default-language option when the current language has no
+	 * value of its own, mirroring how the option is written.
+	 *
+	 * @param string $type Page type.
+	 *
+	 * @return int|string Template ID, or an empty value when none is set.
+	 */
+	public static function type_default_template_id( $type ) {
+		$post_id = TemplateSettings::instance()->get_option( self::option_name( $type ) );
+
+		if ( empty( $post_id ) ) {
+			$post_id = TemplateSettings::instance()->get_option( self::option_name( $type, true ) );
+		}
+
+		return $post_id;
+	}
+
+	/**
+	 * Scope map for Product Page templates that target a taxonomy term.
+	 *
+	 * Keys are the `_is_product_page_template_for` values; each entry names the
+	 * taxonomy to read off the current product, the term meta holding the
+	 * template id, and the helper building the "set as active" option name.
+	 *
+	 * @return array
+	 */
+	private static function product_template_term_scopes() {
+		return [
+			'product_cats'   => [
+				'taxonomy'    => 'product_cat',
+				'term_meta'   => self::$categories_product_page_template,
+				'option_name' => 'option_name_product_page_specific_cat_set_default',
+			],
+			'product_brands' => [
+				'taxonomy'    => 'product_brand',
+				'term_meta'   => self::$brands_product_page_template,
+				'option_name' => 'option_name_product_page_specific_brand_set_default',
+			],
+			'product_tags'   => [
+				'taxonomy'    => 'product_tag',
+				'term_meta'   => self::$tags_product_page_template,
+				'option_name' => 'option_name_product_page_specific_tag_set_default',
+			],
+		];
+	}
+
+	/**
+	 * Check whether a builder template may render for the current request.
+	 *
+	 * Deactivation takes precedence over every condition. A Product Page
+	 * template scoped to specific products/categories/brands/tags is stored
+	 * independently of the type-wide `rtsb_tb_template_default_<type>` option, so
+	 * that option can keep pointing at a template that is no longer active — for
+	 * example when a template was saved as "All Products" while active and later
+	 * switched to a scoped mode. Validating here stops such a stale pointer, or a
+	 * stale resolved transient, from resurrecting a deactivated template.
+	 *
+	 * Templates of any other type keep their previous behaviour: the type-wide
+	 * option is the activation record, so a published template of the right type
+	 * is active.
+	 *
+	 * @param int|string $template_id Builder template ID.
+	 * @param string     $type        Expected page type. Defaults to the template's own type.
+	 *
+	 * @return bool
+	 */
+	public static function is_template_active( $template_id, $type = '' ) {
+		$template_id = absint( $template_id );
+
+		if ( ! $template_id || 'publish' !== get_post_status( $template_id ) ) {
+			return false;
+		}
+
+		$type = $type ? $type : self::builder_type( $template_id );
+
+		if ( self::builder_type( $template_id ) !== $type ) {
+			return false;
+		}
+
+		if ( 'product' !== $type ) {
+			return true;
+		}
+
+		$scope = get_post_meta( $template_id, '_is_product_page_template_for', true );
+
+		if ( empty( $scope ) || 'all_products' === $scope ) {
+			// Unscoped templates are activated by the type-wide option itself.
+			return absint( self::type_default_template_id( $type ) ) === $template_id;
+		}
+
+		return self::is_scoped_product_template_active( $template_id, $scope );
+	}
+
+	/**
+	 * Check a scoped Product Page template against the current product.
+	 *
+	 * Active means both halves of the assignment still hold: the template is
+	 * switched on for its scope, and the current product is actually covered by
+	 * that scope.
+	 *
+	 * @param int    $template_id Builder template ID.
+	 * @param string $scope       Value of `_is_product_page_template_for`.
+	 *
+	 * @return bool
+	 */
+	private static function is_scoped_product_template_active( $template_id, $scope ) {
+		$product_id = get_the_ID();
+
+		if ( ! $product_id ) {
+			return false;
+		}
+
+		if ( 'specific_products' === $scope ) {
+			if ( ! self::get_specific_product_as_default( $template_id ) ) {
+				return false;
+			}
+
+			$assigned = get_post_meta( $product_id, self::$view_template_for_products_meta, true );
+
+			return absint( $assigned ) === absint( $template_id );
+		}
+
+		$scopes = self::product_template_term_scopes();
+
+		if ( empty( $scopes[ $scope ] ) ) {
+			return false;
+		}
+
+		$taxonomy = $scopes[ $scope ]['taxonomy'];
+
+		if ( ! taxonomy_exists( $taxonomy ) ) {
+			return false;
+		}
+
+		$set_default_option = call_user_func( [ self::class, $scopes[ $scope ]['option_name'] ], $template_id );
+
+		if ( ! TemplateSettings::instance()->get_option( $set_default_option ) ) {
+			return false;
+		}
+
+		$terms = get_the_terms( $product_id, $taxonomy );
+
+		if ( is_wp_error( $terms ) || empty( $terms ) ) {
+			return false;
+		}
+
+		foreach ( $terms as $term ) {
+			$assigned = get_term_meta( $term->term_id, $scopes[ $scope ]['term_meta'], true );
+
+			if ( absint( $assigned ) === absint( $template_id ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
 	 * Page builder Page for.
 	 * No need translatable Text and textdomain.
 	 *
@@ -252,6 +473,76 @@ class BuilderFns {
 		];
 
 		return apply_filters( 'rtsb/builder/register/page/types', $page_types );
+	}
+
+	/**
+	 * Template types this install cannot build, listed so they can be advertised.
+	 *
+	 * Display only. These keys are deliberately kept out of builder_page_types(),
+	 * which drives the admin column, the list table filter, the singleton rules
+	 * and template resolution - entries there must be types that can actually
+	 * render. Empty once the pro plugin is active, because it registers the real
+	 * ones through `rtsb/builder/register/page/types`.
+	 *
+	 * The labels mirror the pro side (BuilderHooksPro, GiftCardInit,
+	 * MegaMenuBuilderHooks, Brand/TagTemplate). A few of those are module gated
+	 * at runtime, so this list is what pro can offer, not a promise of what a
+	 * given pro install will show.
+	 *
+	 * @return array
+	 */
+	public static function pro_page_types() {
+		if ( rtsb()->has_pro() ) {
+			return [];
+		}
+
+		$page_types = [
+			'brand-archive'                   => 'Brand Archive',
+			'tag-archive'                     => 'Tag Archive',
+			'order-thank-you'                 => 'Thank You / Order Received',
+			'myaccount-dashboard'             => 'My Account - Dashboard',
+			'myaccount-order'                 => 'My Account - Orders',
+			'myaccount-downloads'             => 'My Account - Downloads',
+			'myaccount-address'               => 'My Account - Address',
+			'myaccount-edit-billing-address'  => 'My Account - Edit Billing Address',
+			'myaccount-edit-shipping-address' => 'My Account - Edit Shipping Address',
+			'myaccount-edit-details'          => 'My Account - Edit/Details',
+			'myaccount-order-details'         => 'My Account - Order Details',
+			'myaccount-payment-methods'       => 'My Account - Payment Methods',
+			'myaccount-add-payment-method'    => 'My Account - Add Payment Method',
+			'order-pay'                       => 'My Account - Pay For Order',
+			'myaccount-auth'                  => 'Login / Register',
+			'myaccount-lost-password'         => 'Lost Password',
+			'myaccount-rtsb-gift-cards'       => 'My Account - Gift Card',
+			'myaccount-rtsb-view-card'        => 'My Account - Gift Card Details',
+			'quick-view'                      => 'Quick View',
+			'popup-builder'                   => 'Popup',
+			'mega-menu'                       => 'Mega Menu',
+		];
+
+		return apply_filters( 'rtsb/builder/register/pro/page/types', $page_types );
+	}
+
+	/**
+	 * Label for a template type, including types this install cannot build.
+	 *
+	 * A template keeps its type in post meta after the plugin that registered it
+	 * goes away, so the label has to be resolvable from both registries.
+	 *
+	 * @param string $type Template type key.
+	 *
+	 * @return string Label, or an empty string for an unknown type.
+	 */
+	public static function page_type_label( $type ) {
+		$types = self::builder_page_types();
+
+		if ( isset( $types[ $type ] ) ) {
+			return $types[ $type ];
+		}
+
+		$pro_types = self::pro_page_types();
+
+		return $pro_types[ $type ] ?? '';
 	}
 
 	/**

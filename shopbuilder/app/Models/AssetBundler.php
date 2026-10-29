@@ -255,6 +255,32 @@ class AssetBundler {
 	}
 
 	/**
+	 * Identifier for the process doing the work.
+	 *
+	 * Hosts routinely list getmypid() in disable_functions, and PHP reports a
+	 * disabled function as an undefined one, so calling it unqualified throws
+	 * `Call to undefined function
+	 * RadiusTheme\SB\Models\getmypid()` and takes the whole request down - and it
+	 * is reached on any request that finds a cold bundle, which is every request
+	 * right after a cache purge, a plugin update or a version bump. The value is
+	 * only ever used to tell concurrent builders apart, never to address a
+	 * process, so any unique-enough token does the job.
+	 *
+	 * @return string
+	 */
+	protected function process_token() {
+		if ( function_exists( 'getmypid' ) ) {
+			$pid = getmypid();
+
+			if ( false !== $pid ) {
+				return (string) $pid;
+			}
+		}
+
+		return 'p' . substr( md5( uniqid( '', true ) ), 0, 12 );
+	}
+
+	/**
 	 * Try to become the process that builds this bundle.
 	 *
 	 * Opening with the 'x' mode creates the file only if it does not already
@@ -289,7 +315,7 @@ class AssetBundler {
 		}
 
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fwrite, WordPress.PHP.NoSilencedErrors.Discouraged
-		@fwrite( $handle, (string) getmypid() );
+		@fwrite( $handle, $this->process_token() );
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
 		fclose( $handle );
 
@@ -323,7 +349,7 @@ class AssetBundler {
 	 * @return string
 	 */
 	protected function get_temp_file_path() {
-		return $this->get_cache_file_path() . '.tmp-' . getmypid() . '-' . uniqid( '', true );
+		return $this->get_cache_file_path() . '.tmp-' . $this->process_token() . '-' . uniqid( '', true );
 	}
 
 	/**
@@ -340,28 +366,56 @@ class AssetBundler {
 	}
 
 	/**
-	 * Delete previous bundles for this handle, keeping the current one.
+	 * Delete this handle's bundles left over from an earlier release.
 	 *
-	 * Bundle filenames embed a hash of the plugin versions and the source file
-	 * list, so a new file appears on every update and on every settings change
-	 * that alters which assets are included. Without this the directory grows
-	 * without bound: nothing else prunes it, because Cache::clear_asset_cache()
-	 * returns early when optimization is disabled or the directory is not
-	 * writable.
+	 * Bundle filenames embed a plugin-version signature and an asset-set
+	 * signature, so a new file appears on every update and on every settings
+	 * change that alters which assets are included. Without this the directory
+	 * grows without bound: nothing else prunes it, because
+	 * Cache::clear_asset_cache() returns early when optimization is disabled or
+	 * the directory is not writable.
+	 *
+	 * Only the version segment decides what is obsolete. Every asset set built
+	 * by the current release is kept, because more than one is legitimate at a
+	 * time.
 	 *
 	 * @return void
 	 */
 	protected function prune_obsolete_bundles() {
-		$current = $this->get_cache_file_path();
-		$pattern = $this->upload_dir . "$this->handle-*.min.$this->type";
-		$files   = glob( $pattern );
+		$files = glob( $this->upload_dir . "$this->handle-*.min.$this->type" );
 
 		if ( ! is_array( $files ) ) {
 			return;
 		}
 
+		$type    = preg_quote( $this->type, '/' );
+		$handle  = preg_quote( $this->handle, '/' );
+		$version = preg_quote( $this->version_signature(), '/' );
+
+		// Only this handle's own bundles, so a non-contextual `rtsb-bundled`
+		// build cannot reach `rtsb-bundled-shop-*`: the glob matches those too.
+		$current_release = "/^{$handle}-{$version}-[a-f0-9]{32}\.min\.{$type}$/";
+		$older_release   = "/^{$handle}-[a-f0-9]{12}-[a-f0-9]{32}\.min\.{$type}$/";
+
+		// Bundles from before the version segment existed.
+		$legacy = "/^{$handle}-[a-f0-9]{32}\.min\.{$type}$/";
+
 		foreach ( $files as $file ) {
-			if ( $file === $current ) {
+			$name = basename( $file );
+
+			/*
+			 * Every asset set of the current release is a live bundle, not a
+			 * stale one. Since the served set now depends on which widgets the
+			 * rendered template actually uses, two pages of the same context can
+			 * legitimately need different files; deleting one because the other
+			 * was just built made each request evict the other and rebuild from
+			 * scratch.
+			 */
+			if ( preg_match( $current_release, $name ) ) {
+				continue;
+			}
+
+			if ( ! preg_match( $older_release, $name ) && ! preg_match( $legacy, $name ) ) {
 				continue;
 			}
 
@@ -401,15 +455,45 @@ class AssetBundler {
 	 * @return string
 	 */
 	protected function generate_filename() {
+		return sprintf(
+			'%s-%s-%s.min.%s',
+			$this->handle,
+			$this->version_signature(),
+			$this->asset_set_signature(),
+			$this->type
+		);
+	}
+
+	/**
+	 * Signature of the plugin versions this bundle was built from.
+	 *
+	 * Its own filename segment rather than part of one combined hash, so
+	 * prune_obsolete_bundles() can tell "built by an older release" - which must
+	 * go - from "a different asset set of the current release" - which must
+	 * stay.
+	 *
+	 * @return string
+	 */
+	protected function version_signature() {
 		$version = defined( 'RTSB_VERSION' ) ? RTSB_VERSION : '';
 
 		if ( defined( 'RTSBPRO_VERSION' ) ) {
 			$version .= '-' . RTSBPRO_VERSION;
 		}
 
-		$hash = md5( $this->handle . $version . wp_json_encode( $this->source_files ) );
+		return substr( md5( $version ), 0, 12 );
+	}
 
-		return "$this->handle-$hash.min.$this->type";
+	/**
+	 * Signature of the exact source files in this bundle.
+	 *
+	 * Deterministic for a given list, so the same asset set always resolves to
+	 * the same file and a warm request never rebuilds.
+	 *
+	 * @return string
+	 */
+	protected function asset_set_signature() {
+		return md5( wp_json_encode( $this->source_files ) );
 	}
 
 	/**
